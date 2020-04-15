@@ -15,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $models = array(
-            'Shop'
+            'Shop',
+            'Food'
         );
         foreach($models as $model) {
             $this->app->bind("App\Repositories\Interfaces\\{$model}RepositoryInterface", "App\Repositories\Eloquents\\{$model}Repository");

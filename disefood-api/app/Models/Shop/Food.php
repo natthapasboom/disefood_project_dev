@@ -9,6 +9,6 @@ class Food extends Model
     protected $table = 'foods';
     protected $primaryKey = 'food_id';
     protected $fillable = [
-        'shop_id', 'name', 'cover_image','type'
+        'shop_id', 'name', 'price', 'status', 'cover_image','type'
     ];
 }

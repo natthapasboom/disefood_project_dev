@@ -17,23 +17,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-// Route::group([
-//     'prefix' => 'shop',
-//     'namespace' => 'Shop'
-// ], function() {
-//     Route::get('/', 'ShopController@getShops');
-// });
-
-// Route::prefix('shop')->group(function() {
-//     Route::get('/','ShopController@getShops');
-// });
-
-// Route::get('/shops', 'ShopController@getShops');
-// Route::get('shops', 'ShopController@getShops');
-// use App\Models\Shop\Shop;
-// Route::get('shops', function() {
-//     return Shop::all();
-// });
-
 Route::get('shops', 'ShopController@getShopsList');
 Route::get('shops/{shop_id}', 'ShopController@findShopById');
+Route::get('foods', 'FoodController@getFoodsList');
+Route::get('foods/{shop_id}', 'FoodController@getFoodsByShopId');
