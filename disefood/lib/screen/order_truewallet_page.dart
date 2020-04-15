@@ -3,17 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-//import 'package:image_picker_saver/image_picker_saver.dart';
 
-
-
-class PromptpayPage extends StatefulWidget {
+class TruewalletPage extends StatefulWidget {
   @override
-  _PromptpayPageState createState() => _PromptpayPageState();
+  _TruewalletPageState createState() => _TruewalletPageState();
 }
 
-class _PromptpayPageState extends State<PromptpayPage> {
-  File _image;
+class _TruewalletPageState extends State<TruewalletPage> {
+ File _image;
 
   static GlobalKey screen = new GlobalKey();
 
@@ -75,7 +72,7 @@ class _PromptpayPageState extends State<PromptpayPage> {
                 indent: 45,
                 endIndent: 45,
               ),
-              Container(
+               Container(
                   height: 400,
                   padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
                   child: Card(
@@ -87,7 +84,7 @@ class _PromptpayPageState extends State<PromptpayPage> {
                           width: 150,
                           margin: EdgeInsets.only(top: 30),
                           child: Image.network(
-                              "https://www.thaiload.com/wp-content/uploads/2018/01/image.jpeg"),
+                              "https://www.gump.in.th/uploaded_files/img/TAN/wallet-logo.png"),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -259,3 +256,4 @@ class _PromptpayPageState extends State<PromptpayPage> {
   }
 
 }
+

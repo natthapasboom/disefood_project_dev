@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:disefood/screen/order_promptpay_page.dart';
+import 'package:disefood/screen/order_truewallet_page.dart';
 import 'package:flutter/material.dart';
 
 class OrderItemPage extends StatefulWidget {
@@ -400,12 +401,85 @@ class _OrderItemPageState extends State<OrderItemPage> {
                           ),
                         ],
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TruewalletPage(),
+                          ),
+                        );
+                      },
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ),
                 ],
-              )
+              ),
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  "ราคารวม",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "90 บาท",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Divider(
+            thickness: 3,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                width: 150,
+                margin: EdgeInsets.fromLTRB(0, 5, 20, 0),
+                child: RaisedButton(
+                  elevation: 5,
+                  color: Colors.white,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "ย้อนกลับ",
+                    style: TextStyle(
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.white, width: 2),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+              ),
+              Container(
+                width: 150,
+                margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                child: RaisedButton(
+                  elevation: 5,
+                  color: Colors.orange,
+                  onPressed: () {},
+                  child: Text(
+                    "ยืนยัน",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.orange, width: 2),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
