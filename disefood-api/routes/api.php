@@ -20,4 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('shops', 'ShopController@getShopsList');
 Route::get('shops/{shop_id}', 'ShopController@findShopById');
 Route::get('foods', 'FoodController@getFoodsList');
-Route::get('foods/{shop_id}', 'FoodController@getFoodsByShopId');
+Route::get('shop/foods/{shop_id}', 'FoodController@getFoodsByShopId');
+
+Route::get('user/{user_id}', 'UserController@getUserById');
+Route::get('user/profile/{user_id}', 'UserController@getProfileById');

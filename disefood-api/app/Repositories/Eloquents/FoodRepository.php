@@ -2,10 +2,9 @@
 
 
 namespace App\Repositories\Eloquents;
-use App\Models\Food\Food;
+
+use App\Models\Shop\Food;
 use App\Repositories\Interfaces\FoodRepositoryInterface;
-// use App\Models\Shop\Shop;
-// use App\Repositories\Interfaces\ShopRepositoryInterface;
 
 class FoodRepository implements FoodRepositoryInterface
 {
