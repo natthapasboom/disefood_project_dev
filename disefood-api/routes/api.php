@@ -24,3 +24,7 @@ Route::get('shop/foods/{shop_id}', 'FoodController@getFoodsByShopId');
 
 Route::get('user/{user_id}', 'UserController@getUserById');
 Route::get('user/profile/{user_id}', 'UserController@getProfileById');
+
+Route::get('order/shop/{shop_id}', 'OrderController@getOrderBySeller');
+Route::get('order/user/{user_id}', 'OrderController@getOrderByUser');
+Route::get('order/detail/{order_id}', 'OrderController@getOrderDetailByOrderId');
