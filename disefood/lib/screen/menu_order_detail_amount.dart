@@ -17,7 +17,7 @@ class _OrderAmountState extends State<OrderAmount> {
   int amount;
   String stramount = " ";
   int price = 45;
-  String textbutton = "Add to Cart";
+  String textbutton = "เพิ่มลงตะกร้า";
   _OrderAmountState(this.amounttempvalue) {
     if (amounttempvalue == null) {
       amount = 1;
@@ -44,9 +44,9 @@ class _OrderAmountState extends State<OrderAmount> {
   changeText(int opt) {
     setState(() {
       if (opt == 1) {
-        textbutton = 'Remove Item';
+        textbutton = 'ลบรายการอาหาร';
       } else {
-        textbutton = 'Add to Cart';
+        textbutton = 'เพิ่มลงตะกร้า';
       }
     });
   }
@@ -153,7 +153,7 @@ class _OrderAmountState extends State<OrderAmount> {
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.fromLTRB(20, 10, 0, 10),
                     child: Text(
-                      "Additional Request",
+                      "คำแนะนำพิเศษ",
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
@@ -163,10 +163,9 @@ class _OrderAmountState extends State<OrderAmount> {
                       style: new TextStyle(
                         fontSize: 15,
                       ),
-                      // maxLines: 2,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'ใส่ข้อมูลระบุ เช่น เผ็ดน้อย เป็นต้น'),
+                          hintText: 'ใส่ข้อมูลระบุสำหรับอาหาร เช่น หวานน้อย เป็นต้น'),
                     ),
                   ),
                   Container(
@@ -287,7 +286,7 @@ class _OrderAmountState extends State<OrderAmount> {
                             Visibility(
                               visible: isbuttonpriceinvis,
                               child: new Text(
-                                ' - $totalPrice Baht',
+                                ' - $totalPrice บาท',
                                 style: new TextStyle(
                                     color: Colors.white, fontSize: 18),
                               ),

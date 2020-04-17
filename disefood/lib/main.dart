@@ -1,5 +1,6 @@
 
 
+import 'package:disefood/screen/login_customer_page.dart';
 import 'package:disefood/screen/order_promptpay_page.dart';
 import 'package:disefood/screen_seller/home_seller.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ void main(){
       primaryColor: Colors.orange,
       appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
     ),
-    home: new Home(),
+    home: new LoginPage(),
     initialRoute: '/',
 
   ));

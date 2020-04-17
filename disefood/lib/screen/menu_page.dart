@@ -34,35 +34,39 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => Navigator.push(
-          context,
-          PageRouteBuilder(
-              pageBuilder: (BuildContext context, Animation<double> animation,
-                  Animation<double> secondaryAnimation) {
-                return Home();
-              },
-              transitionsBuilder: (BuildContext context,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                  Widget child) {
-                return FadeTransition(
-                  opacity: Tween<double>(
-                    begin: 0,
-                    end: 1,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
-              transitionDuration: Duration(milliseconds: 400))),
+        context,
+        PageRouteBuilder(
+          pageBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation) {
+            return Home();
+          },
+          transitionsBuilder: (BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+              Widget child) {
+            return FadeTransition(
+              opacity: Tween<double>(
+                begin: 0,
+                end: 1,
+              ).animate(animation),
+              child: child,
+            );
+          },
+          transitionDuration: Duration(milliseconds: 400),
+        ),
+      ),
       child: new Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           actions: <Widget>[
             new IconButton(
-                icon: new Icon(Icons.favorite),
-                onPressed: () => debugPrint('Favorite')),
+              icon: new Icon(Icons.favorite),
+              onPressed: () => debugPrint('Favorite'),
+            ),
             new IconButton(
-                icon: Icon(Icons.archive),
-                onPressed: () => debugPrint("archieve")),
+              icon: Icon(Icons.archive),
+              onPressed: () => debugPrint("archieve"),
+            ),
           ],
         ),
         drawer: SideMenuCustomer(),
@@ -222,17 +226,19 @@ class _MenuPageState extends State<MenuPage> {
                           Text("45"),
                           SizedBox(width: 15),
                           IconButton(
-                              icon: new Icon(
-                                Icons.add_circle,
-                                color: Colors.orange,
-                              ),
-                              onPressed: () => debugPrint('Add')),
+                            icon: new Icon(
+                              Icons.add_circle,
+                              color: Colors.orange,
+                            ),
+                            onPressed: () => debugPrint('Add'),
+                          ),
                           IconButton(
-                              icon: new Icon(
-                                Icons.favorite_border,
-                                color: Colors.orange,
-                              ),
-                              onPressed: () => debugPrint('Mark as Favorite')),
+                            icon: new Icon(
+                              Icons.favorite_border,
+                              color: Colors.orange,
+                            ),
+                            onPressed: () => debugPrint('Mark as Favorite'),
+                          ),
                         ],
                       ),
                       Divider(
@@ -248,17 +254,19 @@ class _MenuPageState extends State<MenuPage> {
                           Text("45"),
                           SizedBox(width: 15),
                           IconButton(
-                              icon: new Icon(
-                                Icons.add_circle,
-                                color: Colors.orange,
-                              ),
-                              onPressed: () => debugPrint('Add')),
+                            icon: new Icon(
+                              Icons.add_circle,
+                              color: Colors.orange,
+                            ),
+                            onPressed: () => debugPrint('Add'),
+                          ),
                           IconButton(
-                              icon: new Icon(
-                                Icons.favorite_border,
-                                color: Colors.orange,
-                              ),
-                              onPressed: () => debugPrint('Mark as Favorite')),
+                            icon: new Icon(
+                              Icons.favorite_border,
+                              color: Colors.orange,
+                            ),
+                            onPressed: () => debugPrint('Mark as Favorite'),
+                          ),
                         ],
                       ),
                       Divider(
@@ -268,41 +276,46 @@ class _MenuPageState extends State<MenuPage> {
                         thickness: 1.5,
                       ),
                       Container(
-                        margin: EdgeInsets.all(30),
-                        child: IntrinsicWidth(
-                          //ทำให้ปุ่มกว้างเท่ากันไม่ได้
-                          child: Row(
-                            children: <Widget>[
-                              RaisedButton(
+                        margin: EdgeInsets.fromLTRB(0, 40, 0, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              width: 130,
+                              child: RaisedButton(
+                                elevation: 5,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
                                 onPressed: () {
                                   return Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                          pageBuilder: (BuildContext context,
-                                              Animation<double> animation,
-                                              Animation<double>
-                                                  secondaryAnimation) {
-                                            return Home();
-                                          },
-                                          transitionsBuilder:
-                                              (BuildContext context,
-                                                  Animation<double> animation,
-                                                  Animation<double>
-                                                      secondaryAnimation,
-                                                  Widget child) {
-                                            return FadeTransition(
-                                              opacity: Tween<double>(
-                                                begin: 0,
-                                                end: 1,
-                                              ).animate(animation),
-                                              child: child,
-                                            );
-                                          },
-                                          transitionDuration:
-                                              Duration(milliseconds: 400)));
+                                    context,
+                                    PageRouteBuilder(
+                                      pageBuilder: (BuildContext context,
+                                          Animation<double> animation,
+                                          Animation<double>
+                                              secondaryAnimation) {
+                                        return Home();
+                                      },
+                                      transitionsBuilder: (BuildContext context,
+                                          Animation<double> animation,
+                                          Animation<double> secondaryAnimation,
+                                          Widget child) {
+                                        return FadeTransition(
+                                          opacity: Tween<double>(
+                                            begin: 0,
+                                            end: 1,
+                                          ).animate(animation),
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration:
+                                          Duration(milliseconds: 400),
+                                    ),
+                                  );
                                 },
                                 child: Text(
-                                  "Back",
+                                  "ย้อนกลับ",
                                   style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.orange,
@@ -310,10 +323,17 @@ class _MenuPageState extends State<MenuPage> {
                                 ),
                                 color: Colors.white,
                               ),
-                              SizedBox(
-                                width: 30,
-                              ),
-                              RaisedButton(
+                            ),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: 15),
+                              child: RaisedButton(
+                                elevation: 5,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
                                 onPressed: () {
                                   Navigator.push(
                                     context,
@@ -323,7 +343,7 @@ class _MenuPageState extends State<MenuPage> {
                                   );
                                 },
                                 child: Text(
-                                  "View Order",
+                                  "ดูรายการอาหาร",
                                   style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.white,
@@ -331,8 +351,8 @@ class _MenuPageState extends State<MenuPage> {
                                 ),
                                 color: Colors.orange,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

@@ -10,7 +10,7 @@ class TruewalletPage extends StatefulWidget {
 }
 
 class _TruewalletPageState extends State<TruewalletPage> {
- File _image;
+  File _image;
 
   static GlobalKey screen = new GlobalKey();
 
@@ -21,16 +21,6 @@ class _TruewalletPageState extends State<TruewalletPage> {
       noupload = false;
     });
   }
-
-
-//  void ScreenShot() async {
-//    RenderRepaintBoundary boundary = screen.currentContext.findRenderObject();
-//    ui.Image image = await boundary.toImage();
-//    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-//    var filePath = await ImagePickerSaver.saveFile(
-//        fileData: byteData.buffer.asUint8List());
-//    print(filePath);
-//  }
 
   void getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -46,11 +36,13 @@ class _TruewalletPageState extends State<TruewalletPage> {
       appBar: AppBar(
         actions: <Widget>[
           new IconButton(
-              icon: new Icon(Icons.favorite),
-              onPressed: () => debugPrint('Favorite')),
+            icon: new Icon(Icons.favorite),
+            onPressed: () => debugPrint('Favorite'),
+          ),
           new IconButton(
-              icon: Icon(Icons.archive),
-              onPressed: () => debugPrint("archieve")),
+            icon: Icon(Icons.archive),
+            onPressed: () => debugPrint("archieve"),
+          ),
         ],
       ),
       drawer: SideMenuCustomer(),
@@ -72,60 +64,60 @@ class _TruewalletPageState extends State<TruewalletPage> {
                 indent: 45,
                 endIndent: 45,
               ),
-               Container(
-                  height: 400,
-                  padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          width: 150,
-                          margin: EdgeInsets.only(top: 30),
-                          child: Image.network(
-                              "https://www.gump.in.th/uploaded_files/img/TAN/wallet-logo.png"),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text("ร้าน 000001"),
-                            Text(" # 999999 Baht"),
-                          ],
-                        ),
-                        Container(
-                          width: 200,
-                          margin: EdgeInsets.only(top: 10),
-                          child: Image.network(
-                              "https://boofcv.org/images/thumb/3/35/Example_rendered_qrcode.png/400px-Example_rendered_qrcode.png"),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 15),
-                          width: 200,
-                          child: FlatButton(
-                            onPressed: (){
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.file_download,
-                                  color: Colors.orange,
-                                ),
-                                Text(
-                                  " บันทืกรูปภาพ",
-                                  style: TextStyle(
-                                      color: Colors.orange,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
+              Container(
+                height: 400,
+                padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        width: 150,
+                        margin: EdgeInsets.only(top: 30),
+                        child: Image.network(
+                            "https://www.gump.in.th/uploaded_files/img/TAN/wallet-logo.png"),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("ร้าน 000001"),
+                          Text(" # 999999 Baht"),
+                        ],
+                      ),
+                      Container(
+                        width: 200,
+                        margin: EdgeInsets.only(top: 10),
+                        child: Image.network(
+                            "https://boofcv.org/images/thumb/3/35/Example_rendered_qrcode.png/400px-Example_rendered_qrcode.png"),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 15),
+                        width: 200,
+                        child: FlatButton(
+                          onPressed: () {},
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.file_download,
+                                color: Colors.orange,
+                              ),
+                              Text(
+                                " บันทืกรูปภาพ",
+                                style: TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
+              ),
               Container(
                 alignment: Alignment.centerLeft,
                 margin: EdgeInsets.fromLTRB(45, 20, 0, 0),
@@ -148,22 +140,22 @@ class _TruewalletPageState extends State<TruewalletPage> {
                         visible: noupload,
                         child: Container(
                           width: 300,
-                          child : _image == null?
-                          Image.network(
-                              "https://wakarusaag.com/wp-content/plugins/oem-showcase-inventory/assets/images/noimage-found.png"):
-                              SizedBox(
-                                height: 480,
-                                child: Container(
-                                  margin: EdgeInsets.fromLTRB(10, 30, 10, 10),
-                                  height: 360,
-                                  width: 300,
+                          child: _image == null
+                              ? Image.network(
+                                  "https://wakarusaag.com/wp-content/plugins/oem-showcase-inventory/assets/images/noimage-found.png")
+                              : SizedBox(
+                                  height: 480,
                                   child: Container(
-                                    height: 500,
-                                    margin: EdgeInsets.only(top: 10),
-                                    child: Image.file(_image),
+                                    margin: EdgeInsets.fromLTRB(10, 30, 10, 10),
+                                    height: 360,
+                                    width: 300,
+                                    child: Container(
+                                      height: 500,
+                                      margin: EdgeInsets.only(top: 10),
+                                      child: Image.file(_image),
+                                    ),
                                   ),
                                 ),
-                              )
                         ),
                       ),
                       Container(
@@ -171,7 +163,7 @@ class _TruewalletPageState extends State<TruewalletPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             FlatButton(
-                              onLongPress: (){
+                              onLongPress: () {
                                 getImage();
                                 setState(() {
                                   _image;
@@ -254,6 +246,4 @@ class _TruewalletPageState extends State<TruewalletPage> {
       ),
     );
   }
-
 }
-

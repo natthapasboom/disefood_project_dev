@@ -31,7 +31,10 @@ class _OrderItemPageState extends State<OrderItemPage> {
       totalhour = currenthours + 1;
       totalminute = (currentmin + 5) - 60;
     }
-    Timer.periodic(Duration(seconds: 1), (Timer t) => _getCurrentTime());
+    Timer.periodic(
+      Duration(seconds: 1),
+      (Timer t) => _getCurrentTime(),
+    );
     super.initState();
   }
 
@@ -99,11 +102,13 @@ class _OrderItemPageState extends State<OrderItemPage> {
       appBar: AppBar(
         actions: <Widget>[
           new IconButton(
-              icon: new Icon(Icons.favorite),
-              onPressed: () => debugPrint('Favorite')),
+            icon: new Icon(Icons.favorite),
+            onPressed: () => debugPrint('Favorite'),
+          ),
           new IconButton(
-              icon: Icon(Icons.archive),
-              onPressed: () => debugPrint("archieve")),
+            icon: Icon(Icons.archive),
+            onPressed: () => debugPrint("archieve"),
+          ),
         ],
       ),
       drawer: SideMenuCustomer(),
@@ -115,7 +120,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
               Container(
                 padding: EdgeInsets.fromLTRB(20, 16, 5, 16),
                 child: Text(
-                  "View Order",
+                  "ข้อมูลการสั้งซื้อ",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -125,11 +130,11 @@ class _OrderItemPageState extends State<OrderItemPage> {
           Column(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                 width: double.maxFinite,
                 color: Colors.grey[400],
                 child: Text(
-                  "Order Summary",
+                  "สรุปรายการอาหาร",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
@@ -193,11 +198,11 @@ class _OrderItemPageState extends State<OrderItemPage> {
             children: <Widget>[
               Container(
                 margin: EdgeInsets.only(top: 20),
-                padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                 width: double.maxFinite,
                 color: Colors.grey[400],
                 child: Text(
-                  "Recieve Time",
+                  "สรุปเวลาของรายการ",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
@@ -308,11 +313,11 @@ class _OrderItemPageState extends State<OrderItemPage> {
           Column(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
                 width: double.maxFinite,
                 color: Colors.grey[400],
                 child: Text(
-                  "Payment Method",
+                  "โปรดเลือกวิธีการชำระเงิน",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
