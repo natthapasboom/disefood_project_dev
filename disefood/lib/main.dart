@@ -18,7 +18,7 @@ void main(){
       primaryColor: Colors.orange,
       appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
     ),
-    home: new AddMenu(),
+    home: new OrderAmount(),
     initialRoute: '/',
 
   ));

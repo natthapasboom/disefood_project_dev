@@ -1,4 +1,5 @@
 import 'package:disefood/component/sidemenu_customer.dart';
+import 'package:disefood/screen/view_order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
@@ -36,17 +37,30 @@ class _PromptpayPageState extends State<PromptpayPage> {
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         actions: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 265),
+            child: new IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
           new IconButton(
             icon: new Icon(Icons.favorite),
             onPressed: () => debugPrint('Favorite'),
           ),
           new IconButton(
             icon: Icon(Icons.archive),
-            onPressed: () => debugPrint("archieve"),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ViewOrder(),
+              ),
+            ),
           ),
         ],
       ),
-      drawer: SideMenuCustomer(),
       body: SingleChildScrollView(
         child: Container(
           color: Colors.grey[200],
@@ -164,12 +178,6 @@ class _PromptpayPageState extends State<PromptpayPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             FlatButton(
-                              onLongPress: () {
-                                getImage();
-                                setState(() {
-                                  _image;
-                                });
-                              },
                               color: Colors.white,
                               child: Row(
                                 children: <Widget>[
@@ -185,7 +193,12 @@ class _PromptpayPageState extends State<PromptpayPage> {
                                   )
                                 ],
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                getImage();
+                                setState(() {
+                                  _image;
+                                });
+                              },
                             ),
                           ],
                         ),
@@ -198,30 +211,9 @@ class _PromptpayPageState extends State<PromptpayPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    width: 150,
-                    margin: EdgeInsets.fromLTRB(0, 10, 20, 20),
-                    child: RaisedButton(
-                      elevation: 5,
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        "ย้อนกลับ",
-                        style: TextStyle(
-                            color: Colors.orange,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.white, width: 2),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 150,
-                    margin: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                    width: 320,
+                    height: 40,
+                    margin: EdgeInsets.fromLTRB(0, 15, 0, 20),
                     child: RaisedButton(
                       elevation: 5,
                       color: Colors.orange,
