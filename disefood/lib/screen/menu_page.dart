@@ -2,7 +2,10 @@ import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
 import 'package:disefood/screen/order_items.dart';
+import 'package:disefood/screen/view_order_page.dart';
 import 'package:flutter/material.dart';
+
+
 
 class MenuPage extends StatefulWidget {
   final String stramount;
@@ -12,6 +15,8 @@ class MenuPage extends StatefulWidget {
   @override
   _MenuPageState createState() => _MenuPageState(stramount, checkinvis);
 }
+
+
 
 class _MenuPageState extends State<MenuPage> {
   bool isfavorite = false;
@@ -57,19 +62,107 @@ class _MenuPageState extends State<MenuPage> {
       ),
       child: new Scaffold(
         resizeToAvoidBottomPadding: false,
+        bottomNavigationBar: Container(
+          decoration: new BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black,
+                blurRadius: 12.0,
+                spreadRadius: 5.0,
+                offset: Offset(
+                  10.0,
+                  10.0,
+                ),
+              )
+            ],
+          ),
+          child: BottomAppBar(
+            shape: CircularNotchedRectangle(),
+            child: new Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 70,
+                ),
+                Container(
+                  width: 320,
+                  height: 40,
+                  child: FloatingActionButton.extended(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    backgroundColor: Colors.orange,
+                    elevation: 4.0,
+                    label: const Text(
+                      'ยืนยันรายการอาหาร',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OrderItemPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         appBar: AppBar(
           actions: <Widget>[
+            Container(
+              margin: EdgeInsets.only(right: 265),
+              child: new IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  return Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation) {
+                        return Home();
+                      },
+                      transitionsBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation,
+                          Widget child) {
+                        return FadeTransition(
+                          opacity: Tween<double>(
+                            begin: 0,
+                            end: 1,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
+                      transitionDuration: Duration(milliseconds: 400),
+                    ),
+                  );
+                },
+              ),
+            ),
             new IconButton(
               icon: new Icon(Icons.favorite),
               onPressed: () => debugPrint('Favorite'),
             ),
             new IconButton(
               icon: Icon(Icons.archive),
-              onPressed: () => debugPrint("archieve"),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ViewOrder(),
+                ),
+              ),
             ),
           ],
         ),
-        drawer: SideMenuCustomer(),
         body: SingleChildScrollView(
           child: Container(
             child: Column(
@@ -214,146 +307,9 @@ class _MenuPageState extends State<MenuPage> {
                         ],
                       ),
                       Divider(
-                        endIndent: 15,
                         height: 0,
                         color: Colors.grey,
                         thickness: 1.5,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Text("Noodle 1"),
-                          SizedBox(width: 130),
-                          Text("45"),
-                          SizedBox(width: 15),
-                          IconButton(
-                            icon: new Icon(
-                              Icons.add_circle,
-                              color: Colors.orange,
-                            ),
-                            onPressed: () => debugPrint('Add'),
-                          ),
-                          IconButton(
-                            icon: new Icon(
-                              Icons.favorite_border,
-                              color: Colors.orange,
-                            ),
-                            onPressed: () => debugPrint('Mark as Favorite'),
-                          ),
-                        ],
-                      ),
-                      Divider(
-                        endIndent: 15,
-                        height: 0,
-                        color: Colors.grey,
-                        thickness: 1.5,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Text("Noodle 1"),
-                          SizedBox(width: 130),
-                          Text("45"),
-                          SizedBox(width: 15),
-                          IconButton(
-                            icon: new Icon(
-                              Icons.add_circle,
-                              color: Colors.orange,
-                            ),
-                            onPressed: () => debugPrint('Add'),
-                          ),
-                          IconButton(
-                            icon: new Icon(
-                              Icons.favorite_border,
-                              color: Colors.orange,
-                            ),
-                            onPressed: () => debugPrint('Mark as Favorite'),
-                          ),
-                        ],
-                      ),
-                      Divider(
-                        endIndent: 15,
-                        height: 0,
-                        color: Colors.grey,
-                        thickness: 1.5,
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(0, 40, 0, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              width: 130,
-                              child: RaisedButton(
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                onPressed: () {
-                                  return Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      pageBuilder: (BuildContext context,
-                                          Animation<double> animation,
-                                          Animation<double>
-                                              secondaryAnimation) {
-                                        return Home();
-                                      },
-                                      transitionsBuilder: (BuildContext context,
-                                          Animation<double> animation,
-                                          Animation<double> secondaryAnimation,
-                                          Widget child) {
-                                        return FadeTransition(
-                                          opacity: Tween<double>(
-                                            begin: 0,
-                                            end: 1,
-                                          ).animate(animation),
-                                          child: child,
-                                        );
-                                      },
-                                      transitionDuration:
-                                          Duration(milliseconds: 400),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  "ย้อนกลับ",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.orange,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 30,
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(right: 15),
-                              child: RaisedButton(
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => OrderItemPage(),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  "ดูรายการอาหาร",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                color: Colors.orange,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ],
                   ),

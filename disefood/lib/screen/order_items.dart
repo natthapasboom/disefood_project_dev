@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:disefood/screen/order_promptpay_page.dart';
 import 'package:disefood/screen/order_truewallet_page.dart';
+import 'package:disefood/screen/view_order_page.dart';
 import 'package:flutter/material.dart';
 
 class OrderItemPage extends StatefulWidget {
@@ -101,17 +102,30 @@ class _OrderItemPageState extends State<OrderItemPage> {
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         actions: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 265),
+            child: new IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
           new IconButton(
             icon: new Icon(Icons.favorite),
             onPressed: () => debugPrint('Favorite'),
           ),
           new IconButton(
             icon: Icon(Icons.archive),
-            onPressed: () => debugPrint("archieve"),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ViewOrder(),
+              ),
+            ),
           ),
         ],
       ),
-      drawer: SideMenuCustomer(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -444,36 +458,15 @@ class _OrderItemPageState extends State<OrderItemPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                width: 150,
-                margin: EdgeInsets.fromLTRB(0, 5, 20, 0),
-                child: RaisedButton(
-                  elevation: 5,
-                  color: Colors.white,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    "ย้อนกลับ",
-                    style: TextStyle(
-                        color: Colors.orange,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.white, width: 2),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-              ),
-              Container(
-                width: 150,
-                margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                width: 320,
+                height: 40,
+                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                 child: RaisedButton(
                   elevation: 5,
                   color: Colors.orange,
                   onPressed: () {},
                   child: Text(
-                    "ยืนยัน",
+                    "ยืนยันคำสั่งซื้อ",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
