@@ -1,6 +1,6 @@
 import 'package:disefood/component/sidemenu_seller.dart';
 import 'package:flutter/material.dart';
-
+import 'package:disefood/screen_seller/orderdetail.dart';
 
 class OrderSellerPage extends StatefulWidget {
   OrderSellerPage({Key key}) : super(key : key);
@@ -9,7 +9,9 @@ class OrderSellerPage extends StatefulWidget {
 }
 
 class _OrderSellerPageState extends State<OrderSellerPage> {
+  int i = 1;
   List<String> items = List<String>.generate(7, (index) {
+    
     return "Item + $index";
   });
 
@@ -34,11 +36,13 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
       ),
       drawer: SideMenuSeller(),
       body: new ListView.builder(
+        
         itemCount: items.length ,
-        itemBuilder: (context,int index){
-          final item = items[index];
+        itemBuilder: (context,int i){
+          
           return new Dismissible(
-            key:  new Key(items[index]),
+            key:  new Key(items[i]),
+          
             child: Container(
               margin: EdgeInsets.all(20),
               height: 335,
@@ -60,7 +64,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
-                            "คิวที่ $index",style: TextStyle(fontSize: 14 ,fontWeight: FontWeight.w600,color: Colors.white),
+                            "คิวที่ $i",style: TextStyle(fontSize: 14 ,fontWeight: FontWeight.w600,color: Colors.white),
                           ),
                         ),
                       ),
@@ -167,7 +171,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                   RaisedButton(
                                     onPressed:(){
                                       setState(() {
-                                        items.removeAt(index);
+                                        items.removeAt(i);
                                       });
                                     },
                                     padding: EdgeInsets.only(left: 20,right: 20),
@@ -177,7 +181,10 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                     ),
                                   ),
                                   RaisedButton(
-                                    onPressed: ()=> {},
+                                    onPressed: ()=> {
+                                         Navigator.push(context,
+                                         MaterialPageRoute(builder: (context) => orderDetailSeller()),)
+                                    },
                                     padding: EdgeInsets.only(left: 20,right: 20),
                                     color: Colors.white,
                                     child: Text(
