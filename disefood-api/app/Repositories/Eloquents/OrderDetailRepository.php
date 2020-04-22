@@ -8,6 +8,8 @@ use App\Models\Order\OrderDetail;
 
 class OrderDetailRepository implements OrderDetailRepositoryInterface
 {
+    private $orderDetail;
+
     public function __construct()
     {
         $this->orderDetail = new OrderDetail;

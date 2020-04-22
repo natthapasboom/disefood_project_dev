@@ -8,6 +8,8 @@ use App\Repositories\Interfaces\FoodRepositoryInterface;
 
 class FoodRepository implements FoodRepositoryInterface
 {
+    private $food;
+
     public function __construct()
     {
         $this->food = new Food();
@@ -21,5 +23,11 @@ class FoodRepository implements FoodRepositoryInterface
     public function findByShopId($shop_id)
     {
         return $this->food->where('shop_id', $shop_id)->get();
+    }
+
+    public function addFood($food, $shop_id)
+    {
+        $food['shop_id'] = $shop_id;
+        return $this->food->create($food);
     }
 }

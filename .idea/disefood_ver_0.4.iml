@@ -99,8 +99,12 @@
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/disefood/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/disefood/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Dart SDK" level="project" />
+    <orderEntry type="library" name="Dart Packages" level="project" />
   </component>
 </module>

@@ -7,6 +7,8 @@ use App\Models\User\User;
 
 class UserRepository implements UserRepositoryInterface
 {
+    private $user;
+
     public function __construct()
     {
         $this->user = new User;

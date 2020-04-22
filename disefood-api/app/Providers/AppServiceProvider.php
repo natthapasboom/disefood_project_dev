@@ -20,7 +20,8 @@ class AppServiceProvider extends ServiceProvider
             'User',
             'Profile',
             'Order',
-            'OrderDetail'
+            'OrderDetail',
+            'UserShop'
         );
         foreach($models as $model) {
             $this->app->bind("App\Repositories\Interfaces\\{$model}RepositoryInterface", "App\Repositories\Eloquents\\{$model}Repository");

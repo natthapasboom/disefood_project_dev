@@ -8,6 +8,8 @@ use App\Models\User\Profile;
 
 class ProfileRepository implements ProfileRepositoryInterface
 {
+    private $profile;
+
     public function __construct()
     {
         $this->profile = new Profile;
