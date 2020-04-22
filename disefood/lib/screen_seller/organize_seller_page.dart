@@ -1,8 +1,7 @@
 
 import 'dart:io';
 import 'package:disefood/component/sidemenu_seller.dart';
-import 'package:disefood/screen_seller/addmenu_seller.dart';
-import 'package:disefood/screen_seller/testaddmenu.dart';
+import 'package:disefood/screen_seller/addmenu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -51,120 +50,6 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
     );
   }
 
-//Show dialog
-//  void _showAlert() {
-//    showDialog(
-//      context: context,
-//      builder: (BuildContext context) {
-//        return AlertDialog(
-//          shape: RoundedRectangleBorder(
-//            borderRadius: BorderRadius.all(Radius.circular(30.0)),
-//          ),
-//          contentPadding: EdgeInsets.only(top: 10),
-//          content: Container(
-//            width: 500,
-//            height: 550,
-//            child: Column(
-//              mainAxisAlignment: MainAxisAlignment.start,
-//              crossAxisAlignment: CrossAxisAlignment.stretch,
-//              mainAxisSize: MainAxisSize.min,
-//              children: <Widget>[
-//                Transform.translate(
-//                  offset: Offset(0, -30),
-//                  child: Container(
-//                    margin: EdgeInsets.only(bottom: 10),
-//                    padding: EdgeInsets.only(top: 15, bottom: 15),
-//                    // padding: new EdgeInsets.all(10.0),
-//                    decoration: new BoxDecoration(
-//                      color: Colors.orange,
-//                      borderRadius: BorderRadius.only(
-//                          topLeft: Radius.circular(30.0),
-//                          topRight: Radius.circular(30.0)),
-//                    ),
-//                    child: new Text(
-//                      'เพิ่มเมนู',
-//                      style: TextStyle(
-//                        color: Colors.white,
-//                        fontWeight: FontWeight.bold,
-//                        fontSize: 18.0,
-//                        fontFamily: 'helvetica_neue_light',
-//                      ),
-//                      textAlign: TextAlign.center,
-//                    ),
-//                  ),
-//                ),
-//                Padding(
-//                  padding: EdgeInsets.only(top: 0.0),
-//                  child: new Stack(fit: StackFit.loose, children: <Widget>[
-//                    new Row(
-//                      crossAxisAlignment: CrossAxisAlignment.center,
-//                      mainAxisAlignment: MainAxisAlignment.center,
-//                      children: <Widget>[
-//                        new Container(
-//                            width: 140.0,
-//                            height: 140.0,
-//                            decoration: new BoxDecoration(
-//                              shape: BoxShape.circle,
-//                              image: new DecorationImage(
-//                                image: new ExactAssetImage(
-//                                    'assets/images/as.png'),
-//                                fit: BoxFit.cover,
-//                              ),
-//                            )),
-//                      ],
-//                    ),
-//                    Padding(
-//                        padding: EdgeInsets.only(top: 90.0, right: 100.0),
-//                        child: new Row(
-//                          mainAxisAlignment: MainAxisAlignment.center,
-//                          children: <Widget>[
-//                            new CircleAvatar(
-//                              backgroundColor: Colors.red,
-//                              radius: 25.0,
-//                              child: new IconButton(
-//                                icon : Icon(Icons.camera_alt,
-//                                  color: Colors.white,
-//                                ),
-//                                onPressed: (){
-//                                  pickImageFromGallery(ImageSource.gallery);
-//                                },
-//                              ),
-//                            )
-//                          ],
-//                        )),
-//                  ]),
-//                ),
-//                InkWell(
-//                  onTap: (){
-//                    Navigator.pop(context);
-//                  },
-//                  child: Container(
-//                    margin: EdgeInsets.only(top: 290),
-//                    padding: EdgeInsets.only(top: 15, bottom: 15),
-//                    decoration: BoxDecoration(
-//                      color: Colors.orange,
-//                      borderRadius: BorderRadius.only(
-//                          bottomLeft: Radius.circular(30.0),
-//                          bottomRight: Radius.circular(30.0)),
-//                    ),
-//                    child: Text(
-//                      "ยืนยัน",
-//                      style: TextStyle(color: Colors.white,
-//                          fontWeight: FontWeight.bold,
-//                          fontSize: 18),
-//                      textAlign: TextAlign.center,
-//                    ),
-//                  ),
-//                ),
-//              ],
-//            ),
-//          ),
-//        );
-//      },
-//    );
-//  }
-
-
 
     @override
     Widget build(BuildContext context) {
@@ -211,11 +96,25 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                   Container(
                     padding: EdgeInsets.only(left: 40),
                     child: widget.valueFormAddMenu == null && widget.savePrice == null?
-                    Text("เพิ่มรายการอาหาร"):
-                    new Text('${widget.valueFormAddMenu}          ${widget.savePrice}',),
+                    Text("เพิ่มรายการอาหาร 2"):
+                    new Text('${widget.valueFormAddMenu}'),
+                  ),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                           padding: EdgeInsets.only(left: 200),
+                           child: widget.valueFormAddMenu == null && widget.savePrice == null?
+                         Text(""):
+                         Container(
+                           padding: EdgeInsets.only(left: 50),
+                             child: new Text('${widget.savePrice}',),
+                         ),
+                         
+                        ),
+                      ],
                   ),
                   Container(
-                    padding: EdgeInsets.only(left: 185),
+                    padding: EdgeInsets.only(left: 0),
                     child:   widget.valueFormAddMenu == null && widget.savePrice == null?
                     IconButton(
                       icon: Icon(
@@ -231,66 +130,25 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                       },
                     ):
                         Container(
+                         
                           child: IconButton(
                             icon: Icon(
                               Icons.edit,
                               color: Colors.deepOrange,
                             ),
+                            onPressed: (){
+                              // if(widget.valueFormAddMenu !=null && widget.savePrice != null){
+                                 
+                              // }
+                              Navigator.push(
+                                  context,
+                                 MaterialPageRoute(
+                                   builder: (context) => AddMenu(),
+                                 )
+                              );
+                            },
                           ),
                         ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 0),
-              child: Divider(
-                indent: 40,
-                color: Colors.black,
-                endIndent: 40,
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 0),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(left: 40),
-                    child: widget.valueFormAddMenu == null && widget.savePrice == null?
-                    Text("เพิ่มรายการอาหาร"):
-                    new Text('${widget.valueFormAddMenu}          ${widget.savePrice}',),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 185),
-                    child:   widget.valueFormAddMenu == null && widget.savePrice == null?
-                    IconButton(
-                      icon: Icon(
-                        Icons.add_circle,
-                        color: Colors.deepOrange,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddMenu(),
-                            ));
-                      },
-                    ):
-                    Container(
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          color: Colors.deepOrange,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddMenu(),
-                              ));
-                        },
-                      ),
-                    ),
                   ),
                 ],
               ),

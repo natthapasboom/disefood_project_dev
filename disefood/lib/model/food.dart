@@ -3,7 +3,7 @@ class Food{
   static const String OutOfStock = 'OutofStock';
 
   String foodName = '';
-  String  price ;
+  int  price ;
 
   Map<String, bool> status = {
     InStock: false,
