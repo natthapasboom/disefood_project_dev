@@ -282,7 +282,7 @@ class _HomeState extends State<Home> {
 
 Widget searchBox = new Material(
   child: new Container(
-    padding: const EdgeInsets.all(30.0),
+    padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
     child: new Container(
       child: new Center(
         child: new Column(
@@ -297,7 +297,7 @@ Widget searchBox = new Material(
                 filled: true,
                 fillColor: Colors.white10,
                 border: new OutlineInputBorder(
-                  borderRadius: new BorderRadius.circular(20.0),
+                  borderRadius: new BorderRadius.circular(10.0),
                 ),
                 //fillColor: Colors.green
               ),

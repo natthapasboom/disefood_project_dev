@@ -26,15 +26,36 @@ class _OrderStatusState extends State<OrderStatus> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Container(
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+              Stack(
+
+                alignment: Alignment.centerRight,
+                children: <Widget>[
+                  Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
                   ),
-                ),
+                  // These values are based on trial & error method
+                  ButtonTheme(
+                    minWidth: 0,
+                    child: FlatButton(
+                      
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Column(
                 children: <Widget>[
@@ -54,19 +75,19 @@ class _OrderStatusState extends State<OrderStatus> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                  ),
-                  Container(
-                    width: 100,
-                    child: Image.network(
-                        "https://i.pinimg.com/originals/3e/44/20/3e4420a483037b487aa2880130ec7032.gif"),
-                  ),
+                  ), //รูป
+                  // Container(
+                  //   width: 100,
+                  //   child: Image.network(
+                  //       ""),
+                  // ),
                   SizedBox(
                     height: 10,
-                  ),
-                  Container(
-                    width: 150,
-                    child: Image.network("https://i.gifer.com/E0jz.gif"),
-                  ),
+                  ), //รูป
+                  // Container(
+                  //   width: 150,
+                  //   child: Image.network(""),
+                  // ),
                   SizedBox(
                     height: 20,
                   ),
@@ -88,7 +109,7 @@ class _OrderStatusState extends State<OrderStatus> {
                     bottomRight: Radius.circular(20),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
