@@ -8,6 +8,8 @@ use App\Models\Order\Order;
 
 class OrderRepository implements OrderRepositoryInterface
 {
+    private $order;
+
     public function __construct()
     {
         $this->order = new Order;

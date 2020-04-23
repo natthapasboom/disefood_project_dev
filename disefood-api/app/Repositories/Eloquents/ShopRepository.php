@@ -8,6 +8,8 @@ use App\Repositories\Interfaces\ShopRepositoryInterface;
 
 class ShopRepository implements ShopRepositoryInterface
 {
+    private $shop;
+
     public function __construct()
     {
         $this->shop = new Shop();
@@ -21,5 +23,10 @@ class ShopRepository implements ShopRepositoryInterface
     public function findById($shop_id)
     {
         return $this->shop->find($shop_id);
+    }
+
+    public function create($shop)
+    {
+        return $this->shop->create($shop);
     }
 }

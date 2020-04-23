@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-// use Illuminate\Http\Request;
 use App\Repositories\Interfaces\FoodRepositoryInterface;
+//use App\Http\Requests\CreateFoodRequest;
 
 class FoodController extends Controller
 {
-    public function __construct(FoodRepositoryInterface $foodRepository)
+    private $foodRepo;
+
+    public function __construct(FoodRepositoryInterface $foodRepo)
     {
-        $this->foodRepository = $foodRepository;
+        $this->foodRepo = $foodRepo;
     }
 
     public function getFoodsList()
     {
-        $foodsList = $this->foodRepository->get();
-        return $foodsList;
+        return $this->foodRepo->get();
     }
 
     public function getFoodsByShopId($shop_id)
     {
-        $foodsList = $this->foodRepository->findByShopId($shop_id);
-        return $foodsList;
+        return $this->foodRepo->findByShopId($shop_id);
     }
 }

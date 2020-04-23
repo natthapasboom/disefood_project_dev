@@ -5,32 +5,39 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\ProfileRepositoryInterface;
+use App\Repositories\Interfaces\UserShopsRepositoryInterface;
 
 class UserController extends Controller
 {
 
-    /**
-     * UserController constructor.
-     */
+    private $userRepo;
+    private $profileRepo;
+    private $userShopRepo;
+
     public function __construct
     (
-        UserRepositoryInterface $userRepository,
-        ProfileRepositoryInterface $profileRepository
+        UserRepositoryInterface $userRepo,
+        ProfileRepositoryInterface $profileRepo,
+        UserShopsRepositoryInterface $userShopsRepo
     )
     {
-        $this->userRepository = $userRepository;
-        $this->profileRepository = $profileRepository;
+        $this->userRepo = $userRepo;
+        $this->profileRepo = $profileRepo;
+        $this->userShopRepo = $userShopsRepo;
     }
 
     public function getUserById($user_id)
     {
-        $user = $this->userRepository->getUserById($user_id);
-        return $user;
+        return $this->userRepo->getUserById($user_id);
     }
 
     public function getProfileById($user_id)
     {
-        $user_profile = $this->profileRepository->getProfileById($user_id);
-        return $user_profile;
+        return $this->profileRepo->getProfileById($user_id);
+    }
+
+    public function getShopByUserId($user_id)
+    {
+        return $this->userShopRepo->getShopByUserId($user_id);
     }
 }

@@ -11,4 +11,9 @@ class Shop extends Model
     protected $fillable = [
         'name', 'shop_slot', 'cover_image'
     ];
+
+    public function foods()
+    {
+        return $this->hasMany('App\Models\Shop\Food', 'food_id', 'food_id');
+    }
 }
