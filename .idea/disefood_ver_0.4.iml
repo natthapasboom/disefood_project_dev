@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/disefood-api/app" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/disefood-api/tests" isTestSource="true" packagePrefix="Tests\" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/asm89/stack-cors" />
+      <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/aws/aws-sdk-php" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/dnoegel/php-xdg-base-dir" />
@@ -28,10 +29,13 @@
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/hamcrest/hamcrest-php" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/laravel/framework" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/laravel/tinker" />
+      <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/laravel/ui" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/league/commonmark" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/league/flysystem" />
+      <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/league/flysystem-aws-s3-v3" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/mockery/mockery" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/monolog/monolog" />
+      <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/mtdowling/jmespath.php" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/myclabs/deep-copy" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/nesbot/carbon" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/nikic/php-parser" />

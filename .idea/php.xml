@@ -95,6 +95,10 @@
       <path value="$PROJECT_DIR$/disefood-api/vendor/ramsey/uuid" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/fideloper/proxy" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/laravel/ui" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/mtdowling/jmespath.php" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/league/flysystem-aws-s3-v3" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/aws/aws-sdk-php" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.2" />

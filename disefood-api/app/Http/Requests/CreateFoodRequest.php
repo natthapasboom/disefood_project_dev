@@ -18,7 +18,7 @@ class CreateFoodRequest extends BaseFormRequest
             'name'          => 'required|string',
             'price'         => 'required|integer',
             'status'        => 'required|boolean',
-            'cover_image'   => 'required|string',
+            'cover_image'   => 'required|image',
         ];
     }
 }
