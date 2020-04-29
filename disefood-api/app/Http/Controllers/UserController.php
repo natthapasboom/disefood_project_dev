@@ -46,12 +46,13 @@ class UserController extends Controller
     public function register(CreateUserStore $request)
     {
         $newUser = $request->validated();
-        if($request->hasFile('profile_img')) {
-            $path = $user['profile_img'] = Storage::disk('s3')->put('images/user/profile_img', $request->file('profile_img'));
-        }
+        $path = Storage::disk('s3')->put('images/user/profile_img', $request->file('profile_img'));
+        $newUser['profile_img'] = $path;
         $newUser['password'] = bcrypt($newUser['password']);
         $user = $this->userRepo->create($newUser);
         $user_id = $user['user_id'];
-        return $this->profileRepo->create($newUser , $user_id);
+        $this->profileRepo->create($newUser, $user_id);
+
+        return response('register success', 200);
     }
 }
