@@ -24,6 +24,7 @@ Route::get('shops/{shop_id}', 'ShopController@findShopById');
 Route::get('foods', 'FoodController@getFoodsList');
 Route::get('shop/foods/{shop_id}', 'FoodController@getFoodsByShopId');
 //USER
+Route::post('user', 'UserController@register');
 Route::get('user/{user_id}', 'UserController@getUserById');
 Route::get('user/profile/{user_id}', 'UserController@getProfileById');
 Route::get('user/shop/{user_id}','UserController@getShopByUserId');

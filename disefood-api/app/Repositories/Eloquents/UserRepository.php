@@ -18,4 +18,9 @@ class UserRepository implements UserRepositoryInterface
     {
         return $this->user->where('user_id', $user_id)->first();
     }
+
+    public function create($user)
+    {
+        return $this->user->create($user);
+    }
 }

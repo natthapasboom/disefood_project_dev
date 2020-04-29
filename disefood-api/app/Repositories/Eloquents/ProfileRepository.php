@@ -17,6 +17,12 @@ class ProfileRepository implements ProfileRepositoryInterface
 
     public function getProfileById($user_id)
     {
-        return $this->profile->where('user_id',$user_id)->first();
+        return $this->profile->where('user_id', $user_id)->first();
+    }
+
+    public function create($user, $user_id)
+    {
+        $user['user_id'] = $user_id;
+        return $this->profile->create($user);
     }
 }

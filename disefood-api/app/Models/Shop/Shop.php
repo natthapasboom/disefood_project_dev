@@ -12,23 +12,15 @@ class Shop extends Model
     protected $fillable = [
         'name', 'shop_slot', 'cover_image'
     ];
-
-//    public $appends = ['url', 'upload_time', 'size_in_kb'];
+    /**
+     * @var mixed
+     */
+    private $path;
 
     public function getUrlAttribute()
     {
         return Storage::disk('s3')->url($this->path);
     }
-//
-//    public function getUploadedTimeAttribute()
-//    {
-//        return $this->created_at->diffForHumans();
-//    }
-//
-//    public function getSizeInKbAttribute()
-//    {
-//        return round($this->size / 1024, 2);
-//    }
 
     public function foods()
     {

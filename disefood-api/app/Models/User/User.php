@@ -11,4 +11,13 @@ class User extends Model
     protected $fillable = [
         'username', 'password'
     ];
+    protected $hidden = [
+        'id', 'password'
+    ];
+
+    public function profile()
+    {
+        return $this->hasOne('App\Models\User\Profile', 'user_id', 'user_id');
+    }
+
 }
