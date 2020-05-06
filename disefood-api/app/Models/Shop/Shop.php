@@ -24,6 +24,6 @@ class Shop extends Model
 
     public function foods()
     {
-        return $this->hasMany('App\Models\Shop\Food', 'food_id', 'food_id');
+        return $this->hasMany(Food::class, 'shop_id', 'shop_id');
     }
 }

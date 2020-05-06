@@ -14,6 +14,6 @@ class Food extends Model
 
     public function shop()
     {
-        return $this->hasOne('App\Models\Shop\Shop','shop_id', 'shop_id');
+        return $this->belongsTo(Shop::class);
     }
 }
