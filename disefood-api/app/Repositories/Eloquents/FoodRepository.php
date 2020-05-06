@@ -20,14 +20,29 @@ class FoodRepository implements FoodRepositoryInterface
         return $this->food->all();
     }
 
+    public function addFood($food, $shop_id)
+    {
+        $food['shop_id'] = $shop_id;
+        return $this->food->create($food);
+    }
+
+    public function findByFoodId($food_id)
+    {
+        return $this->food->where('food_id', $food_id)->first();
+    }
+
     public function findByShopId($shop_id)
     {
         return $this->food->where('shop_id', $shop_id)->get();
     }
 
-    public function addFood($food, $shop_id)
+    public function update($food, $food_id)
     {
-        $food['shop_id'] = $shop_id;
-        return $this->food->create($food);
+        return $this->food->where('food_id', $food_id)->update($food);
+    }
+
+    public function delete($food_id)
+    {
+        return $this->food->where('food_id', $food_id)->delete();
     }
 }
