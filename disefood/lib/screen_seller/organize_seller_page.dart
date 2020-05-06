@@ -18,37 +18,38 @@ class OrganizeSellerPage extends StatefulWidget {
 class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   Future<File> imageFile;
   var foodMenu ;
+
   pickImageFromGallery(ImageSource source) {
     setState(() {
       imageFile = ImagePicker.pickImage(source: source);
     });
   }
 
-  Widget showImage() {
-    return FutureBuilder<File>(
-      future: imageFile,
-      builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.data != null) {
-            return  Image.file(
-            snapshot.data,
-            width: 150,
-            height: 150,
-          );
-        } else if (snapshot.error != null) {
-          return const Text(
-            'Error Picking Image',
-            textAlign: TextAlign.center,
-          );
-        } else {
-          return const Text(
-            'No Image Selected',
-            textAlign: TextAlign.center,
-          );
-        }
-      },
-    );
-  }
+  // Widget showImage() {
+  //   return FutureBuilder<File>(
+  //     future: imageFile,
+  //     builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.done &&
+  //           snapshot.data != null) {
+  //           return  Image.file(
+  //           snapshot.data,
+  //           width: 150,
+  //           height: 150,
+  //         );
+  //       } else if (snapshot.error != null) {
+  //         return const Text(
+  //           'Error Picking Image',
+  //           textAlign: TextAlign.center,
+  //         );
+  //       } else {
+  //         return const Text(
+  //           'No Image Selected',
+  //           textAlign: TextAlign.center,
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
 
 
     @override
