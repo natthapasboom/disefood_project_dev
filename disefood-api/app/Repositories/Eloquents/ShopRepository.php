@@ -29,4 +29,14 @@ class ShopRepository implements ShopRepositoryInterface
     {
         return $this->shop->create($shop);
     }
+
+    public function delete($shop_id)
+    {
+        return $this->shop->where('shop_id', $shop_id)->delete();
+    }
+
+    public function updateShop($shop, $shop_id)
+    {
+        return $this->shop->where('shop_id', $shop_id)->update($shop);
+    }
 }
