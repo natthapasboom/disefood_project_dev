@@ -11,4 +11,9 @@ class Profile extends Model
         'user_id', 'first_name', 'last_name',
         'tel', 'profile_img', 'is_seller',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User\User', 'user_id');
+    }
 }
