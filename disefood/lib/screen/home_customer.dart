@@ -118,7 +118,7 @@ class _HomeState extends State<Home> {
           actions: <Widget>[
             new IconButton(
               icon: new Icon(Icons.favorite),
-              onPressed: () => debugPrint('favorite'),
+              onPressed: () => debugPrint('favorites'),
             ),
             new IconButton(
               icon: Icon(Icons.archive),
