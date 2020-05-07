@@ -173,7 +173,6 @@ class _OrderAmountState extends State<OrderAmount> {
                             pageBuilder: (BuildContext context,
                                 Animation<double> animation,
                                 Animation<double> secondaryAnimation) {
-                              FoodsList();
                               return MenuPage();
                             },
                             transitionsBuilder: (BuildContext context,
