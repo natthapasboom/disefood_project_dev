@@ -57,12 +57,15 @@ class ShopController extends Controller
     public function updateShop(UpdateShopRequest $request, $shop_id)
     {
         $shop = $request->validated();
+        dd($shop);
+//        dd($request->file('cover_image'));
 //        $shopBeforeUpdate = $this->shopRepo->findById($shop_id);
-//        Storage::delete($shopBeforeUpdate['cover_image']);
-//        $shop['cover_image'] = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'));
-        $this->shopRepo->updateShop($shop, $shop_id);
-        $shop = $this->shopRepo->findById($shop_id);
-        return response()->json($shop);
+//        $last_path = $shopBeforeUpdate['cover_image'];
+//        Storage::disk('s3')->delete($last_path);
+//        $shop['cover_image'] = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'));
+//        dd($shop['cover_image']);
+//        $this->shopRepo->updateShop($shop, $shop_id);
+//        return $this->shopRepo->findById($shop_id);
     }
 
     public function deleteByShopId($shop_id)
