@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\CreateUserStore;
+use App\Http\Requests\LoginRequest;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\ProfileRepositoryInterface;
 use App\Repositories\Interfaces\UserShopsRepositoryInterface;
@@ -26,6 +27,11 @@ class UserController extends Controller
         $this->userRepo = $userRepo;
         $this->profileRepo = $profileRepo;
         $this->userShopRepo = $userShopsRepo;
+    }
+
+    public function getAll()
+    {
+        return $this->userRepo->get();
     }
 
     public function getUserById($user_id)
@@ -54,5 +60,11 @@ class UserController extends Controller
         $this->profileRepo->create($newUser, $user_id);
 
         return response('register success', 200);
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $login =  $request->validated();
+        return response($this->userRepo->login($login), 200);
     }
 }

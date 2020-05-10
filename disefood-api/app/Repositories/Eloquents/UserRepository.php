@@ -4,6 +4,7 @@
 namespace App\Repositories\Eloquents;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Models\User\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -22,5 +23,27 @@ class UserRepository implements UserRepositoryInterface
     public function create($user)
     {
         return $this->user->create($user);
+    }
+
+    public function get()
+    {
+        return $this->user->get();
+    }
+
+    public function login($user)
+    {
+        $username = $user['username'];
+        $password = $user['password'];
+        $user = $this->user->where('username', $username)->first();
+        $user_id = $user['user_id'];
+        $checkPass = $user['password'];
+
+        if($username == $user['username']){
+            if(Hash::check($password, $checkPass)){
+                $temp = $this->user->find($user_id);
+                $profile = $temp->profile()->get();
+                return $profile;
+            }
+        }
     }
 }
