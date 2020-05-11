@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:http/http.dart' as http;
 
-
 class Home extends StatefulWidget {
   static const routeName = '/screen/home_customer';
   @override
@@ -75,7 +74,11 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => MenuPage(),
+                                  builder: (context) => MenuPage(
+                                      shopId: snapshot.data[index].shopId,
+                                      shopName: snapshot.data[index].name,
+                                      shopImage:
+                                          'https://disefood.s3-ap-southeast-1.amazonaws.com/${snapshot.data[index].coverImage}'),
                                 ),
                               );
                             },
@@ -92,7 +95,7 @@ class _HomeState extends State<Home> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Image.network(
-                                      'https://www.prachachat.net/wp-content/uploads/2018/05/3-1024x704-728x501.jpg',
+                                      'https://disefood.s3-ap-southeast-1.amazonaws.com/${snapshot.data[index].coverImage}',
                                       width: 380,
                                       height: 210,
                                       fit: BoxFit.cover),
@@ -125,14 +128,7 @@ class _HomeState extends State<Home> {
                   ],
                 );
               }
-            }
-            // (context, snapshot) {
-            //   if (snapshot.hasError) print(snapshot.error);
-            //   return !snapshot.hasData
-            //       ? Center(child: CircularProgressIndicator())
-            //       : ShopsList(shops: snapshot.data);
-            // },
-            ),
+            }),
       ),
     );
   }
