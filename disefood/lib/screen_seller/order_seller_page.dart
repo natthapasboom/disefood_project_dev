@@ -9,8 +9,8 @@ class OrderSellerPage extends StatefulWidget {
 }
 
 class _OrderSellerPageState extends State<OrderSellerPage> {
-  int i = 1;
-  List<String> items = List<String>.generate(7, (index) {
+  
+  List<String> items = List<String>.generate(7+1, (index) {
     
     return "Item + $index";
   });
@@ -39,10 +39,11 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
         
         itemCount: items.length ,
         itemBuilder: (context,int i){
-          
+           
           return new Dismissible(
+           
             key:  new Key(items[i]),
-          
+            
             child: Container(
               margin: EdgeInsets.all(20),
               height: 335,
@@ -64,7 +65,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
-                            "คิวที่ $i",style: TextStyle(fontSize: 14 ,fontWeight: FontWeight.w600,color: Colors.white),
+                            "คิวที่ ${i+1}",style: TextStyle(fontSize: 14 ,fontWeight: FontWeight.w600,color: Colors.white),
                           ),
                         ),
                       ),

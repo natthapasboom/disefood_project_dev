@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:disefood/component/login.dart';
+import 'package:disefood/component/organize_seller_bottombar.dart';
 import 'package:disefood/screen/login_customer_page.dart';
 import 'package:disefood/screen/menu_page.dart';
 import 'package:disefood/screen/order_items.dart';
@@ -7,6 +11,7 @@ import 'package:disefood/screen_seller/home_seller.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen_seller/addmenu.dart';
+import 'component/register.dart';
 import 'screen/menu_order_detail_amount.dart';
 import 'screen_seller/home_seller.dart';
 
@@ -16,9 +21,10 @@ void main() {
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
       primaryColor: Colors.orange,
-      appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
+      appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: Colors.white),),
+      fontFamily: 'Roboto', 
     ),
-    home: new Home(),
+    home: Regis(),
     initialRoute: '/',
   ));
 }

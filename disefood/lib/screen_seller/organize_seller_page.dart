@@ -1,173 +1,150 @@
-
-import 'dart:io';
+import 'dart:convert';
 import 'package:disefood/component/sidemenu_seller.dart';
-import 'package:disefood/screen_seller/addmenu.dart';
+import 'package:disefood/model/foods_list.dart';
+import 'package:disefood/screen_seller/home_seller.dart';
+import 'package:disefood/screen_seller/widget/organize_seller.dart';
+import 'package:disefood/services/foodservice.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
+import 'package:disefood/services/foodservice.dart';
+import 'editmenu.dart';
 
 class OrganizeSellerPage extends StatefulWidget {
-  String valueFormAddMenu;
-  String savePrice;
-  OrganizeSellerPage({Key key,this.valueFormAddMenu,this.savePrice}) : super(key : key);
+  static final route = "/organize_seller";
   @override
   _OrganizeSellerPageState createState() => _OrganizeSellerPageState();
 }
 
 class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
-  Future<File> imageFile;
-  var foodMenu ;
+  FoodsList foodslist = FoodsList();
 
-  pickImageFromGallery(ImageSource source) {
-    setState(() {
-      imageFile = ImagePicker.pickImage(source: source);
-    });
-  }
-
-  // Widget showImage() {
-  //   return FutureBuilder<File>(
-  //     future: imageFile,
-  //     builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.done &&
-  //           snapshot.data != null) {
-  //           return  Image.file(
-  //           snapshot.data,
-  //           width: 150,
-  //           height: 150,
-  //         );
-  //       } else if (snapshot.error != null) {
-  //         return const Text(
-  //           'Error Picking Image',
-  //           textAlign: TextAlign.center,
-  //         );
-  //       } else {
-  //         return const Text(
-  //           'No Image Selected',
-  //           textAlign: TextAlign.center,
-  //         );
-  //       }
-  //     },
-  //   );
-  // }
-
-
-    @override
-    Widget build(BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          actions: <Widget>[
-            Container(
-              padding: EdgeInsets.all(0),
-              margin: EdgeInsets.only(left: 0, top: 0, right: 170),
-              child: Center(
-                child:
-                Text(
-                  "Organize",
-                  style: TextStyle(color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18),
-                ),
-              ),
-            ),
-          ],
-        ),
-        drawer: SideMenuSeller(),
-        body: ListView(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(left: 40, top: 30),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        actions: <Widget>[
+          Container(
+            padding: EdgeInsets.all(0),
+            margin: EdgeInsets.only(left: 0, top: 0, right: 170),
+            child: Center(
               child: Text(
-                "รายการอาหาร",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                "Organize",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
               ),
             ),
-            Container(
-              padding: EdgeInsets.only(top: 10),
-              child: Divider(
-                indent: 40,
-                color: Colors.black,
-                endIndent: 40,
-              ),
+          ),
+        ],
+      ),
+      drawer: SideMenuSeller(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 40, top: 30),
+            child: Text(
+              "รายการอาหาร",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
-            Container(
-              padding: EdgeInsets.only(top: 0),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(left: 40),
-                    child: widget.valueFormAddMenu == null && widget.savePrice == null?
-                    Text("เพิ่มรายการอาหาร 2"):
-                    new Text('${widget.valueFormAddMenu}'),
-                  ),
-                    Row(
-                      children: <Widget>[
-                        Container(
-                           padding: EdgeInsets.only(left: 200),
-                           child: widget.valueFormAddMenu == null && widget.savePrice == null?
-                         Text(""):
-                         Container(
-                           padding: EdgeInsets.only(left: 50),
-                             child: new Text('${widget.savePrice}',),
-                         ),
-                         
-                        ),
-                      ],
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 0),
-                    child:   widget.valueFormAddMenu == null && widget.savePrice == null?
-                    IconButton(
-                      icon: Icon(
-                        Icons.add_circle,
-                        color: Colors.deepOrange,
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10),
+            child: Divider(
+              indent: 40,
+              color: Colors.black,
+              endIndent: 40,
+            ),
+          ),
+          Container(
+            child: FutureBuilder(
+                future: getFoodsData(http.Client()),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  print(snapshot.data);
+                  if (snapshot.data == null) {
+                    return Container(
+                      margin: EdgeInsets.only(top: 200),
+                      child: Center(
+                        child: CircularProgressIndicator(),
                       ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddMenu(),
-                            ));
-                      },
-                    ):
-                        Container(
-                         
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color: Colors.deepOrange,
-                            ),
-                            onPressed: (){
-                              // if(widget.valueFormAddMenu !=null && widget.savePrice != null){
-                                 
-                              // }
-                              Navigator.push(
-                                  context,
-                                 MaterialPageRoute(
-                                   builder: (context) => AddMenu(),
-                                 )
-                              );
-                            },
-                          ),
-                        ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 0),
-              child: Divider(
-                indent: 40,
-                color: Colors.black,
-                endIndent: 40,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+                    );
+                  } else {
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            children: <Widget>[
+                              ListTile(
+                                leading: Expanded(
+                                  child: Container(
+                                    margin: EdgeInsets.only(
+                                      left: 30,
+                                    ),
+                                    child: Text(
+                                      '${snapshot.data[index].name}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                trailing: Wrap(
+                                  spacing: 12, // space between two icons
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(top: 13),
+                                      child: Text(
+                                        '${snapshot.data[index].price}',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      child: snapshot.hasData
+                                          ? IconButton(
+                                              icon: Icon(
+                                                Icons.edit,
+                                                color: Colors.amber[800],
+                                              ),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            EditMenuPage(
+                                                              foodslist:
+                                                                  snapshot.data[
+                                                                      index],
+                                                            )));
+                                              })
+                                          : IconButton(
+                                              icon: Icon(
+                                                Icons.add_circle,
+                                                color: Colors.amber[800],
+                                              ),
+                                              onPressed: () {},
+                                            ),
+                                    ),
+                                    // icon-1
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    );
+                  }
+                }),
+          ),
+        ],
+      ),
+    );
   }
-
-
-
-
+}
