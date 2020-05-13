@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\Interfaces\FoodRepositoryInterface;
 use App\Http\Requests\UpdateFoodInShop;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class FoodController extends Controller
 {
@@ -25,12 +26,16 @@ class FoodController extends Controller
         return $this->foodRepo->findByShopId($shop_id);
     }
 
-    public function updateFoodByFoodId(UpdateFoodInShop $request, $food_id)
+    public function updateFoodByFoodId(Request $request, $food_id)
     {
-        $food = $request->validated();
+        $food = $request->except(['_method']);
+        $food_beforeUpdate = $this->foodRepo->findByFoodId($food_id);
+        $path_beforeUpdate = $food_beforeUpdate['cover_image'];
+        Storage::disk('s3')->delete($path_beforeUpdate);
+        $food['cover_image'] = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'), 'public');
+
         $this->foodRepo->update($food, $food_id);
-        $food = $this->foodRepo->findByFoodId($food_id);
-        return response()->json($food);
+        return $this->foodRepo->findByFoodId($food_id);
     }
 
     public function deleteByFoodId($food_id)

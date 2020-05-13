@@ -8,6 +8,7 @@ use App\Http\Requests\CreateShopRequest;
 use App\Http\Requests\CreateFoodRequest;
 use App\Http\Requests\UpdateShopRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
@@ -54,22 +55,16 @@ class ShopController extends Controller
         return $this->foodRepo->addFood($food, $shop_id);
     }
 
-    public function updateShop(UpdateShopRequest $request, $shop_id)
+    public function updateShop(Request $request, $shop_id)
     {
-        $shop = $request->validated();
-        if($shop == null)
-        {
-            return response()->json(['error' => 'Shop not found'], 404);
-        }
-        dd($shop);
-//        dd($request->file('cover_image'));
-//        $shopBeforeUpdate = $this->shopRepo->findById($shop_id);
-//        $last_path = $shopBeforeUpdate['cover_image'];
-//        Storage::disk('s3')->delete($last_path);
-//        $shop['cover_image'] = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'));
-//        dd($shop['cover_image']);
-//        $this->shopRepo->updateShop($shop, $shop_id);
-//        return $this->shopRepo->findById($shop_id);
+        $shop = $request->except(['_method' ]);
+        $shop_beforeUpdate = $this->shopRepo->findById($shop_id);
+        $path_beforeUpdate = $shop_beforeUpdate['cover_image'];
+        Storage::disk('s3')->delete($path_beforeUpdate);
+        $shop['cover_image'] = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'), 'public');
+
+        $this->shopRepo->updateShop($shop, $shop_id);
+        return $this->shopRepo->findById($shop_id);
     }
 
     public function deleteByShopId($shop_id)
