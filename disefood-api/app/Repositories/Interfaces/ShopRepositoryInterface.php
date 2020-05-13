@@ -11,5 +11,4 @@ interface ShopRepositoryInterface
     public function findById($shop_id);
     public function delete($shop_id);
     public function updateShop($shop, $shop_id);
-
 }

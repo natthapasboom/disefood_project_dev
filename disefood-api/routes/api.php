@@ -28,10 +28,12 @@ Route::get('shop/foods/{shop_id}', 'FoodController@getFoodsByShopId');
 Route::delete('shop/{shop_id}', 'ShopController@deleteByShopId');
 Route::delete('food/{food_id}', 'FoodController@deleteByFoodId');
 //USER
+Route::get('users', 'Usercontroller@getAll');
 Route::post('user', 'UserController@register');
 Route::get('user/{user_id}', 'UserController@getUserById');
 Route::get('user/profile/{user_id}', 'UserController@getProfileById');
 Route::get('user/shop/{user_id}','UserController@getShopByUserId');
+Route::post('login', 'UserController@login');
 //ORDER
 Route::get('order/shop/{shop_id}', 'OrderController@getOrderBySeller');
 Route::get('order/user/{user_id}', 'OrderController@getOrderByUser');

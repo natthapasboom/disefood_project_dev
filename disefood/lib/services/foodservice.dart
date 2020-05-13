@@ -15,7 +15,7 @@ import 'dart:async';
 
 
   Future<List<FoodsList>> getFoodsData(http.Client client) async {
-  const foodAPI = 'http://10.0.2.2:8000/api/foods/';
+  String  foodAPI = 'http://10.0.2.2:8000/api/foods/';
   final response = await client.get(foodAPI);
   return compute(parseFoods, response.body);
    

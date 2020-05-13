@@ -8,79 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:http/http.dart' as http;
 
-
-class ShopsList extends StatelessWidget {
-  final List<Shops> shops;
-
-  ShopsList({Key key, this.shops}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          headerSection,
-          Expanded(
-            child: ListView.builder(
-              itemCount: shops.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MenuPage(),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 5,
-                    color: Colors.white70,
-                    margin: EdgeInsets.only(
-                        top: 15, bottom: 15, left: 40, right: 40),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Image.network(
-                            'https://www.prachachat.net/wp-content/uploads/2018/05/3-1024x704-728x501.jpg',
-                            width: 380,
-                            height: 210,
-                            fit: BoxFit.cover),
-                        ListTile(
-                          title: Text(
-                            "${shops[index].name}",
-                            style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.star,
-                                color: Colors.orange,
-                              ),
-                              Text("  4.2 Review(20 Review)")
-                            ],
-                          ),
-                        ),
-                      ],
-//          crossAxisAlignment: CrossAxisAlignment.start,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class Home extends StatefulWidget {
   static const routeName = '/screen/home_customer';
   @override
@@ -128,14 +55,80 @@ class _HomeState extends State<Home> {
         ),
         drawer: SideMenuCustomer(), //EndAppbar
         body: FutureBuilder<List<Shops>>(
-          future: fetchShops(http.Client()),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) print(snapshot.error);
-            return !snapshot.hasData
-                ? Center(child: CircularProgressIndicator())
-                : ShopsList(shops: snapshot.data);
-          },
-        ),
+            future: fetchShops(http.Client()),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.data == null) {
+                return Container(
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              } else {
+                return Column(
+                  children: <Widget>[
+                    headerSection,
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MenuPage(
+                                      shopId: snapshot.data[index].shopId,
+                                      shopName: snapshot.data[index].name,
+                                      shopImage:
+                                          'https://disefood.s3-ap-southeast-1.amazonaws.com/${snapshot.data[index].coverImage}'),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              semanticContainer: true,
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              elevation: 5,
+                              color: Colors.white70,
+                              margin: EdgeInsets.only(
+                                  top: 15, bottom: 15, left: 40, right: 40),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Image.network(
+                                      'https://disefood.s3-ap-southeast-1.amazonaws.com/${snapshot.data[index].coverImage}',
+                                      width: 380,
+                                      height: 210,
+                                      fit: BoxFit.cover),
+                                  ListTile(
+                                    title: Text(
+                                      "${snapshot.data[index].name}",
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.orange,
+                                        ),
+                                        Text("  4.2 Review(20 Review)")
+                                      ],
+                                    ),
+                                  ),
+                                ],
+//          crossAxisAlignment: CrossAxisAlignment.start,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }
+            }),
       ),
     );
   }
@@ -199,4 +192,3 @@ Widget headerSection = new Material(
     ),
   ),
 );
-

@@ -3,13 +3,62 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class OrderAmount extends StatefulWidget {
-  OrderAmount({Key key,}) : super(key: key);
+  final String foodName;
+  final int foodPrice;
+  final String foodImage;
+  final int foodAmount;
+  OrderAmount(
+      {Key key, this.foodName, this.foodPrice, this.foodImage, this.foodAmount})
+      : super(key: key);
   @override
-  _OrderAmountState createState() => _OrderAmountState();
+  _OrderAmountState createState() =>
+      _OrderAmountState(foodName, foodPrice, foodImage, foodAmount);
 }
 
 class _OrderAmountState extends State<OrderAmount> {
+  String foodNameRecieve;
+  int foodPriceRecieve;
+  String foodImageRecieve;
+  int foodAmount = 1;
+  bool isFoodRemove = false;
+  int totalPrice;
+  _OrderAmountState(foodName, foodPrice, foodImage, foodAmount) {
+    this.foodNameRecieve = foodName;
+    this.foodPriceRecieve = foodPrice;
+    this.foodImageRecieve = foodImage;
+    this.totalPrice = foodPrice;
+    if (foodAmount == null) {
+      foodAmount = 1;
+    } else {
+      this.foodAmount = foodAmount;
+    }
+  }
 
+  void add() {
+    foodAmount++;
+    checkButtonRemove();
+    totalPrice = totalPrice + foodPriceRecieve;
+    setState(() {});
+  }
+
+  void remove() {
+    if (foodAmount > 0) {
+      foodAmount--;
+      checkButtonRemove();
+      totalPrice = totalPrice - foodPriceRecieve;
+      setState(() {});
+    }
+  }
+
+  void checkButtonRemove() {
+    if (foodAmount <= 0) {
+      isFoodRemove = true;
+      setState(() {});
+    } else {
+      isFoodRemove = false;
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +110,7 @@ class _OrderAmountState extends State<OrderAmount> {
                             image: DecorationImage(
                               fit: BoxFit.fill,
                               image: NetworkImage(
-                                "https://www.seriouseats.com/2020/01/20200122-kal-guksu-anchovy-noodle-soup-vicky-wasik-5-1500x1125.jpg",
+                                "https://disefood.s3-ap-southeast-1.amazonaws.com/${foodImageRecieve}",
                               ),
                             ),
                           ),
@@ -73,7 +122,7 @@ class _OrderAmountState extends State<OrderAmount> {
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.fromLTRB(20, 10, 0, 10),
                     child: Text(
-                      "Noodle",
+                      "${foodNameRecieve}",
                       style: TextStyle(fontSize: 20),
                     ),
                   ),
@@ -117,7 +166,7 @@ class _OrderAmountState extends State<OrderAmount> {
                               color: Colors.orange,
                             ),
                             onPressed: () {
-                             
+                              remove();
                             },
                             borderSide: BorderSide(
                                 color: Colors.grey[350],
@@ -131,7 +180,7 @@ class _OrderAmountState extends State<OrderAmount> {
                         Container(
                           margin: EdgeInsets.all(20),
                           child: new Text(
-                            '9',
+                            '${foodAmount}',
                             style: new TextStyle(fontSize: 20.0),
                           ),
                         ),
@@ -146,7 +195,7 @@ class _OrderAmountState extends State<OrderAmount> {
                               color: Colors.orange,
                             ),
                             onPressed: () {
-                            
+                              add();
                             },
                             borderSide: BorderSide(
                                 color: Colors.grey[350],
@@ -164,47 +213,92 @@ class _OrderAmountState extends State<OrderAmount> {
                     width: 300,
                     height: 50,
                     margin: EdgeInsets.only(top: 70),
-                    child: RaisedButton(
-                      onPressed: () {
-                     
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (BuildContext context,
-                                Animation<double> animation,
-                                Animation<double> secondaryAnimation) {
-                              FoodsList();
-                              return MenuPage();
-                            },
-                            transitionsBuilder: (BuildContext context,
-                                Animation<double> animation,
-                                Animation<double> secondaryAnimation,
-                                Widget child) {
-                              return FadeTransition(
-                                opacity: Tween<double>(
-                                  begin: 0,
-                                  end: 1,
-                                ).animate(animation),
-                                child: child,
-                              );
-                            },
-                            transitionDuration: Duration(milliseconds: 400),
-                          ),
-                        );
-                      },
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(8),
-                      ),
-                      child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            new Text(
-                              'sdsdsd',
-                              style: new TextStyle(
-                                  color: Colors.white, fontSize: 18),
+                    child: Visibility(
+                      visible: isFoodRemove,
+                      child: RaisedButton(
+                        color: Colors.red,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (BuildContext context,
+                                  Animation<double> animation,
+                                  Animation<double> secondaryAnimation) {
+                                return MenuPage();
+                              },
+                              transitionsBuilder: (BuildContext context,
+                                  Animation<double> animation,
+                                  Animation<double> secondaryAnimation,
+                                  Widget child) {
+                                return FadeTransition(
+                                  opacity: Tween<double>(
+                                    begin: 0,
+                                    end: 1,
+                                  ).animate(animation),
+                                  child: child,
+                                );
+                              },
+                              transitionDuration: Duration(milliseconds: 400),
                             ),
-                          ],
+                          );
+                        },
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(8),
+                        ),
+                        child: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Text(
+                                'นำออกจากตะกร้า',
+                                style: new TextStyle(
+                                    color: Colors.white, fontSize: 18),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      replacement: RaisedButton(
+                        color: Colors.orange,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (BuildContext context,
+                                  Animation<double> animation,
+                                  Animation<double> secondaryAnimation) {
+                                return MenuPage();
+                              },
+                              transitionsBuilder: (BuildContext context,
+                                  Animation<double> animation,
+                                  Animation<double> secondaryAnimation,
+                                  Widget child) {
+                                return FadeTransition(
+                                  opacity: Tween<double>(
+                                    begin: 0,
+                                    end: 1,
+                                  ).animate(animation),
+                                  child: child,
+                                );
+                              },
+                              transitionDuration: Duration(milliseconds: 400),
+                            ),
+                          );
+                        },
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(8),
+                        ),
+                        child: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              new Text(
+                                'เพิ่มลงตะกร้า - ${totalPrice}',
+                                style: new TextStyle(
+                                    color: Colors.white, fontSize: 18),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -218,18 +312,6 @@ class _OrderAmountState extends State<OrderAmount> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import 'package:disefood/screen/menu_page.dart';
 // import 'package:flutter/cupertino.dart';

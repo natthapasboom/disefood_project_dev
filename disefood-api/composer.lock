@@ -60,6 +60,7 @@
         },
         {
             "name": "aws/aws-sdk-php",
+<<<<<<< HEAD
             "version": "3.137.5",
             "source": {
                 "type": "git",
@@ -70,6 +71,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b3309075ec2a2c695c33d8e21c07b3d5c10cdb9a",
                 "reference": "b3309075ec2a2c695c33d8e21c07b3d5c10cdb9a",
+=======
+            "version": "3.137.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aws/aws-sdk-php.git",
+                "reference": "d70ccd508c9a9fa5a1579f80fd1f6b8fff79a7c8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d70ccd508c9a9fa5a1579f80fd1f6b8fff79a7c8",
+                "reference": "d70ccd508c9a9fa5a1579f80fd1f6b8fff79a7c8",
+>>>>>>> a75dbf4bf58c4ad16097c723f21107ed4ce74084
                 "shasum": ""
             },
             "require": {
@@ -140,7 +153,11 @@
                 "s3",
                 "sdk"
             ],
+<<<<<<< HEAD
             "time": "2020-05-07T18:16:43+00:00"
+=======
+            "time": "2020-05-05T18:14:48+00:00"
+>>>>>>> a75dbf4bf58c4ad16097c723f21107ed4ce74084
         },
         {
             "name": "brick/math",
@@ -185,6 +202,12 @@
                 "bignum",
                 "brick",
                 "math"
+            ],
+            "funding": [
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/brick/math",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-04-15T15:59:35+00:00"
         },
@@ -781,6 +804,7 @@
         },
         {
             "name": "laravel/framework",
+<<<<<<< HEAD
             "version": "v7.10.3",
             "source": {
                 "type": "git",
@@ -791,6 +815,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/framework/zipball/6e927e78aafd578d59c99608e7f0e23a5f7bfc5a",
                 "reference": "6e927e78aafd578d59c99608e7f0e23a5f7bfc5a",
+=======
+            "version": "v7.10.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/framework.git",
+                "reference": "4110965660ffc459206a5f1e5c3b40354347cd08"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/4110965660ffc459206a5f1e5c3b40354347cd08",
+                "reference": "4110965660ffc459206a5f1e5c3b40354347cd08",
+>>>>>>> a75dbf4bf58c4ad16097c723f21107ed4ce74084
                 "shasum": ""
             },
             "require": {
@@ -929,7 +965,11 @@
                 "framework",
                 "laravel"
             ],
+<<<<<<< HEAD
             "time": "2020-05-06T15:36:00+00:00"
+=======
+            "time": "2020-05-05T22:17:38+00:00"
+>>>>>>> a75dbf4bf58c4ad16097c723f21107ed4ce74084
         },
         {
             "name": "laravel/tinker",
@@ -1176,6 +1216,12 @@
                 "s3",
                 "sftp",
                 "storage"
+            ],
+            "funding": [
+                {
+                    "url": "https://offset.earth/frankdejonge",
+                    "type": "other"
+                }
             ],
             "time": "2020-04-16T13:21:26+00:00"
         },
@@ -5097,6 +5143,16 @@
                 "phpunit",
                 "testing",
                 "xunit"
+            ],
+            "funding": [
+                {
+                    "url": "https://phpunit.de/donate.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/sebastianbergmann",
+                    "type": "github"
+                }
             ],
             "time": "2020-04-23T04:39:42+00:00"
         },

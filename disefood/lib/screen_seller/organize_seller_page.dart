@@ -80,8 +80,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                           return Column(
                             children: <Widget>[
                               ListTile(
-                                leading: Expanded(
-                                  child: Container(
+                                leading:  Container(
                                     margin: EdgeInsets.only(
                                       left: 30,
                                     ),
@@ -92,7 +91,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                       ),
                                     ),
                                   ),
-                                ),
+                                
                                 trailing: Wrap(
                                   spacing: 12, // space between two icons
                                   children: <Widget>[
