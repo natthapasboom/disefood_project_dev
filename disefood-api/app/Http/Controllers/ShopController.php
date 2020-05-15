@@ -44,7 +44,8 @@ class ShopController extends Controller
         $shop = $request->validated();
         $path = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'),'public');
         $shop['cover_image'] = $path;
-        return $this->shopRepo->create($shop);
+        $this->shopRepo->create($shop);
+        return response('delete success', 200);
     }
 
     public function addFoodToShop(CreateFoodRequest $request, $shop_id)
