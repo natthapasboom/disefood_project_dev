@@ -1,4 +1,4 @@
-class Foods {
+class FoodsList {
   int foodId;
   int shopId;
   String name;
@@ -8,7 +8,7 @@ class Foods {
   String createdAt;
   String updatedAt;
 
-  Foods(
+  FoodsList(
       {this.foodId,
       this.shopId,
       this.name,
@@ -18,7 +18,7 @@ class Foods {
       this.createdAt,
       this.updatedAt});
 
-  Foods.fromJson(Map<String, dynamic> json) {
+  FoodsList.fromJson(Map<String, dynamic> json) {
     foodId = json['food_id'];
     shopId = json['shop_id'];
     name = json['name'];

@@ -185,7 +185,7 @@ class _MenuPageState extends State<MenuPage> {
           ],
         ),
         body: SingleChildScrollView(
-          child: FutureBuilder<List<Foods>>(
+          child: FutureBuilder<List<FoodsList>>(
               future: fetchFoodsMenuPage(http.Client(), shopIdRecieve),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.data == null) {

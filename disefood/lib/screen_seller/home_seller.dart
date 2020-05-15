@@ -1,30 +1,36 @@
 import 'package:disefood/component/feedback_seller_bottombar.dart';
 import 'package:disefood/component/organize_seller_bottombar.dart';
 import 'package:disefood/component/summary_seller_bottombar.dart';
-import 'package:flutter/foundation.dart';
+import 'package:disefood/model/user_profile.dart';
+import 'package:disefood/screen/login_customer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/component/sidemenu_seller.dart';
 import 'package:disefood/component/order_seller_bottombar.dart';
 
 class HomeSeller extends StatefulWidget {
-  static const routeName = '/screen/home_seller';
-
+  final UserProfile userData;
+  HomeSeller({Key key, @required this.userData}):super(key:key);
+  static const routeName = '/home_seller';
+  
   @override
   _HomeSellerState createState() => _HomeSellerState();
 }
 
 class _HomeSellerState extends State<HomeSeller> {
+   
   @override
   Widget build(BuildContext context) {
+    
+   final HomeSeller params = ModalRoute.of(context).settings.arguments;
     return new Scaffold(
       appBar: AppBar(
         actions: <Widget>[],
       ),
-      drawer: SideMenuSeller(),
+      drawer: _sideMenuSeller(params.userData),
       body: ListView(
         children: <Widget>[
           headerImage,
-          titleSection,
+          _titleSection(params.userData),
           Container(
             height: 13.0,
             color: Colors.black12,
@@ -178,7 +184,20 @@ class _HomeSellerState extends State<HomeSeller> {
       ),
     );
   }
+  
+
 }
+
+_sideMenuSeller(UserProfile userData){
+  return SideMenuSeller(userData: userData,);
+}
+
+// class UserParam {
+//      final UserProfile userData;
+//      UserParam({
+//        @required this.userData,
+//      });
+//   }
 
 Widget headerImage = new Image.network(
   'https://www.prachachat.net/wp-content/uploads/2018/05/3-1024x704-728x501.jpg',
@@ -187,7 +206,9 @@ Widget headerImage = new Image.network(
   fit: BoxFit.cover,
 );
 
-Widget titleSection = Container(
+ _titleSection(UserProfile userData) {
+   
+   return Container(
   padding: EdgeInsets.all(10.0),
   child: Row(
     children: <Widget>[
@@ -203,8 +224,9 @@ Widget titleSection = Container(
                   fontSize: 24.0),
             ),
           ),
+          
           title: Text(
-            "Restaurant 1",
+            '${userData.firstName}',
             style: TextStyle(
                 fontSize: 24.0,
                 color: Colors.black,
@@ -237,6 +259,12 @@ Widget titleSection = Container(
     ],
   ),
 );
+}
+
+// class ParamUser{
+//     final UserProfile userData;
+//     ParamUser({ @required this.userData});
+// }
 
 //Widget buttonSection1 = Row(
 //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
