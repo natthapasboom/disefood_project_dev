@@ -11,14 +11,33 @@ import 'screen/menu_order_detail_amount.dart';
 import 'screen_seller/home_seller.dart';
 
 //#Clt+Alt+L จัดระเบียบ
-void main() {
-  runApp(new MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData(
-      primaryColor: Colors.orange,
-      appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
-    ),
-    home: new Home(),
-    initialRoute: '/',
-  ));
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: Colors.orange,
+        appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
+      ),
+      home: Home(),
+      initialRoute: '/',
+    );
+  }
 }
+
+// void main() {
+//   runApp(new MaterialApp(
+//     debugShowCheckedModeBanner: false,
+//     theme: ThemeData(
+//       primaryColor: Colors.orange,
+//       appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
+//     ),
+//     home: new Home(),
+//     initialRoute: '/',
+//   ));
+// }

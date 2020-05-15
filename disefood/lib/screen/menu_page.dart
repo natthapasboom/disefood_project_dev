@@ -1,4 +1,5 @@
 import 'package:disefood/model/foods_list.dart';
+import 'package:disefood/model/order.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
 import 'package:disefood/screen/order_items.dart';
@@ -40,11 +41,6 @@ class _MenuPageState extends State<MenuPage> {
   int foodIdTemp;
   bool isAmountHasValue = false;
 
-  List<Foods> foods;
-
-
-  
-
   _MenuPageState(shopId, shopName, shopImage, foodAmount, totalPrice, foodId) {
     this.shopIdRecieve = shopId;
     this.shopNameRecieve = shopName;
@@ -53,6 +49,11 @@ class _MenuPageState extends State<MenuPage> {
     this.foodAmountRecieve = foodAmount;
     this.totalPriceRecieve = totalPrice;
     this.foodIdTemp = foodId;
+  }
+  Map<int, int> quantities = {};
+
+  void takeAmountNumber(int foodId, int foodAmount) {
+    quantities[foodId] = foodAmount;
   }
 
   @override
@@ -299,14 +300,14 @@ class _MenuPageState extends State<MenuPage> {
                                   shrinkWrap: true,
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (context, index) {
-                                    if (foodAmountRecieve != null &&
-                                        foodAmountRecieve != 0) {
-                                      if (index == foodIdTemp - 1) {
-                                        isAmountHasValue = true;
-                                      } else {
-                                        isAmountHasValue = false;
-                                      }
-                                    }
+                                    // if (foodAmountRecieve != null &&
+                                    //     foodAmountRecieve != 0) {
+                                    //   if (index == foodIdTemp - 1) {
+                                    //     isAmountHasValue = true;
+                                    //   } else {
+                                    //     isAmountHasValue = false;
+                                    //   }
+                                    // }
                                     return Column(
                                       children: <Widget>[
                                         Row(
@@ -314,7 +315,7 @@ class _MenuPageState extends State<MenuPage> {
                                               MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
                                             Visibility(
-                                              visible: isAmountHasValue,
+                                              visible: false,
                                               child: SizedBox(
                                                 width: 20,
                                                 child: Text(
