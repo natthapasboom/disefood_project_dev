@@ -1,9 +1,16 @@
+import 'package:disefood/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/screen/home_customer.dart';
 
 
 
 class SideMenuCustomer extends StatelessWidget {
+  final UserProfile userData;
+  
+  const SideMenuCustomer({
+    Key key,
+    @required this.userData,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
 
@@ -15,11 +22,11 @@ class SideMenuCustomer extends StatelessWidget {
         children: <Widget>[
           UserAccountsDrawerHeader(
 
-            accountName: Text('Nawapan Deeprasertkul',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
+            accountName: Text('${userData.firstName} ${userData.lastName}',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
             accountEmail: Text('nawapan2541@hotmail.com',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
             currentAccountPicture: CircleAvatar(
               backgroundImage: NetworkImage(
-                  "https://scontent.fbkk12-2.fna.fbcdn.net/v/t1.0-9/45926892_1046615655508482_3161250217966174208_n.jpg?_nc_cat=104&_nc_sid=85a577&_nc_eui2=AeEurEYHU09PTy2q3x-bSQ7Dl3dnA7TbhRyXd2cDtNuFHE8WL7tFPsSOkUzgsaBpi_bkU2avX1IYgdRpTtpum8Hs&_nc_ohc=oXMIThBe7DMAX_x-mOs&_nc_ht=scontent.fbkk12-2.fna&oh=986f9feca93f1007fc91a4b5f9b59028&oe=5EDB4660"),
+                  "https://disefood.s3-ap-southeast-1.amazonaws.com/${userData.profileImg}"),
               backgroundColor: Colors.white,
             ),
           ),

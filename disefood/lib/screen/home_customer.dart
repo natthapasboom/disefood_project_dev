@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 class Home extends StatefulWidget {
    final UserProfile userData;
    Home({Key key, @required this.userData}):super(key:key);
-  static const routeName = '/screen/home_customer';
+  static const routeName = '/home_customer';
   @override
   _HomeState createState() => _HomeState();
 }
@@ -20,6 +20,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
+     final Home params = ModalRoute.of(context).settings.arguments;
     return WillPopScope(
       onWillPop: () async => Navigator.push(
         context,
@@ -56,7 +57,7 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        drawer: SideMenuCustomer(), //EndAppbar
+        drawer: _sideMenuCustomer(params.userData), //EndAppbar
         body: FutureBuilder<List<Shops>>(
             future: fetchShops(http.Client()),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -135,6 +136,9 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+}
+_sideMenuCustomer(UserProfile userData){
+  return SideMenuCustomer(userData: userData,);
 }
 
 Widget headerSection = new Material(
