@@ -1,4 +1,5 @@
 import 'package:disefood/model/shops_list.dart';
+import 'package:disefood/model/user_profile.dart';
 import 'package:disefood/services/shopservice.dart';
 import 'package:disefood/screen/login_customer_page.dart';
 import 'package:disefood/screen/menu_page.dart';
@@ -9,7 +10,9 @@ import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
-  static const routeName = '/screen/home_customer';
+   final UserProfile userData;
+   Home({Key key, @required this.userData}):super(key:key);
+  static const routeName = '/home_customer';
   @override
   _HomeState createState() => _HomeState();
 }
@@ -17,6 +20,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
+     final Home params = ModalRoute.of(context).settings.arguments;
     return WillPopScope(
       onWillPop: () async => Navigator.push(
         context,
@@ -53,7 +57,7 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        drawer: SideMenuCustomer(), //EndAppbar
+        drawer: _sideMenuCustomer(params.userData), //EndAppbar
         body: FutureBuilder<List<Shops>>(
             future: fetchShops(http.Client()),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -132,6 +136,9 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+}
+_sideMenuCustomer(UserProfile userData){
+  return SideMenuCustomer(userData: userData,);
 }
 
 Widget headerSection = new Material(

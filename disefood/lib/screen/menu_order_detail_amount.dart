@@ -7,12 +7,24 @@ class OrderAmount extends StatefulWidget {
   final int foodPrice;
   final String foodImage;
   final int foodAmount;
+  final String shopName;
+  final int shopId;
+  final String shopImage;
+  final int foodId;
   OrderAmount(
-      {Key key, this.foodName, this.foodPrice, this.foodImage, this.foodAmount})
+      {Key key,
+      this.foodName,
+      this.foodPrice,
+      this.foodImage,
+      this.foodAmount,
+      this.shopId,
+      this.shopName,
+      this.shopImage,
+      this.foodId})
       : super(key: key);
   @override
-  _OrderAmountState createState() =>
-      _OrderAmountState(foodName, foodPrice, foodImage, foodAmount);
+  _OrderAmountState createState() => _OrderAmountState(foodName, foodPrice,
+      foodImage, foodAmount, shopId, shopName, shopImage, foodId);
 }
 
 class _OrderAmountState extends State<OrderAmount> {
@@ -22,15 +34,24 @@ class _OrderAmountState extends State<OrderAmount> {
   int foodAmount = 1;
   bool isFoodRemove = false;
   int totalPrice;
-  _OrderAmountState(foodName, foodPrice, foodImage, foodAmount) {
+  String shopNameTemp;
+  int shopIdTemp;
+  String shopImageTemp;
+  int foodIdRecieve;
+  _OrderAmountState(foodName, foodPrice, foodImage, foodAmount, shopId,
+      shopName, shopImage, foodId) {
     this.foodNameRecieve = foodName;
     this.foodPriceRecieve = foodPrice;
     this.foodImageRecieve = foodImage;
     this.totalPrice = foodPrice;
-    if (foodAmount == null) {
-      foodAmount = 1;
-    } else {
+    this.shopIdTemp = shopId;
+    this.shopNameTemp = shopName;
+    this.shopImageTemp = shopImage;
+    this.foodIdRecieve = foodId;
+    if (foodAmount != null) {
       this.foodAmount = foodAmount;
+    } else {
+      foodAmount = 1;
     }
   }
 
@@ -224,7 +245,14 @@ class _OrderAmountState extends State<OrderAmount> {
                               pageBuilder: (BuildContext context,
                                   Animation<double> animation,
                                   Animation<double> secondaryAnimation) {
-                                return MenuPage();
+                                return MenuPage(
+                                  shopId: shopIdTemp,
+                                  shopName: shopNameTemp,
+                                  shopImage: shopImageTemp,
+                                  foodAmount: foodAmount,
+                                  totalPrice: totalPrice,
+                                  foodId: foodIdRecieve,
+                                );
                               },
                               transitionsBuilder: (BuildContext context,
                                   Animation<double> animation,
@@ -267,7 +295,14 @@ class _OrderAmountState extends State<OrderAmount> {
                               pageBuilder: (BuildContext context,
                                   Animation<double> animation,
                                   Animation<double> secondaryAnimation) {
-                                return MenuPage();
+                                return MenuPage(
+                                  shopId: shopIdTemp,
+                                  shopName: shopNameTemp,
+                                  shopImage: shopImageTemp,
+                                  foodAmount: foodAmount,
+                                  totalPrice: totalPrice,
+                                  foodId: foodIdRecieve,
+                                );
                               },
                               transitionsBuilder: (BuildContext context,
                                   Animation<double> animation,

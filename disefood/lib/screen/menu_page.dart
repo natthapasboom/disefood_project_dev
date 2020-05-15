@@ -1,4 +1,5 @@
 import 'package:disefood/model/foods_list.dart';
+import 'package:disefood/model/order.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
 import 'package:disefood/screen/order_items.dart';
@@ -12,23 +13,47 @@ class MenuPage extends StatefulWidget {
   final int shopId;
   final String shopName;
   final String shopImage;
-  MenuPage({Key key, this.shopId, this.shopName, this.shopImage})
+
+  final int foodAmount;
+  final int totalPrice;
+  final int foodId;
+  MenuPage(
+      {Key key,
+      this.shopId,
+      this.shopName,
+      this.shopImage,
+      this.foodAmount,
+      this.totalPrice,
+      this.foodId})
       : super(key: key);
   @override
-  _MenuPageState createState() => _MenuPageState(shopId, shopName, shopImage);
+  _MenuPageState createState() => _MenuPageState(
+      shopId, shopName, shopImage, foodAmount, totalPrice, foodId);
 }
 
 class _MenuPageState extends State<MenuPage> {
   int shopIdRecieve;
   String shopNameRecieve;
   String shopImage;
-  List<Foods> foods;
 
-  _MenuPageState(shopId, shopName, shopImage) {
+  int foodAmountRecieve;
+  int totalPriceRecieve;
+  int foodIdTemp;
+  bool isAmountHasValue = false;
+
+  _MenuPageState(shopId, shopName, shopImage, foodAmount, totalPrice, foodId) {
     this.shopIdRecieve = shopId;
     this.shopNameRecieve = shopName;
     this.shopImage = shopImage;
-    print(shopId);
+
+    this.foodAmountRecieve = foodAmount;
+    this.totalPriceRecieve = totalPrice;
+    this.foodIdTemp = foodId;
+  }
+  Map<int, int> quantities = {};
+
+  void takeAmountNumber(int foodId, int foodAmount) {
+    quantities[foodId] = foodAmount;
   }
 
   @override
@@ -160,7 +185,7 @@ class _MenuPageState extends State<MenuPage> {
           ],
         ),
         body: SingleChildScrollView(
-          child: FutureBuilder<List<Foods>>(
+          child: FutureBuilder<List<FoodsList>>(
               future: fetchFoodsMenuPage(http.Client(), shopIdRecieve),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.data == null) {
@@ -275,19 +300,43 @@ class _MenuPageState extends State<MenuPage> {
                                   shrinkWrap: true,
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (context, index) {
+                                    // if (foodAmountRecieve != null &&
+                                    //     foodAmountRecieve != 0) {
+                                    //   if (index == foodIdTemp - 1) {
+                                    //     isAmountHasValue = true;
+                                    //   } else {
+                                    //     isAmountHasValue = false;
+                                    //   }
+                                    // }
                                     return Column(
                                       children: <Widget>[
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
+                                            Visibility(
+                                              visible: false,
+                                              child: SizedBox(
+                                                width: 20,
+                                                child: Text(
+                                                  "${foodAmountRecieve}x",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.orange),
+                                                ),
+                                              ),
+                                              replacement: SizedBox(
+                                                width: 20,
+                                              ),
+                                            ),
                                             SizedBox(
-                                              width: 175,
+                                              width: 145,
                                               child: Text(
                                                   '${snapshot.data[index].name}'),
                                             ),
                                             SizedBox(
-                                              width: 40,
+                                              width: 20,
                                               child: Text(
                                                   '${snapshot.data[index].price}'),
                                             ),
@@ -304,7 +353,20 @@ class _MenuPageState extends State<MenuPage> {
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (context) =>
-                                                        OrderAmount(foodName:snapshot.data[index].name,foodPrice:snapshot.data[index].price,foodImage:snapshot.data[index].coverImage),
+                                                        OrderAmount(
+                                                      foodName: snapshot
+                                                          .data[index].name,
+                                                      foodPrice: snapshot
+                                                          .data[index].price,
+                                                      foodImage: snapshot
+                                                          .data[index]
+                                                          .coverImage,
+                                                      shopId: shopIdRecieve,
+                                                      shopName: shopNameRecieve,
+                                                      shopImage: shopImage,
+                                                      foodId: snapshot
+                                                          .data[index].foodId,
+                                                    ),
                                                   ),
                                                 );
                                               },
