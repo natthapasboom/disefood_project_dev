@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:disefood/component/sidemenu_seller.dart';
 import 'package:disefood/model/foods_list.dart';
+import 'package:disefood/model/user_profile.dart';
 import 'package:disefood/screen_seller/home_seller.dart';
 import 'package:disefood/screen_seller/widget/organize_seller.dart';
 import 'package:disefood/services/foodservice.dart';
@@ -20,9 +21,10 @@ class OrganizeSellerPage extends StatefulWidget {
 
 class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   FoodsList foodslist = FoodsList();
-
+  
   @override
   Widget build(BuildContext context) {
+    final HomeSeller params = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
@@ -41,7 +43,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
           ),
         ],
       ),
-      drawer: SideMenuSeller(),
+      drawer: _sideMenuSeller(params.userData),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -146,4 +148,8 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
       ),
     );
   }
+
+  _sideMenuSeller(UserProfile userData){
+  return SideMenuSeller(userData: userData,);
+}
 }

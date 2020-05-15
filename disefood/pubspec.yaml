@@ -29,6 +29,7 @@ dependencies:
   shared_preferences: ^0.5.7+2
   get_it: ^4.0.2
   dio: ^3.0.9
+  uuid: ^2.0.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

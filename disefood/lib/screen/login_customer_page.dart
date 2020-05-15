@@ -1,11 +1,15 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
+import 'package:disefood/model/user_profile.dart';
 import 'package:disefood/screen/home_customer.dart';
+import 'package:disefood/screen_seller/home_seller.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
+  static const routeName = '/Login';
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -15,33 +19,72 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _passwordController = TextEditingController();
   ApiProvider apiProvider = ApiProvider();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  Future _login() async {
-    if (_formKey.currentState.validate()) {
-      try {
-        var response = await apiProvider.doLogin(
-            _usernameController.text, _passwordController.text);
-        if (response.statusCode == 200) {
-          print(response.body);
-          var jsonResponse = json.decode(response.body);
-          if (jsonResponse['ok']) {
-            String token = jsonResponse['token'];
-            print(token);
-            SharedPreferences prefs =
-                await SharedPreferences.getInstance(); // ใช้เก็บ token
-            await prefs.setString('token', token);
-             Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Home()));
-            // redirect
+  List<UserProfile> list = List();
 
-            print(jsonResponse['error']);
-          }
+  Future<List<UserProfile>> _login() async {
+    print('before validate ==> ');
+    if (_formKey.currentState.validate()) {
+      print('after validate ==> ');
+      String url = "http://10.0.2.2:8080/api/login";
+      try {
+        print('after try ==> ');
+        Dio dio = Dio();
+          dio.options.headers['content-Type']='application/json';
+       
+        Response response = await dio.post(
+          url,
+          data: {
+          "username": _usernameController.text.trim(),
+          "password": _passwordController.text.trim(),
+        
+          },
+          );
+         
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          print('response : ${response.data}');
+          print('Success');
+           
+           var result = UserProfile.fromJson(response.data[0]);
+            print('result : ${result.isSeller}');
+            print('id : ${result.userId}');
+            
+               if(result.isSeller == 1){
+                      Navigator.of(context).pushReplacementNamed(HomeSeller.routeName,arguments: HomeSeller(userData: result,));
+               }else if (result.isSeller == 0){
+                      Navigator.of(context).pushReplacementNamed(Home.routeName,arguments: Home(userData: result,));
+                  // Navigator.of(context).pushReplacementNamed(Home.routeName,arguments: );
+               }
+          
+            // 
+          // for(var map in result){
+          //   UserProfile userProfile = UserProfile.fromJson(map);
+          //   print(userProfile);
+          //   // if(userProfile.isSeller == 1){
+          //   //   Navigator.of(context).pushReplacementNamed(HomeSeller.routeName);
+          //   // }
+          // }
+          // var jsonData = UserProfile.fromJson(response.data);
+          // print('json data : $jsonData');
+            // if(jsonData.isSeller == 1){
+            //     Navigator.of(context).pushReplacementNamed(HomeSeller.routeName);
+            // }
+
+
+         
         } else {
-          print('Connection error');
+          print('error code');
+         
         }
+       
       } catch (error) {
-        print(error);
+        print('error: $error');
       }
     }
   }
+
+   
+
 
   @override
   Widget build(BuildContext context) {
@@ -66,16 +109,17 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Center(
-                      child: Image.network(
-                        "https://seeklogo.com/images/B/business-people-circle-logo-83C8022853-seeklogo.com.png",
-                        width: 100,
-                      ),
+                      child: Text('Login',style: TextStyle(fontSize: 48,color: Colors.white,fontWeight: FontWeight.bold),),
+                      // child: Image.network(
+                      //   "https://seeklogo.com/images/B/business-people-circle-logo-83C8022853-seeklogo.com.png",
+                      //   width: 100,
+                      // ),
                     ),
                     SizedBox(
-                      height: 70.0,
+                      height: 40.0,
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                       child: TextFormField(
                         validator: (value){
                           if(value.isEmpty){
@@ -101,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 10.0,
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                       child: TextFormField(
                         validator: (value){
                           if(value.isEmpty){
@@ -131,7 +175,9 @@ class _LoginPageState extends State<LoginPage> {
                       height: 15.0,
                     ),
                     RaisedButton(
+                      
                       onPressed: () {
+                      
                         _login();
                       },
                       child: Padding(
@@ -181,7 +227,8 @@ class _LoginPageState extends State<LoginPage> {
                     //     )
                     //   ],
                     // ),
-                    FlatButton(
+                    RaisedButton(
+                      
                       onPressed: () {},
                       child: Padding(
                         padding: EdgeInsets.all(15.0),
@@ -200,11 +247,11 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                       ),
-                      color: Colors.transparent,
+                      color: Colors.blue,
                       textColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         side: BorderSide(
-                            color: Colors.white,
+                            color: Colors.blue,
                             width: 1,
                             style: BorderStyle.solid),
                         borderRadius: BorderRadius.circular(50),

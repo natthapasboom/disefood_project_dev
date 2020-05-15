@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:disefood/screen/login_customer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:uuid/uuid.dart';
 class Regis extends StatefulWidget {
   @override
   _RegisState createState() => _RegisState();
@@ -20,7 +21,7 @@ class _RegisState extends State<Regis> {
   File _image;
   ApiProvider apiProvider = ApiProvider();
   bool status;
-  
+  var uuid = Uuid();
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -33,27 +34,57 @@ class _RegisState extends State<Regis> {
     print('before validate ==> ');
     if (_formKey.currentState.validate()) {
       print('after validate ==> ');
-      String url = "http://10.0.2.2:8080/api/user";
+      // String url = "http://321514e0.ngrok.io/api/user";
+       String url = "http://10.0.2.2:8080/api/user";
+       
       try {
         print('after try ==> ');
         Dio dio = Dio();
-        var formData = FormData.fromMap({
+          dio.options.headers['Content-Type']='application/json';
+        // var formData = FormData.fromMap({
+        //   "username": _usernameController.text.trim(),
+        //   "password": _passwordController.text.trim(),
+        //   "first_name": _firstNameController.text.trim(),
+        //   "last_name": _lastNameController.text.trim(),
+        //   "tel": _phoneController.text.trim(),
+        //   "profile_img": await MultipartFile.fromFile(
+        //       _image.path,
+        //        filename: '${uuid.v4()}.png',
+        //   ) ,
+        //   "is_seller": status,
+        // });
+        // print(formData.fields);
+        // print('data : $formData');
+        Response response = await dio.post(
+          url,
+          
+          // data: formData,
+          // options:  Options(
+          //  followRedirects: false,
+          //  validateStatus: (status) { return status < 500; }
+          //   ),
+          // data: formData,
+          data:{
           "username": _usernameController.text.trim(),
           "password": _passwordController.text.trim(),
           "first_name": _firstNameController.text.trim(),
           "last_name": _lastNameController.text.trim(),
           "tel": _phoneController.text.trim(),
-          "profile_img":_image,
+          
+          // "profile_img": await MultipartFile.fromFile(
+          //     _image.path,
+          //      filename: '${uuid.v4()}.png',
+          // ) ,
           "is_seller": status,
-        });
-        print(formData.fields);
-        print('data : $formData');
-        Response response = await dio.post(url,data: formData);
+          },
+          );
+        
         print('res : $response');
         print(response.statusCode);
         if (response.statusCode == 200) {
           print('response : ${response.data}');
           print('Success');
+           Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
           // Scaffold.of(context).showSnackBar(new SnackBar(
           //   content: new Text("User Info Updated"),
           // ));
@@ -243,6 +274,9 @@ class _RegisState extends State<Regis> {
                   return '*';
                 }
               },
+              // onChanged: (value) => 
+              //   _usernameController.text = value.trim()
+              // ,
               controller: _usernameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
@@ -268,6 +302,9 @@ class _RegisState extends State<Regis> {
                   return '*';
                 }
               },
+              // onChanged: (value) => 
+              //   _passwordController.text = value.trim()
+              // ,
               cursorColor: Colors.white,
               controller: _passwordController,
               decoration: InputDecoration(
@@ -292,6 +329,9 @@ class _RegisState extends State<Regis> {
                   return '*';
                 }
               },
+              // onChanged: (value) => 
+              //   _firstNameController.text = value.trim()
+              // ,
               controller: _firstNameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
@@ -315,6 +355,9 @@ class _RegisState extends State<Regis> {
                   return '*';
                 }
               },
+              // onChanged: (value) => 
+              //   _lastNameController.text = value.trim()
+              // ,
               controller: _lastNameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
@@ -333,11 +376,13 @@ class _RegisState extends State<Regis> {
           Container(
             padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
             child: TextFormField(
+              keyboardType: TextInputType.number,
               validator: (value) {
                 if (value.isEmpty) {
                   return '*';
                 }
               },
+              // 
               controller: _phoneController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),

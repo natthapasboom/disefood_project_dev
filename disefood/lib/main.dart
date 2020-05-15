@@ -16,6 +16,7 @@ import 'package:disefood/screen_seller/addmenu.dart';
 import 'component/register.dart';
 import 'screen/menu_order_detail_amount.dart';
 import 'screen_seller/home_seller.dart';
+import 'package:disefood/screen_seller/create_shop.dart';
 
 //#Clt+Alt+L จัดระเบียบ
 void main() {
@@ -24,9 +25,15 @@ void main() {
     theme: ThemeData(
       primaryColor: Colors.orange,
       appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: Colors.white),),
-      fontFamily: 'Roboto', 
+      
     ),
-    home: Regis(),
+    home: LoginPage(),
     initialRoute: '/',
+    routes: {
+      "/home_seller": (_) => HomeSeller(),
+      '/home_customer' : (_) => Home(),
+      '/Login' : (_) => LoginPage(),
+    },
+    
   ));
 }

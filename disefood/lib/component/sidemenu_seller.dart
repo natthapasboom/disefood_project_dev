@@ -1,8 +1,15 @@
+import 'package:disefood/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/screen_seller/home_seller.dart';
 
 
 class SideMenuSeller extends StatelessWidget {
+  final UserProfile userData;
+  
+  const SideMenuSeller({
+    Key key,
+    @required this.userData,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
 
@@ -14,7 +21,7 @@ class SideMenuSeller extends StatelessWidget {
         children: <Widget>[
           UserAccountsDrawerHeader(
 
-            accountName: Text('Nawapan Deeprasertkul',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
+            accountName: Text('${userData.firstName} ${userData.lastName}',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
             accountEmail: Text('nawapan2541@hotmail.com',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
             currentAccountPicture: CircleAvatar(
               backgroundImage: NetworkImage(
@@ -27,9 +34,9 @@ class SideMenuSeller extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text('Home'),
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => HomeSeller()
-              ));
+            
+              Navigator.pop(context
+              );
             },
           ),
           Divider(height: 2,color: Colors.grey,),

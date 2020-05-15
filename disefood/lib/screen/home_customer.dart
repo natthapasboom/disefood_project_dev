@@ -1,4 +1,5 @@
 import 'package:disefood/model/shops_list.dart';
+import 'package:disefood/model/user_profile.dart';
 import 'package:disefood/services/shopservice.dart';
 import 'package:disefood/screen/login_customer_page.dart';
 import 'package:disefood/screen/menu_page.dart';
@@ -9,6 +10,8 @@ import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
+   final UserProfile userData;
+   Home({Key key, @required this.userData}):super(key:key);
   static const routeName = '/screen/home_customer';
   @override
   _HomeState createState() => _HomeState();
