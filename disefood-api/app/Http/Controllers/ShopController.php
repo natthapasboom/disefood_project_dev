@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\Interfaces\ShopRepositoryInterface;
 use App\Repositories\Interfaces\FoodRepositoryInterface;
+use App\Repositories\Interfaces\ProfileRepositoryInterface;
 use App\Http\Requests\CreateShopRequest;
 use App\Http\Requests\CreateFoodRequest;
 use App\Http\Requests\UpdateShopRequest;
@@ -14,15 +15,18 @@ class ShopController extends Controller
 {
     private $shopRepo;
     private $foodRepo;
+    private $userProfileRepo;
 
     public function __construct
     (
         ShopRepositoryInterface $shopRepo,
-        FoodRepositoryInterface $foodRepo
+        FoodRepositoryInterface $foodRepo,
+        ProfileRepositoryInterface $userProfileRepoRepo
     )
     {
         $this->shopRepo = $shopRepo;
         $this->foodRepo = $foodRepo;
+        $this->userProfileRepo = $userProfileRepoRepo;
     }
 
     public function getShopsList()
@@ -45,7 +49,7 @@ class ShopController extends Controller
         $path = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'),'public');
         $shop['cover_image'] = $path;
         $this->shopRepo->create($shop);
-        return response('delete success', 200);
+        return response('create shop success', 200);
     }
 
     public function addFoodToShop(CreateFoodRequest $request, $shop_id)

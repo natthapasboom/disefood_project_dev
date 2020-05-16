@@ -14,12 +14,12 @@ class CreateUserStore extends BaseFormRequest
     public function rules(Request $request)
     {
         return [
-            'username'          => 'required|string',
-            'password'          => 'required|string',
-            'first_name'        => 'required|string',
-            'last_name'         => 'required|string',
-            'tel'               => 'required|string',
-            // 'profile_img'       => 'image',
+            'username'          => 'required|string|min:4|max:50|unique:users,username',
+            'password'          => 'required|string|min:6|max:50',
+            'first_name'        => 'required|string|max:50',
+            'last_name'         => 'required|string|max:50',
+            'tel'               => 'required|string|min:10|max:10|unique:profiles,tel',
+            'profile_img'       => 'image',
             'is_seller'         => 'required|boolean',
         ];
     }
