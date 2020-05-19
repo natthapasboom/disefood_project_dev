@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<FoodsList>> fetchFoodsMenuPage(http.Client client,int shopId) async {
-  final response = await client.get('http://10.0.2.2:8000/api/shop/foods/'+'${shopId}');
+  final response = await client.get('http://10.0.2.2:8080/api/shop/foods/'+'${shopId}');
 
   return compute(parseFoods, response.body);
 }

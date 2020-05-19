@@ -1,31 +1,39 @@
-import 'package:disefood/model/user_profile.dart';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/component/signout_process.dart';
+import 'package:disefood/screen_seller/home_seller_tab.dart';
 import 'package:flutter/material.dart';
-import 'package:disefood/screen_seller/home_seller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 class SideMenuSeller extends StatelessWidget {
-  final UserProfile userData;
-  
+  final String firstName;
+  final int userId; 
+  final String lastName; 
+  final String coverImg;
   const SideMenuSeller({
     Key key,
-    @required this.userData,
+    @required this.firstName,@required this.userId,@required this.lastName,@required this.coverImg
   }) : super(key: key);
+
+  
+
+ 
+
+
   @override
   Widget build(BuildContext context) {
-
     return Drawer(
-      child: Column(
-
+      child: Column( 
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           UserAccountsDrawerHeader(
-
-            accountName: Text('${userData.firstName} ${userData.lastName}',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
+            accountName: Text('$firstName  $lastName',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
             accountEmail: Text('nawapan2541@hotmail.com',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
             currentAccountPicture: CircleAvatar(
-              backgroundImage: NetworkImage(
-                  "https://disefood.s3-ap-southeast-1.amazonaws.com/${userData.profileImg}"),
+              backgroundImage: CachedNetworkImageProvider('https://disefood.s3-ap-southeast-1.amazonaws.com/'+'$coverImg'),
               backgroundColor: Colors.white,
             ),
           ),
@@ -34,9 +42,10 @@ class SideMenuSeller extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text('Home'),
             onTap: (){
-            
-              Navigator.pop(context
-              );
+              MaterialPageRoute route = MaterialPageRoute(builder: (context)=> Homepage());
+                Navigator.of(context).push(route,);
+              // Navigator.pop(context
+              // );
             },
           ),
           Divider(height: 2,color: Colors.grey,),
@@ -48,6 +57,9 @@ class SideMenuSeller extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
+            onTap: (){
+              signOutProcess(context);
+            },
           ),
           Divider(height: 2,color: Colors.grey,),
         ],

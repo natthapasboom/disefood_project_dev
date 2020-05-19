@@ -1,15 +1,18 @@
 import 'dart:async';
 
 import 'package:disefood/component/sidemenu_seller.dart';
+import 'package:disefood/model/user_profile.dart';
 
 import 'package:flutter/material.dart';
 
-class orderDetailSeller extends StatefulWidget {
+class OrderDetailSeller extends StatefulWidget {
+  static final route = "/order_detail_seller";
+ 
   @override
-  _orderDetailSellerState createState() => _orderDetailSellerState();
+  _OrderDetailSellerState createState() => _OrderDetailSellerState();
 }
 
-class _orderDetailSellerState extends State<orderDetailSeller> {
+class _OrderDetailSellerState extends State<OrderDetailSeller> {
   var totalminute;
   var totalhour;
   var currenthours;
@@ -75,12 +78,16 @@ class _orderDetailSellerState extends State<orderDetailSeller> {
       },
     );
   }
+//   _sideMenuSeller(UserProfile userData){
+//   return SideMenuSeller(userData: userData,);
+// }
 
   Future<void> _neverSatisfied() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
+        
         return AlertDialog(
           title: Text(
             'เพิ่มเวลา',
@@ -262,6 +269,7 @@ class _orderDetailSellerState extends State<orderDetailSeller> {
 
   @override
   Widget build(BuildContext context) {
+   
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
@@ -279,7 +287,7 @@ class _orderDetailSellerState extends State<orderDetailSeller> {
           ),
         ],
       ),
-      drawer: SideMenuSeller(),
+      // drawer: _sideMenuSeller(params.userData),
       body: ListView(
         children: <Widget>[
           headerImage,

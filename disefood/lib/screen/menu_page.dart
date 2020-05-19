@@ -1,3 +1,4 @@
+import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
@@ -7,6 +8,7 @@ import 'package:disefood/services/getfoodmenupageservice.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuPage extends StatefulWidget {
   final int shopId;
@@ -31,6 +33,31 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+  //data form api
+  String nameUser;
+  String lastNameUser;
+  int userId;
+  String coverImg;
+  
+  
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      findUser();
+    });
+  }
+  Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    setState(() {
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      coverImg = preference.getString('profile_img');
+    });
+  }
+
+  
   int shopIdRecieve;
   String shopNameRecieve;
   String shopImage;
@@ -42,10 +69,7 @@ class _MenuPageState extends State<MenuPage> {
 
   List<FoodsList> foods;
 
-
-
-
-  
+  Map<String, int> _cart = Map();
 
   _MenuPageState(shopId, shopName, shopImage, foodAmount, totalPrice, foodId) {
     this.shopIdRecieve = shopId;
@@ -185,6 +209,7 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ],
         ),
+        
         body: SingleChildScrollView(
           child: FutureBuilder<List<FoodsList>>(
               future: fetchFoodsMenuPage(http.Client(), shopIdRecieve),

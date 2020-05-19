@@ -19,7 +19,7 @@ class CreateUserStore extends BaseFormRequest
             'first_name'        => 'required|string',
             'last_name'         => 'required|string',
             'tel'               => 'required|string',
-            // 'profile_img'       => 'image',
+            'profile_img'       => 'image',
             'is_seller'         => 'required|boolean',
         ];
     }

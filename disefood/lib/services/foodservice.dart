@@ -6,8 +6,14 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
+import 'package:shared_preferences/shared_preferences.dart';
 
 
+
+
+  
+
+  
 
   
   
@@ -15,21 +21,30 @@ import 'dart:async';
 
 
   Future<List<FoodsList>> getFoodsData(http.Client client) async {
-  String  foodAPI = 'http://10.0.2.2:8000/api/foods/';
+  String  foodAPI = 'http://10.0.2.2:8080/api/foods/';
+  final response = await client.get(foodAPI);
+  return compute(parseFoods, response.body); 
+}
+List<FoodsList> parseFoods(String responseBody) {
+  final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+  return parsed.map<FoodsList>((json) => FoodsList.fromJson(json)).toList();
+}
+
+ Future<List<FoodsList>> getFoodsDataByID(http.Client client,int shopId) async {
+  String  foodAPI = 'http://10.0.2.2:8080/api/shop/foods/$shopId';
   final response = await client.get(foodAPI);
   return compute(parseFoods, response.body);
    
 }
-
-List<FoodsList> parseFoods(String responseBody) {
+List<FoodsList> parseFoodsId(String responseBody) {
   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
 
   return parsed.map<FoodsList>((json) => FoodsList.fromJson(json)).toList();
 }
 
 
-Future<APIResponse<bool>> createFood(FoodsInsert item ) async{
-   const foodAPI = 'http://10.0.2.2:8000/api/foods/';
+Future<APIResponse<bool>> createFood(FoodsInsert item,) async{
+   const foodAPI = 'http://10.0.2.2:8080/api/foods/';
     return http.post(foodAPI,body: json.encode(item.toJson())).then((data){
           if(data.statusCode == 201){
             return APIResponse<bool>(data: true);
