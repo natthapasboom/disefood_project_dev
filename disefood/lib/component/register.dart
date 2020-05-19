@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+
 class Regis extends StatefulWidget {
   @override
   _RegisState createState() => _RegisState();
@@ -26,7 +27,7 @@ class _RegisState extends State<Regis> {
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
-      _image =  image;
+      _image = image;
     });
   }
 
@@ -35,65 +36,62 @@ class _RegisState extends State<Regis> {
     if (_formKey.currentState.validate()) {
       print('after validate ==> ');
       // String url = "http://321514e0.ngrok.io/api/user";
-       String url = "http://10.0.2.2:8080/api/user";
-       
+      String url = "http://10.0.2.2:8080/api/user";
+
       try {
         print('after try ==> ');
         Dio dio = Dio();
-          dio.options.headers['Content-Type']='application/json';
-        // var formData = FormData.fromMap({
-        //   "username": _usernameController.text.trim(),
-        //   "password": _passwordController.text.trim(),
-        //   "first_name": _firstNameController.text.trim(),
-        //   "last_name": _lastNameController.text.trim(),
-        //   "tel": _phoneController.text.trim(),
-        //   "profile_img": await MultipartFile.fromFile(
-        //       _image.path,
-        //        filename: '${uuid.v4()}.png',
-        //   ) ,
-        //   "is_seller": status,
-        // });
-        // print(formData.fields);
-        // print('data : $formData');
+        // dio.options.headers['Content-Type'] = 'application/';
+        var formData = FormData.fromMap({
+          "username": _usernameController.text.trim(),
+          "password": _passwordController.text.trim(),
+          "first_name": _firstNameController.text.trim(),
+          "last_name": _lastNameController.text.trim(),
+          "tel": _phoneController.text.trim(),
+          "profile_img": await MultipartFile.fromFile(
+            _image.path,
+            filename: '${uuid.v4()}.png',
+          ),
+          "is_seller": status,
+        });
+        print(formData.fields);
+        print(formData.files);
+        print('data : $formData');
         Response response = await dio.post(
           url,
-          
+          data: formData,
           // data: formData,
           // options:  Options(
           //  followRedirects: false,
           //  validateStatus: (status) { return status < 500; }
           //   ),
           // data: formData,
-          data:{
-          "username": _usernameController.text.trim(),
-          "password": _passwordController.text.trim(),
-          "first_name": _firstNameController.text.trim(),
-          "last_name": _lastNameController.text.trim(),
-          "tel": _phoneController.text.trim(),
-          
-          // "profile_img": await MultipartFile.fromFile(
-          //     _image.path,
-          //      filename: '${uuid.v4()}.png',
-          // ) ,
-          "is_seller": status,
-          },
-          );
-        
+          // data:{
+          // "username": _usernameController.text.trim(),
+          // "password": _passwordController.text.trim(),
+          // "first_name": _firstNameController.text.trim(),
+          // "last_name": _lastNameController.text.trim(),
+          // "tel": _phoneController.text.trim(),
+
+          // // "profile_img": await MultipartFile.fromFile(
+          // //     _image.path,
+          // //      filename: '${uuid.v4()}.png',
+          // // ) ,
+          // "is_seller": status,
+          // },
+        );
+
         print('res : $response');
+        print('res : ${response.data}');
         print(response.statusCode);
         if (response.statusCode == 200) {
           print('response : ${response.data}');
           print('Success');
-           Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
-          // Scaffold.of(context).showSnackBar(new SnackBar(
-          //   content: new Text("User Info Updated"),
-          // ));
+          Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
+         
         } else {
           print('error code');
-          // Map<String, dynamic> _responseMap = json.decode(response.data);
-          // Scaffold.of(context).showSnackBar(new SnackBar(
-          //   content: new Text(_responseMap['message']),
-          // ));
+         
         }
         print('res : $response');
       } catch (error) {
@@ -102,76 +100,7 @@ class _RegisState extends State<Regis> {
     }
   }
 
-  // Future<http.Response> _register() async {
-
-  //   if (_formKey.currentState.validate()) {
-
-  //     try {
-  //        var response = await apiProvider.doRegister1(
-
-  //           _usernameController.text,
-  //           _passwordController.text,
-  //           _firstNameController.text,
-  //           _lastNameController.text,
-  //           _phoneController.text,
-  //           _image,
-
-  //           status,
-  //           );
-
-  //       print(response.statusCode);
-  //       print('status:   $response');
-  //       if (response.statusCode == 200 )  {
-  //         print('body = ${response.body}');
-  //         var jsonResponse = json.decode(response.body);
-  //         if (jsonResponse['ok']) {
-  //           String token = jsonResponse['token'];
-
-  //           print(token);
-  //           SharedPreferences prefs =
-  //               await SharedPreferences.getInstance(); // ใช้เก็บ token
-  //           await prefs.setString('token', token);
-
-  //           // redirect
-
-  //           print(jsonResponse['error']);
-  //         }
-  //       } else {
-  //         print('Connection error');
-  //       }
-  //     } catch (error) {
-  //       print('Error : $error');
-
-  //     }
-
-  //   }
-
-  // }
-
-  // Future<void> _register() async{
-  //   try{
-  //       print('before register =>');
-
-  //       final user = await apiProvider.dioRegister(
-  //       username : _usernameController.text,
-  //       password : _passwordController.text,
-  //       firstname :_firstNameController.text ,
-  //       lastname : _lastNameController.text,
-  //       phone : _phoneController.text,
-  //       image : _image,
-  //       status:  status,
-  //       );
-
-  //         print('User is : $user');
-  //         if(user != null){
-  //           print('Regis : $user');
-
-  //         }
-
-  //   }catch(e){
-
-  //   }
-  // }
+ 
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
@@ -274,7 +203,7 @@ class _RegisState extends State<Regis> {
                   return '*';
                 }
               },
-              // onChanged: (value) => 
+              // onChanged: (value) =>
               //   _usernameController.text = value.trim()
               // ,
               controller: _usernameController,
@@ -302,7 +231,7 @@ class _RegisState extends State<Regis> {
                   return '*';
                 }
               },
-              // onChanged: (value) => 
+              // onChanged: (value) =>
               //   _passwordController.text = value.trim()
               // ,
               cursorColor: Colors.white,
@@ -329,7 +258,7 @@ class _RegisState extends State<Regis> {
                   return '*';
                 }
               },
-              // onChanged: (value) => 
+              // onChanged: (value) =>
               //   _firstNameController.text = value.trim()
               // ,
               controller: _firstNameController,
@@ -355,7 +284,7 @@ class _RegisState extends State<Regis> {
                   return '*';
                 }
               },
-              // onChanged: (value) => 
+              // onChanged: (value) =>
               //   _lastNameController.text = value.trim()
               // ,
               controller: _lastNameController,
@@ -382,7 +311,7 @@ class _RegisState extends State<Regis> {
                   return '*';
                 }
               },
-              // 
+              //
               controller: _phoneController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),

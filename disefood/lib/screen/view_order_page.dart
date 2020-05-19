@@ -1,7 +1,22 @@
 import 'package:disefood/component/dialogcomponents/dialog_helper.dart';
+import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ViewOrder extends StatelessWidget {
+  String nameUser;
+  String lastNameUser;
+  String profileImg;
+  int userId;
+ Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      profileImg = preference.getString('profile_img');        
+  }
+    
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -23,6 +38,11 @@ class ViewOrder extends StatelessWidget {
             ),
           ],
         ),
+        drawer: SideMenuCustomer(
+          firstName: nameUser,
+          userId: userId,
+          lastName: lastNameUser,
+          coverImg: profileImg),
         body: Container(
           child: Column(
             children: <Widget>[

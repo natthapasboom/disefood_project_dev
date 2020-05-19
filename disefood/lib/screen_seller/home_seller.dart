@@ -1,383 +1,170 @@
+import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:disefood/component/feedback_seller_bottombar.dart';
 import 'package:disefood/component/organize_seller_bottombar.dart';
+import 'package:disefood/component/signout_process.dart';
 import 'package:disefood/component/summary_seller_bottombar.dart';
+import 'package:disefood/model/shop_id.dart';
 import 'package:disefood/model/user_profile.dart';
 import 'package:disefood/screen/login_customer_page.dart';
+import 'package:disefood/screen_seller/order_seller_page.dart';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/component/sidemenu_seller.dart';
 import 'package:disefood/component/order_seller_bottombar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'organize_seller_page.dart';
 
 class HomeSeller extends StatefulWidget {
-  final UserProfile userData;
-  HomeSeller({Key key, @required this.userData}):super(key:key);
+  // final UserProfile userData;
+  // HomeSeller({Key key, @required this.userData}):super(key:key);
   static const routeName = '/home_seller';
-  
+
   @override
   _HomeSellerState createState() => _HomeSellerState();
 }
 
 class _HomeSellerState extends State<HomeSeller> {
-   
+  String shopImg;
+  String nameUser;
+  String lastNameUser;
+  int userId;
+  String profileImg;
+  int shopId;
+  String _shopName;
+  int _shopId;
+  String _shopImg;
+  bool _isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      findUser();
+      fetchShopFromStorage();
+    });
+  }
+
+  Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    setState(() {
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      profileImg = preference.getString('profile_img');
+    });
+  }
+
+  
+
+  
+
+  Future<Null> fetchShopFromStorage() async {
+   SharedPreferences _prefs = await SharedPreferences.getInstance();
+     setState(() {
+       _isLoading = true;
+     });
+    final shopName = _prefs.getString('shop_name');
+    final shopId = _prefs.getInt('shop_id');
+    final shopImg = _prefs.getString('cover_img'); 
+    setState(() {
+      _shopName = shopName;
+      _shopId = shopId;
+      _shopImg = shopImg; 
+      _isLoading = false;  
+    }); 
+  }
+
   @override
   Widget build(BuildContext context) {
-    
-   final HomeSeller params = ModalRoute.of(context).settings.arguments;
+    print('first name = $nameUser');
+    print('lastname = $lastNameUser');
+    print('shopname = $_shopName');
     return new Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[],
-      ),
-      drawer: _sideMenuSeller(params.userData),
-      body: ListView(
+      
+      body: 
+      ListView(
         children: <Widget>[
-          headerImage,
-          _titleSection(params.userData),
+          headerImage(),   
+          Container(
+            padding: EdgeInsets.all(10.0),
+            child:  
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: ListTile(
+                    leading: Container(
+                      padding: EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        "$_shopId",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24.0),
+                      ),
+                      
+                    ),
+                    
+                    title: Text(
+                      '$_shopName',
+                      style: TextStyle(
+                          fontSize: 24.0,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text("ประเภทของร้านอาหาร"),
+                        Container(
+                          padding: EdgeInsets.only(top: 5.0),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.star,
+                                color: Colors.orange,
+                                size: 15.0,
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 5.0),
+                                child: Text("4.2"),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Container(
             height: 13.0,
             color: Colors.black12,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              //menu order
-              Column(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 40),
-                    child: FlatButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => OrderSeller()),
-                        );
-                      },
-                      child: Icon(
-                        Icons.fastfood,
-                        size: 70,
-                        color: Colors.orange,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 8),
-                    child: Text(
-                      "ออเดอร์",
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              //menu manage resteraunt
-              Column(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 40),
-                    child: FlatButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => OrganizeSeller()),
-                        );
-                      },
-                      child: Icon(
-                        Icons.settings,
-                        color: Colors.orange,
-                        size: 70,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 8),
-                    child: Text(
-                      "จัดการร้านค้า",
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              //feedback
-              Column(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 40),
-                    child: FlatButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FeedbackSeller()),
-                        );
-                      },
-                      child: Icon(
-                        Icons.rate_review,
-                        color: Colors.orange,
-                        size: 70,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 8),
-                    child: Text(
-                      "คำแนะนำ",
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              //summary
-              Column(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 40),
-                    child: FlatButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SummarySeller()),
-                        );
-                      },
-                      child: Icon(
-                        Icons.equalizer,
-                        color: Colors.orange,
-                        size: 70,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 8),
-                    child: Text(
-                      "ดูยอดขาย",
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-//          buttonSection1,
-//          buttonSection2,
-        ],
-      ),
+              
+          ],
+        ),
     );
   }
-  
 
+  Widget headerImage() =>
+  // _shopImg != null ?
+  // Image.network(
+      //   'https://disefood.s3-ap-southeast-1.amazonaws.com/'+'$_shopImg',
+      //   height: 160.0,
+      //   width: 430.0,
+      //   fit: BoxFit.cover,
+      // ):
+      // ,
+      CachedNetworkImage(
+        imageUrl: 'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
+        width: 430.0,
+        height: 160.0,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+        errorWidget: (context, url, error) => Icon(Icons.error));
 }
-
-_sideMenuSeller(UserProfile userData){
-  return SideMenuSeller(userData: userData,);
-}
-
-// class UserParam {
-//      final UserProfile userData;
-//      UserParam({
-//        @required this.userData,
-//      });
-//   }
-
-Widget headerImage = new Image.network(
-  'https://www.prachachat.net/wp-content/uploads/2018/05/3-1024x704-728x501.jpg',
-  height: 160.0,
-  width: 430.0,
-  fit: BoxFit.cover,
-);
-
- _titleSection(UserProfile userData) {
-   
-   return Container(
-  padding: EdgeInsets.all(10.0),
-  child: Row(
-    children: <Widget>[
-      Expanded(
-        child: ListTile(
-          leading: Container(
-            padding: EdgeInsets.only(top: 10.0),
-            child: Text(
-              "01",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24.0),
-            ),
-          ),
-          
-          title: Text(
-            '${userData.firstName}',
-            style: TextStyle(
-                fontSize: 24.0,
-                color: Colors.black,
-                fontWeight: FontWeight.bold),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text("อาหารเส้น"),
-              Container(
-                padding: EdgeInsets.only(top: 5.0),
-                child: Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.star,
-                      color: Colors.orange,
-                      size: 15.0,
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 5.0),
-                      child: Text("4.2"),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    ],
-  ),
-);
-}
-
-// class ParamUser{
-//     final UserProfile userData;
-//     ParamUser({ @required this.userData});
-// }
-
-//Widget buttonSection1 = Row(
-//  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//  children: <Widget>[
-//    _buildButtonColumn1(icon: Icons.fastfood, label: "ออเดอร์"),
-//    _buildButtonColumn2(icon: Icons.settings, label: "จัดการร้านค้า"),
-//  ],
-//);
-
-//Widget buttonSection2 = Row(
-//  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//  children: <Widget>[
-//    _buildButtonColumn3(icon: Icons.feedback, label: "คำแนะนำ"),
-//    _buildButtonColumn4(icon: Icons.equalizer, label: "ยอดขาย"),
-//  ],
-//);
-//
-//Column _buildButtonColumn1({IconData icon, String label}) {
-//  var iconColor = Colors.orange;
-//  return Column(
-//    children: <Widget>[
-//      Container(
-//        margin: EdgeInsets.only(top: 40),
-//        child: Icon(
-//          icon,
-//          color: iconColor,
-//          size: 70,
-//        ),
-//      ),
-//      Container(
-//        margin: EdgeInsets.only(top: 8),
-//        child: Text(
-//          label,
-//          style: TextStyle(
-//            fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500,
-//          ),
-//        ),
-//      )
-//    ],
-//  );
-//}
-//
-//Column _buildButtonColumn2({IconData icon, String label}) {
-//  var iconColor = Colors.orange;
-//  return Column(
-//    children: <Widget>[
-//      Container(
-//        margin: EdgeInsets.only(top: 40),
-//        child: Icon(
-//          icon,
-//          color: iconColor,
-//          size: 70,
-//        ),
-//      ),
-//      Container(
-//        margin: EdgeInsets.only(top: 8),
-//        child: Text(
-//          label,
-//          style: TextStyle(
-//            fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500,
-//          ),
-//        ),
-//      )
-//    ],
-//  );
-//}
-//
-//Column _buildButtonColumn3({IconData icon, String label}) {
-//  var iconColor = Colors.orange;
-//  return Column(
-//    children: <Widget>[
-//      Container(
-//        margin: EdgeInsets.only(top: 40),
-//        child: Icon(
-//          icon,
-//          color: iconColor,
-//          size: 70,
-//        ),
-//      ),
-//      Container(
-//        margin: EdgeInsets.only(top: 8),
-//        child: Text(
-//          label,
-//          style: TextStyle(
-//            fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500,
-//          ),
-//        ),
-//      )
-//    ],
-//  );
-//}
-//
-//Column _buildButtonColumn4({IconData icon, String label}) {
-//  var iconColor = Colors.orange;
-//  return Column(
-//    children: <Widget>[
-//      Container(
-//        margin: EdgeInsets.only(top: 40),
-//        child: Icon(
-//          icon,
-//          color: iconColor,
-//          size: 70,
-//        ),
-//      ),
-//      Container(
-//        margin: EdgeInsets.only(top: 8),
-//        child: Text(
-//          label,
-//          style: TextStyle(
-//            fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500,
-//          ),
-//        ),
-//      )
-//    ],
-//  );
-//}

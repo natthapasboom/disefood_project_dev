@@ -1,6 +1,8 @@
+import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:disefood/screen/menu_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderAmount extends StatefulWidget {
   final String foodName;
@@ -28,6 +30,12 @@ class _OrderAmountState extends State<OrderAmount> {
   int foodAmount = 1;
   bool isFoodRemove = false;
   int totalPrice;
+ String nameUser;
+  String lastNameUser;
+  String profileImg;
+  int userId;
+
+  
 
   List<int> amountList;
   _OrderAmountState(foodName, foodPrice, foodImage) {
@@ -67,9 +75,33 @@ class _OrderAmountState extends State<OrderAmount> {
     }
   }
 
+  Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    setState(() {
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      profileImg = preference.getString('profile_img');
+    });
+  }
+
+  @override
+  void initState() {
+    Future.microtask(() {
+      findUser();
+      
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      drawer: SideMenuCustomer(
+          firstName: nameUser,
+          userId: userId,
+          lastName: lastNameUser,
+          coverImg: profileImg),
       resizeToAvoidBottomPadding: false,
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(

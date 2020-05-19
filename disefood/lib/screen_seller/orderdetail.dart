@@ -1,15 +1,20 @@
 import 'dart:async';
 
+import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:disefood/component/sidemenu_seller.dart';
+import 'package:disefood/model/user_profile.dart';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class orderDetailSeller extends StatefulWidget {
+class OrderDetailSeller extends StatefulWidget {
+  static final route = "/order_detail_seller";
+ 
   @override
-  _orderDetailSellerState createState() => _orderDetailSellerState();
+  _OrderDetailSellerState createState() => _OrderDetailSellerState();
 }
 
-class _orderDetailSellerState extends State<orderDetailSeller> {
+class _OrderDetailSellerState extends State<OrderDetailSeller> {
   var totalminute;
   var totalhour;
   var currenthours;
@@ -17,6 +22,10 @@ class _orderDetailSellerState extends State<orderDetailSeller> {
   int addTimeAmount = 5;
   Timer timer;
   bool isthisbuttonselected = true;
+  String nameUser;
+  String lastNameUser;
+  String profileImg;
+  int userId;
   @override
   void initState() {
     currenthours = DateTime.now().hour;
@@ -32,12 +41,26 @@ class _orderDetailSellerState extends State<orderDetailSeller> {
       totalminute = (currentmin + 5) - 60;
     }
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getCurrentTime());
+    Future.microtask(() {
+      findUser();
+      
+    });
     super.initState();
   }
 
   void _getCurrentTime() {
     currenthours = DateTime.now().hour;
     currentmin = DateTime.now().minute;
+  }
+
+    Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    setState(() {
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      profileImg = preference.getString('profile_img');
+    });
   }
 
   void updateAddTimeStatus() {
@@ -75,12 +98,16 @@ class _orderDetailSellerState extends State<orderDetailSeller> {
       },
     );
   }
+//   _sideMenuSeller(UserProfile userData){
+//   return SideMenuSeller(userData: userData,);
+// }
 
   Future<void> _neverSatisfied() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
+        
         return AlertDialog(
           title: Text(
             'เพิ่มเวลา',
@@ -262,7 +289,13 @@ class _orderDetailSellerState extends State<orderDetailSeller> {
 
   @override
   Widget build(BuildContext context) {
+   
     return Scaffold(
+      drawer: SideMenuCustomer(
+          firstName: nameUser,
+          userId: userId,
+          lastName: lastNameUser,
+          coverImg: profileImg),
       appBar: AppBar(
         actions: <Widget>[
           Container(
@@ -279,7 +312,7 @@ class _orderDetailSellerState extends State<orderDetailSeller> {
           ),
         ],
       ),
-      drawer: SideMenuSeller(),
+      // drawer: _sideMenuSeller(params.userData),
       body: ListView(
         children: <Widget>[
           headerImage,

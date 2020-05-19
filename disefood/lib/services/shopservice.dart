@@ -9,7 +9,7 @@ Future<List<Shops>> fetchShops(http.Client client, int shopId) async {
     return compute(parseShops, response.body);
   } else {
     final response =
-        await client.get('http://10.0.2.2:8080/api/shops/+${shopId}');
+        await client.get('http://10.0.2.2:8080/api/shops/+$shopId');
     return compute(parseShops, response.body);
   }
 }

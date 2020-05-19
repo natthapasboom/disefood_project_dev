@@ -1,3 +1,4 @@
+import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/model/shops_list.dart';
 import 'package:disefood/screen/home_customer.dart';
@@ -23,10 +24,15 @@ class _MenuPageState extends State<MenuPage> {
   String shopName, shopImg;
   int shopId;
   bool isAmountHasValue = false;
-
+  String nameUser;
+  String lastNameUser;
+  String profileImg;
+  int userId;
   @override
   void initState() {
-    fetchShop();
+   Future.microtask(() {
+      findUser();
+    });
     super.initState();
   }
 
@@ -36,6 +42,15 @@ class _MenuPageState extends State<MenuPage> {
       shopName = preferences.getString('shop_name');
       shopId = preferences.getInt('shop_id');
       shopImg = preferences.getString('shop_img');
+    });
+  }
+   Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    setState(() {
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      profileImg = preference.getString('profile_img');
     });
   }
 
@@ -168,6 +183,11 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ],
         ),
+        drawer: SideMenuCustomer(
+          firstName: nameUser,
+          userId: userId,
+          lastName: lastNameUser,
+          coverImg: profileImg),
         body: SingleChildScrollView(
           child: FutureBuilder<List<FoodsList>>(
             future: fetchFoodsMenuPage(http.Client(), shopId),

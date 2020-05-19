@@ -20,13 +20,28 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String shopImg;
+  String nameUser;
+  String lastNameUser;
+  String profileImg;
+  int userId;
   Future<Null> _routeMenuById(Widget mywidget, Shops shops) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    await sharedPreferences.setInt('shop_id', shops.shopId);
-    await sharedPreferences.setString('shop_name', shops.name);
-    await sharedPreferences.setString('shop_img', shops.coverImage);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setInt('shop_id', shops.shopId);
+    await preferences.setString('shop_name', shops.name);
+    await preferences.setString('shop_img', shops.coverImage);
     MaterialPageRoute route = MaterialPageRoute(builder: (context) => mywidget);
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
+  }
+
+   Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    setState(() {
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      profileImg = preference.getString('profile_img');
+    });
   }
 
   Future<List<Shops>> fetchShop(int shopId) async {
@@ -47,7 +62,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final Home params = ModalRoute.of(context).settings.arguments;
+   
     return WillPopScope(
       onWillPop: () async => Navigator.push(
         context,
@@ -84,7 +99,11 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        // drawer: _sideMenuCustomer(params.userData), //EndAppbar
+        drawer: SideMenuCustomer(
+          firstName: nameUser,
+          userId: userId,
+          lastName: lastNameUser,
+          coverImg: profileImg), //EndAppbar
         body: FutureBuilder<List<Shops>>(
             future: fetchShops(http.Client(), 0),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -156,11 +175,6 @@ class _HomeState extends State<Home> {
   }
 }
 
-_sideMenuCustomer(UserProfile userData) {
-  return SideMenuCustomer(
-    userData: userData,
-  );
-}
 
 Widget headerSection = new Material(
   child: Container(

@@ -1,16 +1,9 @@
-import 'dart:convert';
-import 'package:disefood/component/sidemenu_seller.dart';
 import 'package:disefood/model/foods_list.dart';
-import 'package:disefood/model/user_profile.dart';
-import 'package:disefood/screen_seller/home_seller.dart';
-import 'package:disefood/screen_seller/widget/organize_seller.dart';
 import 'package:disefood/services/foodservice.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
-import 'package:disefood/services/foodservice.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'editmenu.dart';
 
 class OrganizeSellerPage extends StatefulWidget {
@@ -21,29 +14,35 @@ class OrganizeSellerPage extends StatefulWidget {
 
 class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   FoodsList foodslist = FoodsList();
-  
+
+  @override
+  void initState() {
+    Future.microtask(() async {
+      fetchNameFromStorage();
+    });
+    super.initState();
+  }
+
+  int _shopId;
+  String _name;
+
+  Future fetchNameFromStorage() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    final name = _prefs.getString('first_name');
+    final shopId = _prefs.getInt('shop_id');
+    setState(() {
+      _name = name;
+      _shopId = shopId;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final HomeSeller params = ModalRoute.of(context).settings.arguments;
+    print("Name = $_name");
+    print('$_shopId');
+
+    // final OrganizeSellerPage params = ModalRoute.of(context).settings.arguments;
     return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          Container(
-            padding: EdgeInsets.all(0),
-            margin: EdgeInsets.only(left: 0, top: 0, right: 170),
-            child: Center(
-              child: Text(
-                "Organize",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18),
-              ),
-            ),
-          ),
-        ],
-      ),
-      drawer: _sideMenuSeller(params.userData),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -64,14 +63,16 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
           ),
           Container(
             child: FutureBuilder(
-                future: getFoodsData(http.Client()),
+                future: getFoodsDataByID(http.Client(), _shopId),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   print(snapshot.data);
                   if (snapshot.data == null) {
                     return Container(
                       margin: EdgeInsets.only(top: 200),
                       child: Center(
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.amber[900],
+                        ),
                       ),
                     );
                   } else {
@@ -82,18 +83,17 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                           return Column(
                             children: <Widget>[
                               ListTile(
-                                leading:  Container(
-                                    margin: EdgeInsets.only(
-                                      left: 30,
-                                    ),
-                                    child: Text(
-                                      '${snapshot.data[index].name}',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                      ),
+                                leading: Container(
+                                  margin: EdgeInsets.only(
+                                    left: 30,
+                                  ),
+                                  child: Text(
+                                    '${snapshot.data[index].name}',
+                                    style: TextStyle(
+                                      fontSize: 18,
                                     ),
                                   ),
-                                
+                                ),
                                 trailing: Wrap(
                                   spacing: 12, // space between two icons
                                   children: <Widget>[
@@ -132,6 +132,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                               onPressed: () {},
                                             ),
                                     ),
+
                                     // icon-1
                                   ],
                                 ),
@@ -144,12 +145,30 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                   }
                 }),
           ),
+          Container(
+            child: ListTile(
+              leading: Container(
+                margin: EdgeInsets.only(
+                  left: 30,
+                ),
+                child: Text(
+                  'เพิ่มรายการอาหาร',
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.add_circle,
+                  color: Colors.amber[800],
+                ),
+                onPressed: () {},
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
-
-  _sideMenuSeller(UserProfile userData){
-  return SideMenuSeller(userData: userData,);
-}
 }
