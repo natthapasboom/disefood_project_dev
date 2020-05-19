@@ -52,7 +52,8 @@ class _LoginPageState extends State<LoginPage> {
                if(result.isSeller == 1){
                       Navigator.of(context).pushReplacementNamed(HomeSeller.routeName,arguments: HomeSeller(userData: result,));
                }else if (result.isSeller == 0){
-                      Navigator.of(context).pushReplacementNamed(Home.routeName,arguments: Home(userData: result,));
+                      Navigator.of(context).pushReplacementNamed(Home.routeName,arguments: Home());
+                      // userData: result,
                   // Navigator.of(context).pushReplacementNamed(Home.routeName,arguments: );
                }
           

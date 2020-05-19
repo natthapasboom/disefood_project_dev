@@ -27,7 +27,7 @@ void main() {
       appBarTheme: AppBarTheme(iconTheme: IconThemeData(color: Colors.white),),
       
     ),
-    home: LoginPage(),
+    home: Home(),
     initialRoute: '/',
     routes: {
       "/home_seller": (_) => HomeSeller(),
