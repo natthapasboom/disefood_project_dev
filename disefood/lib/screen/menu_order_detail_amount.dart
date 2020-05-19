@@ -1,30 +1,26 @@
+import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:disefood/screen/menu_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderAmount extends StatefulWidget {
   final String foodName;
   final int foodPrice;
   final String foodImage;
-  final int foodAmount;
-  final String shopName;
-  final int shopId;
-  final String shopImage;
-  final int foodId;
-  OrderAmount(
-      {Key key,
-      this.foodName,
-      this.foodPrice,
-      this.foodImage,
-      this.foodAmount,
-      this.shopId,
-      this.shopName,
-      this.shopImage,
-      this.foodId})
-      : super(key: key);
+
+  OrderAmount({
+    Key key,
+    this.foodName,
+    this.foodPrice,
+    this.foodImage,
+  }) : super(key: key);
   @override
-  _OrderAmountState createState() => _OrderAmountState(foodName, foodPrice,
-      foodImage, foodAmount, shopId, shopName, shopImage, foodId);
+  _OrderAmountState createState() => _OrderAmountState(
+        foodName,
+        foodPrice,
+        foodImage,
+      );
 }
 
 class _OrderAmountState extends State<OrderAmount> {
@@ -34,25 +30,23 @@ class _OrderAmountState extends State<OrderAmount> {
   int foodAmount = 1;
   bool isFoodRemove = false;
   int totalPrice;
-  String shopNameTemp;
-  int shopIdTemp;
-  String shopImageTemp;
-  int foodIdRecieve;
-  _OrderAmountState(foodName, foodPrice, foodImage, foodAmount, shopId,
-      shopName, shopImage, foodId) {
+ String nameUser;
+  String lastNameUser;
+  String profileImg;
+  int userId;
+
+  
+
+  List<int> amountList;
+  _OrderAmountState(foodName, foodPrice, foodImage) {
     this.foodNameRecieve = foodName;
     this.foodPriceRecieve = foodPrice;
     this.foodImageRecieve = foodImage;
     this.totalPrice = foodPrice;
-    this.shopIdTemp = shopId;
-    this.shopNameTemp = shopName;
-    this.shopImageTemp = shopImage;
-    this.foodIdRecieve = foodId;
-    if (foodAmount != null) {
-      this.foodAmount = foodAmount;
-    } else {
-      foodAmount = 1;
-    }
+  }
+
+  void takeAmountToList(index, amount) {
+    amountList[index] = amount;
   }
 
   void add() {
@@ -81,9 +75,33 @@ class _OrderAmountState extends State<OrderAmount> {
     }
   }
 
+  Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    setState(() {
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      profileImg = preference.getString('profile_img');
+    });
+  }
+
+  @override
+  void initState() {
+    Future.microtask(() {
+      findUser();
+      
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      drawer: SideMenuCustomer(
+          firstName: nameUser,
+          userId: userId,
+          lastName: lastNameUser,
+          coverImg: profileImg),
       resizeToAvoidBottomPadding: false,
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
@@ -245,14 +263,7 @@ class _OrderAmountState extends State<OrderAmount> {
                               pageBuilder: (BuildContext context,
                                   Animation<double> animation,
                                   Animation<double> secondaryAnimation) {
-                                return MenuPage(
-                                  shopId: shopIdTemp,
-                                  shopName: shopNameTemp,
-                                  shopImage: shopImageTemp,
-                                  foodAmount: foodAmount,
-                                  totalPrice: totalPrice,
-                                  foodId: foodIdRecieve,
-                                );
+                                return MenuPage();
                               },
                               transitionsBuilder: (BuildContext context,
                                   Animation<double> animation,
@@ -295,14 +306,7 @@ class _OrderAmountState extends State<OrderAmount> {
                               pageBuilder: (BuildContext context,
                                   Animation<double> animation,
                                   Animation<double> secondaryAnimation) {
-                                return MenuPage(
-                                  shopId: shopIdTemp,
-                                  shopName: shopNameTemp,
-                                  shopImage: shopImageTemp,
-                                  foodAmount: foodAmount,
-                                  totalPrice: totalPrice,
-                                  foodId: foodIdRecieve,
-                                );
+                                return MenuPage();
                               },
                               transitionsBuilder: (BuildContext context,
                                   Animation<double> animation,

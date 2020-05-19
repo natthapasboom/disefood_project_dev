@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:disefood/component/sidemenu_seller.dart';
 import 'package:disefood/model/user_profile.dart';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderDetailSeller extends StatefulWidget {
   static final route = "/order_detail_seller";
@@ -20,6 +22,10 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   int addTimeAmount = 5;
   Timer timer;
   bool isthisbuttonselected = true;
+  String nameUser;
+  String lastNameUser;
+  String profileImg;
+  int userId;
   @override
   void initState() {
     currenthours = DateTime.now().hour;
@@ -35,12 +41,26 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
       totalminute = (currentmin + 5) - 60;
     }
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getCurrentTime());
+    Future.microtask(() {
+      findUser();
+      
+    });
     super.initState();
   }
 
   void _getCurrentTime() {
     currenthours = DateTime.now().hour;
     currentmin = DateTime.now().minute;
+  }
+
+    Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    setState(() {
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      profileImg = preference.getString('profile_img');
+    });
   }
 
   void updateAddTimeStatus() {
@@ -271,6 +291,11 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   Widget build(BuildContext context) {
    
     return Scaffold(
+      drawer: SideMenuCustomer(
+          firstName: nameUser,
+          userId: userId,
+          lastName: lastNameUser,
+          coverImg: profileImg),
       appBar: AppBar(
         actions: <Widget>[
           Container(

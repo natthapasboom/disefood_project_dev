@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:image_picker_saver/image_picker_saver.dart';
 
 class PromptpayPage extends StatefulWidget {
@@ -12,6 +14,10 @@ class PromptpayPage extends StatefulWidget {
 }
 
 class _PromptpayPageState extends State<PromptpayPage> {
+  String nameUser;
+  String lastNameUser;
+  String profileImg;
+  int userId;
   File _image;
 
   static GlobalKey screen = new GlobalKey();
@@ -29,6 +35,26 @@ class _PromptpayPageState extends State<PromptpayPage> {
     setState(() {
       _image = image;
     });
+  }
+
+  
+
+Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    setState(() {
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      profileImg = preference.getString('profile_img');
+    });
+  }
+
+  @override
+  void initState() {
+    Future.microtask(() {
+      findUser();
+    });
+    super.initState();
   }
 
   @override
@@ -61,6 +87,11 @@ class _PromptpayPageState extends State<PromptpayPage> {
           ),
         ],
       ),
+      drawer: SideMenuCustomer(
+          firstName: nameUser,
+          userId: userId,
+          lastName: lastNameUser,
+          coverImg: profileImg),
       body: SingleChildScrollView(
         child: Container(
           color: Colors.grey[200],

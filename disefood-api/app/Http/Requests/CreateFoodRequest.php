@@ -15,10 +15,10 @@ class CreateFoodRequest extends BaseFormRequest
     public function rules(Request $request)
     {
         return [
-            'name'          => 'required|string',
+            'name'          => 'required|string|max:50',
             'price'         => 'required|integer',
             'status'        => 'required|boolean',
-            'cover_image'   => 'required|image',
+            'cover_image'   => 'image',
         ];
     }
 }

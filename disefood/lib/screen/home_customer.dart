@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:disefood/model/shops_list.dart';
+import 'package:disefood/model/user_profile.dart';
 import 'package:disefood/services/shopservice.dart';
 import 'package:disefood/screen/login_customer_page.dart';
 import 'package:disefood/screen/menu_page.dart';
@@ -10,38 +12,57 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
-   
+  //  final UserProfile userData;
+  //  Home({Key key, @required this.userData}):super(key:key);
   static const routeName = '/home_customer';
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  String shopImg;
   String nameUser;
   String lastNameUser;
+  String profileImg;
   int userId;
-  String coverImg;
-
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      findUser();
-    });
+  Future<Null> _routeMenuById(Widget mywidget, Shops shops) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setInt('shop_id', shops.shopId);
+    await preferences.setString('shop_name', shops.name);
+    await preferences.setString('shop_img', shops.coverImage);
+    MaterialPageRoute route = MaterialPageRoute(builder: (context) => mywidget);
+    Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
-    Future<Null> findUser() async {
+
+   Future<Null> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     setState(() {
       nameUser = preference.getString('first_name');
       userId = preference.getInt('user_id');
       lastNameUser = preference.getString('last_name');
-      coverImg = preference.getString('profile_img');
+      profileImg = preference.getString('profile_img');
     });
+  }
+
+  Future<List<Shops>> fetchShop(int shopId) async {
+    String url = "http://10.0.2.2:8080/api/shops/+$shopId";
+    try {
+      Dio dio = Dio();
+      Response response = await dio.get(url);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        print("Complete");
+        var result = Shops.fromJson(response.data);
+        _routeMenuById(MenuPage(), result);
+      }
+    } catch (e) {
+      print("$e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-     
+   
     return WillPopScope(
       onWillPop: () async => Navigator.push(
         context,
@@ -82,10 +103,9 @@ class _HomeState extends State<Home> {
           firstName: nameUser,
           userId: userId,
           lastName: lastNameUser,
-          coverImg: coverImg,
-        ), //EndAppbar
+          coverImg: profileImg), //EndAppbar
         body: FutureBuilder<List<Shops>>(
-            future: fetchShops(http.Client()),
+            future: fetchShops(http.Client(), 0),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
                 return Container(
@@ -101,16 +121,7 @@ class _HomeState extends State<Home> {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MenuPage(
-                                      shopId: snapshot.data[index].shopId,
-                                      shopName: snapshot.data[index].name,
-                                      shopImage:
-                                          'https://disefood.s3-ap-southeast-1.amazonaws.com/${snapshot.data[index].coverImage}'),
-                                ),
-                              );
+                              fetchShop(snapshot.data[index].shopId);
                             },
                             child: Card(
                               semanticContainer: true,

@@ -9,7 +9,7 @@ import 'dart:async';
 class ApiProvider {
   ApiProvider();
 
-  String url = 'http://127.0.0.1:8000';
+  String url = 'http://127.0.0.1:8080';
 
   Future<http.Response> doLogin(String username, String password) async {
     String _url = '$url/api/login';
@@ -25,7 +25,7 @@ class ApiProvider {
       String phone,
       File image,
       bool status) async {
-    String _url = 'http://127.0.0.1:8000/api/user';
+    String _url = 'http://127.0.0.1:8080/api/user';
     var fileContent = image.readAsBytesSync();
     var fileContentBase64 = base64.encode(fileContent);
     var body = {
@@ -53,7 +53,7 @@ class ApiProvider {
     File image,
     bool status,
   ) async {
-    String _url = 'http://10.0.2.2:8000/api/user/';
+    String _url = 'http://10.0.2.2:8080/api/user/';
 
     var fileContent = image.readAsBytesSync();
     var fileContentBase64 = base64.encode(fileContent);

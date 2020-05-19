@@ -5,6 +5,8 @@ import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class TruewalletPage extends StatefulWidget {
   @override
   _TruewalletPageState createState() => _TruewalletPageState();
@@ -12,10 +14,21 @@ class TruewalletPage extends StatefulWidget {
 
 class _TruewalletPageState extends State<TruewalletPage> {
   File _image;
-
+ String nameUser;
+  String lastNameUser;
+  String profileImg;
+  int userId;
   static GlobalKey screen = new GlobalKey();
 
   bool noupload = true;
+
+  @override
+  void initState() {
+    Future.microtask(() {
+      findUser();
+    });
+    super.initState();
+  }
 
   void imageUploaded() {
     setState(() {
@@ -30,6 +43,15 @@ class _TruewalletPageState extends State<TruewalletPage> {
     });
   }
 
+    Future<Null> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    setState(() {
+      nameUser = preference.getString('first_name');
+      userId = preference.getInt('user_id');
+      lastNameUser = preference.getString('last_name');
+      profileImg = preference.getString('profile_img');
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +82,11 @@ class _TruewalletPageState extends State<TruewalletPage> {
           ),
         ],
       ),
+      drawer: SideMenuCustomer(
+          firstName: nameUser,
+          userId: userId,
+          lastName: lastNameUser,
+          coverImg: profileImg),
       body: SingleChildScrollView(
         child: Container(
           color: Colors.grey[200],
