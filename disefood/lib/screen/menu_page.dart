@@ -9,25 +9,34 @@ import 'package:disefood/services/shopservice.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuPage extends StatefulWidget {
-  final int shopId;
-
   MenuPage({
     Key key,
-    this.shopId,
   }) : super(key: key);
   @override
-  _MenuPageState createState() => _MenuPageState(shopId);
+  _MenuPageState createState() => _MenuPageState();
 }
 
 class _MenuPageState extends State<MenuPage> {
-  int shopIdRecieve;
-
+  String shopName, shopImg;
+  int shopId;
   bool isAmountHasValue = false;
 
-  _MenuPageState(shopId) {
-    this.shopIdRecieve = shopId;
+  @override
+  void initState() {
+    fetchShop();
+    super.initState();
+  }
+
+  Future<Null> fetchShop() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      shopName = preferences.getString('shop_name');
+      shopId = preferences.getInt('shop_id');
+      shopImg = preferences.getString('shop_img');
+    });
   }
 
   @override
@@ -161,7 +170,7 @@ class _MenuPageState extends State<MenuPage> {
         ),
         body: SingleChildScrollView(
           child: FutureBuilder<List<FoodsList>>(
-            future: fetchFoodsMenuPage(http.Client(), shopIdRecieve),
+            future: fetchFoodsMenuPage(http.Client(), shopId),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
                 return Container(
@@ -173,98 +182,76 @@ class _MenuPageState extends State<MenuPage> {
                 return Container(
                   child: Column(
                     children: <Widget>[
-                      // Image.network(
-                      //   "",
-                      //   height: 200,
-                      //   width: double.maxFinite,
-                      //   fit: BoxFit.cover,
-                      // ),
+                      Image.network(
+                        "https://disefood.s3-ap-southeast-1.amazonaws.com/$shopImg",
+                        height: 200,
+                        width: double.maxFinite,
+                        fit: BoxFit.cover,
+                      ),
                       Container(
-                        // decoration: BoxDecoration(
-                        //   color: Colors.white,
-                        //   boxShadow: [
-                        //     BoxShadow(
-                        //       color: Colors.black.withOpacity(0.5),
-                        //       spreadRadius: -1,
-                        //       blurRadius: 10,
-                        //       offset:
-                        //           Offset(0, -8), // changes position of shadow
-                        //     ),
-                        //   ],
-                        // ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              spreadRadius: -1,
+                              blurRadius: 10,
+                              offset:
+                                  Offset(0, -8), // changes position of shadow
+                            ),
+                          ],
+                        ),
                         child: Column(
                           children: <Widget>[
-                            FutureBuilder<List<Shops>>(
-                                future:
-                                    fetchShops(http.Client(), shopIdRecieve),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot snapshot) {
-                                  if (snapshot.data == null) {
-                                    return Container(
-                                      alignment: Alignment.center,
-                                      margin:
-                                          EdgeInsets.only(top: 300, bottom: 10),
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  } else {
-                                    return Column(
-                                      children: <Widget>[
-                                        Container(
-                                          margin:
-                                              EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                          padding: EdgeInsets.only(left: 45),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Text(
-                                                "0" + "${shopIdRecieve}",
-                                                style: TextStyle(
-                                                    fontSize: 30,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Container(
-                                                height: 65,
-                                                child: VerticalDivider(
-                                                  color: Colors.orange,
-                                                  thickness: 3,
-                                                ),
-                                              ),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Text(
-                                                    "shopname#",
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  Text("ShopTypeValue"),
-                                                  Row(
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.star,
-                                                        color:
-                                                            Colors.orangeAccent,
-                                                        size: 20,
-                                                      ),
-                                                      Text("RateStarsValue"),
-                                                    ],
-                                                  ),
-                                                ],
-                                              )
-                                            ],
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                              padding: EdgeInsets.only(left: 45),
+                              child: Row(
+                                children: <Widget>[
+                                  Text(
+                                    "0" + "$shopId",
+                                    style: TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Container(
+                                    height: 65,
+                                    child: VerticalDivider(
+                                      color: Colors.orange,
+                                      thickness: 3,
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        "$shopName",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text("ShopTypeValue"),
+                                      Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            Icons.star,
+                                            color: Colors.orangeAccent,
+                                            size: 20,
                                           ),
-                                        ),
-                                        Divider(
-                                          thickness: 15,
-                                          color: Colors.grey[300],
-                                        ),
-                                      ],
-                                    );
-                                  }
-                                })
+                                          Text("RateStarsValue"),
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                            Divider(
+                              thickness: 15,
+                              color: Colors.grey[300],
+                            ),
+
                             //
                           ],
                         ),
@@ -328,17 +315,19 @@ class _MenuPageState extends State<MenuPage> {
                                             ),
                                           ),
                                           SizedBox(
-                                            width: 145,
+                                            width: 140,
                                             child: Text(
                                                 '${snapshot.data[index].name}'),
                                           ),
                                           SizedBox(
-                                            width: 20,
+                                            width: 30,
                                             child: Text(
-                                                '${snapshot.data[index].price}'),
+                                              '${snapshot.data[index].price}',
+                                              textAlign: TextAlign.center,
+                                            ),
                                           ),
                                           SizedBox(
-                                            width: 10,
+                                            width: 5,
                                           ),
                                           IconButton(
                                             icon: new Icon(

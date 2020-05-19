@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:disefood/model/shops_list.dart';
 import 'package:disefood/model/user_profile.dart';
 import 'package:disefood/services/shopservice.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   //  final UserProfile userData;
@@ -18,6 +20,31 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Future<Null> _routeMenuById(Widget mywidget, Shops shops) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.setInt('shop_id', shops.shopId);
+    await sharedPreferences.setString('shop_name', shops.name);
+    await sharedPreferences.setString('shop_img', shops.coverImage);
+    MaterialPageRoute route = MaterialPageRoute(builder: (context) => mywidget);
+    Navigator.pushAndRemoveUntil(context, route, (route) => false);
+  }
+
+  Future<List<Shops>> fetchShop(int shopId) async {
+    String url = "http://10.0.2.2:8080/api/shops/+$shopId";
+    try {
+      Dio dio = Dio();
+      Response response = await dio.get(url);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        print("Complete");
+        var result = Shops.fromJson(response.data);
+        _routeMenuById(MenuPage(), result);
+      }
+    } catch (e) {
+      print("$e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Home params = ModalRoute.of(context).settings.arguments;
@@ -75,17 +102,7 @@ class _HomeState extends State<Home> {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MenuPage(
-                                    shopId: snapshot.data[index].shopId,
-                                    // shopName: snapshot.data[index].name,
-                                    // shopImage:
-                                    //     'https://disefood.s3-ap-southeast-1.amazonaws.com/${snapshot.data[index].coverImage}'
-                                  ),
-                                ),
-                              );
+                              fetchShop(snapshot.data[index].shopId);
                             },
                             child: Card(
                               semanticContainer: true,
