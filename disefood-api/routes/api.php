@@ -18,11 +18,9 @@ use Illuminate\Support\Facades\Route;
 // });
 //SHOP
 Route::get('shops', 'ShopController@getShopsList');
+Route::get('shop/user/{user_id}', 'ShopController@getShopByUserId');
 Route::post('shop/{shop_id}', 'ShopController@addFoodToShop');
-
-
 Route::post('shop','ShopController@create');
-
 Route::put('shop/{shop_id}', 'ShopController@updateShop');
 Route::put('food/{food_id}', 'FoodController@updateFoodByFoodId');
 Route::get('shops/{shop_id}', 'ShopController@findShopById');

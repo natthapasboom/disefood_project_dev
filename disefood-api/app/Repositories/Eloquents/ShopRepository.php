@@ -39,4 +39,9 @@ class ShopRepository implements ShopRepositoryInterface
     {
         return $this->shop->where('shop_id', $shop_id)->update($shop);
     }
+
+    public function getShopByUserId($user_id)
+    {
+        return $this->shop->where('user_id',$user_id)->first();
+    }
 }

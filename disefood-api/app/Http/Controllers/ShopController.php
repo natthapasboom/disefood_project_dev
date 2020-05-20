@@ -34,6 +34,11 @@ class ShopController extends Controller
         return $this->shopRepo->get();
     }
 
+    public function getShopByUserId($user_id)
+    {
+        return $this->shopRepo->getShopByUserId($user_id);
+    }
+
     public function findShopById($shop_id)
     {
         $shop = $this->shopRepo->findById($shop_id);
