@@ -17,7 +17,7 @@ class CreateShopRequest extends BaseFormRequest
         return [
             'name'          => 'required|string|max:50',
             'shop_slot'     => 'required|integer',
-            'cover_image'   => 'image',
+//            'cover_image'   => 'image',
             'user_id'       => 'required|integer'
         ];
     }
