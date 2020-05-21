@@ -91,6 +91,8 @@ class _EditMenuPageState extends State<EditMenuPage> {
     }
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -247,6 +249,23 @@ class _EditMenuPageState extends State<EditMenuPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Expanded(
+                                 child: RaisedButton(
+                                  color: Colors.red,
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white),
+                                  ),
+                                ),
+                                
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 30),
+                              ),
+                              Expanded(
                                 child: Container(
                                   child: RaisedButton(
                                     color: Colors.green,
@@ -269,22 +288,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                       style: TextStyle(
                                           fontSize: 18, color: Colors.white),
                                     ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(left: 30),
-                              ),
-                              Expanded(
-                                child: RaisedButton(
-                                  color: Colors.red,
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white),
                                   ),
                                 ),
                               ),

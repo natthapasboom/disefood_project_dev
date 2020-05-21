@@ -116,7 +116,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "Noodle 1",
+                    "Noodle 2",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(

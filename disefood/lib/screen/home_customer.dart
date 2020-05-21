@@ -1,6 +1,8 @@
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/model/shops_list.dart';
-import 'package:disefood/model/user_profile.dart';
 import 'package:disefood/services/shopservice.dart';
 import 'package:disefood/screen/login_customer_page.dart';
 import 'package:disefood/screen/menu_page.dart';
@@ -9,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
@@ -20,21 +23,28 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final logger = Logger();
   String shopImg;
   String nameUser;
   String lastNameUser;
   String profileImg;
   int userId;
-  Future<Null> _routeMenuById(Widget mywidget, Shops shops) async {
+  Future<Null> _routeMenuById(
+      Widget mywidget, Shops shops, FoodsList foods) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setInt('shop_id', shops.shopId);
     await preferences.setString('shop_name', shops.name);
     await preferences.setString('shop_img', shops.coverImage);
+    await preferences.setInt('food_id', foods.foodId);
+    await preferences.setString('food_name', foods.name);
+    await preferences.setInt('food_price', foods.price);
+    await preferences.setString('food_img', foods.coverImage);
+
     MaterialPageRoute route = MaterialPageRoute(builder: (context) => mywidget);
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
 
-   Future<Null> findUser() async {
+  Future<Null> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     setState(() {
       nameUser = preference.getString('first_name');
@@ -44,25 +54,48 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<List<Shops>> fetchShop(int shopId) async {
-    String url = "http://10.0.2.2:8080/api/shops/+$shopId";
+  Future<List<Shops>> fetchShopAndFood(int shopId) async {
+    String shopUrl = "http://10.0.2.2:8080/api/shops/+$shopId";
+
     try {
       Dio dio = Dio();
-      Response response = await dio.get(url);
+      Response response = await dio.get(shopUrl);
       print(response.statusCode);
       if (response.statusCode == 200) {
-        print("Complete");
+        String foodUrl = "http://10.0.2.2:8080/api/shop/foods/+$shopId";
         var result = Shops.fromJson(response.data);
-        _routeMenuById(MenuPage(), result);
+        try {
+          Dio dio = Dio();
+          Response response = await dio.get(foodUrl);
+          if (response.statusCode == 200) {
+            var foodresultlogger = FoodsList.fromJson(response.data[0]);
+            // var foodresult = FoodsList.fromJson(response.data[0]);
+            // logger.d('${foodresult}');
+
+            // var jsonFood = foodresult.toJson();
+            _routeMenuById(MenuPage(), result, foodresultlogger);
+          }
+        } catch (e) {
+          print(e);
+        }
       }
     } catch (e) {
-      print("$e");
+      print(e);
     }
   }
+  
+  @override
+  void initState() {
+    findUser();
+    
+    super.initState();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
-   
+    print('shopId : $userId');
     return WillPopScope(
       onWillPop: () async => Navigator.push(
         context,
@@ -100,16 +133,19 @@ class _HomeState extends State<Home> {
           ],
         ),
         drawer: SideMenuCustomer(
-          firstName: nameUser,
-          userId: userId,
-          lastName: lastNameUser,
-          coverImg: profileImg), //EndAppbar
+            firstName: nameUser,
+            userId: userId,
+            lastName: lastNameUser,
+            coverImg: profileImg), //EndAppbar
         body: FutureBuilder<List<Shops>>(
             future: fetchShops(http.Client(), 0),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
                 return Container(
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(
+                      child: CircularProgressIndicator(
+                    backgroundColor: Colors.orange,
+                  )),
                 );
               } else {
                 return Column(
@@ -121,7 +157,7 @@ class _HomeState extends State<Home> {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
-                              fetchShop(snapshot.data[index].shopId);
+                              fetchShopAndFood(snapshot.data[index].shopId);
                             },
                             child: Card(
                               semanticContainer: true,
@@ -135,11 +171,17 @@ class _HomeState extends State<Home> {
                                     MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Image.network(
-                                      'https://disefood.s3-ap-southeast-1.amazonaws.com/${snapshot.data[index].coverImage}',
-                                      width: 380,
-                                      height: 210,
-                                      fit: BoxFit.cover),
+                                  CachedNetworkImage(
+                                    imageUrl:
+                                        'https://disefood.s3-ap-southeast-1.amazonaws.com/${snapshot.data[index].coverImage}',
+                                    width: 380,
+                                    height: 210,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Center(
+                                        child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
                                   ListTile(
                                     title: Text(
                                       "${snapshot.data[index].name}",
@@ -174,7 +216,6 @@ class _HomeState extends State<Home> {
     );
   }
 }
-
 
 Widget headerSection = new Material(
   child: Container(

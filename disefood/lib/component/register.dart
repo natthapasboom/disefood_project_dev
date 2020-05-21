@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class Regis extends StatefulWidget {
+  static const routeName = '/Regis';
   @override
   _RegisState createState() => _RegisState();
 }
@@ -31,12 +32,12 @@ class _RegisState extends State<Regis> {
     });
   }
 
-  Future<void> _register() async {
+  Future<Null> _register() async {
     print('before validate ==> ');
     if (_formKey.currentState.validate()) {
       print('after validate ==> ');
       // String url = "http://321514e0.ngrok.io/api/user";
-      String url = "http://10.0.2.2:8080/api/user";
+      String url = 'http://10.0.2.2:8080/api/user';
 
       try {
         print('after try ==> ');
@@ -48,37 +49,38 @@ class _RegisState extends State<Regis> {
           "first_name": _firstNameController.text.trim(),
           "last_name": _lastNameController.text.trim(),
           "tel": _phoneController.text.trim(),
-          "profile_img": await MultipartFile.fromFile(
-            _image.path,
-            filename: '${uuid.v4()}.png',
-          ),
+          // "profile_img" : _image,
+          // // "profile_img": await MultipartFile.fromFile(
+          // //   _image.path,
+          // //   filename: '${uuid.v4()}.png',
+          // // ),
           "is_seller": status,
         });
         print(formData.fields);
-        print(formData.files);
+        // print(formData.files);
         print('data : $formData');
         Response response = await dio.post(
           url,
-          data: formData,
+          // data: formData,
           // data: formData,
           // options:  Options(
           //  followRedirects: false,
           //  validateStatus: (status) { return status < 500; }
           //   ),
           // data: formData,
-          // data:{
-          // "username": _usernameController.text.trim(),
-          // "password": _passwordController.text.trim(),
-          // "first_name": _firstNameController.text.trim(),
-          // "last_name": _lastNameController.text.trim(),
-          // "tel": _phoneController.text.trim(),
+          data:{
+          "username": _usernameController.text.trim(),
+          "password": _passwordController.text.trim(),
+          "first_name": _firstNameController.text.trim(),
+          "last_name": _lastNameController.text.trim(),
+          "tel": _phoneController.text.trim(),
 
-          // // "profile_img": await MultipartFile.fromFile(
-          // //     _image.path,
-          // //      filename: '${uuid.v4()}.png',
-          // // ) ,
-          // "is_seller": status,
-          // },
+          // "profile_img": await MultipartFile.fromFile(
+          //     _image.path,
+          //      filename: '${uuid.v4()}.png',
+          // ) ,
+          "is_seller": status,
+          },
         );
 
         print('res : $response');
@@ -125,7 +127,7 @@ class _RegisState extends State<Regis> {
                 padding: EdgeInsets.only(top: 20),
                 child: Center(
                   child: Text(
-                    'Sign in',
+                    'สมัครสมาชิก',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 36,
@@ -200,12 +202,11 @@ class _RegisState extends State<Regis> {
             child: TextFormField(
               validator: (value) {
                 if (value.isEmpty) {
-                  return '*';
+                  return 'โปรดกรอกไอดี';
                 }
               },
-              // onChanged: (value) =>
-              //   _usernameController.text = value.trim()
-              // ,
+            
+              maxLength: 50,
               controller: _usernameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
@@ -228,18 +229,22 @@ class _RegisState extends State<Regis> {
             child: TextFormField(
               validator: (value) {
                 if (value.isEmpty) {
-                  return '*';
+                  return 'โปรดกรอกรหัสผ่าน';
                 }
               },
               // onChanged: (value) =>
               //   _passwordController.text = value.trim()
               // ,
               cursorColor: Colors.white,
+              maxLength: 50,
+              
               controller: _passwordController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'รหัสผ่าน',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
+                 border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(color: Colors.white)),
@@ -255,17 +260,20 @@ class _RegisState extends State<Regis> {
             child: TextFormField(
               validator: (value) {
                 if (value.isEmpty) {
-                  return '*';
+                  return 'โปรดกรอกชื่อ';
                 }
               },
               // onChanged: (value) =>
               //   _firstNameController.text = value.trim()
               // ,
+              maxLength: 50,
               controller: _firstNameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'ชื่อ',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
+                 border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(color: Colors.white)),
@@ -281,17 +289,20 @@ class _RegisState extends State<Regis> {
             child: TextFormField(
               validator: (value) {
                 if (value.isEmpty) {
-                  return '*';
+                  return 'โปรดกรอกนามสกุล';
                 }
               },
               // onChanged: (value) =>
               //   _lastNameController.text = value.trim()
               // ,
+              maxLength: 50,
               controller: _lastNameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'นามสกุล',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
+                 border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(color: Colors.white)),
@@ -308,15 +319,21 @@ class _RegisState extends State<Regis> {
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value.isEmpty) {
-                  return '*';
+                  return 'โปรดกรอกเบอร์โทร';
+                }
+                if(value != 10){
+                  return 'โปรดกรอกให้ครบ10หลัก';
                 }
               },
               //
+              maxLength: 10,
               controller: _phoneController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'เบอร์โทร',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
+                 border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(color: Colors.white)),
@@ -341,6 +358,7 @@ class _RegisState extends State<Regis> {
           ),
           _radiocheck(),
           _buttonRegister(),
+          _buttonCancel(),
         ],
       ),
     );
@@ -351,14 +369,37 @@ class _RegisState extends State<Regis> {
       margin: EdgeInsets.only(top: 20, bottom: 20),
       child: Center(
         child: RaisedButton(
-          color: Colors.amber[900],
+          color: Colors.green,
           onPressed: () {
             _register();
           },
           child: Container(
-            padding: EdgeInsets.only(left: 80, right: 80, top: 10, bottom: 10),
+            padding: EdgeInsets.only(left: 120, right: 120, top: 10, bottom: 10),
             child: Text(
               'สมัคร',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 18),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+   Widget _buttonCancel() {
+    return Container(
+      margin: EdgeInsets.only(top: 10, bottom: 20),
+      child: Center(
+        child: RaisedButton(
+          color: Colors.red,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Container(
+            padding: EdgeInsets.only(left: 120, right: 120, top: 10, bottom: 10),
+            child: Text(
+              'ยกเลิก',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -416,6 +457,7 @@ class _RegisState extends State<Regis> {
 
   bool selectedRadio = false;
   void initState() {
+    selectedRadio = null;
     // selectedRadio = false;
     super.initState();
   }

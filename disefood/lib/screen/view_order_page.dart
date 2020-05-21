@@ -38,11 +38,11 @@ class ViewOrder extends StatelessWidget {
             ),
           ],
         ),
-        drawer: SideMenuCustomer(
-          firstName: nameUser,
-          userId: userId,
-          lastName: lastNameUser,
-          coverImg: profileImg),
+        // drawer: SideMenuCustomer(
+        //   firstName: nameUser,
+        //   userId: userId,
+        //   lastName: lastNameUser,
+        //   coverImg: profileImg),
         body: Container(
           child: Column(
             children: <Widget>[

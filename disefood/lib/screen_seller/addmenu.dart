@@ -22,8 +22,8 @@ class AddMenu extends StatefulWidget {
 }
 
 class _AddMenuState extends State<AddMenu> {
-   int _shopId;
-  
+  int _shopId;
+
   bool status;
   var selectOnStock;
   var selectOutOfStock;
@@ -41,14 +41,12 @@ class _AddMenuState extends State<AddMenu> {
 
   Future fetchNameFromStorage() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    
+
     final shopId = _prefs.getInt('shop_id');
     setState(() {
-      
       _shopId = shopId;
     });
   }
-
 
   final _formKey = GlobalKey<FormState>();
   bool newValue = true;
@@ -59,10 +57,10 @@ class _AddMenuState extends State<AddMenu> {
         actions: <Widget>[
           Container(
             padding: EdgeInsets.all(0),
-            margin: EdgeInsets.only(left: 0, top: 0, right: 170),
+            margin: EdgeInsets.only(left: 0, top: 0, right: 151),
             child: Center(
               child: Text(
-                "Add Menu",
+                "เพื่มรายการอาหาร",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -189,8 +187,8 @@ class _AddMenuState extends State<AddMenu> {
                               title: Text("ของหมด"),
                               value: false,
                               groupValue: selectedRadio,
-                              onChanged: (val) {
-                                print("Radio $val");
+                              onChanged: (newValue) {
+                                print("สถานะ = $newValue");
                                 setSelectedRadio(newValue);
                                 status = newValue;
                               },
@@ -206,61 +204,6 @@ class _AddMenuState extends State<AddMenu> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Expanded(
-                                child: Container(
-                                  child: RaisedButton(
-                                    color: Colors.green,
-                                    onPressed: () async {
-                                      final form = _formKey.currentState;
-                                      if (form.validate()) {
-                                        form.save();
-                                        int _price =
-                                            int.parse(priceController.text);
-                                          
-                                        Future<void> _insertFood() async {
-                                          String _url =
-                                              'http://127.0.0.1:8080/api/shop/$_shopId';
-                                          try {
-                                            var formData = FormData.fromMap({
-                                              "name": nameController,
-                                              "price": _price,
-                                              "status": status,
-                                            });
-                                            print(formData.fields);
-                                            Response response =
-                                                await Dio().post(
-                                              _url,
-                                              data: formData,
-                                            );
-                                            print('res : ${response.data}');
-                                            print(response.statusCode);
-                                            if (response.statusCode == 200) {
-                                              print(
-                                              'response : ${response.data}');
-                                              print('Success');
-                                              Navigator.of(context).pushReplacementNamed(OrganizeSellerPage.route);
-
-                                            }else{
-                                              print('error code');
-                                            }
-                                          } catch (error) {
-                                             print('error: $error');
-                                          }
-                                        }
-                                        _insertFood();
-                                      }
-                                    },
-                                    child: Text(
-                                      'Save',
-                                      style: TextStyle(
-                                          fontSize: 18, color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(left: 30),
-                              ),
-                              Expanded(
                                 child: RaisedButton(
                                   color: Colors.red,
                                   onPressed: () {
@@ -270,6 +213,113 @@ class _AddMenuState extends State<AddMenu> {
                                     'Cancel',
                                     style: TextStyle(
                                         fontSize: 18, color: Colors.white),
+                                  ),
+                                ),
+                                // child: Container(
+                                //   child: RaisedButton(
+                                //     color: Colors.green,
+                                //     onPressed: () async {
+                                //       final form = _formKey.currentState;
+                                //       if (form.validate()) {
+
+                                //         form.save();
+                                //         int _price =
+                                //             int.parse(priceController.text);
+
+                                //           String _url =
+                                //               'http://10.0.2.2:8080/api/shop/$_shopId';
+                                //           try {
+                                //             var formData = FormData.fromMap({
+                                //               "name": nameController,
+                                //               "price": _price,
+                                //               "status": status,
+                                //             });
+                                //             print(formData.fields);
+                                //             Response response =
+                                //                 await Dio().post(
+                                //               _url,
+                                //               data: {
+                                //                 'name': nameController.text,
+                                //                 'price': _price,
+                                //                 'status': status,
+                                //               },
+                                //             );
+                                //             print('res : ${response.data}');
+                                //             print(response.statusCode);
+                                //             if (response.statusCode == 201) {
+                                //               print(
+                                //                   'response : ${response.data}');
+                                //               print('Success');
+                                //              Navigator.pop(context);
+                                //               // Navigator.pop(context);
+                                //             } else {
+                                //               print('error code');
+                                //             }
+                                //           } catch (error) {
+                                //             print('error: $error');
+                                //           }
+                                //         }
+                                //     },
+                                //     child: Text(
+                                //       'Save',
+                                //       style: TextStyle(
+                                //           fontSize: 18, color: Colors.white),
+                                //     ),
+                                //   ),
+                                // ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 30),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  child: RaisedButton(
+                                    color: Colors.green,
+                                    onPressed: () async {
+                                      final form = _formKey.currentState;
+                                      if (form.validate()) {
+                                        form.save();
+                                        int _price =
+                                            int.parse(priceController.text);
+
+                                        String _url =
+                                            'http://10.0.2.2:8080/api/shop/$_shopId';
+                                        try {
+                                          var formData = FormData.fromMap({
+                                            "name": nameController,
+                                            "price": _price,
+                                            "status": status,
+                                          });
+                                          print(formData.fields);
+                                          Response response = await Dio().post(
+                                            _url,
+                                            data: {
+                                              'name': nameController.text,
+                                              'price': _price,
+                                              'status': status,
+                                            },
+                                          );
+                                          print('res : ${response.data}');
+                                          print(response.statusCode);
+                                          if (response.statusCode == 201) {
+                                            print(
+                                                'response : ${response.data}');
+                                            print('Success');
+                                            Navigator.pop(context);
+                                            // Navigator.pop(context);
+                                          } else {
+                                            print('error code');
+                                          }
+                                        } catch (error) {
+                                          print('error: $error');
+                                        }
+                                      }
+                                    },
+                                    child: Text(
+                                      'Save',
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.white),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -290,7 +340,7 @@ class _AddMenuState extends State<AddMenu> {
 
   bool selectedRadio = false;
   void initState() {
-     Future.microtask(() async {
+    Future.microtask(() async {
       fetchNameFromStorage();
     });
     selectedRadio = null;

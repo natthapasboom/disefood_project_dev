@@ -87,11 +87,11 @@ Future<Null> findUser() async {
           ),
         ],
       ),
-      drawer: SideMenuCustomer(
-          firstName: nameUser,
-          userId: userId,
-          lastName: lastNameUser,
-          coverImg: profileImg),
+      // drawer: SideMenuCustomer(
+      //     firstName: nameUser,
+      //     userId: userId,
+      //     lastName: lastNameUser,
+      //     coverImg: profileImg),
       body: SingleChildScrollView(
         child: Container(
           color: Colors.grey[200],
