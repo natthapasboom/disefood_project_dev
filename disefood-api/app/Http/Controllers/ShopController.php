@@ -39,7 +39,7 @@ class ShopController extends Controller
         $shop = $this->shopRepo->getShopByUserId($user_id);
         if($shop == null)
         {
-            return response('shop not found', 400);
+            return response('shop not found', 404);
         }else{
             return $shop;
         }
