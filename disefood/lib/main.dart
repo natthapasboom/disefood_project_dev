@@ -37,6 +37,8 @@ void main() {
     home: LoginPage(),
     initialRoute: '/',
     routes: {
+      Regis.routeName: (_) => Regis(),
+      CreateShop.routeName: (_) => CreateShop(),
       AddMenu.route: (_) => AddMenu(),
       Homepage.routeName: (_) => Homepage(),
       "/home_seller": (_) => HomeSeller(),

@@ -1,17 +1,90 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:disefood/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class CreateShop extends StatefulWidget {
+  static const routeName = '/create_seller';
   @override
   _CreateShopState createState() => _CreateShopState();
 }
 
 class _CreateShopState extends State<CreateShop> {
+  bool _isEdit = false;
+  
+  String _shopName;
+  int _shopId;
+  String _shopImg;
+  int _shopSlot;
+
+@override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      
+      fetchShopFromStorage();
+    });
+  }
+  
+    
+
+
+  Future<Null> fetchShopFromStorage() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    
+    final shopName = _prefs.getString('shop_name');
+    final shopId = _prefs.getInt('shop_id');
+    final shopImg = _prefs.getString('cover_img');
+    final shopSlot = _prefs.getInt('shop_slot');
+    setState(() {
+      _shopName = shopName;
+      _shopId = shopId;
+      _shopImg = shopImg;
+      _shopSlot = shopSlot;
+    });
+  }
+
+  Widget _checkImage() {
+    if (_isEdit) {
+      if (_image != null) {
+        return Image.file(
+          _image,
+          fit: BoxFit.cover,
+          height: 150,
+          width: 500,
+        );
+      } else {
+        return Center(
+          child: IconButton(
+            onPressed: () {
+              getImage();
+              setState(() {
+                _isEdit = true;
+                Image.file(_image);
+              });
+            },
+            iconSize: 36,
+            color: Colors.white,
+            icon: Icon(Icons.add_a_photo),
+          ),
+        );
+      }
+    } else {
+      return CachedNetworkImage(
+        imageUrl: '${AppConfig.image}$_shopImg',
+        height: 150,
+        width: 500,
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
   File _image;
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -32,7 +105,7 @@ class _CreateShopState extends State<CreateShop> {
             margin: EdgeInsets.only(left: 0, top: 0, right: 140),
             child: Center(
               child: Text(
-                "สร้างร้านค้า",
+                "แก้ไขร้านค้า",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -63,11 +136,15 @@ class _CreateShopState extends State<CreateShop> {
     return Container(
       height: 150,
       color: Colors.amber,
-      child: _image == null
+      child: _shopImg == null
           ? Center(
               child: IconButton(
                 onPressed: () {
                   getImage();
+                  setState(() {
+                    _isEdit = true;
+                    Image.file(_image);
+                  });
                 },
                 iconSize: 36,
                 color: Colors.white,
@@ -75,26 +152,39 @@ class _CreateShopState extends State<CreateShop> {
               ),
             )
           : Container(
-              child: Image.file(
-                _image,
+              child: CachedNetworkImage(
+                imageUrl: 'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
                 height: 150,
                 width: 500,
                 fit: BoxFit.cover,
               ),
-              
+              // child: Image.file(
+              //   _shopImg,
+              //   height: 150,
+              //   width: 500,
+              //   fit: BoxFit.cover,
+              // ),
             ),
+          
     );
   }
 
   Widget _buildform() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          margin: EdgeInsets.only(top: 80, left: 40, right: 40, bottom: 10),
+          margin: EdgeInsets.only(top: 30, left: 40, right: 40, bottom: 10),
+          child: Text(
+            'ชื่อร้านค้า :'
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
           child: TextFormField(
             controller: _shopNameController,
             decoration: InputDecoration(
-              labelText: 'กรอกชื่อร้าน',
+              labelText: '$_shopName',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(color: Colors.orange),
@@ -103,11 +193,17 @@ class _CreateShopState extends State<CreateShop> {
           ),
         ),
         Container(
-          margin: EdgeInsets.only(top: 20, left: 40, right: 40, bottom: 10),
+          margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
+          child: Text(
+            'สล็อตของร้าน :'
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
           child: TextFormField(
             controller: _shopSlotController,
             decoration: InputDecoration(
-              labelText: 'กรอกล็อตของร้าน',
+              labelText: '$_shopSlot',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(color: Colors.orange),
@@ -128,7 +224,8 @@ class _CreateShopState extends State<CreateShop> {
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: Container(
-            padding: EdgeInsets.only(top: 12, bottom: 12, left: 120, right: 120),
+            padding:
+                EdgeInsets.only(top: 12, bottom: 12, left: 120, right: 120),
             child: Text(
               'ยืนยัน',
               style: TextStyle(
@@ -147,8 +244,8 @@ class _CreateShopState extends State<CreateShop> {
   Future<void> _createShop() async {
     Dio dio = Dio();
     var uuid = Uuid();
-    String url = 'http://10.0.2.2:8080/api/shop';
-    
+    String url = 'http://10.0.2.2:8080/api/shop/$_shopId';
+
     try {
       var formData = FormData.fromMap({
         "name": _shopNameController.text.trim(),
@@ -160,7 +257,7 @@ class _CreateShopState extends State<CreateShop> {
       });
 
       print(formData.fields);
-      Response response = await dio.post(
+      Response response = await dio.put(
         url,
         data: formData,
         options: Options(
@@ -169,24 +266,18 @@ class _CreateShopState extends State<CreateShop> {
               return status < 500;
             }),
       );
-        response.headers.set('content-type', 'application/json');
-        
-        print('status : ${response.statusCode}');
-        if (response.statusCode == 200) {
-        
-          print('response : ${response.data}');
-          print('Success');
-          Scaffold.of(context).showSnackBar(new SnackBar(
-            content: new Text("Shop Create"),
-          ));
-        } else {
-          print('error code');
-          Map<String, dynamic> _responseMap = json.decode(response.data);
-          Scaffold.of(context).showSnackBar(new SnackBar(
-            content: new Text(_responseMap['message']),
-          ));
-        }
+      response.headers.set('content-type', 'application/json');
 
+      print('status : ${response.statusCode}');
+      if (response.statusCode == 200) {
+        print('response : ${response.data}');
+        print('Success');
+        
+      } else {
+        print('error code');
+      
+       
+      }
     } catch (error) {
       print('error: $error');
     }

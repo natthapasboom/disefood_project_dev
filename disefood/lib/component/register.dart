@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class Regis extends StatefulWidget {
+  static const routeName = '/Regis';
   @override
   _RegisState createState() => _RegisState();
 }
@@ -31,12 +32,12 @@ class _RegisState extends State<Regis> {
     });
   }
 
-  Future<void> _register() async {
+  Future<Null> _register() async {
     print('before validate ==> ');
     if (_formKey.currentState.validate()) {
       print('after validate ==> ');
       // String url = "http://321514e0.ngrok.io/api/user";
-      String url = "http://10.0.2.2:8080/api/user";
+      String url = 'http://10.0.2.2:8080/api/user';
 
       try {
         print('after try ==> ');
@@ -48,37 +49,38 @@ class _RegisState extends State<Regis> {
           "first_name": _firstNameController.text.trim(),
           "last_name": _lastNameController.text.trim(),
           "tel": _phoneController.text.trim(),
-          "profile_img": await MultipartFile.fromFile(
-            _image.path,
-            filename: '${uuid.v4()}.png',
-          ),
+          // "profile_img" : _image,
+          // // "profile_img": await MultipartFile.fromFile(
+          // //   _image.path,
+          // //   filename: '${uuid.v4()}.png',
+          // // ),
           "is_seller": status,
         });
         print(formData.fields);
-        print(formData.files);
+        // print(formData.files);
         print('data : $formData');
         Response response = await dio.post(
           url,
-          data: formData,
+          // data: formData,
           // data: formData,
           // options:  Options(
           //  followRedirects: false,
           //  validateStatus: (status) { return status < 500; }
           //   ),
           // data: formData,
-          // data:{
-          // "username": _usernameController.text.trim(),
-          // "password": _passwordController.text.trim(),
-          // "first_name": _firstNameController.text.trim(),
-          // "last_name": _lastNameController.text.trim(),
-          // "tel": _phoneController.text.trim(),
+          data:{
+          "username": _usernameController.text.trim(),
+          "password": _passwordController.text.trim(),
+          "first_name": _firstNameController.text.trim(),
+          "last_name": _lastNameController.text.trim(),
+          "tel": _phoneController.text.trim(),
 
-          // // "profile_img": await MultipartFile.fromFile(
-          // //     _image.path,
-          // //      filename: '${uuid.v4()}.png',
-          // // ) ,
-          // "is_seller": status,
-          // },
+          // "profile_img": await MultipartFile.fromFile(
+          //     _image.path,
+          //      filename: '${uuid.v4()}.png',
+          // ) ,
+          "is_seller": status,
+          },
         );
 
         print('res : $response');

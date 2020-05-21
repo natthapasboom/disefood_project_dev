@@ -59,10 +59,17 @@ class _HomeState extends State<Home> {
       print("$e");
     }
   }
+  
+  @override
+  void initState() {
+    findUser();
+    
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-   
+    print('shopId : $userId');
     return WillPopScope(
       onWillPop: () async => Navigator.push(
         context,

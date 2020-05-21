@@ -56,7 +56,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
             key: new Key(items[i]),
             child: Container(
               margin: EdgeInsets.all(20),
-              height: 335,
+              height: 338,
               child: InkWell(
                 child: Card(
                   elevation: 8,
@@ -184,6 +184,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                       Transform.translate(
                         offset: Offset(2, -15),
                         child: Container(
+                          
                           child: Row(
                             children: <Widget>[
                               ButtonBar(

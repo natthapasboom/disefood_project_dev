@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/screen_seller/create_shop.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:disefood/component/feedback_seller_bottombar.dart';
@@ -38,6 +39,7 @@ class _HomeSellerState extends State<HomeSeller> {
   int _shopId;
   String _shopImg;
   bool _isLoading = false;
+  int _shopSlot;
   @override
   void initState() {
     super.initState();
@@ -69,11 +71,13 @@ class _HomeSellerState extends State<HomeSeller> {
     final shopName = _prefs.getString('shop_name');
     final shopId = _prefs.getInt('shop_id');
     final shopImg = _prefs.getString('cover_img'); 
+    final shopSlot = _prefs.getInt('shop_slot');
     setState(() {
       _shopName = shopName;
       _shopId = shopId;
       _shopImg = shopImg; 
       _isLoading = false;  
+      _shopSlot = shopSlot;
     }); 
   }
 
@@ -98,7 +102,7 @@ class _HomeSellerState extends State<HomeSeller> {
                     leading: Container(
                       padding: EdgeInsets.only(top: 10.0),
                       child: Text(
-                        "$_shopId",
+                        "$_shopSlot",
                         style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -145,7 +149,42 @@ class _HomeSellerState extends State<HomeSeller> {
             height: 13.0,
             color: Colors.black12,
           ),
-              
+              Container(
+                  child: _shopId == null?
+                  Center(
+                    child: IconButton(icon: Icon(Icons.add_circle,color: Colors.amber[900],),onPressed: (){
+
+                    },),
+                  ):
+                  Column(
+                    
+                    children: <Widget>[
+                      Container(
+
+                        margin: EdgeInsets.only(bottom: 20,right: 30,top: 75),
+                        
+                        child: IconButton(icon: Icon(Icons.store,color: Colors.amber[800],size: 64,),
+                        onPressed: (){
+                          Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            CreateShop(
+                                                              
+                                                            )));
+                        },
+                        ),
+                      
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Center(
+                          child: Text('แก้ไขร้านอาหาร',style: TextStyle(fontSize: 18,),),
+                        ),
+                      )
+                    ],
+                  ),
+              ),
           ],
         ),
     );

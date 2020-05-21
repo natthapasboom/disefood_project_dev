@@ -32,7 +32,7 @@ class FoodController extends Controller
         $food_beforeUpdate = $this->foodRepo->findByFoodId($food_id);
         $path_beforeUpdate = $food_beforeUpdate['cover_image'];
         Storage::disk('s3')->delete($path_beforeUpdate);
-        $food['cover_image'] = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'), 'public');
+        // $food['cover_image'] = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'), 'public');
 
         $this->foodRepo->update($food, $food_id);
         return $this->foodRepo->findByFoodId($food_id);

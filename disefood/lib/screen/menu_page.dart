@@ -32,6 +32,7 @@ class _MenuPageState extends State<MenuPage> {
   void initState() {
    Future.microtask(() {
       findUser();
+      fetchShop();
     });
     super.initState();
   }
@@ -56,6 +57,7 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('shopId : $shopId');
     return WillPopScope(
       onWillPop: () async => Navigator.push(
         context,
@@ -183,11 +185,11 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ],
         ),
-        drawer: SideMenuCustomer(
-          firstName: nameUser,
-          userId: userId,
-          lastName: lastNameUser,
-          coverImg: profileImg),
+        // drawer: SideMenuCustomer(
+        //   firstName: nameUser,
+        //   userId: userId,
+        //   lastName: lastNameUser,
+        //   coverImg: profileImg),
         body: SingleChildScrollView(
           child: FutureBuilder<List<FoodsList>>(
             future: fetchFoodsMenuPage(http.Client(), shopId),

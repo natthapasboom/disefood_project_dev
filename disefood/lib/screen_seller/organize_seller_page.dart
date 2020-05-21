@@ -1,4 +1,5 @@
 import 'package:disefood/model/foods_list.dart';
+import 'package:disefood/screen_seller/addmenu.dart';
 import 'package:disefood/services/foodservice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -46,12 +47,29 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(left: 40, top: 30),
-            child: Text(
-              "รายการอาหาร",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            ),
+          Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(left: 40, top: 30),
+                child: Text(
+                  "รายการอาหาร",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 150, top: 38),
+                child: IconButton(
+                icon: Icon(
+                  Icons.add_circle,
+                  color: Colors.amber[800],
+                ),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AddMenu()));
+                }
+                ),
+              ),
+            ],
           ),
           Container(
             padding: EdgeInsets.only(top: 10),
@@ -145,28 +163,32 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                   }
                 }),
           ),
-          Container(
-            child: ListTile(
-              leading: Container(
-                margin: EdgeInsets.only(
-                  left: 30,
-                ),
-                child: Text(
-                  'เพิ่มรายการอาหาร',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              trailing: IconButton(
-                icon: Icon(
-                  Icons.add_circle,
-                  color: Colors.amber[800],
-                ),
-                onPressed: () {},
-              ),
-            ),
-          ),
+          // Container(
+           
+          //   child: ListTile(
+          //     leading: Container(
+          //       margin: EdgeInsets.only(
+          //         left: 30,
+          //       ),
+          //       child: Text(
+          //         'เพิ่มรายการอาหาร',
+          //         style: TextStyle(
+          //           fontSize: 18,
+          //         ),
+          //       ),
+          //     ),
+          //     trailing: IconButton(
+          //       icon: Icon(
+          //         Icons.add_circle,
+          //         color: Colors.amber[800],
+          //       ),
+          //       onPressed: () {
+          //         Navigator.push(context,
+          //             MaterialPageRoute(builder: (context) => AddMenu()));
+          //       },
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
