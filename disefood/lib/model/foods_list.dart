@@ -8,6 +8,8 @@ class FoodsList {
   String createdAt;
   String updatedAt;
 
+  int quantity=0;
+
   FoodsList(
       {this.foodId,
       this.shopId,
@@ -16,7 +18,8 @@ class FoodsList {
       this.status,
       this.coverImage,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.quantity});
 
   FoodsList.fromJson(Map<String, dynamic> json) {
     foodId = json['food_id'];
@@ -39,6 +42,8 @@ class FoodsList {
     data['cover_image'] = this.coverImage;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    data['quantity'] = this.quantity;
+    
     return data;
   }
 }

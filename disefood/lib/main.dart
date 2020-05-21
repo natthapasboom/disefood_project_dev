@@ -34,7 +34,7 @@ void main() {
         iconTheme: IconThemeData(color: Colors.white),
       ),
     ),
-    home: Home(),
+    home: LoginPage(),
     initialRoute: '/',
     routes: {
       AddMenu.route: (_) => AddMenu(),
