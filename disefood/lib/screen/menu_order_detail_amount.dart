@@ -1,48 +1,37 @@
 import 'package:disefood/component/sidemenu_customer.dart';
+import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/screen/menu_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderAmount extends StatefulWidget {
-  final String foodName;
-  final int foodPrice;
-  final String foodImage;
-
-  OrderAmount({
-    Key key,
-    this.foodName,
-    this.foodPrice,
-    this.foodImage,
-  }) : super(key: key);
+  final List<FoodsList> foodList;
+  final int index;
+  OrderAmount({Key key, @required this.foodList, @required this.index})
+      : super(key: key);
   @override
-  _OrderAmountState createState() => _OrderAmountState(
-        foodName,
-        foodPrice,
-        foodImage,
-      );
+  _OrderAmountState createState() => _OrderAmountState(foodList, index);
 }
 
 class _OrderAmountState extends State<OrderAmount> {
-  String foodNameRecieve;
-  int foodPriceRecieve;
-  String foodImageRecieve;
+  List<FoodsList> foodList;
+  int index;
   int foodAmount = 1;
   bool isFoodRemove = false;
   int totalPrice;
- String nameUser;
+//API USER
+  String nameUser;
   String lastNameUser;
   String profileImg;
   int userId;
 
-  
+
 
   List<int> amountList;
-  _OrderAmountState(foodName, foodPrice, foodImage) {
-    this.foodNameRecieve = foodName;
-    this.foodPriceRecieve = foodPrice;
-    this.foodImageRecieve = foodImage;
-    this.totalPrice = foodPrice;
+  _OrderAmountState(foodList, index) {
+    this.foodList = foodList;
+    this.index = index;
   }
 
   void takeAmountToList(index, amount) {
@@ -52,7 +41,7 @@ class _OrderAmountState extends State<OrderAmount> {
   void add() {
     foodAmount++;
     checkButtonRemove();
-    totalPrice = totalPrice + foodPriceRecieve;
+    totalPrice = totalPrice + foodList[index].price;
     setState(() {});
   }
 
@@ -60,7 +49,7 @@ class _OrderAmountState extends State<OrderAmount> {
     if (foodAmount > 0) {
       foodAmount--;
       checkButtonRemove();
-      totalPrice = totalPrice - foodPriceRecieve;
+     totalPrice = totalPrice - foodList[index].price;
       setState(() {});
     }
   }
@@ -89,7 +78,7 @@ class _OrderAmountState extends State<OrderAmount> {
   void initState() {
     Future.microtask(() {
       findUser();
-      
+      totalPrice = foodList[index].price;
     });
     super.initState();
   }
@@ -149,7 +138,7 @@ class _OrderAmountState extends State<OrderAmount> {
                             image: DecorationImage(
                               fit: BoxFit.fill,
                               image: NetworkImage(
-                                "https://disefood.s3-ap-southeast-1.amazonaws.com/${foodImageRecieve}",
+                                "https://disefood.s3-ap-southeast-1.amazonaws.com/${foodList[index].coverImage}",
                               ),
                             ),
                           ),
@@ -161,7 +150,7 @@ class _OrderAmountState extends State<OrderAmount> {
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.fromLTRB(20, 10, 0, 10),
                     child: Text(
-                      "${foodNameRecieve}",
+                      "${foodList[index].name}",
                       style: TextStyle(fontSize: 20),
                     ),
                   ),
@@ -300,6 +289,7 @@ class _OrderAmountState extends State<OrderAmount> {
                       replacement: RaisedButton(
                         color: Colors.orange,
                         onPressed: () {
+                          
                           Navigator.push(
                             context,
                             PageRouteBuilder(

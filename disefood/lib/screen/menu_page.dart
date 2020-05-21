@@ -1,15 +1,16 @@
-import 'package:disefood/component/sidemenu_customer.dart';
+import 'dart:convert';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/model/foods_list.dart';
-import 'package:disefood/model/shops_list.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
 import 'package:disefood/screen/order_items.dart';
 import 'package:disefood/screen/view_order_page.dart';
 import 'package:disefood/services/getfoodmenupageservice.dart';
-import 'package:disefood/services/shopservice.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuPage extends StatefulWidget {
@@ -21,18 +22,20 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  String shopName, shopImg;
-  int shopId;
+  String shopName, shopImg, foodName, foodImg;
+  int shopId, foodPrice, foodId;
   bool isAmountHasValue = false;
   String nameUser;
   String lastNameUser;
   String profileImg;
   int userId;
+  var foodList;
   @override
   void initState() {
-   Future.microtask(() {
+    Future.microtask(() {
       findUser();
       fetchShop();
+      fetchFood();
     });
     super.initState();
   }
@@ -45,7 +48,18 @@ class _MenuPageState extends State<MenuPage> {
       shopImg = preferences.getString('shop_img');
     });
   }
-   Future<Null> findUser() async {
+
+  Future<Null> fetchFood() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      foodId = preferences.getInt('food_id');
+      foodName = preferences.getString('food_name');
+      foodPrice = preferences.getInt('food_price');
+      foodImg = preferences.getString('food_img');
+    });
+  }
+
+  Future<Null> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     setState(() {
       nameUser = preference.getString('first_name');
@@ -55,6 +69,7 @@ class _MenuPageState extends State<MenuPage> {
     });
   }
 
+  final logger = Logger();
   @override
   Widget build(BuildContext context) {
     print('shopId : $shopId');
@@ -143,30 +158,31 @@ class _MenuPageState extends State<MenuPage> {
               child: new IconButton(
                 icon: Icon(Icons.arrow_back),
                 onPressed: () {
-                  return Navigator.pop(context);
-                  //   Navigator.push(
-                  //     context,
-                  //     PageRouteBuilder(
-                  //       pageBuilder: (BuildContext context,
-                  //           Animation<double> animation,
-                  //           Animation<double> secondaryAnimation) {
-                  //         return Home();
-                  //       },
-                  //       transitionsBuilder: (BuildContext context,
-                  //           Animation<double> animation,
-                  //           Animation<double> secondaryAnimation,
-                  //           Widget child) {
-                  //         return FadeTransition(
-                  //           opacity: Tween<double>(
-                  //             begin: 0,
-                  //             end: 1,
-                  //           ).animate(animation),
-                  //           child: child,
-                  //         );
-                  //       },
-                  //       transitionDuration: Duration(milliseconds: 400),
-                  //     ),
-                  //   );
+                  return
+                      // Navigator.pop(context);
+                      Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation) {
+                        return Home();
+                      },
+                      transitionsBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation,
+                          Widget child) {
+                        return FadeTransition(
+                          opacity: Tween<double>(
+                            begin: 0,
+                            end: 1,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
+                      transitionDuration: Duration(milliseconds: 400),
+                    ),
+                  );
                 },
               ),
             ),
@@ -198,17 +214,23 @@ class _MenuPageState extends State<MenuPage> {
                 return Container(
                   alignment: Alignment.center,
                   margin: EdgeInsets.only(top: 300, bottom: 10),
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.orange,
+                  ),
                 );
               } else {
                 return Container(
                   child: Column(
                     children: <Widget>[
-                      Image.network(
-                        "https://disefood.s3-ap-southeast-1.amazonaws.com/$shopImg",
+                      CachedNetworkImage(
+                        imageUrl:
+                            'https://disefood.s3-ap-southeast-1.amazonaws.com/$shopImg',
                         height: 200,
                         width: double.maxFinite,
                         fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -307,14 +329,6 @@ class _MenuPageState extends State<MenuPage> {
                                 shrinkWrap: true,
                                 itemCount: snapshot.data.length,
                                 itemBuilder: (context, index) {
-                                  // if (foodAmountRecieve != null &&
-                                  //     foodAmountRecieve != 0) {
-                                  //   if (index == foodIdTemp - 1) {
-                                  //     isAmountHasValue = true;
-                                  //   } else {
-                                  //     isAmountHasValue = false;
-                                  //   }
-                                  // }
                                   return Column(
                                     children: <Widget>[
                                       Row(
@@ -322,11 +336,11 @@ class _MenuPageState extends State<MenuPage> {
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Visibility(
-                                            visible: true,
+                                            visible: false,
                                             child: SizedBox(
-                                              width: 20,
+                                              width: 25,
                                               child: Text(
-                                                "qty",
+                                                "${snapshot.data[index].quantity}",
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.orange),
@@ -361,7 +375,10 @@ class _MenuPageState extends State<MenuPage> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      OrderAmount(),
+                                                      OrderAmount(
+                                                          foodList:
+                                                              snapshot.data,
+                                                          index: index),
                                                 ),
                                               );
                                             },
