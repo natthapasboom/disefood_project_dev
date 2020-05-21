@@ -36,7 +36,13 @@ class ShopController extends Controller
 
     public function getShopByUserId($user_id)
     {
-        return $this->shopRepo->getShopByUserId($user_id);
+        $shop = $this->shopRepo->getShopByUserId($user_id);
+        if($shop == null)
+        {
+            return response('shop not found', 400);
+        }else{
+            return $shop;
+        }
     }
 
     public function findShopById($shop_id)
@@ -51,8 +57,9 @@ class ShopController extends Controller
     public function create(CreateShopRequest $request)
     {
         $shop = $request->validated();
-        $path = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'),'public');
-        $shop['cover_image'] = $path;
+//        $path = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'),'public');
+//        $shop['cover_image'] = $path;
+        $shop['cover_image'] = null;
         $this->shopRepo->create($shop);
         return response('create shop success', 200);
     }
@@ -60,18 +67,19 @@ class ShopController extends Controller
     public function addFoodToShop(CreateFoodRequest $request, $shop_id)
     {
         $food = $request->validated();
-        $path = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'), 'public');
-        $food['cover_image'] = $path;
+//        $path = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'), 'public');
+//        $food['cover_image'] = $path;
+        $food['cover_image'] = null;
         return $this->foodRepo->addFood($food, $shop_id);
     }
 
     public function updateShop(Request $request, $shop_id)
     {
         $shop = $request->except(['_method' ]);
-        $shop_beforeUpdate = $this->shopRepo->findById($shop_id);
-        $path_beforeUpdate = $shop_beforeUpdate['cover_image'];
-        Storage::disk('s3')->delete($path_beforeUpdate);
-        $shop['cover_image'] = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'), 'public');
+//        $shop_beforeUpdate = $this->shopRepo->findById($shop_id);
+//        $path_beforeUpdate = $shop_beforeUpdate['cover_image'];
+//        Storage::disk('s3')->delete($path_beforeUpdate);
+//        $shop['cover_image'] = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'), 'public');
 
         $this->shopRepo->updateShop($shop, $shop_id);
         return $this->shopRepo->findById($shop_id);

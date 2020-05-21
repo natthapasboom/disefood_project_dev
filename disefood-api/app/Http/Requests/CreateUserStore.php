@@ -19,7 +19,7 @@ class CreateUserStore extends BaseFormRequest
             'first_name'        => 'required|string|max:50',
             'last_name'         => 'required|string|max:50',
             'tel'               => 'required|string|min:10|max:10|unique:profiles,tel',
-            // 'profile_img'       => 'image',
+//            'profile_img'       => 'image',
             'is_seller'         => 'required|boolean',
         ];
     }

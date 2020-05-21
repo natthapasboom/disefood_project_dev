@@ -69,21 +69,20 @@ class _LoginPageState extends State<LoginPage> {
               logger.e(_url);
               try {
                 Response shopResponse = await Dio().get(_url);
-                print(shopResponse.data);
-                print(shopResponse.statusCode);
-                print(shopResponse.statusMessage);
+                if(shopResponse.statusCode == 404){
+                  print(shopResponse.statusMessage);
+                }
+                
                 if (shopResponse.statusCode == 200) {
                   print('Success Shop!');
                   logger.d(shopResponse.data);
                   var resultShop = ShopById.fromJson(shopResponse.data);
                   if(resultShop.shopId != null){
                     routeHomeSeller(Homepage(), result, resultShop);
-                  }else if(shopResponse.statusCode == 400){
-                    routeHomeCustomer(Homepage(), result);
                   }
                 }
               } catch (error) {
-                print("Error!");
+                print("Error! $error");
                 setState(() {
                   _isLoading = false;
                 });

@@ -29,10 +29,10 @@ class FoodController extends Controller
     public function updateFoodByFoodId(Request $request, $food_id)
     {
         $food = $request->except(['_method']);
-        $food_beforeUpdate = $this->foodRepo->findByFoodId($food_id);
-        $path_beforeUpdate = $food_beforeUpdate['cover_image'];
-        Storage::disk('s3')->delete($path_beforeUpdate);
-        // $food['cover_image'] = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'), 'public');
+//        $food_beforeUpdate = $this->foodRepo->findByFoodId($food_id);
+//        $path_beforeUpdate = $food_beforeUpdate['cover_image'];
+//        Storage::disk('s3')->delete($path_beforeUpdate);
+//        $food['cover_image'] = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'), 'public');
 
         $this->foodRepo->update($food, $food_id);
         return $this->foodRepo->findByFoodId($food_id);
