@@ -127,7 +127,7 @@ class _RegisState extends State<Regis> {
                 padding: EdgeInsets.only(top: 20),
                 child: Center(
                   child: Text(
-                    'Sign in',
+                    'สมัครสมาชิก',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 36,
@@ -202,12 +202,11 @@ class _RegisState extends State<Regis> {
             child: TextFormField(
               validator: (value) {
                 if (value.isEmpty) {
-                  return '*';
+                  return 'โปรดกรอกไอดี';
                 }
               },
-              // onChanged: (value) =>
-              //   _usernameController.text = value.trim()
-              // ,
+            
+              maxLength: 50,
               controller: _usernameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
@@ -230,18 +229,22 @@ class _RegisState extends State<Regis> {
             child: TextFormField(
               validator: (value) {
                 if (value.isEmpty) {
-                  return '*';
+                  return 'โปรดกรอกรหัสผ่าน';
                 }
               },
               // onChanged: (value) =>
               //   _passwordController.text = value.trim()
               // ,
               cursorColor: Colors.white,
+              maxLength: 50,
+              
               controller: _passwordController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'รหัสผ่าน',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
+                 border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(color: Colors.white)),
@@ -257,17 +260,20 @@ class _RegisState extends State<Regis> {
             child: TextFormField(
               validator: (value) {
                 if (value.isEmpty) {
-                  return '*';
+                  return 'โปรดกรอกชื่อ';
                 }
               },
               // onChanged: (value) =>
               //   _firstNameController.text = value.trim()
               // ,
+              maxLength: 50,
               controller: _firstNameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'ชื่อ',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
+                 border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(color: Colors.white)),
@@ -283,17 +289,20 @@ class _RegisState extends State<Regis> {
             child: TextFormField(
               validator: (value) {
                 if (value.isEmpty) {
-                  return '*';
+                  return 'โปรดกรอกนามสกุล';
                 }
               },
               // onChanged: (value) =>
               //   _lastNameController.text = value.trim()
               // ,
+              maxLength: 50,
               controller: _lastNameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'นามสกุล',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
+                 border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(color: Colors.white)),
@@ -310,15 +319,21 @@ class _RegisState extends State<Regis> {
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value.isEmpty) {
-                  return '*';
+                  return 'โปรดกรอกเบอร์โทร';
+                }
+                if(value != 10){
+                  return 'โปรดกรอกให้ครบ10หลัก';
                 }
               },
               //
+              maxLength: 10,
               controller: _phoneController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'เบอร์โทร',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
+                 border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
                     borderSide: BorderSide(color: Colors.white)),
@@ -343,6 +358,7 @@ class _RegisState extends State<Regis> {
           ),
           _radiocheck(),
           _buttonRegister(),
+          _buttonCancel(),
         ],
       ),
     );
@@ -353,14 +369,37 @@ class _RegisState extends State<Regis> {
       margin: EdgeInsets.only(top: 20, bottom: 20),
       child: Center(
         child: RaisedButton(
-          color: Colors.amber[900],
+          color: Colors.green,
           onPressed: () {
             _register();
           },
           child: Container(
-            padding: EdgeInsets.only(left: 80, right: 80, top: 10, bottom: 10),
+            padding: EdgeInsets.only(left: 120, right: 120, top: 10, bottom: 10),
             child: Text(
               'สมัคร',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 18),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+   Widget _buttonCancel() {
+    return Container(
+      margin: EdgeInsets.only(top: 10, bottom: 20),
+      child: Center(
+        child: RaisedButton(
+          color: Colors.red,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Container(
+            padding: EdgeInsets.only(left: 120, right: 120, top: 10, bottom: 10),
+            child: Text(
+              'ยกเลิก',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -418,6 +457,7 @@ class _RegisState extends State<Regis> {
 
   bool selectedRadio = false;
   void initState() {
+    selectedRadio = null;
     // selectedRadio = false;
     super.initState();
   }

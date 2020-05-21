@@ -66,13 +66,10 @@ class _LoginPageState extends State<LoginPage> {
             if (result.userId != null) {
               String _url =
                   'http://10.0.2.2:8080/api/shop/user/${result.userId}';
-              logger.e(_url);
+              logger.d(_url);
               try {
                 Response shopResponse = await Dio().get(_url);
-                if(shopResponse.statusCode == 404){
-                  print(shopResponse.statusMessage);
-                }
-                
+                print(shopResponse);
                 if (shopResponse.statusCode == 200) {
                   print('Success Shop!');
                   logger.d(shopResponse.data);
@@ -80,8 +77,12 @@ class _LoginPageState extends State<LoginPage> {
                   if(resultShop.shopId != null){
                     routeHomeSeller(Homepage(), result, resultShop);
                   }
+                }else{
+                   logger.d(shopResponse.statusCode);
+                  routeHomeCustomer(Homepage(), result);
                 }
               } catch (error) {
+                routeHomeCustomer(Homepage(), result);
                 print("Error! $error");
                 setState(() {
                   _isLoading = false;

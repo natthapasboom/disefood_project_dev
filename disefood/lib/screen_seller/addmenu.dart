@@ -23,7 +23,7 @@ class AddMenu extends StatefulWidget {
 
 class _AddMenuState extends State<AddMenu> {
   int _shopId;
-  
+
   bool status;
   var selectOnStock;
   var selectOutOfStock;
@@ -70,9 +70,7 @@ class _AddMenuState extends State<AddMenu> {
           ),
         ],
       ),
-      body: 
-      
-       ListView(
+      body: ListView(
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(top: 60, bottom: 0),
@@ -223,12 +221,11 @@ class _AddMenuState extends State<AddMenu> {
                                 //     onPressed: () async {
                                 //       final form = _formKey.currentState;
                                 //       if (form.validate()) {
-                                        
+
                                 //         form.save();
                                 //         int _price =
                                 //             int.parse(priceController.text);
 
-                                        
                                 //           String _url =
                                 //               'http://10.0.2.2:8080/api/shop/$_shopId';
                                 //           try {
@@ -275,51 +272,48 @@ class _AddMenuState extends State<AddMenu> {
                                 padding: EdgeInsets.only(left: 30),
                               ),
                               Expanded(
-                                 child: Container(
+                                child: Container(
                                   child: RaisedButton(
                                     color: Colors.green,
                                     onPressed: () async {
                                       final form = _formKey.currentState;
                                       if (form.validate()) {
-                                        
                                         form.save();
                                         int _price =
                                             int.parse(priceController.text);
 
-                                        
-                                          String _url =
-                                              'http://10.0.2.2:8080/api/shop/$_shopId';
-                                          try {
-                                            var formData = FormData.fromMap({
-                                              "name": nameController,
-                                              "price": _price,
-                                              "status": status,
-                                            });
-                                            print(formData.fields);
-                                            Response response =
-                                                await Dio().post(
-                                              _url,
-                                              data: {
-                                                'name': nameController.text,
-                                                'price': _price,
-                                                'status': status,
-                                              },
-                                            );
-                                            print('res : ${response.data}');
-                                            print(response.statusCode);
-                                            if (response.statusCode == 201) {
-                                              print(
-                                                  'response : ${response.data}');
-                                              print('Success');
-                                             Navigator.pop(context);
-                                              // Navigator.pop(context);
-                                            } else {
-                                              print('error code');
-                                            }
-                                          } catch (error) {
-                                            print('error: $error');
+                                        String _url =
+                                            'http://10.0.2.2:8080/api/shop/$_shopId';
+                                        try {
+                                          var formData = FormData.fromMap({
+                                            "name": nameController,
+                                            "price": _price,
+                                            "status": status,
+                                          });
+                                          print(formData.fields);
+                                          Response response = await Dio().post(
+                                            _url,
+                                            data: {
+                                              'name': nameController.text,
+                                              'price': _price,
+                                              'status': status,
+                                            },
+                                          );
+                                          print('res : ${response.data}');
+                                          print(response.statusCode);
+                                          if (response.statusCode == 201) {
+                                            print(
+                                                'response : ${response.data}');
+                                            print('Success');
+                                            Navigator.pop(context);
+                                            // Navigator.pop(context);
+                                          } else {
+                                            print('error code');
                                           }
+                                        } catch (error) {
+                                          print('error: $error');
                                         }
+                                      }
                                     },
                                     child: Text(
                                       'Save',
