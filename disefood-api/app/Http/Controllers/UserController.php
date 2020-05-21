@@ -54,7 +54,7 @@ class UserController extends Controller
         $newUser = $request->validated();
 //        $path = Storage::disk('s3')->put('images/user/profile_img', $request->file('profile_img'), 'public');
 //        $newUser['profile_img'] = $path;
-        $newUser['profile_img'] = null;
+        $newUser['profile_img'] = 'images/user/profile_img/Dk75JEOIgYI6v5lgdz8oRHZfazAu0n3y45uPcGNc.png';
         $newUser['password'] = bcrypt($newUser['password']);
         $user = $this->userRepo->create($newUser);
         $user_id = $user['user_id'];
