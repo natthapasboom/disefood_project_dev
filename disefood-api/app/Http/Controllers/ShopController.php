@@ -59,7 +59,7 @@ class ShopController extends Controller
         $shop = $request->validated();
 //        $path = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'),'public');
 //        $shop['cover_image'] = $path;
-        $shop['cover_image'] = 'images/shop/cover_image/jpzqNoazHq9n0nQIcNpRBrkXVzsug9lbbRtuc4Q1.png';
+        $shop['cover_image'] = 'images/shop/cover_image/0XroKxEVpGFeY3RZszfNaLqTfz01J9mT9HTBICTA.png';
         $this->shopRepo->create($shop);
         return response('create shop success', 200);
     }
