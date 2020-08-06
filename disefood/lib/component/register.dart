@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-
+import 'package:http_parser/http_parser.dart';
 class Regis extends StatefulWidget {
   static const routeName = '/Regis';
   @override
@@ -42,25 +42,33 @@ class _RegisState extends State<Regis> {
       try {
         print('after try ==> ');
         Dio dio = Dio();
-        // dio.options.headers['Content-Type'] = 'application/';
+        // dio.options.headers['Content-Type'] = 'multipart/form-data';
         var formData = FormData.fromMap({
           "username": _usernameController.text.trim(),
           "password": _passwordController.text.trim(),
           "first_name": _firstNameController.text.trim(),
           "last_name": _lastNameController.text.trim(),
           "tel": _phoneController.text.trim(),
-          // "profile_img" : _image,
-          // // "profile_img": await MultipartFile.fromFile(
-          // //   _image.path,
-          // //   filename: '${uuid.v4()}.png',
-          // // ),
+          "profile_img": await MultipartFile.fromFile(
+            '${_image.path}',
+            filename: '${uuid.v4()}.jpeg',
+             
+          ),
           "is_seller": status,
         });
         print(formData.fields);
+        print(formData.files.toString());
         // print(formData.files);
         print('data : $formData');
         Response response = await dio.post(
           url,
+          data: formData,
+          options: Options(
+            headers: {
+              'Headers' : 'multipart/form-data',
+              'Accept' : '*/*',
+            }
+          )
           // data: formData,
           // data: formData,
           // options:  Options(
@@ -68,19 +76,19 @@ class _RegisState extends State<Regis> {
           //  validateStatus: (status) { return status < 500; }
           //   ),
           // data: formData,
-          data:{
-          "username": _usernameController.text.trim(),
-          "password": _passwordController.text.trim(),
-          "first_name": _firstNameController.text.trim(),
-          "last_name": _lastNameController.text.trim(),
-          "tel": _phoneController.text.trim(),
+          // data:{
+          // "username": _usernameController.text.trim(),
+          // "password": _passwordController.text.trim(),
+          // "first_name": _firstNameController.text.trim(),
+          // "last_name": _lastNameController.text.trim(),
+          // "tel": _phoneController.text.trim(),
 
-          // "profile_img": await MultipartFile.fromFile(
-          //     _image.path,
-          //      filename: '${uuid.v4()}.png',
-          // ) ,
-          "is_seller": status,
-          },
+          // // "profile_img": await MultipartFile.fromFile(
+          // //     _image.path,
+          // //      filename: '${uuid.v4()}.png',
+          // // ) ,
+          // "is_seller": status,
+          // },
         );
 
         print('res : $response');
@@ -318,12 +326,16 @@ class _RegisState extends State<Regis> {
             child: TextFormField(
               keyboardType: TextInputType.number,
               validator: (value) {
+                
+                if(value.length != 10){
+                  return 'โปรดกรอกให้ครบ10หลัก';
+                }
                 if (value.isEmpty) {
                   return 'โปรดกรอกเบอร์โทร';
                 }
-                if(value != 10){
-                  return 'โปรดกรอกให้ครบ10หลัก';
-                }
+                // if(value != 9){
+                //   return 'โปรดกรอกให้ครบ10หลัก';
+                // }
               },
               //
               maxLength: 10,
