@@ -16,11 +16,12 @@ class CreateUserStore extends BaseFormRequest
         return [
             'username'          => 'required|string|min:4|max:50|unique:users,username',
             'password'          => 'required|string|min:6|max:50',
+            'email'             => 'required|string|min:6|max:50|unique:users,email',
             'first_name'        => 'required|string|max:50',
             'last_name'         => 'required|string|max:50',
             'tel'               => 'required|string|min:10|max:10|unique:profiles,tel',
 //            'profile_img'       => 'image',
-            'is_seller'         => 'required|boolean',
+            'role'         => 'required|string',
         ];
     }
 }

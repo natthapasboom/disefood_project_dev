@@ -9,6 +9,7 @@ use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\ProfileRepositoryInterface;
 use App\Repositories\Interfaces\UserShopsRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
+use Firebase\JWT\JWT;
 
 class UserController extends Controller
 {
@@ -52,21 +53,28 @@ class UserController extends Controller
     public function register(CreateUserStore $request)
     {
         $newUser = $request->validated();
-//        $path = Storage::disk('s3')->put('images/user/profile_img', $request->file('profile_img'), 'public');
-//        $newUser['profile_img'] = $path;
-        $newUser['profile_img'] = 'images/user/profile_img/Dk75JEOIgYI6v5lgdz8oRHZfazAu0n3y45uPcGNc.png';
+        $path = Storage::disk('s3')->put('images/user/profile_img', $request->file('profile_img'), 'public');
+        $newUser['profile_img'] = $path;
+//        $newUser['profile_img'] = 'images/user/profile_img/Dk75JEOIgYI6v5lgdz8oRHZfazAu0n3y45uPcGNc.png';
         $newUser['password'] = bcrypt($newUser['password']);
         $user = $this->userRepo->create($newUser);
         $user_id = $user['user_id'];
         $this->profileRepo->create($newUser, $user_id);
-
         return response('register success', 200);
     }
 
     public function login(LoginRequest $request)
     {
-
         $login =  $request->validated();
-        return response($this->userRepo->login($login), 200);
+        $key = 'example_key';
+        $res = $this->userRepo->login($login);
+        $payload = $res;
+        $jwt = JWT::encode($payload, $key);
+        $decoded = JWT::decode($jwt, $key, array('HS256'));
+        $response = [
+            'access token' => $jwt,
+            'data' => $decoded
+        ];
+        return response($response, 200);
     }
 }

@@ -19,6 +19,7 @@ class CreateShopsTable extends Migration
             $table->integer('shop_slot')->unique();
             $table->string('name', 50)->unique();
             $table->string('cover_image')->nullable();
+            $table->boolean('approved');
             $table->timestamps();
             $table->foreign('user_id')->references('user_id')->on('users');
         });

@@ -27,23 +27,27 @@ class UserRepository implements UserRepositoryInterface
 
     public function get()
     {
-        return $this->user->get();
+        return $this->user->with('profile')->get();
     }
 
     public function login($user)
     {
         $username = $user['username'];
         $password = $user['password'];
-        $user = $this->user->where('username', $username)->first();
-        $user_id = $user['user_id'];
-        $checkPass = $user['password'];
+        $find_user = $this->user->where('username', $username)->first();
+        $find_user_id = $find_user['user_id'];
+        $find_user_password = $find_user['password'];
 
-        if($username == $user['username']){
-            if(Hash::check($password, $checkPass)){
-                $temp = $this->user->find($user_id);
-                $profile = $temp->profile()->get();
-                return $profile;
+        if($username == $find_user['username']){
+            if(Hash::check($password, $find_user_password)){
+                $res_user = $this->user->find($find_user_id);
+                $res_user->profile;
+                return $res_user;
+            }else{
+                return 'if 1';
             }
+        }else{
+            return  'if 2';
         }
     }
 }

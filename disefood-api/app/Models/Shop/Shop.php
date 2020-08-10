@@ -10,7 +10,7 @@ class Shop extends Model
     protected $table = 'shops';
     protected $primaryKey = 'shop_id';
     protected $fillable = [
-        'name', 'shop_slot', 'cover_image', 'user_id'
+        'name', 'shop_slot', 'cover_image', 'user_id', 'approved'
     ];
     /**
      * @var mixed

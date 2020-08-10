@@ -57,9 +57,10 @@ class ShopController extends Controller
     public function create(CreateShopRequest $request)
     {
         $shop = $request->validated();
-//        $path = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'),'public');
-//        $shop['cover_image'] = $path;
-        $shop['cover_image'] = 'images/shop/cover_image/0XroKxEVpGFeY3RZszfNaLqTfz01J9mT9HTBICTA.png';
+        $path = Storage::disk('s3')->put('images/shop/cover_image', $request->file('cover_image'),'public');
+        $shop['cover_image'] = $path;
+        $shop['approved'] = false;
+//        $shop['cover_image'] = 'images/shop/cover_image/0XroKxEVpGFeY3RZszfNaLqTfz01J9mT9HTBICTA.png';
         $this->shopRepo->create($shop);
         return response('create shop success', 200);
     }
