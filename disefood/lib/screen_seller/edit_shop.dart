@@ -135,7 +135,8 @@ class _EditShopState extends State<EditShop> {
   Widget _buildPhoto() {
     return Container(
       height: 150,
-      color: Colors.amber,
+      color: _shopImg == null ?
+      Colors.amber[500]: Colors.white,
       child: _shopImg == null
           ? Center(
               child: IconButton(
@@ -158,12 +159,6 @@ class _EditShopState extends State<EditShop> {
                 width: 500,
                 fit: BoxFit.cover,
               ),
-              // child: Image.file(
-              //   _shopImg,
-              //   height: 150,
-              //   width: 500,
-              //   fit: BoxFit.cover,
-              // ),
             ),
           
     );

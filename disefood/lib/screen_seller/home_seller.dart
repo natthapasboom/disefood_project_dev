@@ -87,8 +87,7 @@ class _HomeSellerState extends State<HomeSeller> {
     print('Shop Id $_shopId');
     return new Scaffold(
       body: _shopId != null
-          ? 
-          ListView(
+          ? ListView(
               children: <Widget>[
                 headerImage(),
                 Container(
@@ -156,38 +155,37 @@ class _HomeSellerState extends State<HomeSeller> {
                   //           onPressed: () {},
                   //         ),
                   //       )
-                      child: Column(
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(
-                                  bottom: 20, right: 30, top: 75),
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.store,
-                                  color: Colors.amber[800],
-                                  size: 64,
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => EditShop()));
-                                },
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(top: 10),
-                              child: Center(
-                                child: Text(
-                                  'แก้ไขร้านอาหาร',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20, right: 30, top: 75),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.store,
+                            color: Colors.amber[800],
+                            size: 64,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EditShop()));
+                          },
                         ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Center(
+                          child: Text(
+                            'แก้ไขร้านอาหาร',
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ],
             )
@@ -204,11 +202,10 @@ class _HomeSellerState extends State<HomeSeller> {
                         size: 36,
                       ),
                       onPressed: () {
-                        
                         Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => CreateShop()));
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateShop()));
                       },
                     ),
                   ),
@@ -226,8 +223,6 @@ class _HomeSellerState extends State<HomeSeller> {
     );
   }
 
-  
-
   Widget headerImage() =>
       // _shopImg != null ?
       // Image.network(
@@ -238,26 +233,27 @@ class _HomeSellerState extends State<HomeSeller> {
       // ):
       // ,
       Container(
-
-        child: _shopImg == null ?
-          Container(
-          
-          width: 430.0,
-          height: 160.0,
-          color: Colors.white60,
-          child: Center(
-            child: Icon(Icons.photo,size: 36,color: Colors.amber[900],),
-          ),
-          )
-        :CachedNetworkImage(
-          imageUrl:
-              'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
-          width: 430.0,
-          height: 160.0,
-          fit: BoxFit.cover,
-          placeholder: (context, url) =>
-              Center(child: CircularProgressIndicator()),
-          errorWidget: (context, url, error) => Icon(Icons.error)),
+        child: _shopImg == null
+            ? Container(
+                width: 430.0,
+                height: 160.0,
+                color: Colors.white60,
+                child: Center(
+                  child: Icon(
+                    Icons.photo,
+                    size: 36,
+                    color: Colors.amber[900],
+                  ),
+                ),
+              )
+            : CachedNetworkImage(
+                imageUrl:
+                    'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
+                width: 430.0,
+                height: 160.0,
+                fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Icon(Icons.error)),
       );
-     
 }

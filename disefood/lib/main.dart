@@ -34,7 +34,7 @@ void main() {
         iconTheme: IconThemeData(color: Colors.white),
       ),
     ),
-    home: LoginPage(),
+    home: Homepage(),
     initialRoute: '/',
     routes: {
       Regis.routeName: (_) => Regis(),

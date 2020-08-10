@@ -171,9 +171,9 @@ class _OrderItemPageState extends State<OrderItemPage> {
                         containerHeight: 210.0,
                       ),
                       showTitleActions: true, onConfirm: (time) {
-                    if (time.hour >= 8 && time.hour <= 15) {
+                    if (time.hour >= 8 && time.hour <= 24) {
                       if (time.hour > DateTime.now().hour) {
-                        if (time.hour != 15) {
+                        if (time.hour != 24) {
                           _time =
                               '  ${time.hour} : ${time.minute} : ${time.second}';
                           setState(() {});

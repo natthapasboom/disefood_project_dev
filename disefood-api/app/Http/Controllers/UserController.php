@@ -60,11 +60,13 @@ class UserController extends Controller
         $user = $this->userRepo->create($newUser);
         $user_id = $user['user_id'];
         $this->profileRepo->create($newUser, $user_id);
+
         return response('register success', 200);
     }
 
     public function login(LoginRequest $request)
     {
+
         $login =  $request->validated();
         $key = 'example_key';
         $res = $this->userRepo->login($login);

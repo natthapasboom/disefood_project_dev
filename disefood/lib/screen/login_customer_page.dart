@@ -55,7 +55,6 @@ class _LoginPageState extends State<LoginPage> {
 
         print(response.statusCode);
         if (response.statusCode == 200) {
-          // print('response : ${response.data}');
           logger.d(response.data);
           print('Success');
           var result = UserProfile.fromJson(response.data[0]);
@@ -74,11 +73,11 @@ class _LoginPageState extends State<LoginPage> {
                   print('Success Shop!');
                   logger.d(shopResponse.data);
                   var resultShop = ShopById.fromJson(shopResponse.data);
-                  if(resultShop.shopId != null){
+                  if (resultShop.shopId != null) {
                     routeHomeSeller(Homepage(), result, resultShop);
                   }
-                }else{
-                   logger.d(shopResponse.statusCode);
+                } else {
+                  logger.d(shopResponse.statusCode);
                   routeHomeCustomer(Homepage(), result);
                 }
               } catch (error) {
@@ -112,7 +111,6 @@ class _LoginPageState extends State<LoginPage> {
   Future<Null> routeHomeCustomer(
     Widget myWidget,
     UserProfile userProfile,
-    
   ) async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     await preference.setInt('user_id', userProfile.userId);
@@ -141,6 +139,7 @@ class _LoginPageState extends State<LoginPage> {
     await preference.setInt('shop_user_id', shopById.userId);
     await preference.setInt('shop_slot', shopById.shopSlot);
     await preference.setString('cover_img', shopById.coverImage);
+    
 
     MaterialPageRoute route = MaterialPageRoute(builder: (context) => myWidget);
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
@@ -288,8 +287,7 @@ class _LoginPageState extends State<LoginPage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                Regis()),
+                                            builder: (context) => Regis()),
                                       );
                                     },
                                     child: Padding(
