@@ -33,6 +33,7 @@ Route::get('user/{user_id}', 'UserController@getUserById');
 Route::get('user/profile/{user_id}', 'UserController@getProfileById');
 Route::get('user/shop/{user_id}','UserController@getShopByUserId');
 Route::post('login', 'UserController@login');
+Route::delete('user/{user_id}', 'UserController@deleteById');
 //ORDER
 Route::get('order/shop/{shop_id}', 'OrderController@getOrderBySeller');
 Route::get('order/user/{user_id}', 'OrderController@getOrderByUser');
