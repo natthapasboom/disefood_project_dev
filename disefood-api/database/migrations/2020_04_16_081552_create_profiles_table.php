@@ -19,11 +19,10 @@ class CreateProfilesTable extends Migration
             $table->string('last_name')->nullable();
             $table->string('tel')->nullable();
             $table->string('profile_img')->nullable();
-//            $table->boolean('is_seller');
             $table->enum('role', ['customer', 'seller', 'admin']);
             $table->timestamps();
 
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');;
         });
     }
 
