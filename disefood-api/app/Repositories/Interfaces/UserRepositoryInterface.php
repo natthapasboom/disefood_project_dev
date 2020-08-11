@@ -10,4 +10,6 @@ interface UserRepositoryInterface
     public function create($user);
     public function login($user);
     public function getUserById($user_id);
+    public function delete($user_id);
+
 }

@@ -17,7 +17,9 @@ class UserRepository implements UserRepositoryInterface
 
     public function getUserById($user_id)
     {
-        return $this->user->where('user_id', $user_id)->first();
+        $user = $this->user->find($user_id);
+        $user->profile;
+        return $user;
     }
 
     public function create($user)
@@ -49,5 +51,10 @@ class UserRepository implements UserRepositoryInterface
         }else{
             return  'if 2';
         }
+    }
+
+    public function delete($user_id)
+    {
+        return $this->user->find($user_id)->delete();
     }
 }
