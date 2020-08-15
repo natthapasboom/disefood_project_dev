@@ -14,18 +14,17 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->increments('order_id');
+            $table->increments('id');
             $table->integer('shop_id')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->integer('total_price');
             $table->integer('total_quantity');
-            $table->enum('status', ['กำลังทำ', 'เสร็จสิ้น', 'ยังไม่ได้รับออเดอร์']);
-            $table->string('proof_payment');
-            $table->string('payment_method');
+            $table->dateTime('time_pickup');
+            $table->enum('status', ['not confirmed', 'in process', 'success']);
             $table->timestamps();
 
-            $table->foreign('shop_id')->references('shop_id')->on('shops');
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('shop_id')->references('id')->on('shops');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
