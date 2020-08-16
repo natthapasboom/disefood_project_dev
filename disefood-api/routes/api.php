@@ -66,4 +66,17 @@ Route::group([
     Route::get('/', 'ShopController@getShopsList');
     Route::get('/{shopId}', 'ShopController@findShopById');
     Route::post('/','ShopController@create');
+
+    Route::group([
+        'prefix' => 'menu'
+    ], function () {
+       Route::get('/{shopId}', 'ShopController@getMenuByShopId');
+       Route::post('/{shopId}', 'ShopController@addMenu');
+    });
+});
+
+Route::group([
+    'prefix' => 'food'
+], function () {
+   Route::get('/{foodId}', 'FoodController@getFoodById');
 });

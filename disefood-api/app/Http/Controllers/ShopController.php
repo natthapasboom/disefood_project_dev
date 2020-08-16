@@ -35,9 +35,9 @@ class ShopController extends Controller
     {
         $shop = $this->shopRepo->findById($shopId);
         if(!$shop) {
-            return response()->json([ 'msg' => 'Shop not found', 'status' => 404]);
-        }else{
-            return  response()->json([ 'data' => $shop ]);
+            return response()->json(['msg' => 'Shop not found', 'status' => 404]);
+        } else {
+            return  response()->json(['data' => $shop]);
         }
     }
 
@@ -58,6 +58,21 @@ class ShopController extends Controller
         return response()->json([ 'data' => $shop, 'msg' => 'Approved Success']);
     }
 
+    public function getMenuByShopId($shopId)
+    {
+        $foods = $this->shopRepo->findMenuByShopId($shopId);
+        return  response()->json(['data' => $foods]);
+    }
+
+    public function addMenu(CreateFoodRequest $request, $shopId)
+    {
+        $req = $request->validated();
+        $pathImg = Storage::disk('s3')->put('images/shop/food/cover_img', $request->file('cover_img'), 'public');
+        $req['cover_img'] = $pathImg;
+        $menu = $this->foodRepo->addMenuByShopId($req, $shopId);
+        return response()->json(['data' => $menu]);
+    }
+
 //    public function getShopByUserId($user_id)
 //    {
 //        $shop = $this->shopRepo->getShopByUserId($user_id);
@@ -68,11 +83,6 @@ class ShopController extends Controller
 //            return $shop;
 //        }
 //    }
-
-
-
-
-
 //    public function addFoodToShop(CreateFoodRequest $request, $shop_id)
 //    {
 //        $food = $request->validated();
@@ -81,7 +91,6 @@ class ShopController extends Controller
 //        $food['cover_image'] = null;
 //        return $this->foodRepo->addFood($food, $shop_id);
 //    }
-
 //    public function updateShop(Request $request, $shop_id)
 //    {
 //        $shop = $request->except(['_method' ]);
@@ -93,7 +102,6 @@ class ShopController extends Controller
 //        $this->shopRepo->updateShop($shop, $shop_id);
 //        return $this->shopRepo->findById($shop_id);
 //    }
-
 //    public function deleteByShopId($shop_id)
 //    {
 //        $shopBeforeDelete = $this->shopRepo->findById($shop_id);
