@@ -11,16 +11,24 @@ class User extends Model
     protected $table = 'users';
     protected $primaryKey ='id';
     protected $fillable = [
-        'username', 'email', 'password'
+        'username', 'email', 'password',
+        'first_name', 'last_name', 'tel',
+        'profile_img', 'role'
     ];
     protected $hidden = [
         'id', 'password'
     ];
 
-    public function profile()
-    {
-        return $this->hasOne(Profile::class, 'user_id', 'id');
-    }
+//    protected $attributes = [
+//        'username' => false,
+//        'email' => false,
+//        'password' => false,
+//        'first_name' => false,
+//        'last_name' => false,
+//        'tel' => false,
+//        'profile_img' => false,
+//        'role' => false
+//    ];
 
     public function shop()
     {

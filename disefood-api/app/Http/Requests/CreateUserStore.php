@@ -19,7 +19,7 @@ class CreateUserStore extends BaseFormRequest
             'email'             => 'required|string|min:6|max:50|unique:users,email',
             'first_name'        => 'required|string|max:50',
             'last_name'         => 'required|string|max:50',
-            'tel'               => 'required|string|min:10|max:10|unique:profiles,tel',
+            'tel'               => 'required|string|min:10|max:10|unique:users,tel',
             'profile_img'       => 'image',
             'role'              => 'required|string',
         ];

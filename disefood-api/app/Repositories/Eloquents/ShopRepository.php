@@ -15,14 +15,14 @@ class ShopRepository implements ShopRepositoryInterface
         $this->shop = new Shop();
     }
 
-    public function get()
+    public function getAll()
     {
         return $this->shop->all();
     }
 
-    public function findById($shop_id)
+    public function findById($shopId)
     {
-        return $this->shop->find($shop_id);
+        return $this->shop->where('id', $shopId)->first();
     }
 
     public function create($shop)
@@ -30,18 +30,18 @@ class ShopRepository implements ShopRepositoryInterface
         return $this->shop->create($shop);
     }
 
-    public function delete($shop_id)
+    public function updateShop($shop, $shopId)
     {
-        return $this->shop->where('shop_id', $shop_id)->delete();
+        return $this->shop->where('id', $shopId)->update($shop);
     }
 
-    public function updateShop($shop, $shop_id)
-    {
-        return $this->shop->where('shop_id', $shop_id)->update($shop);
-    }
+//    public function delete($shop_id)
+//    {
+//        return $this->shop->where('shop_id', $shop_id)->delete();
+//    }
 
-    public function getShopByUserId($user_id)
-    {
-        return $this->shop->where('user_id',$user_id)->first();
-    }
+//    public function getShopByUserId($user_id)
+//    {
+//        return $this->shop->where('user_id',$user_id)->first();
+//    }
 }

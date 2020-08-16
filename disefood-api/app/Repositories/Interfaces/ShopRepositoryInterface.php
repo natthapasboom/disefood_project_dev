@@ -6,10 +6,10 @@ namespace App\Repositories\Interfaces;
 
 interface ShopRepositoryInterface
 {
-    public function get();
+    public function getAll();
     public function create($newShop);
-    public function findById($shop_id);
-    public function delete($shop_id);
-    public function updateShop($shop, $shop_id);
-    public function getShopByUserId($user_id);
+    public function findById($shopId);
+    public function updateShop($shop, $shopId);
+//    public function getShopByUserId($user_id);
+//    public function delete($shop_id);
 }
