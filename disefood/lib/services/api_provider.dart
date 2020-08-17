@@ -11,7 +11,7 @@ class ApiProvider {
   String url = 'http://10.0.2.2:8080';
 
   Future<http.Response> doLogin(String username, String password) async {
-    String _url = 'http://10.0.2.2:8080/api/login';
+    String _url = 'http://10.0.2.2:8080/api/auth/login';
     
     var body = {"username": username, "password": password};
     http.Response response = await http.post(_url,  body: body);

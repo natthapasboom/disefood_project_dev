@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   List<UserProfile> list = List();
 
-  Future<UserProfile> _login() async {
+   Future<UserProfile> _login() async {
     print('before validate ==> ');
 
     if (_formKey.currentState.validate()) {
@@ -57,19 +57,17 @@ class _LoginPageState extends State<LoginPage> {
         //   },
         // );
         
-       
-        
-        logger.d(response);
+    
         print(response.statusCode);
         if (response.statusCode == 200) {
-          // var result = UserProfile.fromJson(json.decode(response.body));
-          // return result;
-          // logger.d(result);
-          // logger.d(response.data);
-          // print('Success');
-          // var result = UserProfile.fromJson(response.data[0]);
-          // print('result : ${result.isSeller}');
-          // print('id : ${result.userId}');
+          Map map = json.decode(response.body);
+          UserProfile msg = UserProfile.fromJson(map);
+          var data = msg.data.toJson();
+          var role = msg.data.role;
+          logger.d(data);
+          if(role == "admin"){
+              
+          }
 
           // if (result.isSeller == 1) {
           //   if (result.userId != null) {
@@ -118,41 +116,41 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<Null> routeHomeCustomer(
-    Widget myWidget,
-    UserProfile userProfile,
-  ) async {
-    SharedPreferences preference = await SharedPreferences.getInstance();
-    await preference.setInt('user_id', userProfile.userId);
-    await preference.setString('first_name', userProfile.firstName);
-    await preference.setString('last_name', userProfile.lastName);
-    await preference.setString('tel', userProfile.tel);
-    await preference.setString('profile_img', userProfile.profileImg);
-    await preference.setInt('is_seller', userProfile.isSeller);
+  // Future<Null> routeHomeCustomer(
+  //   Widget myWidget,
+  //   UserProfile userProfile,
+  // ) async {
+  //   SharedPreferences preference = await SharedPreferences.getInstance();
+  //   await preference.setInt('user_id', userProfile.data.tel);
+  //   await preference.setString('first_name', userProfile.firstName);
+  //   await preference.setString('last_name', userProfile.lastName);
+  //   await preference.setString('tel', userProfile.tel);
+  //   await preference.setString('profile_img', userProfile.profileImg);
+  //   await preference.setInt('is_seller', userProfile.isSeller);
 
-    MaterialPageRoute route = MaterialPageRoute(builder: (context) => myWidget);
-    Navigator.pushAndRemoveUntil(context, route, (route) => false);
-  }
+  //   MaterialPageRoute route = MaterialPageRoute(builder: (context) => myWidget);
+  //   Navigator.pushAndRemoveUntil(context, route, (route) => false);
+  // }
 
-  Future<Null> routeHomeSeller(
-      Widget myWidget, UserProfile userProfile, ShopById shopById) async {
-    SharedPreferences preference = await SharedPreferences.getInstance();
-    await preference.setInt('user_id', userProfile.userId);
-    logger.d('user data ==> ${userProfile.toJson()}');
-    await preference.setString('first_name', userProfile.firstName);
-    await preference.setString('last_name', userProfile.lastName);
-    await preference.setString('tel', userProfile.tel);
-    await preference.setString('profile_img', userProfile.profileImg);
-    await preference.setInt('is_seller', userProfile.isSeller);
-    await preference.setInt('shop_id', shopById.shopId);
-    await preference.setString('shop_name', shopById.name);
-    await preference.setInt('shop_user_id', shopById.userId);
-    await preference.setInt('shop_slot', shopById.shopSlot);
-    await preference.setString('cover_img', shopById.coverImage);
+  // Future<Null> routeHomeSeller(
+  //     Widget myWidget, UserProfile userProfile, ShopById shopById) async {
+  //   SharedPreferences preference = await SharedPreferences.getInstance();
+  //   await preference.setInt('user_id', userProfile.userId);
+  //   logger.d('user data ==> ${userProfile.toJson()}');
+  //   await preference.setString('first_name', userProfile.firstName);
+  //   await preference.setString('last_name', userProfile.lastName);
+  //   await preference.setString('tel', userProfile.tel);
+  //   await preference.setString('profile_img', userProfile.profileImg);
+  //   await preference.setInt('is_seller', userProfile.isSeller);
+  //   await preference.setInt('shop_id', shopById.shopId);
+  //   await preference.setString('shop_name', shopById.name);
+  //   await preference.setInt('shop_user_id', shopById.userId);
+  //   await preference.setInt('shop_slot', shopById.shopSlot);
+  //   await preference.setString('cover_img', shopById.coverImage);
 
-    MaterialPageRoute route = MaterialPageRoute(builder: (context) => myWidget);
-    Navigator.pushAndRemoveUntil(context, route, (route) => false);
-  }
+  //   MaterialPageRoute route = MaterialPageRoute(builder: (context) => myWidget);
+  //   Navigator.pushAndRemoveUntil(context, route, (route) => false);
+  // }
 
   @override
   Widget build(BuildContext context) {

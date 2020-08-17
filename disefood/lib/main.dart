@@ -35,7 +35,7 @@ void main() {
         iconTheme: IconThemeData(color: Colors.white),
       ),
     ),
-    home: EditProfile(),
+    home: LoginPage(),
     initialRoute: '/',
     routes: {
       Regis.routeName: (_) => Regis(),
