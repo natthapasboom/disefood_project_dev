@@ -14,15 +14,15 @@ class CreateFoodsTable extends Migration
     public function up()
     {
         Schema::create('foods', function (Blueprint $table) {
-            $table->increments('food_id');
+            $table->increments('id');
             $table->integer('shop_id')->unsigned();
-            $table->string('name', 50);
+            $table->string('name');
             $table->integer('price');
             $table->boolean('status');
-            $table->string('cover_image')->nullable();
+            $table->string('cover_img')->nullable();
             $table->timestamps();
 
-            $table->foreign('shop_id')->references('shop_id')->on('shops');
+            $table->foreign('shop_id')->references('id')->on('shops');
         });
     }
 

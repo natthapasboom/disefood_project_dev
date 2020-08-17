@@ -2,14 +2,36 @@
 
 namespace App\Models\Order;
 
+use App\Models\Payment\Payment;
+use App\Models\Shop\Shop;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
     protected $table = 'orders';
-    protected $primaryKey = 'order_id';
+    protected $primaryKey = 'id';
     protected $fillable = [
-        'total_price', 'quantity', 'status', 'proof_payment',
-        'payment_method', 'shop_id', 'user_id'
+        'total_quantity', 'total_price', 'time_pickup', 'status', 'shop_id', 'user_id'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class);
+    }
+
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class, 'order_id', id);
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'order_id', 'id');
+    }
 }

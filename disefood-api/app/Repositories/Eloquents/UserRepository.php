@@ -2,9 +2,9 @@
 
 
 namespace App\Repositories\Eloquents;
+
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Models\User\User;
-use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -15,39 +15,34 @@ class UserRepository implements UserRepositoryInterface
         $this->user = new User;
     }
 
-    public function getUserById($user_id)
+    public function getAll()
     {
-        return $this->user->where('user_id', $user_id)->first();
+        return $this->user->get();
     }
 
-    public function create($user)
+    public function getUserById($userId)
     {
-        return $this->user->create($user);
+        return $this->user->where('id', $userId)->first();
     }
 
-    public function get()
+    public function create($newUser)
     {
-        return $this->user->with('profile')->get();
+
+        return $this->user->create($newUser);
     }
 
-    public function login($user)
+    public function findByUserName($username)
     {
-        $username = $user['username'];
-        $password = $user['password'];
-        $find_user = $this->user->where('username', $username)->first();
-        $find_user_id = $find_user['user_id'];
-        $find_user_password = $find_user['password'];
-
-        if($username == $find_user['username']){
-            if(Hash::check($password, $find_user_password)){
-                $res_user = $this->user->find($find_user_id);
-                $res_user->profile;
-                return $res_user;
-            }else{
-                return 'if 1';
-            }
-        }else{
-            return  'if 2';
-        }
+        return $this->user->where('username', $username)->first();
     }
+
+//    public function delete($user_id)
+//    {
+//        return $this->user->find($user_id)->delete();
+//    }
+//
+//    public function updateById($user_id, $user)
+//    {
+//        return $this->user->where('id', $user_id)->update($user);
+//    }
 }

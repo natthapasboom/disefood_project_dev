@@ -21,29 +21,34 @@ class FoodController extends Controller
         return $this->foodRepo->get();
     }
 
-    public function getFoodsByShopId($shop_id)
+    public function getFoodById($foodId)
     {
-        return $this->foodRepo->findByShopId($shop_id);
+        $food = $this->foodRepo->findByFoodId($foodId);
+        if(!$food) {
+            return  response()->json(['msg' => 'Food not found', 'status' => 404]);
+        } else {
+            return response()->json(['data' => $food]);
+        }
     }
 
-    public function updateFoodByFoodId(Request $request, $food_id)
-    {
-        $food = $request->except(['_method']);
-//        $food_beforeUpdate = $this->foodRepo->findByFoodId($food_id);
-//        $path_beforeUpdate = $food_beforeUpdate['cover_image'];
-//        Storage::disk('s3')->delete($path_beforeUpdate);
-//        $food['cover_image'] = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'), 'public');
+//    public function updateFoodByFoodId(Request $request, $food_id)
+//    {
+//        $food = $request->except(['_method']);
+////        $food_beforeUpdate = $this->foodRepo->findByFoodId($food_id);
+////        $path_beforeUpdate = $food_beforeUpdate['cover_image'];
+////        Storage::disk('s3')->delete($path_beforeUpdate);
+////        $food['cover_image'] = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'), 'public');
+//
+//        $this->foodRepo->update($food, $food_id);
+//        return $this->foodRepo->findByFoodId($food_id);
+//    }
 
-        $this->foodRepo->update($food, $food_id);
-        return $this->foodRepo->findByFoodId($food_id);
-    }
-
-    public function deleteByFoodId($food_id)
-    {
-        $foodBeforeDelete = $this->foodRepo->findByFoodId($food_id);
-        $path = $foodBeforeDelete['cover_image'];
-        Storage::disk('s3')->delete($path);
-        $this->foodRepo->delete($food_id);
-        return response('delete shop success', 200);
-    }
+//    public function deleteByFoodId($food_id)
+//    {
+//        $foodBeforeDelete = $this->foodRepo->findByFoodId($food_id);
+//        $path = $foodBeforeDelete['cover_image'];
+//        Storage::disk('s3')->delete($path);
+//        $this->foodRepo->delete($food_id);
+//        return response('delete shop success', 200);
+//    }
 }

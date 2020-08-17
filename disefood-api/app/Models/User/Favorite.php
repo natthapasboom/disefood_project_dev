@@ -1,17 +1,17 @@
 <?php
 
+
 namespace App\Models\User;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Profile extends Model
+class Favorite extends Model
 {
-    protected $table = 'profiles';
+    protected $table = 'favorites';
+    protected $primaryKey = 'id';
     protected $fillable = [
-        'user_id', 'first_name', 'last_name',
-        'tel', 'profile_img', 'role',
+        'user_id', 'shop_id'
     ];
-
     public function user()
     {
         return $this->belongsTo(User::class);

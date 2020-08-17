@@ -1,15 +1,16 @@
 <?php
 
+
 namespace App\Models\Shop;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Food extends Model
+class Feedback extends Model
 {
-    protected $table = 'foods';
+    protected  $table = 'feedbacks';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'shop_id', 'name', 'price', 'status', 'cover_img'
+        'comment', 'rating', 'user_id', 'shop_id'
     ];
 
     public function shop()

@@ -4,6 +4,7 @@
 namespace App\Repositories\Eloquents;
 
 use App\Models\Shop\Food;
+use App\Models\Shop\Shop;
 use App\Repositories\Interfaces\FoodRepositoryInterface;
 
 class FoodRepository implements FoodRepositoryInterface
@@ -20,29 +21,42 @@ class FoodRepository implements FoodRepositoryInterface
         return $this->food->all();
     }
 
-    public function addFood($food, $shop_id)
+//    public function addFood($food, $shopId)
+//    {
+//        $food['shop_id'] = $shopId;
+//        return $this->food->create($food);
+//    }
+
+    public function findByFoodId($foodId)
     {
-        $food['shop_id'] = $shop_id;
-        return $this->food->create($food);
+        return $this->food->where('id', $foodId)->first();
     }
 
-    public function findByFoodId($food_id)
-    {
-        return $this->food->where('food_id', $food_id)->first();
-    }
+//    public function findByShopId($shopId)
+//    {
+//        return $this->food->where('shop_id', $shopId)->get();
+//    }
 
-    public function findByShopId($shop_id)
-    {
-        return $this->food->where('shop_id', $shop_id)->get();
-    }
+//    public function update($food, $food_id)
+//    {
+//        return $this->food->where('food_id', $food_id)->update($food);
+//    }
 
-    public function update($food, $food_id)
+//    public function delete($food_id)
+//    {
+//        return $this->food->where('food_id', $food_id)->delete();
+//    }
+    public function addMenuByShopId($newMenu, $shopId)
     {
-        return $this->food->where('food_id', $food_id)->update($food);
-    }
+        $shop = Shop::find($shopId);
+        $this->food->shop()->associate($shop);
 
-    public function delete($food_id)
-    {
-        return $this->food->where('food_id', $food_id)->delete();
+        $this->food->name = $newMenu['name'];
+        $this->food->price = $newMenu['price'];
+        $this->food->status = $newMenu['status'];
+        $this->food->cover_img = $newMenu['cover_img'];
+
+        $this->food->save($newMenu);
+        return $this->food;
     }
 }
