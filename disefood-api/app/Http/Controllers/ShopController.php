@@ -54,7 +54,8 @@ class ShopController extends Controller
     public function approved(Request $request, $shopId)
     {
         $req = $request->except(['_method' ]);
-        $shop = $this->shopRepo->updateShop($req, $shopId);
+        $this->shopRepo->updateShop($req, $shopId);
+        $shop = $this->shopRepo->findById($shopId);
         return response()->json([ 'data' => $shop, 'msg' => 'Approved Success']);
     }
 
