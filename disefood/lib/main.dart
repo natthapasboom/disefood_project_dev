@@ -1,6 +1,7 @@
 
 
 
+import 'package:disefood/component/editProfile.dart';
 import 'package:disefood/component/order_seller_bottombar.dart';
 import 'package:disefood/component/organize_seller_bottombar.dart';
 import 'package:disefood/screen/login_customer_page.dart';
@@ -34,7 +35,7 @@ void main() {
         iconTheme: IconThemeData(color: Colors.white),
       ),
     ),
-    home: Homepage(),
+    home: EditProfile(),
     initialRoute: '/',
     routes: {
       Regis.routeName: (_) => Regis(),
