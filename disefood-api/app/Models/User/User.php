@@ -16,7 +16,7 @@ class User extends Model
         'profile_img', 'role'
     ];
     protected $hidden = [
-        'id', 'password'
+        'password'
     ];
 
 //    protected $attributes = [
