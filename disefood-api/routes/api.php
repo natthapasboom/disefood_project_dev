@@ -55,9 +55,15 @@ Route::group([
 Route::group([
     'prefix' => 'auth'
 ], function () {
-    Route::get('/user/{userId}', 'AuthController@getProfileById');
     Route::post('/register', 'AuthController@register');
     Route::post('/login', 'AuthController@login');
+});
+
+Route::group([
+    'prefix' => 'user'
+], function () {
+    Route::get('/{userId}', 'UserController@getProfileById');
+    Route::put('/{userId}', 'UserController@update');
 });
 
 Route::group([

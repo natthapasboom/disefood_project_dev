@@ -36,13 +36,8 @@ class UserRepository implements UserRepositoryInterface
         return $this->user->where('username', $username)->first();
     }
 
-//    public function delete($user_id)
-//    {
-//        return $this->user->find($user_id)->delete();
-//    }
-//
-//    public function updateById($user_id, $user)
-//    {
-//        return $this->user->where('id', $user_id)->update($user);
-//    }
+    public function updateById($user, $userId)
+    {
+        return $this->user->where('id', $userId)->update($user);
+    }
 }

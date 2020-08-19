@@ -22,12 +22,6 @@ class AuthController extends Controller
         $this->userRepo = $userRepo;
     }
 
-    public function getProfileById($userId)
-    {
-        $user = $this->userRepo->getUserById($userId);
-        return response()->json(['data' => $user]);
-    }
-
     public function register(CreateUserStore $request)
     {
         $req = $request->validated();
