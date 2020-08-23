@@ -8,6 +8,7 @@ import 'package:disefood/services/api_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http_parser/http_parser.dart';
+
 class Regis extends StatefulWidget {
   static const routeName = '/Regis';
   @override
@@ -52,7 +53,6 @@ class _RegisState extends State<Regis> {
           "profile_img": await MultipartFile.fromFile(
             '${_image.path}',
             filename: '${uuid.v4()}.jpeg',
-             
           ),
           "is_seller": status,
         });
@@ -60,36 +60,33 @@ class _RegisState extends State<Regis> {
         print(formData.files.toString());
         // print(formData.files);
         print('data : $formData');
-        Response response = await dio.post(
-          url,
-          data: formData,
-          options: Options(
-            headers: {
-              'Headers' : 'multipart/form-data',
-              'Accept' : '*/*',
-            }
-          )
-          // data: formData,
-          // data: formData,
-          // options:  Options(
-          //  followRedirects: false,
-          //  validateStatus: (status) { return status < 500; }
-          //   ),
-          // data: formData,
-          // data:{
-          // "username": _usernameController.text.trim(),
-          // "password": _passwordController.text.trim(),
-          // "first_name": _firstNameController.text.trim(),
-          // "last_name": _lastNameController.text.trim(),
-          // "tel": _phoneController.text.trim(),
+        Response response = await dio.post(url,
+            data: formData,
+            options: Options(headers: {
+              'Headers': 'multipart/form-data',
+              'Accept': '*/*',
+            })
+            // data: formData,
+            // data: formData,
+            // options:  Options(
+            //  followRedirects: false,
+            //  validateStatus: (status) { return status < 500; }
+            //   ),
+            // data: formData,
+            // data:{
+            // "username": _usernameController.text.trim(),
+            // "password": _passwordController.text.trim(),
+            // "first_name": _firstNameController.text.trim(),
+            // "last_name": _lastNameController.text.trim(),
+            // "tel": _phoneController.text.trim(),
 
-          // // "profile_img": await MultipartFile.fromFile(
-          // //     _image.path,
-          // //      filename: '${uuid.v4()}.png',
-          // // ) ,
-          // "is_seller": status,
-          // },
-        );
+            // // "profile_img": await MultipartFile.fromFile(
+            // //     _image.path,
+            // //      filename: '${uuid.v4()}.png',
+            // // ) ,
+            // "is_seller": status,
+            // },
+            );
 
         print('res : $response');
         print('res : ${response.data}');
@@ -98,10 +95,8 @@ class _RegisState extends State<Regis> {
           print('response : ${response.data}');
           print('Success');
           Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
-         
         } else {
           print('error code');
-         
         }
         print('res : $response');
       } catch (error) {
@@ -109,8 +104,6 @@ class _RegisState extends State<Regis> {
       }
     }
   }
-
- 
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
@@ -213,7 +206,6 @@ class _RegisState extends State<Regis> {
                   return 'โปรดกรอกไอดี';
                 }
               },
-            
               maxLength: 50,
               controller: _usernameController,
               decoration: InputDecoration(
@@ -245,13 +237,13 @@ class _RegisState extends State<Regis> {
               // ,
               cursorColor: Colors.white,
               maxLength: 50,
-              
+
               controller: _passwordController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'รหัสผ่าน',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
-                 border: OutlineInputBorder(
+                border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
@@ -280,7 +272,7 @@ class _RegisState extends State<Regis> {
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'ชื่อ',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
-                 border: OutlineInputBorder(
+                border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
@@ -309,7 +301,7 @@ class _RegisState extends State<Regis> {
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'นามสกุล',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
-                 border: OutlineInputBorder(
+                border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
@@ -326,8 +318,7 @@ class _RegisState extends State<Regis> {
             child: TextFormField(
               keyboardType: TextInputType.number,
               validator: (value) {
-                
-                if(value.length != 10){
+                if (value.length != 10) {
                   return 'โปรดกรอกให้ครบ10หลัก';
                 }
                 if (value.isEmpty) {
@@ -344,7 +335,7 @@ class _RegisState extends State<Regis> {
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'เบอร์โทร',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
-                 border: OutlineInputBorder(
+                border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.0),
@@ -386,7 +377,8 @@ class _RegisState extends State<Regis> {
             _register();
           },
           child: Container(
-            padding: EdgeInsets.only(left: 120, right: 120, top: 10, bottom: 10),
+            padding:
+                EdgeInsets.only(left: 120, right: 120, top: 10, bottom: 10),
             child: Text(
               'สมัคร',
               style: TextStyle(
@@ -399,7 +391,8 @@ class _RegisState extends State<Regis> {
       ),
     );
   }
-   Widget _buttonCancel() {
+
+  Widget _buttonCancel() {
     return Container(
       margin: EdgeInsets.only(top: 10, bottom: 20),
       child: Center(
@@ -409,7 +402,8 @@ class _RegisState extends State<Regis> {
             Navigator.pop(context);
           },
           child: Container(
-            padding: EdgeInsets.only(left: 120, right: 120, top: 10, bottom: 10),
+            padding:
+                EdgeInsets.only(left: 120, right: 120, top: 10, bottom: 10),
             child: Text(
               'ยกเลิก',
               style: TextStyle(
