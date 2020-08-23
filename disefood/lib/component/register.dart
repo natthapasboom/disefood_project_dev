@@ -5,9 +5,11 @@ import 'package:disefood/screen/login_customer_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:disefood/services/api_provider.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:logger/logger.dart';
 
 class Regis extends StatefulWidget {
   static const routeName = '/Regis';
@@ -21,6 +23,8 @@ class _RegisState extends State<Regis> {
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  final logger = Logger();
   File _image;
   ApiProvider apiProvider = ApiProvider();
   bool status;
@@ -31,6 +35,12 @@ class _RegisState extends State<Regis> {
     setState(() {
       _image = image;
     });
+  }
+
+  bool isValidEmail(value) {
+    return RegExp(
+            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+        .hasMatch(value);
   }
 
   Future<Null> _register() async {
@@ -50,6 +60,7 @@ class _RegisState extends State<Regis> {
           "first_name": _firstNameController.text.trim(),
           "last_name": _lastNameController.text.trim(),
           "tel": _phoneController.text.trim(),
+          "email": _emailController.text.trim(),
           "profile_img": await MultipartFile.fromFile(
             '${_image.path}',
             filename: '${uuid.v4()}.jpeg',
@@ -210,7 +221,7 @@ class _RegisState extends State<Regis> {
               controller: _usernameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
-                hintText: 'ไอดี',
+                hintText: 'กรอกไอดี',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white)),
@@ -220,6 +231,10 @@ class _RegisState extends State<Regis> {
                 enabledBorder: new OutlineInputBorder(
                   borderRadius: new BorderRadius.circular(15.0),
                   borderSide: new BorderSide(color: Colors.white),
+                ),
+                errorBorder: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(15.0),
+                  borderSide: new BorderSide(color: Colors.red),
                 ),
               ),
             ),
@@ -241,7 +256,7 @@ class _RegisState extends State<Regis> {
               controller: _passwordController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
-                hintText: 'รหัสผ่าน',
+                hintText: 'กรอกรหัสผ่าน',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white)),
@@ -251,6 +266,10 @@ class _RegisState extends State<Regis> {
                 enabledBorder: new OutlineInputBorder(
                   borderRadius: new BorderRadius.circular(15.0),
                   borderSide: new BorderSide(color: Colors.white),
+                ),
+                errorBorder: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(15.0),
+                  borderSide: new BorderSide(color: Colors.red),
                 ),
               ),
             ),
@@ -270,7 +289,7 @@ class _RegisState extends State<Regis> {
               controller: _firstNameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
-                hintText: 'ชื่อ',
+                hintText: 'กรอกชื่อ',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white)),
@@ -280,6 +299,10 @@ class _RegisState extends State<Regis> {
                 enabledBorder: new OutlineInputBorder(
                   borderRadius: new BorderRadius.circular(15.0),
                   borderSide: new BorderSide(color: Colors.white),
+                ),
+                errorBorder: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(15.0),
+                  borderSide: new BorderSide(color: Colors.red),
                 ),
               ),
             ),
@@ -299,7 +322,7 @@ class _RegisState extends State<Regis> {
               controller: _lastNameController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
-                hintText: 'นามสกุล',
+                hintText: 'กรอกนามสกุล',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white)),
@@ -309,6 +332,10 @@ class _RegisState extends State<Regis> {
                 enabledBorder: new OutlineInputBorder(
                   borderRadius: new BorderRadius.circular(15.0),
                   borderSide: new BorderSide(color: Colors.white),
+                ),
+                errorBorder: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(15.0),
+                  borderSide: new BorderSide(color: Colors.red),
                 ),
               ),
             ),
@@ -333,7 +360,7 @@ class _RegisState extends State<Regis> {
               controller: _phoneController,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 20),
-                hintText: 'เบอร์โทร',
+                hintText: 'กรอกเบอร์โทร',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white)),
@@ -343,6 +370,52 @@ class _RegisState extends State<Regis> {
                 enabledBorder: new OutlineInputBorder(
                   borderRadius: new BorderRadius.circular(15.0),
                   borderSide: new BorderSide(color: Colors.white),
+                ),
+                errorBorder: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(15.0),
+                  borderSide: new BorderSide(color: Colors.red),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+            child: TextFormField(
+              onFieldSubmitted: (value) {
+                if (isValidEmail(value)) {
+                  logger.d(value);
+                } else {
+                  logger.e('โปรดกรอกอีเมลล์ให้ถูกต้อง');
+                }
+              },
+              validator: (value) {
+                if (isValidEmail(value)) {
+                  logger.d(value);
+                } else {
+                  return 'โปรดกรอกอีเมลล์ให้ถูกต้อง';
+                }
+              },
+              //
+              keyboardType: TextInputType.emailAddress,
+              textCapitalization: TextCapitalization.none,
+              maxLength: 50,
+              controller: _emailController,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.only(left: 20),
+                hintText: 'กรอกอีเมลล์',
+                hintStyle: TextStyle(color: Colors.white, fontSize: 18),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                    borderSide: BorderSide(color: Colors.white)),
+                enabledBorder: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(15.0),
+                  borderSide: new BorderSide(color: Colors.white),
+                ),
+                errorBorder: new OutlineInputBorder(
+                  borderRadius: new BorderRadius.circular(15.0),
+                  borderSide: new BorderSide(color: Colors.red),
                 ),
               ),
             ),

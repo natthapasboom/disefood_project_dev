@@ -32,13 +32,13 @@ class _HomeState extends State<Home> {
   Future<Null> _routeMenuById(
       Widget mywidget, Shops shops, FoodsList foods) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setInt('shop_id', shops.shopId);
-    await preferences.setString('shop_name', shops.name);
-    await preferences.setString('shop_img', shops.coverImage);
-    await preferences.setInt('food_id', foods.foodId);
-    await preferences.setString('food_name', foods.name);
-    await preferences.setInt('food_price', foods.price);
-    await preferences.setString('food_img', foods.coverImage);
+    // await preferences.setInt('shop_id', shops.shopId);
+    // await preferences.setString('shop_name', shops.name);
+    // await preferences.setString('shop_img', shops.coverImage);
+    // await preferences.setInt('food_id', foods.foodId);
+    // await preferences.setString('food_name', foods.name);
+    // await preferences.setInt('food_price', foods.price);
+    // await preferences.setString('food_img', foods.coverImage);
 
     MaterialPageRoute route = MaterialPageRoute(builder: (context) => mywidget);
     Navigator.pushAndRemoveUntil(context, route, (route) => false);

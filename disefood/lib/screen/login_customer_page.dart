@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:disefood/component/dialogcomponents/alert_dialog.dart';
 import 'package:disefood/component/register.dart';
 import 'package:disefood/model/shop_id.dart';
 import 'package:disefood/model/user_profile.dart';
 import 'package:disefood/screen/home_customer.dart';
+import 'package:disefood/screen_admin/home.dart';
 import 'package:disefood/screen_seller/addmenu.dart';
 import 'package:disefood/screen_seller/home_seller.dart';
 import 'package:disefood/screen_seller/home_seller_tab.dart';
@@ -12,6 +14,7 @@ import 'package:disefood/screen_seller/order_seller_page.dart';
 import 'package:disefood/screen_seller/organize_seller_page.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:http/src/response.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,6 +27,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   bool _obscureText = true;
+
   final logger = Logger();
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -31,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   List<UserProfile> list = List();
 
-  Future<List<UserProfile>> _login() async {
+  Future<UserProfile> _login() async {
     print('before validate ==> ');
 
     if (_formKey.currentState.validate()) {
@@ -42,57 +46,27 @@ class _LoginPageState extends State<LoginPage> {
       String url = "http://10.0.2.2:8080/api/login";
       try {
         print('after try ==> ');
-        Dio dio = Dio();
-        dio.options.headers['content-Type'] = 'application/json';
-
-        Response response = await dio.post(
-          url,
-          data: {
-            "username": _usernameController.text.trim(),
-            "password": _passwordController.text.trim(),
-          },
-        );
+        var username = _usernameController.text.trim();
+        var password = _passwordController.text.trim();
+        var response = await apiProvider.doLogin(username, password);
+      
 
         print(response.statusCode);
         if (response.statusCode == 200) {
-          logger.d(response.data);
-          print('Success');
-          var result = UserProfile.fromJson(response.data[0]);
-          print('result : ${result.isSeller}');
-          print('id : ${result.userId}');
-
-          if (result.isSeller == 1) {
-            if (result.userId != null) {
-              String _url =
-                  'http://10.0.2.2:8080/api/shop/user/${result.userId}';
-              logger.d(_url);
-              try {
-                Response shopResponse = await Dio().get(_url);
-                print(shopResponse);
-                if (shopResponse.statusCode == 200) {
-                  print('Success Shop!');
-                  logger.d(shopResponse.data);
-                  var resultShop = ShopById.fromJson(shopResponse.data);
-                  if (resultShop.shopId != null) {
-                    routeHomeSeller(Homepage(), result, resultShop);
-                  }
-                } else {
-                  logger.d(shopResponse.statusCode);
-                  routeHomeCustomer(Homepage(), result);
-                }
-              } catch (error) {
-                routeHomeCustomer(Homepage(), result);
-                print("Error! $error");
-                setState(() {
-                  _isLoading = false;
-                });
-              }
-            } else {
-              // CircularProgressIndicator();
-            }
-          } else if (result.isSeller == 0) {
-            routeHomeCustomer(Home(), result);
+          Map map = json.decode(response.body);
+          UserProfile msg = UserProfile.fromJson(map);
+          var data = msg.data.toJson();
+          String role = msg.data.role;
+          // logger.d(data);
+          if (role == "admin") {
+              routeToService(HomeAdmin(),msg);
+          } else if (role == "customer") {
+              routeToService(Home(),msg);
+          } else if (role == "seller") {
+              routeToService(Homepage(),msg);
           }
+
+        
         } else {
           print('error code');
           setState(() {
@@ -105,52 +79,29 @@ class _LoginPageState extends State<LoginPage> {
           _isLoading = false;
         });
       }
+    } else {
+      alertDialog(context, "กรุณากรอกใหม่");
     }
   }
 
-  Future<Null> routeHomeCustomer(
-    Widget myWidget,
-    UserProfile userProfile,
-  ) async {
+  Future<Null> routeToService(Widget myWidget,UserProfile userprofile) async {
     SharedPreferences preference = await SharedPreferences.getInstance();
-    await preference.setInt('user_id', userProfile.userId);
-    await preference.setString('first_name', userProfile.firstName);
-    await preference.setString('last_name', userProfile.lastName);
-    await preference.setString('tel', userProfile.tel);
-    await preference.setString('profile_img', userProfile.profileImg);
-    await preference.setInt('is_seller', userProfile.isSeller);
-
+    await preference.setInt('user_id', userprofile.data.id);
+    await preference.setString('token',  userprofile.token);
     MaterialPageRoute route = MaterialPageRoute(builder: (context) => myWidget);
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
 
-  Future<Null> routeHomeSeller(
-      Widget myWidget, UserProfile userProfile, ShopById shopById) async {
-    SharedPreferences preference = await SharedPreferences.getInstance();
-    await preference.setInt('user_id', userProfile.userId);
-    logger.d('user data ==> ${userProfile.toJson()}');
-    await preference.setString('first_name', userProfile.firstName);
-    await preference.setString('last_name', userProfile.lastName);
-    await preference.setString('tel', userProfile.tel);
-    await preference.setString('profile_img', userProfile.profileImg);
-    await preference.setInt('is_seller', userProfile.isSeller);
-    await preference.setInt('shop_id', shopById.shopId);
-    await preference.setString('shop_name', shopById.name);
-    await preference.setInt('shop_user_id', shopById.userId);
-    await preference.setInt('shop_slot', shopById.shopSlot);
-    await preference.setString('cover_img', shopById.coverImage);
-    
-
-    MaterialPageRoute route = MaterialPageRoute(builder: (context) => myWidget);
-    Navigator.pushAndRemoveUntil(context, route, (route) => false);
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.amber[900],
+              ),
             )
           : Stack(
               children: <Widget>[

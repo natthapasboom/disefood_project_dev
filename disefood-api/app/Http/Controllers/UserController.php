@@ -2,74 +2,62 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
 use App\Http\Requests\CreateUserStore;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Repositories\Interfaces\UserRepositoryInterface;
-use App\Repositories\Interfaces\ProfileRepositoryInterface;
-use App\Repositories\Interfaces\UserShopsRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
+
 
 class UserController extends Controller
 {
 
     private $userRepo;
-    private $profileRepo;
-    private $userShopRepo;
 
     public function __construct
     (
-        UserRepositoryInterface $userRepo,
-        ProfileRepositoryInterface $profileRepo,
-        UserShopsRepositoryInterface $userShopsRepo
+        UserRepositoryInterface $userRepo
     )
     {
         $this->userRepo = $userRepo;
-        $this->profileRepo = $profileRepo;
-        $this->userShopRepo = $userShopsRepo;
     }
 
     public function getAll()
     {
-        return $this->userRepo->get();
+        $users = $this->userRepo->getAll();
+        return response()->json(['data' => $users, 'status' => 200]);
     }
 
-    public function getUserById($user_id)
+    public function getProfileById($userId)
     {
-        return $this->userRepo->getUserById($user_id);
+        $user = $this->userRepo->getUserById($userId);
+        if ( !$user )
+            return response()->json(['data' => $user, 'msg' => 'User not found' , 'status' => 404]);
+        else
+            return response()->json(['data' => $user, 'status' => 200]);
     }
 
-    public function getProfileById($user_id)
+    public function update($userId, UpdateUserRequest $request)
     {
-        return $this->profileRepo->getProfileById($user_id);
-    }
-
-    public function getShopByUserId($user_id)
-    {
-        return $this->userShopRepo->getShopByUserId($user_id);
-    }
-
-    public function register(CreateUserStore $request)
-    {
-        dd($request->all());
-        $newUser = $request->validated();
-       $path = Storage::disk('s3')->put('images/user/profile_img', $request->file('profile_img'), 'public');
-      
-        $newUser['profile_img'] = $path;
-        dd($path);
-        $newUser['profile_img'] = 'images/user/profile_img/Dk75JEOIgYI6v5lgdz8oRHZfazAu0n3y45uPcGNc.png';
-        $newUser['password'] = bcrypt($newUser['password']);
-        $user = $this->userRepo->create($newUser);
-        $user_id = $user['user_id'];
-        $this->profileRepo->create($newUser, $user_id);
-
-        return response('register success', 200);
-    }
-
-    public function login(LoginRequest $request)
-    {
-
-        $login =  $request->validated();
-        return response($this->userRepo->login($login), 200);
+        $user = $this->userRepo->getUserById($userId);
+        if ( !$user ) {
+            return response()->json(['data' => $user, 'msg' => 'User not found', 'status' => 404]);
+        } else {
+            $req = $request->validated();
+            if ( !$req['profile_img'] ){
+                $this->userRepo->updateById($req, $userId);
+                $res = $this->userRepo->getUserById($userId);
+                return response()->json(['data' => $res, 'msg' => 'Updated success', 'status' => 200]);
+            } else {
+                $oldPath =  $user['profile_img'];
+                Storage::disk('s3')->delete($oldPath);
+                $newPath = Storage::disk('s3')->put('images/user/profile_img', $request->file('profile_img'), 'public');
+                $req['profile_img'] = $newPath;
+                $this->userRepo->updateById($req, $userId);
+                $res = $this->userRepo->getUserById($userId);
+                return response()->json(['data' => $res, 'msg' => 'Updated with image success', 'status' => 200]);
+            }
+        }
     }
 }
