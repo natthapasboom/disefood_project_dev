@@ -29,7 +29,7 @@ class AuthController extends Controller
         $req['password'] = bcrypt($req['password']);
         $req['profile_img'] = $pathImg;
         $user = $this->userRepo->create($req);
-        return response()->json(['data' => $user]);
+        return response()->json(['data' => $user, 'msg' => 'Register success', 'status' => 200]);
     }
 
     public function login(LoginRequest $request)
@@ -40,13 +40,13 @@ class AuthController extends Controller
         $user = null;
         $key = 'example_key';
         if(!$username || !$password || $username == null || $password == null) {
-            return response()->json(['data' => $user]);
+            return response()->json(['data' => $user, 'msg' => 'username or password is wrong' , 'status' => 404]);
         } else {
             $user = $this->userRepo->findByUserName($username);
             if (Hash::check($password, $user['password']))
                 $payload = $user;
                 $token = JWT::encode($payload, $key);
-                return response()->json(['data' => $user, 'token' => $token]);
+                return response()->json(['data' => $user, 'token' => $token, 'status' => 200]);
         }
     }
 }

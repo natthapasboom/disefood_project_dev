@@ -72,6 +72,7 @@ Route::group([
     Route::get('/', 'ShopController@getShopsList');
     Route::get('/{shopId}', 'ShopController@findShopById');
     Route::post('/','ShopController@create');
+    Route::put('/{shopId}', 'ShopController@update');
 
     Route::group([
         'prefix' => 'menu'
