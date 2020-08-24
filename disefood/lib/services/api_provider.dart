@@ -22,30 +22,31 @@ class ApiProvider {
   }
 
   Future<http.Response> getUserById(int userId) async {
-    String _url = 'http://10.0.2.2:8080/api/auth/user/$userId';
+    String _url = 'http://10.0.2.2:8080/api/user/$userId';
     http.Response response = await http.get(_url);
     return response;
   }
 
+  Future<http.Response> getFoodByShopId(int shopId) async {
+    String _url = 'http://10.0.2.2:8080/api/shop/menu/$shopId';
+    http.Response response = await http.get(_url);
+    return response;
+  }
 
   Future<String> getShops() async {
     String _url = 'http://10.0.2.2:8080/api/shop';
     final response = await http.get(_url);
-      var body = response.body; 
-      var arr = json.decode(body)['data'];
-      logger.d(arr);
-     return "successful";
+    var body = response.body;
+    var arr = json.decode(body)['data'];
+    logger.d(arr);
+    return "successful";
   }
-
-
-  
-
 
   Future<List<ShopList>> getShopList(http.Client client) async {
     String _url = 'http://10.0.2.2:8080/api/shop';
     final response = await client.get(_url);
     print(response.statusCode);
-    logger.d(response.body); 
+    logger.d(response.body);
     return compute(parseShop, response.body);
   }
 

@@ -26,8 +26,6 @@ class _OrderAmountState extends State<OrderAmount> {
   String profileImg;
   int userId;
 
-
-
   List<int> amountList;
   _OrderAmountState(foodList, index) {
     this.foodList = foodList;
@@ -49,7 +47,7 @@ class _OrderAmountState extends State<OrderAmount> {
     if (foodAmount > 0) {
       foodAmount--;
       checkButtonRemove();
-     totalPrice = totalPrice - foodList[index].price;
+      totalPrice = totalPrice - foodList[index].price;
       setState(() {});
     }
   }
@@ -289,7 +287,6 @@ class _OrderAmountState extends State<OrderAmount> {
                       replacement: RaisedButton(
                         color: Colors.orange,
                         onPressed: () {
-                          
                           Navigator.push(
                             context,
                             PageRouteBuilder(
