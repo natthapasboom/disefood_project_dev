@@ -21,8 +21,18 @@ class ApiProvider {
     return response;
   }
 
+
+  Future<http.Response> approveShopById(int shopId, String approved, String _method) async {
+    String _url = 'http://10.0.2.2:8080/api/admin/approved/$shopId'; 
+    var body = {"approved": approved, "_method": _method};
+    http.Response response = await http.post(_url, body: body);
+    return response;
+
+  }
+
+
   Future<http.Response> getUserById(int userId) async {
-    String _url = 'http://10.0.2.2:8080/api/auth/user/$userId';
+    String _url = 'http://10.0.2.2:8080/api/user/$userId';
     http.Response response = await http.get(_url);
     return response;
   }
