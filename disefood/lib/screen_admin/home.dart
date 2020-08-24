@@ -183,12 +183,50 @@ class _HomeAdminState extends State<HomeAdmin> {
                                       Container(
                                         margin:
                                             EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                        child: Text(
-                                          "สถานะ : ",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                              fontFamily: 'Roboto'),
+                                        child: item['approved'] == 0 ?
+                                        Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "สถานะ :",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                  fontFamily: 'Roboto'),
+                                            ),
+                                             Container(
+                                               margin: EdgeInsets.only(left: 5),
+                                               child: Text(
+                                                "ยังไม่ยืนยัน",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                    color: const Color(0xffEC0A25),
+                                                    fontFamily: 'Roboto'),
+                                            ),
+                                             ),
+                                          ],
+                                        ):
+                                        Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "สถานะ :",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                  fontFamily: 'Roboto'),
+                                            ),
+                                             Container(
+                                               margin: EdgeInsets.only(left: 5),
+                                               child: Text(
+                                                "ยืนยัน",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                    color: const Color(0xff81CF66),
+                                                    fontFamily: 'Roboto'),
+                                            ),
+                                             ),
+                                          ],
                                         ),
                                       ),
                                       Transform.translate(
@@ -210,19 +248,31 @@ class _HomeAdminState extends State<HomeAdmin> {
                                                       shopId = item['id'];
                                                       shopSlot = item['shop_slot'];
                                                       coverImg = item['cover_img'];
-                                                      Navigator.push(
+                                                      if(item['approved'] == 0){
+                                                         Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
                                                             builder: (context) =>
                                                                 ShopDetail(name: name, shopId: shopId, shopSlot: shopSlot, coverImg: coverImg,)),
                                                       );
+                                                      }else if(item['approved'] == 1){
+                                                          print('delete');
+                                                      }
+                                                     
                                                     },
                                                     padding: EdgeInsets.only(
                                                         left: 30, right: 30),
                                                     color:
                                                         const Color(0xffF6A911),
-                                                    child: Text(
+                                                    child: item['approved'] == 0 ? Text(
                                                       "ดูรายละเอียด",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ):
+                                                    Text(
+                                                      "ยกเลิก",
                                                       style: TextStyle(
                                                           color: Colors.white,
                                                           fontWeight:
