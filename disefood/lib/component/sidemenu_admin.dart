@@ -1,17 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/component/signout_process.dart';
-import 'package:disefood/model/user_profile.dart';
+import 'package:disefood/screen_admin/home.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/screen/home_customer.dart';
 
 
 
-class SideMenuCustomer extends StatelessWidget {
+class SideMenuAdmin extends StatelessWidget {
   final String firstName;
   final int userId; 
   final String lastName; 
   final String coverImg;
   final String email;
-  const SideMenuCustomer({
+  const SideMenuAdmin({
     Key key,
     @required this.firstName,@required this.userId,@required this.lastName,@required this.coverImg,@required this.email
   }) : super(key: key);
@@ -28,7 +29,7 @@ class SideMenuCustomer extends StatelessWidget {
           UserAccountsDrawerHeader(
             
             accountName: Text('$firstName $lastName',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
-            accountEmail: email == null ?Text('โปรดกรอกอีเมลล์',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),):
+            accountEmail:
             Text('$email',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15),),
             currentAccountPicture: coverImg == null ?
             CircleAvatar(
@@ -38,8 +39,13 @@ class SideMenuCustomer extends StatelessWidget {
             
             :
             CircleAvatar(
-              backgroundImage: NetworkImage(
-                  "https://disefood.s3-ap-southeast-1.amazonaws.com/$coverImg"),
+              backgroundImage: coverImg == null ? 
+              Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.amber[900],
+                        ),
+                      )
+              :CachedNetworkImageProvider('https://disefood.s3-ap-southeast-1.amazonaws.com/'+'$coverImg'),
               backgroundColor: coverImg == null ? const Color(0xffFF7C2C):Colors.white,
             ),
           ),
@@ -48,7 +54,7 @@ class SideMenuCustomer extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text('Home'),
             onTap: (){
-              Navigator.pushNamed(context, Home.routeName);
+              Navigator.pushNamed(context, HomeAdmin.routeName);
             },
           ),
           Divider(height: 2,color: Colors.grey,),

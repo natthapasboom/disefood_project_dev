@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/model/foodByShopId.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
 import 'package:disefood/screen/order_items.dart';
 import 'package:disefood/screen/view_order_page.dart';
+import 'package:disefood/services/api_provider.dart';
 import 'package:disefood/services/getfoodmenupageservice.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,65 +16,66 @@ import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuPage extends StatefulWidget {
-  MenuPage({
-    Key key,
-  }) : super(key: key);
+  final int shopId;
+  final String shopName;
+  final int shopSlot;
+  final String shopCoverImg;
+  const MenuPage(
+      {Key key,
+      @required this.shopId,
+      @required this.shopName,
+      @required this.shopSlot,
+      @required this.shopCoverImg})
+      : super(key: key);
   @override
   _MenuPageState createState() => _MenuPageState();
 }
 
 class _MenuPageState extends State<MenuPage> {
-  String shopName, shopImg, foodName, foodImg;
-  int shopId, foodPrice, foodId;
-  bool isAmountHasValue = false;
-  String nameUser;
-  String lastNameUser;
-  String profileImg;
+  Logger logger = Logger();
+  int shopId;
+  String shopName;
+  int shopSlot;
+  String shopCoverImg;
+
   int userId;
-  var foodList;
+  ApiProvider apiProvider = ApiProvider();
+  String email;
+  bool isLoading = true;
+  List foods = [];
   @override
   void initState() {
-    Future.microtask(() {
-      findUser();
-      fetchShop();
-      fetchFood();
-    });
     super.initState();
-  }
-
-  Future<Null> fetchShop() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      shopName = preferences.getString('shop_name');
-      shopId = preferences.getInt('shop_id');
-      shopImg = preferences.getString('shop_img');
+      shopName = widget.shopName;
+      shopCoverImg = widget.shopCoverImg;
+      shopSlot = widget.shopSlot;
+      shopId = widget.shopId;
+    });
+    Future.microtask(() {
+      findMenu();
     });
   }
 
-  Future<Null> fetchFood() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    setState(() {
-      foodId = preferences.getInt('food_id');
-      foodName = preferences.getString('food_name');
-      foodPrice = preferences.getInt('food_price');
-      foodImg = preferences.getString('food_img');
-    });
-  }
-
-  Future<Null> findUser() async {
+  Future<Foods> findMenu() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
-    setState(() {
-      nameUser = preference.getString('first_name');
-      userId = preference.getInt('user_id');
-      lastNameUser = preference.getString('last_name');
-      profileImg = preference.getString('profile_img');
-    });
+    var response = await apiProvider.getFoodByShopId(shopId);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      Map map = json.decode(response.body);
+      FoodByShopId msg = FoodByShopId.fromJson(map);
+      var data = msg.data.toJson();
+      setState(() {
+        isLoading = false;
+        foods = msg.data.foods;
+      });
+    } else {
+      logger.e("statuscode != 200");
+    }
   }
 
-  final logger = Logger();
   @override
   Widget build(BuildContext context) {
-    print('shopId : $shopId');
     return WillPopScope(
       onWillPop: () async => Navigator.push(
         context,
@@ -206,25 +209,17 @@ class _MenuPageState extends State<MenuPage> {
         //   userId: userId,
         //   lastName: lastNameUser,
         //   coverImg: profileImg),
-        body: SingleChildScrollView(
-          child: FutureBuilder<List<FoodsList>>(
-            future: fetchFoodsMenuPage(http.Client(), shopId),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.data == null) {
-                return Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.only(top: 300, bottom: 10),
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.orange,
-                  ),
-                );
-              } else {
-                return Container(
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : SingleChildScrollView(
+                child: Container(
                   child: Column(
                     children: <Widget>[
                       CachedNetworkImage(
                         imageUrl:
-                            'https://disefood.s3-ap-southeast-1.amazonaws.com/$shopImg',
+                            'https://disefood.s3-ap-southeast-1.amazonaws.com/$shopCoverImg',
                         height: 200,
                         width: double.maxFinite,
                         fit: BoxFit.cover,
@@ -327,8 +322,10 @@ class _MenuPageState extends State<MenuPage> {
                               child: ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (context, index) {
+                                itemCount: foods != null ? foods.length : 0,
+                                itemBuilder: (BuildContext context, int index) {
+                                  var item = foods[index];
+                                  logger.d(foods);
                                   return Column(
                                     children: <Widget>[
                                       Row(
@@ -340,7 +337,7 @@ class _MenuPageState extends State<MenuPage> {
                                             child: SizedBox(
                                               width: 25,
                                               child: Text(
-                                                "${snapshot.data[index].quantity}",
+                                                "0",
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.orange),
@@ -352,13 +349,12 @@ class _MenuPageState extends State<MenuPage> {
                                           ),
                                           SizedBox(
                                             width: 140,
-                                            child: Text(
-                                                '${snapshot.data[index].name}'),
+                                            child: Text('${item['name']}'),
                                           ),
                                           SizedBox(
                                             width: 30,
                                             child: Text(
-                                              '${snapshot.data[index].price}',
+                                              '${item['price']}',
                                               textAlign: TextAlign.center,
                                             ),
                                           ),
@@ -371,16 +367,16 @@ class _MenuPageState extends State<MenuPage> {
                                               color: Colors.orange,
                                             ),
                                             onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      OrderAmount(
-                                                          foodList:
-                                                              snapshot.data,
-                                                          index: index),
-                                                ),
-                                              );
+                                              // Navigator.push(
+                                              //   context,
+                                              //   MaterialPageRoute(
+                                              //     builder: (context) =>
+                                              //         OrderAmount(
+                                              //             foodList:
+                                              //                 snapshot.data,
+                                              //             index: index),
+                                              //   ),
+                                              // );
                                             },
                                           ),
                                           IconButton(
@@ -407,11 +403,8 @@ class _MenuPageState extends State<MenuPage> {
                       ),
                     ],
                   ),
-                );
-              }
-            },
-          ),
-        ),
+                ),
+              ),
       ),
     );
   }

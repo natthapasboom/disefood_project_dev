@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:logger/logger.dart';
+
 class Regis extends StatefulWidget {
   static const routeName = '/Regis';
   @override
@@ -381,20 +382,17 @@ class _RegisState extends State<Regis> {
             padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
             child: TextFormField(
               onFieldSubmitted: (value) {
-                if(isValidEmail(value)){
-              
+                if (isValidEmail(value)) {
                   logger.d(value);
-                }else{
+                } else {
                   logger.e('โปรดกรอกอีเมลล์ให้ถูกต้อง');
                 }
               },
               validator: (value) {
-                 if(isValidEmail(value)){
-              
+                if (isValidEmail(value)) {
                   logger.d(value);
-                }else{
+                } else {
                   return 'โปรดกรอกอีเมลล์ให้ถูกต้อง';
-                  
                 }
               },
               //

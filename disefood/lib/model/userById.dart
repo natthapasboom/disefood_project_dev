@@ -1,12 +1,10 @@
-class UserProfile {
+class UserById {
   Data data;
-  String token;
 
-  UserProfile({this.data, this.token});
+  UserById({this.data});
 
-  UserProfile.fromJson(Map<String, dynamic> json) {
+  UserById.fromJson(Map<String, dynamic> json) {
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-    token = json['token'];
   }
 
   Map<String, dynamic> toJson() {
@@ -14,7 +12,6 @@ class UserProfile {
     if (this.data != null) {
       data['data'] = this.data.toJson();
     }
-    data['token'] = this.token;
     return data;
   }
 }
