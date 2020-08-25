@@ -45,7 +45,7 @@ class UserController extends Controller
             return response()->json(['data' => $user, 'msg' => 'User not found', 'status' => 404]);
         } else {
             $req = $request->validated();
-            if ( !$req['profile_img'] ){
+            if ( !isset($req['profile_img']) ){
                 $this->userRepo->updateById($req, $userId);
                 $res = $this->userRepo->getUserById($userId);
                 return response()->json(['data' => $res, 'msg' => 'Updated success', 'status' => 200]);

@@ -39,17 +39,12 @@ use Illuminate\Support\Facades\Route;
 //Route::get('order/user/{user_id}', 'OrderController@getOrderByUser');
 //Route::get('order/detail/{order_id}', 'OrderController@getOrderDetailByOrderId');
 
-//Route::group([
-//    'prefix' => 'admin',
-//    'namespace' => 'User'
-//], function() {
-//    Route::get('/user', 'UserController@getAll');
-//});
 Route::group([
     'prefix' => 'admin'
 ], function () {
     Route::get('/users', 'UserController@getAll');
     Route::put('/approved/{shopId}', 'ShopController@approved');
+    Route::delete('/rejected/{shopId}', 'ShopController@rejected');
 });
 
 Route::group([
