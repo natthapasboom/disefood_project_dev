@@ -1,8 +1,11 @@
+import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/model/shops_list.dart';
+import 'package:disefood/model/userById.dart';
+import 'package:disefood/services/api_provider.dart';
 import 'package:disefood/services/shopservice.dart';
 import 'package:disefood/screen/login_customer_page.dart';
 import 'package:disefood/screen/menu_page.dart';
@@ -24,78 +27,96 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final logger = Logger();
+  //sidebar att.
   String shopImg;
   String nameUser;
   String lastNameUser;
   String profileImg;
+  //fetch ข้อมูล
   int userId;
-  Future<Null> _routeMenuById(
-      Widget mywidget, Shops shops, FoodsList foods) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    // await preferences.setInt('shop_id', shops.shopId);
-    // await preferences.setString('shop_name', shops.name);
-    // await preferences.setString('shop_img', shops.coverImage);
-    // await preferences.setInt('food_id', foods.foodId);
-    // await preferences.setString('food_name', foods.name);
-    // await preferences.setInt('food_price', foods.price);
-    // await preferences.setString('food_img', foods.coverImage);
+  ApiProvider apiProvider = ApiProvider();
+  String email;
+  bool isLoading = true;
+  List shops = [];
+  //ตัวแปรส่งไปหน้าต่อไป
+  int shopId;
+  String shopName;
+  int shopSlot;
+  String shopCoverImg;
 
-    MaterialPageRoute route = MaterialPageRoute(builder: (context) => mywidget);
-    Navigator.pushAndRemoveUntil(context, route, (route) => false);
-  }
-
-  Future<Null> findUser() async {
-    SharedPreferences preference = await SharedPreferences.getInstance();
-    setState(() {
-      nameUser = preference.getString('first_name');
-      userId = preference.getInt('user_id');
-      lastNameUser = preference.getString('last_name');
-      profileImg = preference.getString('profile_img');
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      findUser();
+      getShops();
     });
   }
 
-  Future<List<Shops>> fetchShopAndFood(int shopId) async {
-    String shopUrl = "http://10.0.2.2:8080/api/shops/+$shopId";
-
-    try {
-      Dio dio = Dio();
-      Response response = await dio.get(shopUrl);
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        String foodUrl = "http://10.0.2.2:8080/api/shop/foods/+$shopId";
-        var result = Shops.fromJson(response.data);
-        try {
-          Dio dio = Dio();
-          Response response = await dio.get(foodUrl);
-          if (response.statusCode == 200) {
-            var foodresultlogger = FoodsList.fromJson(response.data[0]);
-            // var foodresult = FoodsList.fromJson(response.data[0]);
-            // logger.d('${foodresult}');
-
-            // var jsonFood = foodresult.toJson();
-            _routeMenuById(MenuPage(), result, foodresultlogger);
-          }
-        } catch (e) {
-          print(e);
-        }
-      }
-    } catch (e) {
-      print(e);
+  Future<UserById> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    userId = preference.getInt('user_id');
+    var response = await apiProvider.getUserById(userId);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      Map map = json.decode(response.body);
+      UserById msg = UserById.fromJson(map);
+      var data = msg.data.toJson();
+      userId = preference.getInt('user_id');
+      setState(() {
+        nameUser = msg.data.firstName;
+        lastNameUser = msg.data.lastName;
+        profileImg = msg.data.profileImg;
+        email = msg.data.email;
+      });
+    } else {
+      logger.e("statuscode != 200");
     }
   }
-  
-  @override
-  void initState() {
-    findUser();
-    
-    super.initState();
+
+  Future getShops() async {
+    String _url = 'http://10.0.2.2:8080/api/shop';
+    final response = await http.get(_url);
+    var body = response.body;
+    setState(() {
+      isLoading = false;
+      shops = json.decode(body)['data'];
+      print(shops);
+    });
   }
 
+  // Future<List<Shops>> fetchShopAndFood(int shopId) async {
+  //   String shopUrl = "http://10.0.2.2:8080/api/shops/+$shopId";
 
+  //   try {
+  //     Dio dio = Dio();
+  //     Response response = await dio.get(shopUrl);
+  //     print(response.statusCode);
+  //     if (response.statusCode == 200) {
+  //       String foodUrl = "http://10.0.2.2:8080/api/shop/foods/+$shopId";
+  //       var result = Shops.fromJson(response.data);
+  //       try {
+  //         Dio dio = Dio();
+  //         Response response = await dio.get(foodUrl);
+  //         if (response.statusCode == 200) {
+  //           var foodresultlogger = FoodsList.fromJson(response.data[0]);
+  //           // var foodresult = FoodsList.fromJson(response.data[0]);
+  //           // logger.d('${foodresult}');
+
+  //           // var jsonFood = foodresult.toJson();
+  //           _routeMenuById(MenuPage(), result, foodresultlogger);
+  //         }
+  //       } catch (e) {
+  //         print(e);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    print('shopId : $userId');
     return WillPopScope(
       onWillPop: () async => Navigator.push(
         context,
@@ -137,81 +158,102 @@ class _HomeState extends State<Home> {
             userId: userId,
             lastName: lastNameUser,
             coverImg: profileImg), //EndAppbar
-        body: FutureBuilder<List<Shops>>(
-            future: fetchShops(http.Client(), 0),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.data == null) {
-                return Container(
-                  child: Center(
-                      child: CircularProgressIndicator(
-                    backgroundColor: Colors.orange,
-                  )),
-                );
-              } else {
-                return Column(
-                  children: <Widget>[
-                    headerSection,
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              fetchShopAndFood(snapshot.data[index].shopId);
-                            },
-                            child: Card(
-                              semanticContainer: true,
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              elevation: 5,
-                              color: Colors.white70,
-                              margin: EdgeInsets.only(
-                                  top: 15, bottom: 15, left: 40, right: 40),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  CachedNetworkImage(
-                                    imageUrl:
-                                        'https://disefood.s3-ap-southeast-1.amazonaws.com/${snapshot.data[index].coverImage}',
-                                    width: 380,
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                children: <Widget>[
+                  headerSection,
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: shops != null ? shops.length : 0,
+                      itemBuilder: (BuildContext context, int index) {
+                        var item = shops[index];
+                        return InkWell(
+                          onTap: () {
+                            //card
+                            shopId = item['id'];
+                            shopName = item['name'];
+                            shopSlot = item['shop_slot'];
+                            shopCoverImg = item['cover_img'];
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MenuPage(
+                                        shopId: shopId,
+                                        shopName: shopName,
+                                        shopSlot: shopSlot,
+                                        shopCoverImg: shopCoverImg,
+                                      )),
+                            );
+                          },
+                          child: Card(
+                            semanticContainer: true,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            elevation: 5,
+                            color: Colors.white70,
+                            margin: EdgeInsets.only(
+                                top: 15, bottom: 15, left: 40, right: 40),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                CachedNetworkImage(
+                                  imageUrl:
+                                      'https://disefood.s3-ap-southeast-1.amazonaws.com/${item['cover_img']}',
+                                  width: 380,
+                                  height: 210,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Center(
+                                      child: Container(
+                                          margin: EdgeInsets.only(
+                                              top: 50, bottom: 35),
+                                          child: CircularProgressIndicator(
+                                            backgroundColor: Colors.amber[900],
+                                          ))),
+                                  errorWidget: (context, url, error) =>
+                                      Container(
                                     height: 210,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => Center(
-                                        child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                  ),
-                                  ListTile(
-                                    title: Text(
-                                      "${snapshot.data[index].name}",
-                                      style: TextStyle(
-                                          fontSize: 24,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    subtitle: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.star,
-                                          color: Colors.orange,
-                                        ),
-                                        Text("  4.2 Review(20 Review)")
-                                      ],
+                                    width: 380,
+                                    color: const Color(0xff7FC9C5),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.store,
+                                        size: 50,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
-                                ],
+                                ),
+                                ListTile(
+                                  title: Text(
+                                    "${item['name']}",
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.star,
+                                        color: Colors.orange,
+                                      ),
+                                      Text("  4.2 Review(20 Review)")
+                                    ],
+                                  ),
+                                ),
+                              ],
 //          crossAxisAlignment: CrossAxisAlignment.start,
-                              ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                );
-              }
-            }),
+                  ),
+                ],
+              ),
       ),
     );
   }

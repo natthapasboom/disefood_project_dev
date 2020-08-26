@@ -17,7 +17,7 @@ class UpdateShopRequest extends BaseFormRequest
         return [
             'name'          => 'string',
             'shop_slot'     => 'integer',
-//            'cover_image'   => 'image',
+            'cover_img'   => 'image',
         ];
     }
 }
