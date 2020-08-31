@@ -81,4 +81,6 @@ Route::group([
     'prefix' => 'food'
 ], function () {
    Route::get('/{foodId}', 'FoodController@getFoodById');
+   Route::put('/{foodId}', 'FoodController@updateFoodByFoodId');
+   Route::delete('/{foodId}', 'FoodController@deleteByFoodId');
 });

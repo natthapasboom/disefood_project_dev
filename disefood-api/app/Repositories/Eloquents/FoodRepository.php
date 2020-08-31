@@ -26,15 +26,16 @@ class FoodRepository implements FoodRepositoryInterface
         return $this->food->where('id', $foodId)->first();
     }
 
-//    public function update($food, $food_id)
-//    {
-//        return $this->food->where('food_id', $food_id)->update($food);
-//    }
+    public function update($food, $foodId)
+    {
+        return $this->food->where('id', $foodId)->update($food);
+    }
 
-//    public function delete($food_id)
-//    {
-//        return $this->food->where('food_id', $food_id)->delete();
-//    }
+    public function delete($foodId)
+    {
+        return $this->food->where('id', $foodId)->delete();
+    }
+
     public function addMenuByShopId($newMenu, $shopId)
     {
         $shop = Shop::find($shopId);

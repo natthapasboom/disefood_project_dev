@@ -33,7 +33,7 @@ class UserController extends Controller
     {
         $user = $this->userRepo->getUserById($userId);
         if ( !$user )
-            return response()->json(['data' => $user, 'msg' => 'User not found' , 'status' => 404]);
+            return response()->json(['data' => $user, 'msg' => 'User Not Found' , 'status' => 404]);
         else
             return response()->json(['data' => $user, 'status' => 200]);
     }
@@ -42,13 +42,13 @@ class UserController extends Controller
     {
         $user = $this->userRepo->getUserById($userId);
         if ( !$user ) {
-            return response()->json(['data' => $user, 'msg' => 'User not found', 'status' => 404]);
+            return response()->json(['data' => $user, 'msg' => 'User Not Found', 'status' => 404]);
         } else {
             $req = $request->validated();
             if ( !isset($req['profile_img']) ){
                 $this->userRepo->updateById($req, $userId);
                 $res = $this->userRepo->getUserById($userId);
-                return response()->json(['data' => $res, 'msg' => 'Updated success', 'status' => 200]);
+                return response()->json(['data' => $res, 'msg' => 'Updated Success', 'status' => 200]);
             } else {
                 $oldPath =  $user['profile_img'];
                 Storage::disk('s3')->delete($oldPath);
@@ -56,7 +56,7 @@ class UserController extends Controller
                 $req['profile_img'] = $newPath;
                 $this->userRepo->updateById($req, $userId);
                 $res = $this->userRepo->getUserById($userId);
-                return response()->json(['data' => $res, 'msg' => 'Updated with image success', 'status' => 200]);
+                return response()->json(['data' => $res, 'msg' => 'Updated with Image Success', 'status' => 200]);
             }
         }
     }

@@ -3,7 +3,6 @@
 
 namespace App\Repositories\Eloquents;
 
-use App\Models\Shop\Food;
 use App\Models\Shop\Shop;
 use App\Repositories\Interfaces\ShopRepositoryInterface;
 
@@ -43,6 +42,6 @@ class ShopRepository implements ShopRepositoryInterface
 
     public function delete($shopId)
     {
-        return $this->shop->find($shopId)->delete();
+        return $this->shop->where('id', $shopId)->delete();
     }
 }
