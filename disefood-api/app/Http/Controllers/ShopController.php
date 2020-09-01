@@ -45,7 +45,9 @@ class ShopController extends Controller
     {
         $req = $request->validated();
         $pathImg = Storage::disk('s3')->put('images/shop/cover_img', $request->file('cover_img'),'public');
+        $docImg = Storage::disk('s3')->put('images/shop/doc_img', $request->file('document_img'), 'public');
         $req['cover_img'] = $pathImg;
+        $req['document_img'] = $docImg;
         $req['approved'] = false;
         $shop = $this->shopRepo->create($req);
         return response()->json(['data' => $shop, 'msg' => 'Create shop success', 'status' => 200]);
@@ -56,6 +58,9 @@ class ShopController extends Controller
         $req = $request->except(['_method' ]);
         $this->shopRepo->updateShop($req, $shopId);
         $shop = $this->shopRepo->findById($shopId);
+        if(!$shop) {
+            return response()->json(['data' => $shop, 'msg' => 'Shop not found', 'status' => 404]);
+        }
         return response()->json(['data' => $shop, 'msg' => 'Approved Success', 'status' => 200]);
     }
 
@@ -86,28 +91,28 @@ class ShopController extends Controller
         $pathImg = Storage::disk('s3')->put('images/shop/food/cover_img', $request->file('cover_img'), 'public');
         $req['cover_img'] = $pathImg;
         $menu = $this->foodRepo->addMenuByShopId($req, $shopId);
-        return response()->json(['data' => $menu, 'msg' => 'Add menu success', 'status' => 200]);
+        return response()->json(['data' => $menu, 'msg' => 'Add Menu Success', 'status' => 200]);
     }
 
     public function update(UpdateShopRequest $request, $shopId)
     {
         $shop = $this->shopRepo->findById($shopId);
         if(!$shop) {
-            return response()->json(['data' => $shop, 'msg' => 'Shop not found', 'status' => 404]);
+            return response()->json(['data' => $shop, 'msg' => 'Shop Not Found', 'status' => 404]);
         } else {
             $req = $request->validated();
             if(!isset($req['cover_img'])){
                 $this->shopRepo->updateShop($req, $shopId);
                 $res = $this->shopRepo->findById($shopId);
-                return response()->json(['data' => $res, 'msg' => 'Updated success', 'status' => 200]);
+                return response()->json(['data' => $res, 'msg' => 'Updated Success', 'status' => 200]);
             } else {
                 $oldPath = $shop['cover_img'];
                 Storage::disk('s3')->delete($oldPath);
-                $newPath = Storage::disk('s3')->put('images/shop/food/cover_img', $request->file('cover_img'), 'public');
+                $newPath = Storage::disk('s3')->put('images/shop/cover_img', $request->file('cover_img'), 'public');
                 $req['cover_img'] = $newPath;
                 $this->shopRepo->updateShop($req, $shopId);
                 $res = $this->shopRepo->findById($shopId);
-                return response()->json(['data' => $res, 'msg' => 'Updated with image success', 'status' => 200]);
+                return response()->json(['data' => $res, 'msg' => 'Updated With Image Success', 'status' => 200]);
             }
         }
     }

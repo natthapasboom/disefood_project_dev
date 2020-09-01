@@ -29,7 +29,7 @@ class AuthController extends Controller
         $req['password'] = bcrypt($req['password']);
         $req['profile_img'] = $pathImg;
         $user = $this->userRepo->create($req);
-        return response()->json(['data' => $user, 'msg' => 'Register success', 'status' => 200]);
+        return response()->json(['data' => $user, 'msg' => 'Register Success', 'status' => 200]);
     }
 
     public function login(LoginRequest $request)
@@ -40,7 +40,7 @@ class AuthController extends Controller
         $user = null;
         $key = 'example_key';
         if(!$username || !$password || $username == null || $password == null) {
-            return response()->json(['data' => $user, 'msg' => 'username or password is wrong' , 'status' => 404]);
+            return response()->json(['data' => $user, 'msg' => 'Username or Password is Wrong' , 'status' => 404]);
         } else {
             $user = $this->userRepo->findByUserName($username);
             if (Hash::check($password, $user['password']))

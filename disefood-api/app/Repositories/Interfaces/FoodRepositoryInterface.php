@@ -9,6 +9,6 @@ interface FoodRepositoryInterface
     public function get();
     public function findByFoodId($foodId);
     public function addMenuByShopId($newMenu, $shopId);
-//    public function update($food, $food_id);
-//    public function delete($food_id);
+    public function update($food, $foodId);
+    public function delete($foodId);
 }

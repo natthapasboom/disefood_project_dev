@@ -6,13 +6,16 @@ use App\Models\Order\Order;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Shop extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'shops';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'name', 'shop_slot', 'cover_img', 'user_id', 'approved'
+        'name', 'shop_slot', 'cover_img', 'document_img', 'user_id', 'approved'
     ];
     /**
      * @var mixed
