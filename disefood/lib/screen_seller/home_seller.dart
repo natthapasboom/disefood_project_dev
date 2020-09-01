@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen_seller/create_shop.dart';
 import 'package:disefood/screen_seller/edit_shop.dart';
+import 'package:disefood/services/api_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:disefood/component/feedback_seller_bottombar.dart';
@@ -17,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/component/sidemenu_seller.dart';
 import 'package:disefood/component/order_seller_bottombar.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'organize_seller_page.dart';
 
@@ -41,6 +44,9 @@ class _HomeSellerState extends State<HomeSeller> {
   String _shopImg;
   bool _isLoading = false;
   int _shopSlot;
+  String email;
+  final logger = Logger();
+  ApiProvider apiProvider = ApiProvider();
   @override
   void initState() {
     super.initState();
@@ -50,32 +56,44 @@ class _HomeSellerState extends State<HomeSeller> {
     });
   }
 
-  Future<Null> findUser() async {
+  Future<UserById> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
-    setState(() {
-      nameUser = preference.getString('first_name');
+    userId = preference.getInt('user_id');
+    var response = await apiProvider.getUserById(userId);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      Map map = json.decode(response.body);
+      UserById msg = UserById.fromJson(map);
+      var data = msg.data.toJson();
       userId = preference.getInt('user_id');
-      lastNameUser = preference.getString('last_name');
-      profileImg = preference.getString('profile_img');
-    });
+      setState(() {
+        nameUser = msg.data.firstName;
+        lastNameUser = msg.data.lastName;
+        profileImg = msg.data.profileImg;
+        email = msg.data.email;
+      });
+    } else {
+      logger.e("statuscode != 200");
+    }
   }
 
   Future<Null> fetchShopFromStorage() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isLoading = true;
-    });
-    final shopName = _prefs.getString('shop_name');
-    final shopId = _prefs.getInt('shop_id');
-    final shopImg = _prefs.getString('cover_img');
-    final shopSlot = _prefs.getInt('shop_slot');
-    setState(() {
-      _shopName = shopName;
-      _shopId = shopId;
-      _shopImg = shopImg;
-      _isLoading = false;
-      _shopSlot = shopSlot;
-    });
+    SharedPreferences preference = await SharedPreferences.getInstance();
+
+    userId = preference.getInt('user_id');
+    var response = await apiProvider.getShopId(userId);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      Map map = json.decode(response.body);
+      ShopById msg = ShopById.fromJson(map);
+      setState(() {
+        _isLoading = true;
+        _shopName = msg.data.name;
+        _shopImg = msg.data.coverImg;
+        _shopSlot = msg.data.shopSlot;
+        _shopId = msg.data.id;
+      });
+    }
   }
 
   @override
@@ -251,9 +269,13 @@ class _HomeSellerState extends State<HomeSeller> {
                     'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
                 width: 430.0,
                 height: 160.0,
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    Center(child: CircularProgressIndicator()),
+                fit: BoxFit.fill,
+                placeholder: (context, url) => Center(
+                    child: Container(
+                        margin: EdgeInsets.only(top: 50, bottom: 35),
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.amber[900],
+                        ))),
                 errorWidget: (context, url, error) => Icon(Icons.error)),
       );
 }

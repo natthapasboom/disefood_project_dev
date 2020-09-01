@@ -325,11 +325,11 @@ class _CreateShopState extends State<CreateShop> {
             logger.d(resultShop);
             SharedPreferences preference =
                 await SharedPreferences.getInstance();
-            await preference.setInt('shop_id', resultShop.shopId);
-            await preference.setString('shop_name', resultShop.name);
-            await preference.setInt('shop_user_id', resultShop.userId);
-            await preference.setInt('shop_slot', resultShop.shopSlot);
-            await preference.setString('cover_img', resultShop.coverImage);
+            // await preference.setInt('shop_id', resultShop.shopId);
+            // await preference.setString('shop_name', resultShop.name);
+            // await preference.setInt('shop_user_id', resultShop.userId);
+            // await preference.setInt('shop_slot', resultShop.shopSlot);
+            // await preference.setString('cover_img', resultShop.coverImage);
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => Homepage()));
           }
