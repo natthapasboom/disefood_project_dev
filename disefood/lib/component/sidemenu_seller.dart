@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/component/editProfile.dart';
 import 'package:disefood/component/signout_process.dart';
 import 'package:disefood/screen_seller/home_seller_tab.dart';
 import 'package:flutter/material.dart';
@@ -76,6 +77,10 @@ class SideMenuSeller extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.edit),
             title: Text('Edit Profile'),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EditProfile()));
+            },
           ),
           Divider(
             height: 2,

@@ -45,6 +45,7 @@ class _HomeSellerState extends State<HomeSeller> {
   bool _isLoading = false;
   int _shopSlot;
   String email;
+  int approve;
   final logger = Logger();
   ApiProvider apiProvider = ApiProvider();
   @override
@@ -80,11 +81,6 @@ class _HomeSellerState extends State<HomeSeller> {
 
   Future<Null> fetchShopFromStorage() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
-    if (_isLoading == false) {
-      Center(
-        child: CircularProgressIndicator(),
-      );
-    }
     userId = preference.getInt('user_id');
     var response = await apiProvider.getShopId(userId);
     print(response.statusCode);
@@ -97,6 +93,7 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopImg = msg.data.coverImg;
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
+        approve = msg.data.approved;
       });
     }
   }
@@ -109,109 +106,173 @@ class _HomeSellerState extends State<HomeSeller> {
               child: CircularProgressIndicator(),
             )
           : _shopId != null
-              ? ListView(
-                  children: <Widget>[
-                    headerImage(),
-                    Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: ListTile(
-                              leading: Container(
-                                padding: EdgeInsets.only(top: 10.0),
-                                child: Text(
-                                  "$_shopSlot",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 24.0),
-                                ),
-                              ),
-                              title: Text(
-                                '$_shopName',
-                                style: TextStyle(
-                                    fontSize: 24.0,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text("ประเภทของร้านอาหาร"),
-                                  Container(
-                                    padding: EdgeInsets.only(top: 5.0),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.star,
-                                          color: Colors.orange,
-                                          size: 15.0,
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(left: 5.0),
-                                          child: Text("4.2"),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      height: 13.0,
-                      color: Colors.black12,
-                    ),
-                    Container(
-                      // child: _shopId == null
-                      //     ? Center(
-                      //         child: IconButton(
-                      //           icon: Icon(
-                      //             Icons.add_circle,
-                      //             color: Colors.amber[900],
-                      //           ),
-                      //           onPressed: () {},
-                      //         ),
-                      //       )
+              ? approve == 0
+                  ? Center(
                       child: Column(
                         children: <Widget>[
+                          // headerImage(),
                           Container(
-                            margin:
-                                EdgeInsets.only(bottom: 20, right: 30, top: 75),
+                            margin: EdgeInsets.only(top: 250),
                             child: IconButton(
                               icon: Icon(
-                                Icons.store,
-                                color: Colors.amber[800],
-                                size: 64,
+                                Icons.add_circle,
+                                color: Colors.amber[900],
+                                size: 36,
                               ),
                               onPressed: () {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => EditShop()));
+                                        builder: (context) => CreateShop()));
                               },
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            child: Center(
-                              child: Text(
-                                'แก้ไขร้านอาหาร',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                ),
+                          Center(
+                            child: Text(
+                              'เพิ่มร้านค้า',
+                              style: TextStyle(
+                                fontSize: 18,
                               ),
                             ),
                           )
                         ],
                       ),
-                    ),
-                  ],
-                )
+                    )
+                  : ListView(
+                      children: <Widget>[
+                        headerImage(),
+                        Container(
+                          padding: EdgeInsets.all(10.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                                      padding:
+                                          EdgeInsets.only(left: 25, right: 10),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            "0" + "$_shopId",
+                                            style: TextStyle(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.only(
+                                                left: 10, right: 10),
+                                            height: 65,
+                                            child: VerticalDivider(
+                                              color: Colors.orange,
+                                              thickness: 3,
+                                            ),
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.only(
+                                                  bottom: 5,
+                                                ),
+                                                child: Text(
+                                                  "$_shopName",
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              Container(
+                                                  padding: EdgeInsets.only(
+                                                    bottom: 5,
+                                                  ),
+                                                  child: Text(
+                                                    "ShopTypeValue",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Colors.grey[500]),
+                                                  )),
+                                              Row(
+                                                children: <Widget>[
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                      right: 5,
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.star,
+                                                      color:
+                                                          Colors.orangeAccent,
+                                                      size: 20,
+                                                    ),
+                                                  ),
+                                                  Text("RateStarsValue"),
+                                                ],
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    //
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          height: 13.0,
+                          color: const Color(0xffC4C4C4),
+                        ),
+                        Container(
+                          // child: _shopId == null
+                          //     ? Center(
+                          //         child: IconButton(
+                          //           icon: Icon(
+                          //             Icons.add_circle,
+                          //             color: Colors.amber[900],
+                          //           ),
+                          //           onPressed: () {},
+                          //         ),
+                          //       )
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(
+                                    bottom: 20, right: 30, top: 75),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.store,
+                                    color: Colors.amber[800],
+                                    size: 64,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => EditShop()));
+                                  },
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 10),
+                                child: Center(
+                                  child: Text(
+                                    'แก้ไขร้านอาหาร',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
               : Center(
                   child: Column(
                     children: <Widget>[

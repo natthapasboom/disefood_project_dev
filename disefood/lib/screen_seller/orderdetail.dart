@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderDetailSeller extends StatefulWidget {
   static final route = "/order_detail_seller";
- 
+
   @override
   _OrderDetailSellerState createState() => _OrderDetailSellerState();
 }
@@ -28,22 +28,9 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   int userId;
   @override
   void initState() {
-    currenthours = DateTime.now().hour;
-    // currenthours = 22;
-    currentmin = DateTime.now().minute;
-    // currentmin = 56;
-    totalhour = currenthours;
-
-    if (currentmin < 54) {
-      totalminute = currentmin + 5;
-    } else {
-      totalhour = currenthours + 1;
-      totalminute = (currentmin + 5) - 60;
-    }
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getCurrentTime());
     Future.microtask(() {
       findUser();
-      
     });
     super.initState();
   }
@@ -53,7 +40,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
     currentmin = DateTime.now().minute;
   }
 
-    Future<Null> findUser() async {
+  Future<Null> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     setState(() {
       nameUser = preference.getString('first_name');
@@ -63,51 +50,11 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
     });
   }
 
-  void updateAddTimeStatus() {
-    setState(
-      () {
-        if (totalminute >= 59) {
-          totalminute = 0;
-          if (totalhour >= 23) {
-            totalhour = 0;
-          } else {
-            totalhour++;
-          }
-        } else {
-          totalminute++;
-        }
-      },
-    );
-  }
-
-  void updateMinusTimeStatus() {
-    setState(
-      () {
-        if (addTimeAmount >= 5) {
-          if (totalminute <= 0) {
-            totalminute = 59;
-            if (totalhour <= 0) {
-              totalhour = 23;
-            } else {
-              totalhour--;
-            }
-          } else {
-            totalminute--;
-          }
-        }
-      },
-    );
-  }
-//   _sideMenuSeller(UserProfile userData){
-//   return SideMenuSeller(userData: userData,);
-// }
-
   Future<void> _neverSatisfied() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
-        
         return AlertDialog(
           title: Text(
             'เพิ่มเวลา',
@@ -119,16 +66,14 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                 Column(
                   children: <Widget>[
                     Row(
-                     children: <Widget>[
+                      children: <Widget>[
                         Container(
                           padding: EdgeInsets.only(left: 50, top: 5),
                           child: SizedBox(
                             width: 30.0,
                             height: 30.0,
                             child: const Card(
-                              child: Center(
-                               
-                              ),
+                              child: Center(),
                               color: Colors.orange,
                             ),
                           ),
@@ -139,14 +84,12 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                             width: 30.0,
                             height: 30.0,
                             child: const Card(
-                              child: Center(
-                                
-                              ),
+                              child: Center(),
                               color: Colors.orange,
                             ),
                           ),
                         ),
-                     ],
+                      ],
                     ),
                     Row(
                       children: <Widget>[
@@ -211,16 +154,14 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                       ],
                     ),
                     Row(
-                     children: <Widget>[
+                      children: <Widget>[
                         Container(
                           padding: EdgeInsets.only(left: 50, top: 5),
                           child: SizedBox(
                             width: 30.0,
                             height: 30.0,
                             child: const Card(
-                              child: Center(
-                                
-                              ),
+                              child: Center(),
                               color: Colors.orange,
                             ),
                           ),
@@ -231,14 +172,12 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                             width: 30.0,
                             height: 30.0,
                             child: const Card(
-                              child: Center(
-                                
-                              ),
+                              child: Center(),
                               color: Colors.orange,
                             ),
                           ),
                         ),
-                     ],
+                      ],
                     ),
                   ],
                 ),
@@ -289,7 +228,6 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
 
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
       drawer: SideMenuCustomer(
           firstName: nameUser,
