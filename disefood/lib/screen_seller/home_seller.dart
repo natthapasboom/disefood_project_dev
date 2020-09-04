@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen_seller/create_shop.dart';
 import 'package:disefood/screen_seller/edit_shop.dart';
+import 'package:disefood/services/api_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:disefood/component/feedback_seller_bottombar.dart';
@@ -17,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/component/sidemenu_seller.dart';
 import 'package:disefood/component/order_seller_bottombar.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'organize_seller_page.dart';
 
@@ -41,8 +44,12 @@ class _HomeSellerState extends State<HomeSeller> {
   String _shopImg;
   bool _isLoading = false;
   int _shopSlot;
+  String email;
+  final logger = Logger();
+  ApiProvider apiProvider = ApiProvider();
   @override
   void initState() {
+    _isLoading = false;
     super.initState();
     Future.microtask(() {
       findUser();
@@ -50,176 +57,192 @@ class _HomeSellerState extends State<HomeSeller> {
     });
   }
 
-  Future<Null> findUser() async {
+  Future<UserById> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
-    setState(() {
-      nameUser = preference.getString('first_name');
+    userId = preference.getInt('user_id');
+    var response = await apiProvider.getUserById(userId);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      Map map = json.decode(response.body);
+      UserById msg = UserById.fromJson(map);
+      var data = msg.data.toJson();
       userId = preference.getInt('user_id');
-      lastNameUser = preference.getString('last_name');
-      profileImg = preference.getString('profile_img');
-    });
+      setState(() {
+        nameUser = msg.data.firstName;
+        lastNameUser = msg.data.lastName;
+        profileImg = msg.data.profileImg;
+        email = msg.data.email;
+      });
+    } else {
+      logger.e("statuscode != 200");
+    }
   }
 
   Future<Null> fetchShopFromStorage() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isLoading = true;
-    });
-    final shopName = _prefs.getString('shop_name');
-    final shopId = _prefs.getInt('shop_id');
-    final shopImg = _prefs.getString('cover_img');
-    final shopSlot = _prefs.getInt('shop_slot');
-    setState(() {
-      _shopName = shopName;
-      _shopId = shopId;
-      _shopImg = shopImg;
-      _isLoading = false;
-      _shopSlot = shopSlot;
-    });
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    if (_isLoading == false) {
+      Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    userId = preference.getInt('user_id');
+    var response = await apiProvider.getShopId(userId);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      Map map = json.decode(response.body);
+      ShopById msg = ShopById.fromJson(map);
+      setState(() {
+        _isLoading = true;
+        _shopName = msg.data.name;
+        _shopImg = msg.data.coverImg;
+        _shopSlot = msg.data.shopSlot;
+        _shopId = msg.data.id;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    print('User Id = $userId');
-    print('first name = $nameUser');
-    print('lastname = $lastNameUser');
-    print('shopname = $_shopName');
-    print('Shop Id $_shopId');
     return new Scaffold(
-      body: _shopId != null
-          ? ListView(
-              children: <Widget>[
-                headerImage(),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: ListTile(
-                          leading: Container(
-                            padding: EdgeInsets.only(top: 10.0),
-                            child: Text(
-                              "$_shopSlot",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24.0),
+      body: _isLoading == false
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : _shopId != null
+              ? ListView(
+                  children: <Widget>[
+                    headerImage(),
+                    Container(
+                      padding: EdgeInsets.all(10.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: ListTile(
+                              leading: Container(
+                                padding: EdgeInsets.only(top: 10.0),
+                                child: Text(
+                                  "$_shopSlot",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24.0),
+                                ),
+                              ),
+                              title: Text(
+                                '$_shopName',
+                                style: TextStyle(
+                                    fontSize: 24.0,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text("ประเภทของร้านอาหาร"),
+                                  Container(
+                                    padding: EdgeInsets.only(top: 5.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.orange,
+                                          size: 15.0,
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(left: 5.0),
+                                          child: Text("4.2"),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                          title: Text(
-                            '$_shopName',
-                            style: TextStyle(
-                                fontSize: 24.0,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text("ประเภทของร้านอาหาร"),
-                              Container(
-                                padding: EdgeInsets.only(top: 5.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.orange,
-                                      size: 15.0,
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(left: 5.0),
-                                      child: Text("4.2"),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 13.0,
-                  color: Colors.black12,
-                ),
-                Container(
-                  // child: _shopId == null
-                  //     ? Center(
-                  //         child: IconButton(
-                  //           icon: Icon(
-                  //             Icons.add_circle,
-                  //             color: Colors.amber[900],
-                  //           ),
-                  //           onPressed: () {},
-                  //         ),
-                  //       )
+                    ),
+                    Container(
+                      height: 13.0,
+                      color: Colors.black12,
+                    ),
+                    Container(
+                      // child: _shopId == null
+                      //     ? Center(
+                      //         child: IconButton(
+                      //           icon: Icon(
+                      //             Icons.add_circle,
+                      //             color: Colors.amber[900],
+                      //           ),
+                      //           onPressed: () {},
+                      //         ),
+                      //       )
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin:
+                                EdgeInsets.only(bottom: 20, right: 30, top: 75),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.store,
+                                color: Colors.amber[800],
+                                size: 64,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditShop()));
+                              },
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 10),
+                            child: Center(
+                              child: Text(
+                                'แก้ไขร้านอาหาร',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              : Center(
                   child: Column(
                     children: <Widget>[
+                      // headerImage(),
                       Container(
-                        margin: EdgeInsets.only(bottom: 20, right: 30, top: 75),
+                        margin: EdgeInsets.only(top: 250),
                         child: IconButton(
                           icon: Icon(
-                            Icons.store,
-                            color: Colors.amber[800],
-                            size: 64,
+                            Icons.add_circle,
+                            color: Colors.amber[900],
+                            size: 36,
                           ),
                           onPressed: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => EditShop()));
+                                    builder: (context) => CreateShop()));
                           },
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Center(
-                          child: Text(
-                            'แก้ไขร้านอาหาร',
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
+                      Center(
+                        child: Text(
+                          'เพิ่มร้านค้า',
+                          style: TextStyle(
+                            fontSize: 18,
                           ),
                         ),
                       )
                     ],
                   ),
                 ),
-              ],
-            )
-          : Center(
-              child: Column(
-                children: <Widget>[
-                  // headerImage(),
-                  Container(
-                    margin: EdgeInsets.only(top: 250),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.add_circle,
-                        color: Colors.amber[900],
-                        size: 36,
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CreateShop()));
-                      },
-                    ),
-                  ),
-                  Center(
-                    child: Text(
-                      'เพิ่มร้านค้า',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
     );
   }
 
@@ -251,9 +274,13 @@ class _HomeSellerState extends State<HomeSeller> {
                     'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
                 width: 430.0,
                 height: 160.0,
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    Center(child: CircularProgressIndicator()),
+                fit: BoxFit.fill,
+                placeholder: (context, url) => Center(
+                    child: Container(
+                        margin: EdgeInsets.only(top: 50, bottom: 35),
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.amber[900],
+                        ))),
                 errorWidget: (context, url, error) => Icon(Icons.error)),
       );
 }
