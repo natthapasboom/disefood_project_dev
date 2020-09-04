@@ -44,4 +44,9 @@ class ShopRepository implements ShopRepositoryInterface
     {
         return $this->shop->where('id', $shopId)->delete();
     }
+
+    public function getBySellerId($userId)
+    {
+        return $this->shop->where('user_id', $userId)->first();
+    }
 }

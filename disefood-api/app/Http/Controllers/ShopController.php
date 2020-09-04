@@ -9,6 +9,7 @@ use App\Http\Requests\CreateFoodRequest;
 use App\Http\Requests\UpdateShopRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
 {
@@ -115,5 +116,13 @@ class ShopController extends Controller
                 return response()->json(['data' => $res, 'msg' => 'Updated With Image Success', 'status' => 200]);
             }
         }
+    }
+
+    public function getShopByOwner()
+    {
+        $user = Auth::user();
+        $userId = $user['id'];
+        $shop = $this->shopRepo->getBySellerId($userId);
+        return response()->json(['data' => $shop, 'status' => 200]);
     }
 }
