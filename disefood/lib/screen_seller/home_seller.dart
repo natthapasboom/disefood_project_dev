@@ -46,6 +46,7 @@ class _HomeSellerState extends State<HomeSeller> {
   int _shopSlot;
   String email;
   int approve;
+  String token;
   final logger = Logger();
   ApiProvider apiProvider = ApiProvider();
   @override
@@ -61,6 +62,7 @@ class _HomeSellerState extends State<HomeSeller> {
   Future<UserById> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     userId = preference.getInt('user_id');
+
     var response = await apiProvider.getUserById(userId);
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -82,7 +84,9 @@ class _HomeSellerState extends State<HomeSeller> {
   Future<Null> fetchShopFromStorage() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     userId = preference.getInt('user_id');
-    var response = await apiProvider.getShopId(userId);
+    token = preference.getString('token');
+    logger.d(token);
+    var response = await apiProvider.getShopId(token);
     print(response.statusCode);
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
@@ -94,6 +98,7 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
         approve = msg.data.approved;
+        preference.setInt('shop_id', msg.data.id);
       });
     }
   }

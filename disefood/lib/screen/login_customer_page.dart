@@ -49,24 +49,22 @@ class _LoginPageState extends State<LoginPage> {
         var username = _usernameController.text.trim();
         var password = _passwordController.text.trim();
         var response = await apiProvider.doLogin(username, password);
-      
 
         print(response.statusCode);
         if (response.statusCode == 200) {
           Map map = json.decode(response.body);
           UserProfile msg = UserProfile.fromJson(map);
+          logger.d(msg.accessToken);
           var data = msg.data.toJson();
           String role = msg.data.role;
           // logger.d(data);
           if (role == "admin") {
-              routeToService(HomeAdmin(),msg);
+            routeToService(HomeAdmin(), msg);
           } else if (role == "customer") {
-              routeToService(Home(),msg);
+            routeToService(Home(), msg);
           } else if (role == "seller") {
-              routeToService(Homepage(),msg);
+            routeToService(Homepage(), msg);
           }
-
-        
         } else {
           print('error code');
           setState(() {
@@ -84,15 +82,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<Null> routeToService(Widget myWidget,UserProfile userprofile) async {
+  Future<Null> routeToService(Widget myWidget, UserProfile userprofile) async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     await preference.setInt('user_id', userprofile.data.id);
-    await preference.setString('token',  userprofile.token);
+    await preference.setString('token', userprofile.accessToken);
     MaterialPageRoute route = MaterialPageRoute(builder: (context) => myWidget);
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }
-
- 
 
   @override
   Widget build(BuildContext context) {

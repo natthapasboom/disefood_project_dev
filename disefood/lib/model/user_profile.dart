@@ -1,12 +1,16 @@
 class UserProfile {
   Data data;
-  String token;
+  String accessToken;
+  String tokenType;
+  String expiresAt;
 
-  UserProfile({this.data, this.token});
+  UserProfile({this.data, this.accessToken, this.tokenType, this.expiresAt});
 
   UserProfile.fromJson(Map<String, dynamic> json) {
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-    token = json['token'];
+    accessToken = json['access_token'];
+    tokenType = json['token_type'];
+    expiresAt = json['expires_at'];
   }
 
   Map<String, dynamic> toJson() {
@@ -14,7 +18,9 @@ class UserProfile {
     if (this.data != null) {
       data['data'] = this.data.toJson();
     }
-    data['token'] = this.token;
+    data['access_token'] = this.accessToken;
+    data['token_type'] = this.tokenType;
+    data['expires_at'] = this.expiresAt;
     return data;
   }
 }
