@@ -10,7 +10,6 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-//use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -65,10 +64,11 @@ class AuthController extends Controller
         return response()->json(['data' => $user, 'status' => 200]);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-//        if (Auth::check()) {
-//            Auth::user()->OauthAccessToken()->delete();
-//        }
+        $token = $request->user->token();
+        $token->revoke();
+        $response = 'You have been successfully logged out!';
+        return response($response, 200);
     }
 }
