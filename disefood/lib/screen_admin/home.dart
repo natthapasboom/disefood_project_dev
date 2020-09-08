@@ -3,9 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/screen_admin/shop_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:disefood/component/sidemenu_admin.dart';
-import 'package:disefood/component/sidemenu_customer.dart';
-import 'package:disefood/model/shopList.dart';
-import 'package:disefood/model/shop_id.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
@@ -181,51 +178,59 @@ class _HomeAdminState extends State<HomeAdmin> {
                                       Container(
                                         margin:
                                             EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                        child: item['approved'] == 0 ?
-                                        Row(
-                                          children: <Widget>[
-                                            Text(
-                                              "สถานะ :",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                  fontFamily: 'Roboto'),
-                                            ),
-                                             Container(
-                                               margin: EdgeInsets.only(left: 5),
-                                               child: Text(
-                                                "ยังไม่ยืนยัน",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
-                                                    color: const Color(0xffEC0A25),
-                                                    fontFamily: 'Roboto'),
-                                            ),
-                                             ),
-                                          ],
-                                        ):
-                                        Row(
-                                          children: <Widget>[
-                                            Text(
-                                              "สถานะ :",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                  fontFamily: 'Roboto'),
-                                            ),
-                                             Container(
-                                               margin: EdgeInsets.only(left: 5),
-                                               child: Text(
-                                                "ยืนยัน",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
-                                                    color: const Color(0xff81CF66),
-                                                    fontFamily: 'Roboto'),
-                                            ),
-                                             ),
-                                          ],
-                                        ),
+                                        child: item['approved'] == 0
+                                            ? Row(
+                                                children: <Widget>[
+                                                  Text(
+                                                    "สถานะ :",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        fontFamily: 'Roboto'),
+                                                  ),
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 5),
+                                                    child: Text(
+                                                      "ยังไม่ยืนยัน",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
+                                                          color: const Color(
+                                                              0xffEC0A25),
+                                                          fontFamily: 'Roboto'),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : Row(
+                                                children: <Widget>[
+                                                  Text(
+                                                    "สถานะ :",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        fontFamily: 'Roboto'),
+                                                  ),
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 5),
+                                                    child: Text(
+                                                      "ยืนยัน",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
+                                                          color: const Color(
+                                                              0xff81CF66),
+                                                          fontFamily: 'Roboto'),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                       ),
                                       Transform.translate(
                                         offset: Offset(2, 0),
@@ -244,39 +249,61 @@ class _HomeAdminState extends State<HomeAdmin> {
                                                     onPressed: () {
                                                       name = item['name'];
                                                       shopId = item['id'];
-                                                      shopSlot = item['shop_slot'];
-                                                      coverImg = item['cover_img'];
-                                                      if(item['approved'] == 0){
-                                                         Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                ShopDetail(name: name, shopId: shopId, shopSlot: shopSlot, coverImg: coverImg,)),
-                                                      );
-                                                      }else if(item['approved'] == 1){
-                                                          print('delete');
-                                                            alertDialog(context, 'ลบร้านค้า ?', shopId);
+                                                      shopSlot =
+                                                          item['shop_slot'];
+                                                      coverImg =
+                                                          item['cover_img'];
+                                                      if (item['approved'] ==
+                                                          0) {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      ShopDetail(
+                                                                        name:
+                                                                            name,
+                                                                        shopId:
+                                                                            shopId,
+                                                                        shopSlot:
+                                                                            shopSlot,
+                                                                        coverImg:
+                                                                            coverImg,
+                                                                      )),
+                                                        );
+                                                      } else if (item[
+                                                              'approved'] ==
+                                                          1) {
+                                                        print('delete');
+                                                        alertDialog(
+                                                            context,
+                                                            'ลบร้านค้า ?',
+                                                            shopId);
                                                       }
-                                                     
                                                     },
                                                     padding: EdgeInsets.only(
                                                         left: 30, right: 30),
                                                     color:
                                                         const Color(0xffF6A911),
-                                                    child: item['approved'] == 0 ? Text(
-                                                      "ดูรายละเอียด",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ):
-                                                    Text(
-                                                      "ยกเลิก",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
+                                                    child: item['approved'] == 0
+                                                        ? Text(
+                                                            "ดูรายละเอียด",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )
+                                                        : Text(
+                                                            "ยกเลิก",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
                                                   ),
                                                 ],
                                               ),
@@ -298,47 +325,79 @@ class _HomeAdminState extends State<HomeAdmin> {
                 ),
               ));
   }
-  Future<void> alertDialog(BuildContext context, String message, int shopId,) async {
-  showDialog(context: context, 
-  builder: (context) => Container(
-    
-    child: SimpleDialog(
-      title: Container(
-        
-        child: Text(message, style: TextStyle(fontFamily: 'Roboto', fontSize: 18, fontWeight: FontWeight.bold),)
-        ),
-      children: <Widget>[
-        Container(
-          margin: EdgeInsets.only(left: 30,top: 10,bottom: 30,right: 100),
-          child: Text('ท่านต้องการลบร้านค้าใช่หรือไม่',style: TextStyle(fontFamily: 'Roboto', fontSize: 14, fontWeight: FontWeight.normal,color: const Color(0xff838181)),),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Container(
-              
-              child: FlatButton(
-                onPressed: () async{
-                  var response = await apiProvider.rejectShopByID(shopId);
-                  if(response.statusCode == 200) {
-                    logger.d('success');
-                          MaterialPageRoute route = MaterialPageRoute(builder: (context) => HomeAdmin());
-                          Navigator.pushAndRemoveUntil(context, route, (route) => false);
-                  }else{
-                    logger.e('status code = ${response.statusCode}');
-                  }
-                }
-              , 
-              child: Text('ยืนยัน', style: TextStyle(fontFamily: 'Roboto', fontSize: 14, fontWeight: FontWeight.bold,color: const Color(0xffFF7C2C)),)),
-            ),
-             FlatButton(
-              onPressed: () => Navigator.pop(context)
-            , 
-            child: Text('ยกเลิก', style: TextStyle(fontFamily: 'Roboto', fontSize: 14, fontWeight: FontWeight.bold,color: const Color(0xffFF7C2C)),)),
-          ],
-        )
-      ],
-    ),
-  ));
-}
+
+  Future<void> alertDialog(
+    BuildContext context,
+    String message,
+    int shopId,
+  ) async {
+    showDialog(
+        context: context,
+        builder: (context) => Container(
+              child: SimpleDialog(
+                title: Container(
+                    child: Text(
+                  message,
+                  style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                )),
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(
+                        left: 30, top: 10, bottom: 30, right: 100),
+                    child: Text(
+                      'ท่านต้องการลบร้านค้าใช่หรือไม่',
+                      style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          color: const Color(0xff838181)),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        child: FlatButton(
+                            onPressed: () async {
+                              var response =
+                                  await apiProvider.rejectShopByID(shopId);
+                              if (response.statusCode == 200) {
+                                logger.d('success');
+                                MaterialPageRoute route = MaterialPageRoute(
+                                    builder: (context) => HomeAdmin());
+                                Navigator.pushAndRemoveUntil(
+                                    context, route, (route) => false);
+                              } else {
+                                logger
+                                    .e('status code = ${response.statusCode}');
+                              }
+                            },
+                            child: Text(
+                              'ยืนยัน',
+                              style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xffFF7C2C)),
+                            )),
+                      ),
+                      FlatButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            'ยกเลิก',
+                            style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xffFF7C2C)),
+                          )),
+                    ],
+                  )
+                ],
+              ),
+            ));
+  }
 }

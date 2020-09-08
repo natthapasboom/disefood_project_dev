@@ -21,13 +21,12 @@ class ApiProvider {
     return response;
   }
 
-
-  Future<http.Response> approveShopById(int shopId, String approved, String _method) async {
-    String _url = 'http://10.0.2.2:8080/api/admin/approved/$shopId'; 
+  Future<http.Response> approveShopById(
+      int shopId, String approved, String _method) async {
+    String _url = 'http://10.0.2.2:8080/api/admin/approved/$shopId';
     var body = {"approved": approved, "_method": _method};
     http.Response response = await http.post(_url, body: body);
     return response;
-
   }
 
   Future<http.Response> rejectShopByID(int id) async {
@@ -35,7 +34,6 @@ class ApiProvider {
     http.Response response = await http.delete(_url);
     return response;
   }
-
 
   Future<http.Response> getUserById(int userId) async {
     String _url = 'http://10.0.2.2:8080/api/user/$userId';
@@ -46,6 +44,13 @@ class ApiProvider {
   Future<http.Response> getFoodByShopId(int shopId) async {
     String _url = 'http://10.0.2.2:8080/api/shop/menu/$shopId';
     http.Response response = await http.get(_url);
+    return response;
+  }
+
+  Future<http.Response> getShopId(String token) async {
+    String _url = 'http://10.0.2.2:8080/api/shop/owner';
+    http.Response response =
+        await http.get(_url, headers: {'Authorization': 'Bearer $token'});
     return response;
   }
 

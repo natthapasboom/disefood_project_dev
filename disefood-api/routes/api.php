@@ -52,10 +52,17 @@ Route::group([
 ], function () {
     Route::post('/register', 'AuthController@register');
     Route::post('/login', 'AuthController@login');
+
+    Route::group([
+        'middleware' => 'auth:api'
+    ], function () {
+        Route::get('/logout', 'AuthController@logout');
+        Route::get('/detail', 'AuthController@detail');
+    });
 });
 
 Route::group([
-    'prefix' => 'user'
+    'prefix' => 'user',
 ], function () {
     Route::get('/{userId}', 'UserController@getProfileById');
     Route::put('/{userId}', 'UserController@update');
@@ -65,9 +72,16 @@ Route::group([
     'prefix' => 'shop'
 ], function () {
     Route::get('/', 'ShopController@getShopsList');
-    Route::get('/{shopId}', 'ShopController@findShopById');
+    Route::get('/{shopId}/detail', 'ShopController@findShopById');
     Route::post('/','ShopController@create');
     Route::put('/{shopId}', 'ShopController@update');
+
+    Route::group([
+        'prefix' => 'owner',
+        'middleware' => 'auth:api'
+    ], function () {
+        Route::get('/', 'ShopController@getShopByOwner');
+    });
 
     Route::group([
         'prefix' => 'menu'
@@ -81,4 +95,6 @@ Route::group([
     'prefix' => 'food'
 ], function () {
    Route::get('/{foodId}', 'FoodController@getFoodById');
+   Route::put('/{foodId}', 'FoodController@updateFoodByFoodId');
+   Route::delete('/{foodId}', 'FoodController@deleteByFoodId');
 });

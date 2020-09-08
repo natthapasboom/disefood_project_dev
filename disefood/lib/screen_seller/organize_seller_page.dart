@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:disefood/model/foods_list.dart';
+import 'package:disefood/model/menuyShopId.dart';
 import 'package:disefood/screen_seller/addmenu.dart';
+import 'package:disefood/services/api_provider.dart';
 import 'package:disefood/services/foodservice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'editmenu.dart';
 
@@ -15,180 +20,186 @@ class OrganizeSellerPage extends StatefulWidget {
 
 class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   FoodsList foodslist = FoodsList();
-
+  List foodList = [];
+  bool _isLoading = false;
+  int _shopId;
+  String foodName;
+  ApiProvider apiProvider = ApiProvider();
   @override
   void initState() {
     Future.microtask(() async {
-      fetchNameFromStorage();
+      // fetchNameFromStorage();
+      getFoodByShopId();
     });
     super.initState();
   }
 
-  int _shopId;
-  String _name;
+  // Future fetchNameFromStorage() async {
+  //   SharedPreferences _prefs = await SharedPreferences.getInstance();
+  //   final name = _prefs.getString('first_name');
+  //   final shopId = _prefs.getInt('shop_id');
+  //   setState(() {
+  //     _name = name;
+  //     _shopId = shopId;
+  //   });
+  // }
 
-  Future fetchNameFromStorage() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-    final name = _prefs.getString('first_name');
-    final shopId = _prefs.getInt('shop_id');
+  Future getFoodByShopId() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    _shopId = preferences.getInt('shop_id');
+    String _url = 'http://10.0.2.2:8080/api/shop/menu/$_shopId';
+    final response = await http.get(_url);
+    var body = response.body;
     setState(() {
-      _name = name;
-      _shopId = shopId;
+      _isLoading = true;
+      foodList = json.decode(body)['data'];
+      Logger logger = Logger();
+      logger.d(foodList);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Name = $_name");
-    print('$_shopId');
-
     // final OrganizeSellerPage params = ModalRoute.of(context).settings.arguments;
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(left: 40, top: 30),
-                child: Text(
-                  "รายการอาหาร",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                ),
+      body: ListView(
+        children: [
+          
+              Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(left: 40, top: 30),
+                    child: Text(
+                      "รายการอาหาร",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    ),
+                  ),
+                  // Container(
+                  //   padding: EdgeInsets.only(left: 150, top: 38),
+                  //   child: IconButton(
+                  //   icon: Icon(
+                  //     Icons.add_circle,
+                  //     color: Colors.amber[800],
+                  //   ),
+                  //   onPressed: () {
+                  //     Navigator.push(context,
+                  //         MaterialPageRoute(builder: (context) => AddMenu()));
+                  //   }
+                  //   ),
+                  // ),
+                ],
               ),
               Container(
-                padding: EdgeInsets.only(left: 150, top: 38),
-                child: IconButton(
-                icon: Icon(
-                  Icons.add_circle,
-                  color: Colors.amber[800],
-                ),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddMenu()));
-                }
+                padding: EdgeInsets.only(top: 10),
+                child: Divider(
+                  indent: 40,
+                  color: Colors.black,
+                  endIndent: 40,
                 ),
               ),
-            ],
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 10),
-            child: Divider(
-              indent: 40,
-              color: Colors.black,
-              endIndent: 40,
-            ),
-          ),
-          Container(
-            child: FutureBuilder(
-                future: getFoodsDataByID(http.Client(), _shopId),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  print(snapshot.data);
-                  if (snapshot.data == null) {
-                    return Container(
-                      margin: EdgeInsets.only(top: 200),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.amber[900],
+              Expanded(
+                child: !_isLoading
+                    ? Container(
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.amber[900],
+                          ),
                         ),
-                      ),
-                    );
-                  } else {
-                    return Expanded(
+                      )
+                    : Expanded(
                       child: ListView.builder(
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Column(
-                            children: <Widget>[
-                              ListTile(
-                                leading: Container(
-                                  margin: EdgeInsets.only(
-                                    left: 30,
-                                  ),
-                                  child: Text(
-                                    '${snapshot.data[index].name}',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                                trailing: Wrap(
-                                  spacing: 12, // space between two icons
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(top: 13),
+                          shrinkWrap: true,
+                          itemCount: foodList != null ? foodList.length : 0,
+                          itemBuilder: (BuildContext context, int index) {
+                            var foods = foodList[index];
+                            return Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Container(
+                                      margin: EdgeInsets.only(
+                                        left: 30,
+                                      ),
                                       child: Text(
-                                        '${snapshot.data[index].price}',
+                                        '${foods['name']}',
                                         style: TextStyle(
                                           fontSize: 18,
                                         ),
                                       ),
                                     ),
-                                    Container(
-                                      child: snapshot.hasData
-                                          ? IconButton(
-                                              icon: Icon(
-                                                Icons.edit,
-                                                color: Colors.amber[800],
-                                              ),
-                                              onPressed: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            EditMenuPage(
-                                                              foodslist:
-                                                                  snapshot.data[
-                                                                      index],
-                                                            )));
-                                              })
-                                          : IconButton(
-                                              icon: Icon(
-                                                Icons.add_circle,
-                                                color: Colors.amber[800],
-                                              ),
-                                              onPressed: () {},
+                                    trailing: Wrap(
+                                      spacing: 12, // space between two icons
+                                      children: <Widget>[
+                                        Container(
+                                          margin: EdgeInsets.only(top: 13),
+                                          child: Text(
+                                            '${foods['price']}',
+                                            style: TextStyle(
+                                              fontSize: 18,
                                             ),
+                                          ),
+                                        ),
+                                        Container(
+                                            child: IconButton(
+                                                icon: Icon(
+                                                  Icons.edit,
+                                                  color: Colors.amber[800],
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              EditMenuPage(
+                                                                foodslist:
+                                                                    foods[index],
+                                                              )));
+                                                })),
+                                        // icon-1
+                                      ],
                                     ),
-
-                                    // icon-1
-                                  ],
-                                ),
+                                  ),
+                                  Container(
+                                          padding: EdgeInsets.only(top: 0),
+                                          child: Divider(
+                                            indent: 40,
+                                            color: Colors.black,
+                                            endIndent: 40,
+                                          ),
+                                        ),
+                                ],
                               ),
-                            ],
-                          );
-                        },
-                      ),
-                    );
-                  }
-                }),
-          ),
-          // Container(
-           
-          //   child: ListTile(
-          //     leading: Container(
-          //       margin: EdgeInsets.only(
-          //         left: 30,
-          //       ),
-          //       child: Text(
-          //         'เพิ่มรายการอาหาร',
-          //         style: TextStyle(
-          //           fontSize: 18,
-          //         ),
-          //       ),
-          //     ),
-          //     trailing: IconButton(
-          //       icon: Icon(
-          //         Icons.add_circle,
-          //         color: Colors.amber[800],
-          //       ),
-          //       onPressed: () {
-          //         Navigator.push(context,
-          //             MaterialPageRoute(builder: (context) => AddMenu()));
-          //       },
-          //     ),
-          //   ),
-          // ),
+                            );
+                          }),
+                    ),
+              ),
+              Expanded(
+                child: _isLoading
+                    ? ListTile(
+                        leading: Container(
+                          margin: EdgeInsets.only(
+                            left: 30,
+                          ),
+                          child: Text(
+                            'เพิ่มรายการอาหาร',
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(
+                            Icons.add_circle,
+                            color: Colors.amber[800],
+                          ),
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => AddMenu()));
+                          },
+                        ),
+                      )
+                    : Container(),
+              ),
         ],
       ),
     );

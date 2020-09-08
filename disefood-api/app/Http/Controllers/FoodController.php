@@ -25,30 +25,45 @@ class FoodController extends Controller
     {
         $food = $this->foodRepo->findByFoodId($foodId);
         if(!$food) {
-            return  response()->json(['msg' => 'Food not found', 'status' => 404]);
+            return  response()->json(['msg' => 'Food Not Found', 'status' => 404]);
         } else {
             return response()->json(['data' => $food]);
         }
     }
 
-//    public function updateFoodByFoodId(Request $request, $food_id)
-//    {
-//        $food = $request->except(['_method']);
-////        $food_beforeUpdate = $this->foodRepo->findByFoodId($food_id);
-////        $path_beforeUpdate = $food_beforeUpdate['cover_image'];
-////        Storage::disk('s3')->delete($path_beforeUpdate);
-////        $food['cover_image'] = Storage::disk('s3')->put('images/shop/food/cover_image', $request->file('cover_image'), 'public');
-//
-//        $this->foodRepo->update($food, $food_id);
-//        return $this->foodRepo->findByFoodId($food_id);
-//    }
+    public function updateFoodByFoodId(UpdateFoodInShop $request, $foodId)
+    {
+        $food = $this->foodRepo->findByFoodId($foodId);
+        if(!$food) {
+            return response()->json(['data' => $food, 'msg' => 'Food Not Found', 'status' => 404]);
+        } else {
+            $req = $request->validated();
+            if(!isset($req['cover_img'])) {
+                $this->foodRepo->update($req, $foodId);
+                $food = $this->foodRepo->findByFoodId($foodId);
+                return response()->json(['data' => $food, 'msg' => 'Updated Success', 'status' => 200]);
+            } else {
+                $oldPath = $food['cover_img'];
+                Storage::disk('s3')->delete($oldPath);
+                $newPath = Storage::disk('s3')->put('images/shop/food/cover_img', $request->file('cover_img'), 'public');
+                $req['cover_img'] = $newPath;
+                $this->foodRepo->update($req, $foodId);
+                $food = $this->foodRepo->findByFoodId($foodId);
+                return response()->json(['data' => $food, 'msg' => 'Updated with Image Success']);
+            }
+        }
+    }
 
-//    public function deleteByFoodId($food_id)
-//    {
-//        $foodBeforeDelete = $this->foodRepo->findByFoodId($food_id);
-//        $path = $foodBeforeDelete['cover_image'];
-//        Storage::disk('s3')->delete($path);
-//        $this->foodRepo->delete($food_id);
-//        return response('delete shop success', 200);
-//    }
+    public function deleteByFoodId($foodId)
+    {
+        $food = $this->foodRepo->findByFoodId($foodId);
+        if(!$food) {
+            return response()->json(['data' => $food, 'msg' => 'Food Not Found', 'status' => 404]);
+        } else {
+            $oldPath = $food['cover_img'];
+            Storage::disk('s3')->delete($oldPath);
+            $food = $this->foodRepo->delete($foodId);
+            return response()->json(['data' => $food, 'msg' => 'Remove Food Success', 'status' => 200]);
+        }
+    }
 }

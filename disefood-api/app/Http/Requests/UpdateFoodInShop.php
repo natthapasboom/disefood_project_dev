@@ -18,7 +18,7 @@ class UpdateFoodInShop extends BaseFormRequest
             'name' => 'string',
             'price' => 'integer',
             'status' => 'boolean',
-//            'cover_image' => 'image'
+            'cover_img' => 'image'
         ];
     }
 }
