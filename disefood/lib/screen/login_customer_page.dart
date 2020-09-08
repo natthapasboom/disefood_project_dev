@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
         if (response.statusCode == 200) {
           Map map = json.decode(response.body);
           UserProfile msg = UserProfile.fromJson(map);
-          logger.d(msg.accessToken);
+
           var data = msg.data.toJson();
           String role = msg.data.role;
           // logger.d(data);

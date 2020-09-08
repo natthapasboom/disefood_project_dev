@@ -62,7 +62,7 @@ class _EditProfileState extends State<EditProfile> {
       Map map = json.decode(response.body);
       UserById msg = UserById.fromJson(map);
       var data = msg.data.toJson();
-      logger.d(data);
+
       setState(() {
         _isLoading = true;
         userId = preference.getInt('user_id');
@@ -116,13 +116,14 @@ class _EditProfileState extends State<EditProfile> {
             )
           : userId != null
               ? ListView(
+                  padding: EdgeInsets.all(0),
                   children: <Widget>[
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
                           width: 411,
-                          height: 200,
+                          height: 160,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                                 begin: Alignment.topLeft,

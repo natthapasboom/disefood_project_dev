@@ -85,7 +85,7 @@ class _HomeSellerState extends State<HomeSeller> {
     SharedPreferences preference = await SharedPreferences.getInstance();
     userId = preference.getInt('user_id');
     token = preference.getString('token');
-    logger.d(token);
+
     var response = await apiProvider.getShopId(token);
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -340,7 +340,7 @@ class _HomeSellerState extends State<HomeSeller> {
                     'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
                 width: 430.0,
                 height: 160.0,
-                fit: BoxFit.fill,
+                fit: BoxFit.fitHeight,
                 placeholder: (context, url) => Center(
                     child: Container(
                         margin: EdgeInsets.only(top: 50, bottom: 35),
