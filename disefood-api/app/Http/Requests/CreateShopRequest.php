@@ -15,11 +15,10 @@ class CreateShopRequest extends BaseFormRequest
     public function rules(Request $request)
     {
         return [
-            'name'          => 'required|string|max:50',
-            'shop_slot'     => 'required|integer',
-            'cover_image'   => 'image',
-            'document_image'=> 'image',
-            'user_id'       => 'required|integer'
+            'name'          => 'required|string|max:50|unique:shops,name',
+            'shop_slot'     => 'required|integer|unique:shops,shop_slot',
+            'cover_img'   => 'image',
+            'document_img'=> 'required|image',
         ];
     }
 }
