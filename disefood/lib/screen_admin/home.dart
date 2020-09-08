@@ -72,8 +72,6 @@ class _HomeAdminState extends State<HomeAdmin> {
     setState(() {
       isLoading = false;
       shops = json.decode(body)['data'];
-
-      print(shops);
     });
   }
 
