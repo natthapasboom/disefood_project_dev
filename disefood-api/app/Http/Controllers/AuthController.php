@@ -6,9 +6,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateUserStore;
 use App\Http\Requests\LoginRequest;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Storage;
-use Firebase\JWT\JWT;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+//use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -34,19 +36,39 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $req =  $request->validated();
-        $username = $req['username'];
-        $password = $req['password'];
-        $user = null;
-        $key = 'example_key';
-        if(!$username || !$password || $username == null || $password == null) {
-            return response()->json(['data' => $user, 'msg' => 'Username or Password is Wrong' , 'status' => 404]);
-        } else {
-            $user = $this->userRepo->findByUserName($username);
-            if (Hash::check($password, $user['password']))
-                $payload = $user;
-                $token = JWT::encode($payload, $key);
-                return response()->json(['data' => $user, 'token' => $token, 'status' => 200]);
-        }
+        $request->validated();
+        $credentials = request(['username', 'password']);
+        if(!Auth::attempt($credentials))
+            return response()->json([
+                'msg' => 'Unauthorized',
+                'status' => 401
+            ]);
+
+        $user = $request->user();
+
+        $tokenResult = $user->createToken('Auth Token');
+        $token = $tokenResult->token;
+        $token->save();
+        return response()->json([
+            'data'  => $user,
+            'access_token' => $tokenResult->accessToken,
+            'token_type' => 'Bearer',
+            'expires_at' => Carbon::parse(
+                $tokenResult->token->expires_at
+            )->toDateTimeString()
+        ]);
+    }
+
+    public function detail()
+    {
+        $user = Auth::user();
+        return response()->json(['data' => $user, 'status' => 200]);
+    }
+
+    public function logout()
+    {
+//        if (Auth::check()) {
+//            Auth::user()->OauthAccessToken()->delete();
+//        }
     }
 }

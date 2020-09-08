@@ -4,10 +4,14 @@ namespace App\Models\User;
 
 use App\Models\Order\Order;
 use App\Models\Shop\Shop;
-use Illuminate\Database\Eloquent\Model;
+use App\OauthAccessToken;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Passport\HasApiTokens;
 
-class User extends Model
+class User extends Authenticatable
 {
+    use HasApiTokens, Notifiable;
     protected $table = 'users';
     protected $primaryKey ='id';
     protected $fillable = [
@@ -15,20 +19,15 @@ class User extends Model
         'first_name', 'last_name', 'tel',
         'profile_img', 'role'
     ];
+
     protected $hidden = [
-        'password'
+        'password', 'remember_token'
     ];
 
-//    protected $attributes = [
-//        'username' => false,
-//        'email' => false,
-//        'password' => false,
-//        'first_name' => false,
-//        'last_name' => false,
-//        'tel' => false,
-//        'profile_img' => false,
-//        'role' => false
-//    ];
+//    public function OauthAccessToken()
+//    {
+//        return $this->hasMany(OauthAccessToken::class);
+//    }
 
     public function shop()
     {

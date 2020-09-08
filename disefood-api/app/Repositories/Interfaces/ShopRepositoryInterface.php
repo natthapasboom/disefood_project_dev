@@ -11,5 +11,6 @@ interface ShopRepositoryInterface
     public function findById($shopId);
     public function updateShop($shop, $shopId);
     public function findMenuByShopId($shopId);
+    public function getBySellerId($userId);
     public function delete($shopId);
 }

@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('tel')->nullable();
             $table->string('profile_img')->nullable();
             $table->enum('role', ['customer', 'seller', 'admin']);
+            $table->string('remember_token')->nullable();
             $table->timestamps();
         });
     }

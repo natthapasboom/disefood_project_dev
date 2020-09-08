@@ -22,10 +22,16 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   int userId;
   @override
   void initState() {
+    Timer.periodic(Duration(seconds: 1), (Timer t) => _getCurrentTime());
     Future.microtask(() {
       findUser();
     });
     super.initState();
+  }
+
+  void _getCurrentTime() {
+    currenthours = DateTime.now().hour;
+    currentmin = DateTime.now().minute;
   }
 
   Future<Null> findUser() async {

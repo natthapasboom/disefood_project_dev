@@ -40,11 +40,13 @@ void main() {
       HomeAdmin.routeName: (_) => HomeAdmin(),
       AddMenu.route: (_) => AddMenu(),
       Homepage.routeName: (_) => Homepage(),
+      EditProfile.routeName: (_) => EditProfile(),
       "/home_seller": (_) => HomeSeller(),
       '/home_customer': (_) => Home(),
       '/organize_seller': (_) => OrganizeSellerPage(),
       '/Login': (_) => LoginPage(),
       '/order_seller': (_) => OrderSellerPage(),
+
       // '/order_detail_seller': (_) => OrderDetailSeller(),
     },
   ));
