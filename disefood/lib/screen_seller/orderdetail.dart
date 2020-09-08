@@ -9,18 +9,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderDetailSeller extends StatefulWidget {
   static final route = "/order_detail_seller";
- 
+
   @override
   _OrderDetailSellerState createState() => _OrderDetailSellerState();
 }
 
 class _OrderDetailSellerState extends State<OrderDetailSeller> {
-  var totalminute;
-  var totalhour;
-  var currenthours;
-  var currentmin;
-  int addTimeAmount = 5;
-  Timer timer;
   bool isthisbuttonselected = true;
   String nameUser;
   String lastNameUser;
@@ -28,32 +22,13 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   int userId;
   @override
   void initState() {
-    currenthours = DateTime.now().hour;
-    // currenthours = 22;
-    currentmin = DateTime.now().minute;
-    // currentmin = 56;
-    totalhour = currenthours;
-
-    if (currentmin < 54) {
-      totalminute = currentmin + 5;
-    } else {
-      totalhour = currenthours + 1;
-      totalminute = (currentmin + 5) - 60;
-    }
-    Timer.periodic(Duration(seconds: 1), (Timer t) => _getCurrentTime());
     Future.microtask(() {
       findUser();
-      
     });
     super.initState();
   }
 
-  void _getCurrentTime() {
-    currenthours = DateTime.now().hour;
-    currentmin = DateTime.now().minute;
-  }
-
-    Future<Null> findUser() async {
+  Future<Null> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     setState(() {
       nameUser = preference.getString('first_name');
@@ -63,51 +38,11 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
     });
   }
 
-  void updateAddTimeStatus() {
-    setState(
-      () {
-        if (totalminute >= 59) {
-          totalminute = 0;
-          if (totalhour >= 23) {
-            totalhour = 0;
-          } else {
-            totalhour++;
-          }
-        } else {
-          totalminute++;
-        }
-      },
-    );
-  }
-
-  void updateMinusTimeStatus() {
-    setState(
-      () {
-        if (addTimeAmount >= 5) {
-          if (totalminute <= 0) {
-            totalminute = 59;
-            if (totalhour <= 0) {
-              totalhour = 23;
-            } else {
-              totalhour--;
-            }
-          } else {
-            totalminute--;
-          }
-        }
-      },
-    );
-  }
-//   _sideMenuSeller(UserProfile userData){
-//   return SideMenuSeller(userData: userData,);
-// }
-
   Future<void> _neverSatisfied() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
-        
         return AlertDialog(
           title: Text(
             'เพิ่มเวลา',
@@ -119,16 +54,14 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                 Column(
                   children: <Widget>[
                     Row(
-                     children: <Widget>[
+                      children: <Widget>[
                         Container(
                           padding: EdgeInsets.only(left: 50, top: 5),
                           child: SizedBox(
                             width: 30.0,
                             height: 30.0,
                             child: const Card(
-                              child: Center(
-                               
-                              ),
+                              child: Center(),
                               color: Colors.orange,
                             ),
                           ),
@@ -139,14 +72,12 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                             width: 30.0,
                             height: 30.0,
                             child: const Card(
-                              child: Center(
-                                
-                              ),
+                              child: Center(),
                               color: Colors.orange,
                             ),
                           ),
                         ),
-                     ],
+                      ],
                     ),
                     Row(
                       children: <Widget>[
@@ -211,16 +142,14 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                       ],
                     ),
                     Row(
-                     children: <Widget>[
+                      children: <Widget>[
                         Container(
                           padding: EdgeInsets.only(left: 50, top: 5),
                           child: SizedBox(
                             width: 30.0,
                             height: 30.0,
                             child: const Card(
-                              child: Center(
-                                
-                              ),
+                              child: Center(),
                               color: Colors.orange,
                             ),
                           ),
@@ -231,14 +160,12 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                             width: 30.0,
                             height: 30.0,
                             child: const Card(
-                              child: Center(
-                                
-                              ),
+                              child: Center(),
                               color: Colors.orange,
                             ),
                           ),
                         ),
-                     ],
+                      ],
                     ),
                   ],
                 ),
@@ -289,13 +216,12 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
 
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
-      drawer: SideMenuCustomer(
-          firstName: nameUser,
-          userId: userId,
-          lastName: lastNameUser,
-          coverImg: profileImg),
+      // drawer: SideMenuCustomer(
+      //     firstName: nameUser,
+      //     userId: userId,
+      //     lastName: lastNameUser,
+      //     coverImg: profileImg),
       appBar: AppBar(
         actions: <Widget>[
           Container(
@@ -316,166 +242,9 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
       body: ListView(
         children: <Widget>[
           headerImage,
-          textdetailCustomer,
-          Container(
-            padding: EdgeInsets.only(top: 10),
-            child: Divider(
-              indent: 40,
-              color: Colors.black,
-              endIndent: 40,
-            ),
-          ),
-          //หมวดข้อมูลผู้สั่ง Order
-          Container(
-            child: Row(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(left: 40, top: 5, bottom: 10),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        "Nawapan Deeprasertkul",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            child: Row(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(
-                    left: 40,
-                    top: 10,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        "0863882908",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 5),
-            child: Divider(
-              indent: 40,
-              color: Colors.black,
-              endIndent: 40,
-            ),
-          ),
-          Row(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(left: 40, top: 10),
-                child: Text(
-                  "เวลาที่จะมารับ",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-              ),
-              Container(
-                //หมวดเวลา
-                padding: EdgeInsets.only(left: 130, top: 10),
-                child: Text(
-                  '$totalhour.$totalminute  นาฬิกา',
-                  style: TextStyle(fontSize: 14, color: Colors.black),
-                ),
-              ),
-            ],
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 10),
-            child: Divider(
-              indent: 40,
-              color: Colors.black,
-              endIndent: 40,
-            ),
-          ),
-          textOrder,
-          Container(
-            padding: EdgeInsets.only(top: 10),
-            child: Divider(
-              indent: 40,
-              color: Colors.black,
-              endIndent: 40,
-            ),
-          ),
-          Row(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(left: 40, top: 10),
-                child: Text(
-                  "รายการอาหาร",
-                  style: TextStyle(fontSize: 14),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 0, top: 10),
-                child: Text(
-                  ' / ลายละเอียด',
-                  style: TextStyle(fontSize: 14, color: Colors.black),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 120, top: 10),
-                child: Text(
-                  'จำนวน',
-                  style: TextStyle(fontSize: 14),
-                ),
-              ),
-            ],
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 10),
-            child: Divider(
-              indent: 40,
-              color: Colors.black,
-              endIndent: 40,
-            ),
-          ),
-          Row(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(left: 40, top: 10),
-                child: Text(
-                  "ราคารวม",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 120, top: 10),
-                child: Text(
-                  '',
-                  style: TextStyle(fontSize: 14),
-                ),
-              ),
-              Container(
-                  padding: EdgeInsets.only(left: 120, top: 10),
-                  child: Icon(
-                    Icons.attach_money,
-                    color: Colors.green,
-                    size: 30,
-                  )),
-            ],
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 10),
-            child: Divider(
-              indent: 40,
-              color: Colors.black,
-              endIndent: 40,
-            ),
-          ),
+
           texTimeProcess,
           Container(
-            padding: EdgeInsets.only(top: 10),
             child: Divider(
               indent: 40,
               color: Colors.black,
@@ -558,6 +327,154 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
               ),
             ],
           ),
+
+          textdetailCustomer,
+          Container(
+            child: Divider(
+              indent: 40,
+              color: Colors.black,
+              endIndent: 40,
+            ),
+          ),
+          //หมวดข้อมูลผู้สั่ง Order
+          Container(
+            child: Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(left: 40, top: 5, bottom: 10),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        "Nawapan Deeprasertkul",
+                        style: TextStyle(fontSize: 14, color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            child: Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(
+                    left: 40,
+                    top: 10,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        "0863882908",
+                        style: TextStyle(fontSize: 14, color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(left: 40, top: 10),
+                child: Text(
+                  "เวลาที่จะมารับ",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+              ),
+              Container(
+                //หมวดเวลา
+                padding: EdgeInsets.only(left: 130, top: 10),
+                child: Text(
+                  'mock นาฬิกา',
+                  style: TextStyle(fontSize: 14, color: Colors.black),
+                ),
+              ),
+            ],
+          ),
+          Container(
+            child: Divider(
+              indent: 40,
+              color: Colors.black,
+              endIndent: 40,
+            ),
+          ),
+          textOrder,
+          Container(
+            child: Divider(
+              indent: 40,
+              color: Colors.black,
+              endIndent: 40,
+            ),
+          ),
+          Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(left: 40, top: 10),
+                child: Text(
+                  "รายการอาหาร",
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 0, top: 10),
+                child: Text(
+                  ' / รายละเอียด',
+                  style: TextStyle(fontSize: 14, color: Colors.black),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 120, top: 10),
+                child: Text(
+                  'จำนวน',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10),
+            child: Divider(
+              indent: 40,
+              color: Colors.black,
+              endIndent: 40,
+            ),
+          ),
+          Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(left: 40, top: 10),
+                child: Text(
+                  "ราคารวม",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 120, top: 10),
+                child: Text(
+                  '',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+              Container(
+                  padding: EdgeInsets.only(left: 120, top: 10),
+                  child: Icon(
+                    Icons.attach_money,
+                    color: Colors.green,
+                    size: 30,
+                  )),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10),
+            child: Divider(
+              indent: 40,
+              color: Colors.black,
+              endIndent: 40,
+            ),
+          ),
         ],
       ),
     );
@@ -568,7 +485,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
       Container(
         padding: EdgeInsets.only(left: 40, top: 10),
         child: Text(
-          "ลายละเอียดผู้สั่ง",
+          "รายละเอียดผู้สั่ง",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
@@ -578,7 +495,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   Widget textOrder = new Row(
     children: <Widget>[
       Container(
-        padding: EdgeInsets.only(left: 40, top: 30),
+        padding: EdgeInsets.only(left: 40, top: 10),
         child: Text(
           "รายการอาหาร",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -590,7 +507,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   Widget texTimeProcess = new Row(
     children: <Widget>[
       Container(
-        padding: EdgeInsets.only(left: 40, top: 30),
+        padding: EdgeInsets.only(left: 40, top: 20),
         child: Text(
           "เวลาทำอาหาร",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),

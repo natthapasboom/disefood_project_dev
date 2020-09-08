@@ -7,6 +7,7 @@ import 'package:disefood/screen_seller/organize_seller_page.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/screen_seller/orderdetail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class OrderSellerPage extends StatefulWidget {
   static final route = "/order_seller";
   //  final UserProfile userData;
@@ -16,25 +17,24 @@ class OrderSellerPage extends StatefulWidget {
 }
 
 class _OrderSellerPageState extends State<OrderSellerPage> {
- 
   List<String> items = List<String>.generate(7 + 1, (index) {
     return "Item + $index";
   });
 
   List<Card> carditem = new List<Card>();
 
-   @override
+  @override
   void initState() {
-    Future.microtask(() async  {
+    Future.microtask(() async {
       fetchNameFromStorage();
     });
     super.initState();
   }
-  
+
   String _name;
   int _userId;
   Future fetchNameFromStorage() async {
-   SharedPreferences _prefs = await SharedPreferences.getInstance();
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     final name = _prefs.getString('first_name');
     final userId = _prefs.getInt('user_id');
     setState(() {
@@ -42,8 +42,6 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
       _userId = userId;
     });
   }
-  
-
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +182,6 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                       Transform.translate(
                         offset: Offset(2, -15),
                         child: Container(
-                          
                           child: Row(
                             children: <Widget>[
                               ButtonBar(
@@ -206,9 +203,13 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                     ),
                                   ),
                                   RaisedButton(
-                                    onPressed: () => {
-                                      // Navigator.of(context).pushReplacementNamed(OrderDetailSeller.route,arguments: OrderDetailSeller(userData: params.userData,))
-                                    },
+                                    onPressed: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            OrderDetailSeller(),
+                                      ),
+                                    ),
                                     padding:
                                         EdgeInsets.only(left: 20, right: 20),
                                     color: Colors.white,
