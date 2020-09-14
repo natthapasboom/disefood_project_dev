@@ -29,10 +29,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
     super.initState();
   }
 
-  void _getCurrentTime() {
-    currenthours = DateTime.now().hour;
-    currentmin = DateTime.now().minute;
-  }
+  void _getCurrentTime() {}
 
   Future<Null> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
