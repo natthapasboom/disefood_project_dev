@@ -3,9 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/screen_admin/shop_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:disefood/component/sidemenu_admin.dart';
-import 'package:disefood/component/sidemenu_customer.dart';
-import 'package:disefood/model/shopList.dart';
-import 'package:disefood/model/shop_id.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +69,6 @@ class _HomeAdminState extends State<HomeAdmin> {
     setState(() {
       isLoading = false;
       shops = json.decode(body)['data'];
-      // print(shops);
     });
   }
 
