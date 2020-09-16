@@ -4,6 +4,7 @@ import 'package:disefood/screen_admin/home.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShopDetail extends StatefulWidget {
   final int shopId;
@@ -161,11 +162,11 @@ class _ShopDetailState extends State<ShopDetail> {
                     color: const Color(0xffF6A911),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5)),
-                    onPressed: () async { 
+                    onPressed: () async {
                       String approved = '1';
                       String _method = 'PUT';
-                      alertDialog(context, 'ยืนยันร้านค้า ?', id, approved, _method);
-                      
+                      alertDialog(
+                          context, 'ยืนยันร้านค้า ?', id, approved, _method);
                     },
                     child: Center(
                       child: Container(
@@ -188,49 +189,80 @@ class _ShopDetailState extends State<ShopDetail> {
     );
   }
 
-  Future<void> alertDialog(BuildContext context, String message, int shopId, String approved, String _method) async {
-  showDialog(context: context, 
-  builder: (context) => Container(
-    
-    child: SimpleDialog(
-      title: Container(
-        
-        child: Text(message, style: TextStyle(fontFamily: 'Roboto', fontSize: 18, fontWeight: FontWeight.bold),)
-        ),
-      children: <Widget>[
-        Container(
-          margin: EdgeInsets.only(left: 30,top: 10,bottom: 30,right: 100),
-          child: Text('ท่านต้องการยืนยันร้านค้าใช่หรือไม่',style: TextStyle(fontFamily: 'Roboto', fontSize: 14, fontWeight: FontWeight.normal,color: const Color(0xff838181)),),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Container(
-              
-              child: FlatButton(
-                onPressed: () async{
-                  print("shop_id || approved || method : $id || $approved || $_method");
-                    var response = await apiProvider.approveShopById(id, approved, _method);
-                      print(response.statusCode);
-                       if (response.statusCode == 200) {
-                         logger.d('success');
-                          MaterialPageRoute route = MaterialPageRoute(builder: (context) => HomeAdmin());
-                          Navigator.pushAndRemoveUntil(context, route, (route) => false);
-                       }else{
-                         logger.e('error');
-                       }
-                }
-              , 
-              child: Text('ยืนยัน', style: TextStyle(fontFamily: 'Roboto', fontSize: 14, fontWeight: FontWeight.bold,color: const Color(0xffFF7C2C)),)),
-            ),
-             FlatButton(
-              onPressed: () => Navigator.pop(context)
-            , 
-            child: Text('ยกเลิก', style: TextStyle(fontFamily: 'Roboto', fontSize: 14, fontWeight: FontWeight.bold,color: const Color(0xffFF7C2C)),)),
-          ],
-        )
-      ],
-    ),
-  ));
-}
+  Future<void> alertDialog(BuildContext context, String message, int shopId,
+      String approved, String _method) async {
+    showDialog(
+        context: context,
+        builder: (context) => Container(
+              child: SimpleDialog(
+                title: Container(
+                    child: Text(
+                  message,
+                  style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                )),
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(
+                        left: 30, top: 10, bottom: 30, right: 100),
+                    child: Text(
+                      'ท่านต้องการยืนยันร้านค้าใช่หรือไม่',
+                      style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          color: const Color(0xff838181)),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        child: FlatButton(
+                            onPressed: () async {
+                              SharedPreferences preference =
+                                  await SharedPreferences.getInstance();
+                              String token = preference.getString('token');
+                              print(
+                                  "shop_id || approved || method : $id || $approved || $_method");
+                              var response = await apiProvider.approveShopById(
+                                  token, id, approved, _method);
+                              print(response.statusCode);
+                              if (response.statusCode == 200) {
+                                logger.d('success');
+                                MaterialPageRoute route = MaterialPageRoute(
+                                    builder: (context) => HomeAdmin());
+                                Navigator.pushAndRemoveUntil(
+                                    context, route, (route) => false);
+                              } else {
+                                logger.e('error');
+                              }
+                            },
+                            child: Text(
+                              'ยืนยัน',
+                              style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xffFF7C2C)),
+                            )),
+                      ),
+                      FlatButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            'ยกเลิก',
+                            style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xffFF7C2C)),
+                          )),
+                    ],
+                  )
+                ],
+              ),
+            ));
+  }
 }

@@ -27,14 +27,18 @@ class _RegisState extends State<Regis> {
   final logger = Logger();
   File _image;
   ApiProvider apiProvider = ApiProvider();
-  bool status;
+  String status;
   var uuid = Uuid();
 
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = image;
-    });
+  Future<void> getImage(ImageSource imageSource) async {
+    try {
+      var image = await ImagePicker.pickImage(
+          source: imageSource, maxWidth: 400.0, maxHeight: 400.0);
+
+      setState(() {
+        _image = image;
+      });
+    } catch (e) {}
   }
 
   bool isValidEmail(value) {
@@ -43,76 +47,55 @@ class _RegisState extends State<Regis> {
         .hasMatch(value);
   }
 
-  Future<Null> _register() async {
+  Future<String> _register() async {
     print('before validate ==> ');
     if (_formKey.currentState.validate()) {
       print('after validate ==> ');
-      // String url = "http://321514e0.ngrok.io/api/user";
-      String url = 'http://10.0.2.2:8080/api/user';
+      String username = _usernameController.text.trim();
+      String email = _emailController.text.trim();
+      String password = _passwordController.text.trim();
+      String firstName = _firstNameController.text.trim();
+      String lastName = _lastNameController.text.trim();
+      String tel = _phoneController.text.trim();
 
-      try {
-        print('after try ==> ');
-        Dio dio = Dio();
-        // dio.options.headers['Content-Type'] = 'multipart/form-data';
-        var formData = FormData.fromMap({
-          "username": _usernameController.text.trim(),
-          "password": _passwordController.text.trim(),
-          "first_name": _firstNameController.text.trim(),
-          "last_name": _lastNameController.text.trim(),
-          "tel": _phoneController.text.trim(),
-          "email": _emailController.text.trim(),
-          "profile_img": await MultipartFile.fromFile(
-            '${_image.path}',
-            filename: '${uuid.v4()}.jpeg',
-          ),
-          "is_seller": status,
-        });
-        print(formData.fields);
-        print(formData.files.toString());
-        // print(formData.files);
-        print('data : $formData');
-        Response response = await dio.post(url,
-            data: formData,
-            options: Options(headers: {
-              'Headers': 'multipart/form-data',
-              'Accept': '*/*',
-            })
-            // data: formData,
-            // data: formData,
-            // options:  Options(
-            //  followRedirects: false,
-            //  validateStatus: (status) { return status < 500; }
-            //   ),
-            // data: formData,
-            // data:{
-            // "username": _usernameController.text.trim(),
-            // "password": _passwordController.text.trim(),
-            // "first_name": _firstNameController.text.trim(),
-            // "last_name": _lastNameController.text.trim(),
-            // "tel": _phoneController.text.trim(),
+      String url = 'http://10.0.2.2:8080/api/auth/register';
+      String fileName = _image.path.split('/').last;
+      print('after try ==> ');
+      FormData formData = FormData.fromMap({
+        "username": username,
+        "email": email,
+        "password": password,
+        "first_name": firstName,
+        "last_name": lastName,
+        "tel": tel,
+        "profile_img":
+            await MultipartFile.fromFile(_image.path, filename: fileName),
+        "role": status,
+      });
+      print(formData.fields);
+      // print(formData.files);
+      print('data : $formData');
+      var response = await Dio().post(
+        url,
+        data: formData,
+        options: Options(
+            followRedirects: false,
+            validateStatus: (status) {
+              return status < 500;
+            }),
+      );
 
-            // // "profile_img": await MultipartFile.fromFile(
-            // //     _image.path,
-            // //      filename: '${uuid.v4()}.png',
-            // // ) ,
-            // "is_seller": status,
-            // },
-            );
-
-        print('res : $response');
-        print('res : ${response.data}');
-        print(response.statusCode);
-        if (response.statusCode == 200) {
-          print('response : ${response.data}');
-          print('Success');
-          Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
-        } else {
-          print('error code');
-        }
-        print('res : $response');
-      } catch (error) {
-        print('error: $error');
+      print('res : $response');
+      print('res : ${response.data}');
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        print('response : ${response.data}');
+        print('Success');
+        Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
+      } else {
+        print('error code');
       }
+      print('res : $response');
     }
   }
 
@@ -181,7 +164,10 @@ class _RegisState extends State<Regis> {
                       child: FloatingActionButton(
                           backgroundColor: Colors.amber[900],
                           onPressed: () {
-                            getImage();
+                            getImage(ImageSource.gallery);
+                            setState(() {
+                              Image.file(_image);
+                            });
                           },
                           child: Icon(Icons.add_a_photo)),
                     ),
@@ -500,14 +486,14 @@ class _RegisState extends State<Regis> {
               "พ่อค้า / แม่ค้า",
               style: TextStyle(fontSize: 18, color: Colors.white),
             ),
-            value: true,
+            value: "seller",
             groupValue: selectedRadio,
-            onChanged: (bool newValue) {
+            onChanged: (newValue) {
               print(' value : $newValue');
               // print("Radio $val");
               setState(() {
                 setSelectedRadio(newValue);
-                status = newValue;
+                status = "seller";
                 print(' Status :  $status');
               });
             },
@@ -518,11 +504,11 @@ class _RegisState extends State<Regis> {
               "ผู้ใช้งาน",
               style: TextStyle(fontSize: 18, color: Colors.white),
             ),
-            value: false,
+            value: "customer",
             groupValue: selectedRadio,
-            onChanged: (bool newValue) {
+            onChanged: (newValue) {
               setState(() {
-                status = newValue;
+                status = "customer";
                 setSelectedRadio(newValue);
                 print(' Status :  $status');
               });
@@ -534,14 +520,14 @@ class _RegisState extends State<Regis> {
     );
   }
 
-  bool selectedRadio = false;
+  String selectedRadio = '';
   void initState() {
-    selectedRadio = null;
+    selectedRadio = '';
     // selectedRadio = false;
     super.initState();
   }
 
-  setSelectedRadio(bool val) {
+  setSelectedRadio(String val) {
     setState(() {
       selectedRadio = val;
     });

@@ -87,6 +87,7 @@ class _HomeSellerState extends State<HomeSeller> {
     token = preference.getString('token');
 
     var response = await apiProvider.getShopId(token);
+    logger.d(token);
     print(response.statusCode);
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
@@ -99,6 +100,12 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopId = msg.data.id;
         approve = msg.data.approved;
         preference.setInt('shop_id', msg.data.id);
+      });
+    } else {
+      setState(() {
+        _isLoading = true;
+        logger.d('shop not found');
+        logger.d(_shopId);
       });
     }
   }

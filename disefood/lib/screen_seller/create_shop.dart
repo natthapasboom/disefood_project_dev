@@ -1,11 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/shop_id.dart';
 import 'package:disefood/screen_seller/home_seller_tab.dart';
+import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -77,7 +76,7 @@ class _CreateShopState extends State<CreateShop> {
         return Center(
           child: IconButton(
             onPressed: () {
-              getImage();
+              getImage(ImageSource.gallery);
               setState(() {
                 _isEdit = true;
                 Image.file(_image);
@@ -99,12 +98,27 @@ class _CreateShopState extends State<CreateShop> {
     }
   }
 
+  File documentImg;
   File _image;
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = image;
-    });
+  Future<void> getImage(ImageSource imageSource) async {
+    try {
+      var image = await ImagePicker.pickImage(
+          source: imageSource, maxWidth: 400.0, maxHeight: 400.0);
+
+      setState(() {
+        _image = image;
+      });
+    } catch (e) {}
+  }
+
+  Future<void> getDocImg(ImageSource imageSource) async {
+    try {
+      var image = await ImagePicker.pickImage(
+          source: imageSource, maxWidth: 400.0, maxHeight: 400.0);
+      setState(() {
+        documentImg = image;
+      });
+    } catch (e) {}
   }
 
   TextEditingController _shopNameController = TextEditingController();
@@ -149,48 +163,72 @@ class _CreateShopState extends State<CreateShop> {
   }
 
   Widget _buildPhoto() {
-    return Container(
-      height: 150,
-      color: Colors.amber,
-      child: _shopImg == null
-          ? Center(
-              child: IconButton(
-                onPressed: () {
-                  getImage();
-                  setState(() {
-                    _isEdit = true;
-                    Image.file(_image);
-                  });
-                },
-                iconSize: 36,
-                color: Colors.white,
-                icon: Icon(Icons.add_a_photo),
+    return Column(
+      children: <Widget>[
+        Container(
+          height: 150,
+          color: const Color(0xff7FC9C5),
+          child: _image == null
+              ? Center(
+                  child: IconButton(
+                    onPressed: () {
+                      getImage(ImageSource.gallery);
+                      setState(() {
+                        _isEdit = true;
+                        Image.file(_image);
+                      });
+                    },
+                    iconSize: 36,
+                    color: Colors.white,
+                    icon: Icon(Icons.store),
+                  ),
+                )
+              : Container(
+                  child: Image.file(
+                    _image,
+                    height: 150,
+                    width: 500,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+          // child: Image.file(
+          //   _shopImg,
+          //   height: 150,
+          //   width: 500,
+          //   fit: BoxFit.cover,
+          // ),
+        ),
+        Transform.translate(
+          offset: Offset(0, -30.0),
+          child: Container(
+            margin: EdgeInsets.only(left: 290),
+            child: FloatingActionButton(
+              child: Icon(
+                Icons.add_a_photo,
+                size: 20,
               ),
-            )
-          : Container(
-              child: CachedNetworkImage(
-                imageUrl:
-                    'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
-                height: 150,
-                width: 500,
-                fit: BoxFit.cover,
-              ),
-              // child: Image.file(
-              //   _shopImg,
-              //   height: 150,
-              //   width: 500,
-              //   fit: BoxFit.cover,
-              // ),
+              backgroundColor: const Color(000000).withOpacity(0.6),
+              onPressed: () {
+                getImage(ImageSource.gallery);
+                setState(() {
+                  _isEdit = true;
+                  Image.file(_image);
+                });
+              },
             ),
+          ),
+        )
+      ],
     );
   }
 
   Widget _buildform() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          margin: EdgeInsets.only(top: 30, left: 40, right: 40, bottom: 10),
+          margin: EdgeInsets.only(top: 0, left: 40, right: 40, bottom: 10),
           child: Text('ชื่อร้านค้า :'),
         ),
         Container(
@@ -211,8 +249,9 @@ class _CreateShopState extends State<CreateShop> {
           child: Text('สล็อตของร้าน :'),
         ),
         Container(
-          margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
+          margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 20),
           child: TextFormField(
+            keyboardType: TextInputType.number,
             controller: _shopSlotController,
             decoration: InputDecoration(
               labelText: 'กรอกสล็อตของร้านค้า',
@@ -223,13 +262,80 @@ class _CreateShopState extends State<CreateShop> {
             ),
           ),
         ),
+        Center(
+          child: documentImg == null
+              ? Container(
+                  margin: const EdgeInsets.all(30.0),
+                  padding: const EdgeInsets.all(140.0),
+                  decoration:
+                      myBoxDecoration(), //       <--- BoxDecoration here
+                  child: IconButton(
+                      onPressed: () {
+                        getDocImg(ImageSource.gallery);
+                        setState(() {
+                          Image.file(documentImg);
+                        });
+                      },
+                      icon: Icon(Icons.add_a_photo)))
+              : Container(
+                  margin: const EdgeInsets.all(10.0),
+                  child: InkWell(
+                    onTap: () {
+                      getDocImg(ImageSource.gallery);
+                      setState(() {
+                        Image.file(documentImg);
+                      });
+                    },
+                    child: Image.file(
+                      documentImg,
+                      height: 300,
+                      width: 300,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+        ),
+        Center(
+          child: Container(
+            margin: EdgeInsets.only(top: 20),
+            child: RaisedButton(
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Container(
+                  padding:
+                      EdgeInsets.only(top: 12, bottom: 12, left: 95, right: 95),
+                  child: Text(
+                    'เลือกรูปภาพ',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
+                color: const Color(0xffF6A911),
+                onPressed: () {
+                  getDocImg(ImageSource.gallery);
+                  setState(() {
+                    Image.file(documentImg);
+                  });
+                }),
+          ),
+        ),
       ],
+    );
+  }
+
+  BoxDecoration myBoxDecoration() {
+    return BoxDecoration(
+      border: Border.all(width: 1, style: BorderStyle.solid),
     );
   }
 
   Widget _button() {
     return Container(
-      margin: EdgeInsets.only(top: 50, bottom: 20),
+      margin: EdgeInsets.only(top: 20, bottom: 20),
       child: RaisedButton(
           elevation: 8,
           shape: RoundedRectangleBorder(
@@ -256,94 +362,25 @@ class _CreateShopState extends State<CreateShop> {
     );
   }
 
-  // Widget _buttonCancel() {
-  //   return Container(
-  //     margin: EdgeInsets.only(top: 10, bottom: 20),
-  //     child: RaisedButton(
-  //         elevation: 8,
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(10.0),
-  //         ),
-  //         child: Container(
-  //           padding:
-  //               EdgeInsets.only(top: 12, bottom: 12, left: 120, right: 120),
-  //           child: Text(
-  //             'ยกเลิก',
-  //             style: TextStyle(
-  //                 fontSize: 18,
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Colors.white),
-  //           ),
-  //         ),
-  //         color: Colors.red,
-  //         onPressed: ()
-  //         {
-  //           logger.d(userId);
-  //           Navigator.pop(context);
-  //         }),
-  //   );
-  // }
+  Future<String> _createShop() async {
+    int _slot = int.parse(_shopSlotController.text);
+    String name = _shopNameController.text.trim();
+    ApiProvider apiProvider = ApiProvider();
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    String token = preference.getString('token');
 
-  Future<void> _createShop() async {
-    Dio dio = Dio();
-    var uuid = Uuid();
-    String url = 'http://10.0.2.2:8080/api/shop';
-    int _price = int.parse(_shopSlotController.text.trim());
-    try {
-      var formData = FormData.fromMap({
-        "name": _shopNameController.text.trim(),
-        "shop_slot": _price,
-        "user_id": userId,
-        // "cover_img": await MultipartFile.fromFile(
-        //   _image.path,
-        //   filename: '${uuid.v4()}.png',
-        // ),
-      });
+    var body = {
+      "slot": _slot,
+      "name": name,
+      "cover_img": _image,
+      "document_img": documentImg,
+      "token": token
+    };
+    logger.d("body $body");
 
-      print(formData.fields);
-      Response response = await dio.post(
-        url,
-        data: formData,
-        options: Options(
-            followRedirects: false,
-            validateStatus: (status) {
-              return status < 500;
-            }),
-      );
-      response.headers.set('content-type', 'application/json');
+    var response =
+        await apiProvider.createShop(name, _slot, _image, documentImg, token);
 
-      print('status : ${response.statusCode}');
-      if (response.statusCode == 200) {
-        String _url = 'http://10.0.2.2:8080/api/shop/user/$userId';
-        logger.d(_url);
-        try {
-          Response shopResponse = await Dio().get(_url);
-          print(shopResponse);
-          if (shopResponse.statusCode == 200) {
-            print('Success Shop!');
-            var resultShop = ShopById.fromJson(shopResponse.data);
-            logger.d(resultShop);
-            SharedPreferences preference =
-                await SharedPreferences.getInstance();
-            // await preference.setInt('shop_id', resultShop.shopId);
-            // await preference.setString('shop_name', resultShop.name);
-            // await preference.setInt('shop_user_id', resultShop.userId);
-            // await preference.setInt('shop_slot', resultShop.shopSlot);
-            // await preference.setString('cover_img', resultShop.coverImage);
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Homepage()));
-          }
-        } catch (error) {
-          logger.e(error);
-        }
-        print('response : ${response.data}');
-        print('Success');
-        logger.d(response.data);
-      } else {
-        print('error code');
-      }
-    } catch (error) {
-      print('error: $error');
-    }
+    return response;
   }
 }
