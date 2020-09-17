@@ -22,6 +22,10 @@ class Shop extends Model
      */
     private $path;
 
+    protected $hidden = [
+        'document_img'
+    ];
+
     public function getUrlAttribute()
     {
         return Storage::disk('s3')->url($this->path);
