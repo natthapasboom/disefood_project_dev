@@ -59,7 +59,7 @@ class ShopController extends Controller
         }
     }
 
-//    admin
+    //    admin
     public function approved(Request $request, $shopId)
     {
         $admin = $this->isAdmin();

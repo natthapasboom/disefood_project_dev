@@ -21,8 +21,8 @@ class CreateOrdersTable extends Migration
             $table->integer('total_quantity');
             $table->dateTime('time_pickup');
             $table->enum('status', ['not confirmed', 'in process', 'success']);
+            $table->softDeletes('deleted_at', 0);
             $table->timestamps();
-
             $table->foreign('shop_id')->references('id')->on('shops');
             $table->foreign('user_id')->references('id')->on('users');
         });
