@@ -43,6 +43,8 @@ class _HomeAdminState extends State<HomeAdmin> {
 
   Future<UserById> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
+    String token = preference.getString('token');
+    logger.d(token);
     userId = preference.getInt('user_id');
     var response = await apiProvider.getUserById(userId);
     print(response.statusCode);

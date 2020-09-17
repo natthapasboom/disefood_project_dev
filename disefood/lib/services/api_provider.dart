@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:logger/logger.dart';
+import 'package:uuid/uuid.dart';
 
 class ApiProvider {
   ApiProvider();
@@ -21,11 +22,105 @@ class ApiProvider {
     return response;
   }
 
+  Future<String> createShop(String name, int shopSlot, File coverImg,
+      File documentImg, String token) async {
+    try {
+      String _url = 'http://10.0.2.2:8080/api/shop/owner';
+      Dio().options.headers['Authorization'] = 'Bearer $token';
+
+      String shopImage = coverImg.path.split('/').last;
+      String docImage = documentImg.path.split('/').last;
+
+      FormData formData = FormData.fromMap({
+        "name": name,
+        "shop_slot": shopSlot,
+        "cover_img":
+            await MultipartFile.fromFile(coverImg.path, filename: shopImage),
+        "document_img":
+            await MultipartFile.fromFile(documentImg.path, filename: docImage),
+      });
+      logger.d('FormData : ${formData.fields}');
+      var response = await Dio().post(
+        _url,
+        data: formData,
+        options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+            followRedirects: false,
+            validateStatus: (status) {
+              return status < 500;
+            }),
+      );
+
+      logger.d("Status: ${response.statusCode}");
+      logger.d("Data: ${response.data}");
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {}
+    } catch (err) {
+      print('ERROR  $err');
+    }
+  }
+
+  Future<String> register(
+      String username,
+      String email,
+      String password,
+      String firstName,
+      String lastName,
+      String tel,
+      File image,
+      String role) async {
+    try {
+      String url = 'http://10.0.2.2:8080/api/auth/register';
+      String fileName = image.path.split('/').last;
+      print('after try ==> ');
+      FormData formData = FormData.fromMap({
+        "username": username,
+        "email": email,
+        "password": password,
+        "first_name": firstName,
+        "last_name": lastName,
+        "tel": tel,
+        "profile_img":
+            await MultipartFile.fromFile(image.path, filename: fileName),
+        "role": role,
+      });
+      print(formData.fields);
+      // print(formData.files);
+      print('data : $formData');
+      var response = await Dio().post(
+        url,
+        data: formData,
+        options: Options(
+            followRedirects: false,
+            validateStatus: (status) {
+              return status < 500;
+            }),
+      );
+
+      print('res : $response');
+      print('res : ${response.data}');
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        print('response : ${response.data}');
+        print('Success');
+        // Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
+      } else {
+        print('error code');
+      }
+      print('res : $response');
+    } catch (e) {}
+  }
+
   Future<http.Response> approveShopById(
-      int shopId, String approved, String _method) async {
+      String token, int shopId, String approved, String _method) async {
     String _url = 'http://10.0.2.2:8080/api/admin/approved/$shopId';
     var body = {"approved": approved, "_method": _method};
-    http.Response response = await http.post(_url, body: body);
+    http.Response response = await http.post(_url,
+        headers: {'Authorization': 'Bearer $token'}, body: body);
     return response;
   }
 
