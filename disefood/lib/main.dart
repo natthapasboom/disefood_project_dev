@@ -3,12 +3,13 @@ import 'package:disefood/component/order_seller_bottombar.dart';
 import 'package:disefood/component/organize_seller_bottombar.dart';
 import 'package:disefood/screen/keepdata.dart';
 import 'package:disefood/screen/login_customer_page.dart';
+import 'package:disefood/screen/menu_order_detail_amount.dart';
 import 'package:disefood/screen/menu_page.dart';
 import 'package:disefood/screen/order_items.dart';
 import 'package:disefood/screen/order_promptpay_page.dart';
 import 'package:disefood/screen/view_order_page.dart';
 import 'package:disefood/screen_admin/home.dart';
-import 'package:disefood/screen_seller/feedback_page.dart';
+import 'package:disefood/screen_seller/top_seller_stat.dart';
 import 'package:disefood/screen_seller/home_seller.dart';
 import 'package:disefood/screen_seller/home_seller_tab.dart';
 import 'package:disefood/screen_seller/order_seller_page.dart';
@@ -33,7 +34,7 @@ void main() {
         iconTheme: IconThemeData(color: Colors.white),
       ),
     ),
-    home: FeedBackPage(),
+    home: LoginPage(),
     initialRoute: '/',
     routes: {
       Regis.routeName: (_) => Regis(),

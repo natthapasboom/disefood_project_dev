@@ -15,12 +15,12 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FeedBackPage extends StatefulWidget {
+class TopSellerPage extends StatefulWidget {
   @override
-  _FeedBackPageState createState() => _FeedBackPageState();
+  _TopSellerPageState createState() => _TopSellerPageState();
 }
 
-class _FeedBackPageState extends State<FeedBackPage> {
+class _TopSellerPageState extends State<TopSellerPage> {
   int userId;
   ApiProvider apiProvider = ApiProvider();
   String email;
@@ -83,55 +83,67 @@ class _FeedBackPageState extends State<FeedBackPage> {
       ),
       child: Scaffold(
         resizeToAvoidBottomPadding: false,
-        appBar: AppBar(
-          actions: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 265),
-              child: new IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  return
-                      // Navigator.pop(context);
-                      Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation) {
-                        return Home();
-                      },
-                      transitionsBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation,
-                          Widget child) {
-                        return FadeTransition(
-                          opacity: Tween<double>(
-                            begin: 0,
-                            end: 1,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      transitionDuration: Duration(milliseconds: 400),
-                    ),
-                  );
-                },
-              ),
-            ),
-            new IconButton(
-              icon: new Icon(Icons.favorite),
-              onPressed: () => debugPrint('asd'),
-            ),
-            new IconButton(
-              icon: Icon(Icons.archive),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ViewOrder(),
+        bottomNavigationBar: Container(
+          decoration: new BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black,
+                blurRadius: 12.0,
+                spreadRadius: 5.0,
+                offset: Offset(
+                  10.0,
+                  10.0,
                 ),
-              ),
+              )
+            ],
+          ),
+          child: BottomAppBar(
+            shape: CircularNotchedRectangle(),
+            child: new Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 100,
+                ),
+                Container(
+                  width: 350,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0.0, 1.0), //(x,y)
+                        blurRadius: 6.0,
+                      ),
+                    ],
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.only(left: 20, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "ยอดขายรวม",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                        Text(
+                          "9000 บาท",
+                          style: TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
         // drawer: SideMenuCustomer(
         //   firstName: nameUser,
@@ -145,14 +157,16 @@ class _FeedBackPageState extends State<FeedBackPage> {
                 margin: EdgeInsets.fromLTRB(0, 20, 20, 20),
                 alignment: Alignment.centerRight,
                 child: Container(
-                  color: Colors.grey,
-                  child: Text(
-                    "Mock filter",
-                    style: TextStyle(fontSize: 20),
+                  child: RaisedButton(
+                    onPressed: () {},
+                    child: Text(
+                      "Mock filter",
+                      style: TextStyle(fontSize: 20),
+                    ),
                   ),
                 ),
               ),
-              //Listview Replacement
+              //Listview Replacement //0xffE8CE00
               Container(
                 margin: EdgeInsets.only(right: 20, bottom: 10),
                 decoration: BoxDecoration(
@@ -186,12 +200,12 @@ class _FeedBackPageState extends State<FeedBackPage> {
                         image: DecorationImage(
                           fit: BoxFit.fill,
                           image: NetworkImage(
-                              "https://lh3.googleusercontent.com/proxy/z2o6VanYu7nMKGiiGtt0H8GcSqihPizOh-CFRP__LhBdB851xUPCbrJ5N0d-FbhDMd-XJxduC5igJ3xLV53JzjKfJdRfktcXY--IpzH4TQ-yU8y8GxON-eKstXxEf2drGbLM-rumH4dj"),
+                              "https://i.pinimg.com/originals/98/fe/e9/98fee9bccce67719f9f356f73124ba75.png"),
                         ),
                       ),
                     ),
                     Container(
-                      width: 180,
+                      width: 200,
                       padding: EdgeInsets.only(left: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,9 +230,8 @@ class _FeedBackPageState extends State<FeedBackPage> {
                     ),
                     Container(
                       width: 80,
-                      margin: EdgeInsets.only(right: 20),
                       child: Text(
-                        "1000 บาท",
+                        "900 บาท",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.white),
                       ),
@@ -226,7 +239,6 @@ class _FeedBackPageState extends State<FeedBackPage> {
                   ],
                 ),
               ),
-
               Container(
                 margin: EdgeInsets.only(right: 20, bottom: 10),
                 decoration: BoxDecoration(
@@ -260,12 +272,12 @@ class _FeedBackPageState extends State<FeedBackPage> {
                         image: DecorationImage(
                           fit: BoxFit.fill,
                           image: NetworkImage(
-                              "https://lh3.googleusercontent.com/proxy/z2o6VanYu7nMKGiiGtt0H8GcSqihPizOh-CFRP__LhBdB851xUPCbrJ5N0d-FbhDMd-XJxduC5igJ3xLV53JzjKfJdRfktcXY--IpzH4TQ-yU8y8GxON-eKstXxEf2drGbLM-rumH4dj"),
+                              "https://i.pinimg.com/originals/98/fe/e9/98fee9bccce67719f9f356f73124ba75.png"),
                         ),
                       ),
                     ),
                     Container(
-                      width: 180,
+                      width: 200,
                       padding: EdgeInsets.only(left: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
