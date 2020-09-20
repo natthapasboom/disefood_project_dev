@@ -2,37 +2,103 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateOrder;
+use App\Repositories\Interfaces\ShopRepositoryInterface;
 use Illuminate\Http\Request;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\OrderDetailRepositoryInterface;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     private $orderRepo;
     private $orderDetailRepo;
+    private $shopRepo;
 
     public function __construct
     (
         OrderRepositoryInterface $orderRepo,
-        OrderDetailRepositoryInterface $orderDetailRepo
+        OrderDetailRepositoryInterface $orderDetailRepo,
+        ShopRepositoryInterface  $shopRepo
     )
     {
         $this->orderRepo = $orderRepo;
         $this->orderDetailRepo = $orderDetailRepo;
+        $this->shopRepo = $shopRepo;
     }
 
-    public function getOrderBySeller($shop_id)
+    public function getAll()
     {
-        return $this->orderRepo->getOrderByShopId($shop_id);
+        return $this->orderRepo->getAll();
     }
 
-    public function getOrderByUser($user_id)
+    public function getById($orderId)
     {
-        return $this->orderRepo->getOrderByUserId($user_id);
+        return $this->orderRepo->getById($orderId);
     }
 
-    public function getOrderDetailByOrderId($order_id)
+    //Seller
+    public function getByShopId($shopId)
     {
-        return $this->orderDetailRepo->getOrderDetailByOrderId($order_id);
+        $user = Auth::user();
+        if( $this->isSeller($user) && $this->isOwner($user['id'], $shopId)) {
+            $order = $this->orderRepo->getByShopId($shopId);
+            return response()->json(['data' => $order], 200);
+        } else {
+            return response()->json(['msg' => 'No Permission'], 401);
+        }
+    }
+
+    //Seller
+    public function updateStatus(UpdateOrder $request, $orderId)
+    {
+        $user = Auth::user();
+        $order = $this->orderRepo->getById($orderId);
+        $request = $request->validated();
+        if(!$order) return response()->json(['msg' => 'Order Not Found'], 404);
+        if( $this->isSeller($user) && $this->isOwner($user['id'], $order['shop_id'])) {
+            $this->orderRepo->updateById($order['id'], $request);
+            $order = $this->getById($order['id']);
+            return response()->json(['data' => $order, 'msg' => 'Updated Success'], 200);
+        } else {
+            return response()->json(['msg' => 'No Permission'], 401);
+        }
+    }
+
+    //Customer
+    public function getOrderMe()
+    {
+        $user = Auth::user();
+        $userId = $user['id'];
+        $order =  $this->orderRepo->getByUserId($userId);
+        return response()->json(['data' => $order], 200);
+    }
+
+    //Customer
+    public function rejectedOrder($orderId)
+    {
+        $user = Auth::user();
+        $order = $this->orderRepo->getById($orderId);
+
+        if(!$order) return response()->json(['msg' => 'Order Not Found'], 404);
+
+        if($order['user_id'] != $user['id']) return response()->json(['msg' => 'No Permission'], 401);
+
+        $order = $this->orderRepo->delete($orderId);
+        return response()->json(['data' => $order, 'msg' => 'Rejected Success'], 200);
+    }
+
+    private function isSeller($user)
+    {
+        $role = $user['role'];
+        if($role == 'seller')
+            return true;
+    }
+
+    private function isOwner($userId, $shopId)
+    {
+        $shop = $this->shopRepo->findById($shopId);
+        if( $shop['user_id'] == $userId )
+            return true;
     }
 }
