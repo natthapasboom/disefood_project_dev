@@ -11,6 +11,7 @@ import 'package:disefood/screen_seller/addmenu.dart';
 import 'package:disefood/screen_seller/home_seller.dart';
 import 'package:disefood/screen_seller/order_seller_page.dart';
 import 'package:disefood/screen_seller/organize_seller_page.dart';
+import 'package:disefood/screen_seller/top_seller_stat.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -47,7 +48,7 @@ class _HomepageState extends State<Homepage> {
     OrderSellerPage(),
     OrganizeSellerPage(),
     FeedbackSeller(),
-    SummarySeller(),
+    TopSellerPage(),
   ];
 
   Future<UserById> findUser() async {
