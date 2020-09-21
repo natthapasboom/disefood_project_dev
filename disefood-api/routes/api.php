@@ -80,6 +80,7 @@ Route::group([
     ], function () {
         Route::get('/', 'OrderController@getOrderMe');
         Route::delete('/{orderId}', 'OrderController@rejectedOrder');
+
     });
 
     Route::group([
@@ -87,6 +88,7 @@ Route::group([
         'middleware' => 'auth:api'
     ], function () {
         Route::get('/{shopId}', 'OrderController@getByShopId');
-        Route::put('/order/{orderId}', 'OrderController@updateStatus');
+        Route::post('/{shopId}', 'OrderController@createOrder');
+        Route::put('/{orderId}', 'OrderController@updateStatus');
     });
 });
