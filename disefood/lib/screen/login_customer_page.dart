@@ -96,7 +96,8 @@ class _LoginPageState extends State<LoginPage> {
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
-                backgroundColor: Colors.amber[900],
+                strokeWidth: 5.0,
+                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
               ),
             )
           : Stack(

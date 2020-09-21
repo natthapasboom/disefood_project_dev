@@ -298,26 +298,28 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                         int menuId = widget.id;
                                         logger.d(
                                             'data: $menuId ${_nameController.text}, ${_priceController.text}, $selectedRadio, ${widget.image}');
-                                        String url =
+                                        String _url =
                                             'http://10.0.2.2:8080/api/shop/menu/edit/$menuId';
                                         String name =
                                             _nameController.text.trim();
-                                        String fileImage =
-                                            _image.path.split('/').last;
+                                        String fileImage = _isEdit
+                                            ? _image.path.split('/').last
+                                            : widget.image.split('/').last;
                                         FormData formData = FormData.fromMap({
                                           '_method': 'PUT',
                                           'name': name,
                                           'price': _priceController.text.trim(),
                                           'status': statusFood.toString(),
-                                          'cover_img': !_isEdit
+                                          'cover_img': _isEdit
                                               ? await MultipartFile.fromFile(
                                                   _image.path,
                                                   filename: fileImage)
-                                              : widget.image.split('/').last
+                                              : await MultipartFile.fromFile(
+                                                  widget.image),
                                         });
 
-                                        Response response = await Dio().post(
-                                          url,
+                                        var response = await Dio().post(
+                                          _url,
                                           data: formData,
                                           options: Options(
                                               headers: {
