@@ -21,9 +21,10 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
   List orderSeller = [];
   String _name;
   int _userId;
-  List<Card> carditem = new List<Card>();
   Logger logger = Logger();
-  List orderDetail = [];
+  int userId;
+  String timePickup;
+  int totalPrice;
   @override
   void initState() {
     Future.microtask(() async {
@@ -53,19 +54,18 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
     var body = response.body;
+
     logger.d(body);
     setState(() {
-      // var orderDetail = json.decode(body)['data']['order_detail'];
-      // logger.d(orderDetail);
-
       isLoading = false;
-      orderSeller = jsonDecode(body);
+      print(isLoading);
+      orderSeller = jsonDecode(body)['data'];
     });
   }
 
-  dispose() {
-    super.dispose();
-  }
+  // dispose() {
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +82,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
 
                 return Container(
                   margin: EdgeInsets.all(20),
-                  height: 300,
+                  height: 295,
                   child: InkWell(
                     child: Card(
                       elevation: 8,
@@ -148,7 +148,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                           Container(
                             margin: EdgeInsets.only(left: 15, top: 5),
                             child: Text(
-                              '',
+                              '${item["order_details.food_id"]}',
                               //ตรงนี้ๆฟกหสาหฟสกสหฟากสหฟาสกฟหาสวกวฟหกาวสฟหกวสหฟวสกาฟหวสกวหฟก
                               // "${orderSeller[]}",
                               style: TextStyle(fontSize: 16),
@@ -212,13 +212,21 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                     ),
                                   ),
                                   RaisedButton(
-                                    onPressed: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            OrderDetailSeller(),
-                                      ),
-                                    ),
+                                    onPressed: () {
+                                      userId = item["user_id"];
+                                      timePickup = item["time_pickup"];
+                                      totalPrice = item["total_price"];
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              OrderDetailSeller(
+                                                  userId: userId,
+                                                  timePickup: timePickup,
+                                                  totalPrice: totalPrice),
+                                        ),
+                                      );
+                                    },
                                     padding:
                                         EdgeInsets.only(left: 20, right: 20),
                                     color: Colors.white,
