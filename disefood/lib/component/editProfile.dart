@@ -73,6 +73,7 @@ class _EditProfileState extends State<EditProfile> {
         profileImg = msg.data.profileImg;
         email = msg.data.email;
         tel = msg.data.tel;
+        logger.d(profileImg);
       });
     } else {
       logger.e("statuscode != 200");

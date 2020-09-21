@@ -17,27 +17,23 @@ class EditShop extends StatefulWidget {
 
 class _EditShopState extends State<EditShop> {
   bool _isEdit = false;
-  
+
   String _shopName;
   int _shopId;
   String _shopImg;
   int _shopSlot;
 
-@override
+  @override
   void initState() {
     super.initState();
     Future.microtask(() {
-      
       fetchShopFromStorage();
     });
   }
-  
-    
-
 
   Future<Null> fetchShopFromStorage() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    
+
     final shopName = _prefs.getString('shop_name');
     final shopId = _prefs.getInt('shop_id');
     final shopImg = _prefs.getString('cover_img');
@@ -135,8 +131,7 @@ class _EditShopState extends State<EditShop> {
   Widget _buildPhoto() {
     return Container(
       height: 150,
-      color: _shopImg == null ?
-      Colors.amber[500]: Colors.white,
+      color: _shopImg == null ? Colors.amber[500] : Colors.white,
       child: _shopImg == null
           ? Center(
               child: IconButton(
@@ -154,13 +149,13 @@ class _EditShopState extends State<EditShop> {
             )
           : Container(
               child: CachedNetworkImage(
-                imageUrl: 'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
+                imageUrl:
+                    'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
                 height: 150,
                 width: 500,
                 fit: BoxFit.cover,
               ),
             ),
-          
     );
   }
 
@@ -170,9 +165,7 @@ class _EditShopState extends State<EditShop> {
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(top: 30, left: 40, right: 40, bottom: 10),
-          child: Text(
-            'ชื่อร้านค้า :'
-          ),
+          child: Text('ชื่อร้านค้า :'),
         ),
         Container(
           margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
@@ -189,9 +182,7 @@ class _EditShopState extends State<EditShop> {
         ),
         Container(
           margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
-          child: Text(
-            'สล็อตของร้าน :'
-          ),
+          child: Text('สล็อตของร้าน :'),
         ),
         Container(
           margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
@@ -267,11 +258,8 @@ class _EditShopState extends State<EditShop> {
       if (response.statusCode == 200) {
         print('response : ${response.data}');
         print('Success');
-        
       } else {
         print('error code');
-      
-       
       }
     } catch (error) {
       print('error: $error');

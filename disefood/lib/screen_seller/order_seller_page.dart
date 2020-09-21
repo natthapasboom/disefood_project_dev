@@ -59,12 +59,8 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
       // logger.d(orderDetail);
 
       isLoading = false;
-      orderSeller = jsonDecode(body);
+      orderSeller = jsonDecode(body)['data'];
     });
-  }
-
-  dispose() {
-    super.dispose();
   }
 
   @override
@@ -73,7 +69,10 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
     return Scaffold(
       body: isLoading
           ? Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                strokeWidth: 5.0,
+                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
+              ),
             )
           : new ListView.builder(
               itemCount: orderSeller != null ? orderSeller.length : 0,
@@ -103,7 +102,9 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                         margin:
                                             EdgeInsets.only(top: 50, bottom: 0),
                                         child: CircularProgressIndicator(
-                                          backgroundColor: Colors.amber[900],
+                                          strokeWidth: 5.0,
+                                          valueColor: AlwaysStoppedAnimation(
+                                              const Color(0xffF6A911)),
                                         ))),
                                 errorWidget: (context, url, error) => Container(
                                   height: 120,
