@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateOrderRequest;
 use App\Http\Requests\UpdateOrder;
 use App\Repositories\Interfaces\ShopRepositoryInterface;
 use Illuminate\Http\Request;
@@ -52,6 +53,7 @@ class OrderController extends Controller
     //Seller
     public function updateStatus(UpdateOrder $request, $orderId)
     {
+        //TODO: check payment before change status
         $user = Auth::user();
         $order = $this->orderRepo->getById($orderId);
         $request = $request->validated();
@@ -65,6 +67,15 @@ class OrderController extends Controller
         }
     }
 
+    //Customer
+    public function createOrder(CreateOrderRequest $request, $shopId)
+    {
+        $request = $request->validated();
+        $user = Auth::user();
+        $userId = $user->id;
+        $order = $this->orderRepo->create($request, $shopId, $userId);
+        return response()->json(['data' => $order, 'msg' => 'Created Success'], 200);
+    }
     //Customer
     public function getOrderMe()
     {
@@ -81,6 +92,9 @@ class OrderController extends Controller
         $order = $this->orderRepo->getById($orderId);
 
         if(!$order) return response()->json(['msg' => 'Order Not Found'], 404);
+
+        $status = $order->status;
+        if($status != 'not confirmed') return response()->json(['msg' => 'Can not reject this order'], 404);
 
         if($order['user_id'] != $user['id']) return response()->json(['msg' => 'No Permission'], 401);
 

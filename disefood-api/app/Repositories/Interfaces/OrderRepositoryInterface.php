@@ -10,6 +10,6 @@ interface OrderRepositoryInterface
     public function getByUserId($userId);
     public function getByShopId($shopId);
     public function updateById($orderId, $newOrder);
-    public function create($newOrder);
+    public function create($newOrders, $shopId, $userId);
     public function delete($orderId);
 }

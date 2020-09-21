@@ -17,9 +17,9 @@ class CreateOrdersTable extends Migration
             $table->increments('id');
             $table->integer('shop_id')->unsigned();
             $table->integer('user_id')->unsigned();
-            $table->integer('total_price');
-            $table->integer('total_quantity');
-            $table->dateTime('time_pickup');
+            $table->integer('total_price')->nullable();
+            $table->integer('total_quantity')->nullable();
+            $table->dateTime('time_pickup')->nullable();
             $table->enum('status', ['not confirmed', 'in process', 'success']);
             $table->softDeletes('deleted_at', 0);
             $table->timestamps();
