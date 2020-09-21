@@ -115,7 +115,9 @@ class _HomeSellerState extends State<HomeSeller> {
     return new Scaffold(
       body: _isLoading == false
           ? Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.amber[900],
+              ),
             )
           : _shopId != null
               ? approve == 0

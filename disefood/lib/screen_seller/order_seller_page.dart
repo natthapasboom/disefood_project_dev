@@ -23,7 +23,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
   int _userId;
   List<Card> carditem = new List<Card>();
   Logger logger = Logger();
-
+  List orderDetail = [];
   @override
   void initState() {
     Future.microtask(() async {
@@ -59,8 +59,12 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
       // logger.d(orderDetail);
 
       isLoading = false;
-      orderSeller = json.decode(body)['data'];
+      orderSeller = jsonDecode(body);
     });
+  }
+
+  dispose() {
+    super.dispose();
   }
 
   @override
@@ -75,6 +79,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
               itemCount: orderSeller != null ? orderSeller.length : 0,
               itemBuilder: (BuildContext context, int index) {
                 var item = orderSeller[index];
+
                 return Container(
                   margin: EdgeInsets.all(20),
                   height: 300,
@@ -143,8 +148,9 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                           Container(
                             margin: EdgeInsets.only(left: 15, top: 5),
                             child: Text(
+                              '',
                               //ตรงนี้ๆฟกหสาหฟสกสหฟากสหฟาสกฟหาสวกวฟหกาวสฟหกวสหฟวสกาฟหวสกวหฟก
-                              "${item['order_details']}",
+                              // "${orderSeller[]}",
                               style: TextStyle(fontSize: 16),
                             ),
                           ),

@@ -93,7 +93,7 @@ class _AddMenuState extends State<AddMenu> {
       logger.d('response header : ${response.headers}');
       logger.d('status code : ${response.statusCode}');
       if (response.statusCode == 200) {
-        Navigator.pop(context);
+        Navigator.of(context).pop(true);
         logger.d("succes");
       }
     } on DioError catch (e) {

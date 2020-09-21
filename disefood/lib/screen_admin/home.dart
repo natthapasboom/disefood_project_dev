@@ -30,14 +30,17 @@ class _HomeAdminState extends State<HomeAdmin> {
   bool isLoading = true;
   List shops = [];
   ApiProvider apiProvider = ApiProvider();
-
+  String token;
   //ถ้ามี initState จะทำงานก่อน build
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    Future.microtask(() async {
       findUser();
       getShops();
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      token = preferences.getString('token');
+      logger.d(token);
     });
   }
 
@@ -364,8 +367,8 @@ class _HomeAdminState extends State<HomeAdmin> {
                       Container(
                         child: FlatButton(
                             onPressed: () async {
-                              var response =
-                                  await apiProvider.rejectShopByID(shopId);
+                              var response = await apiProvider.rejectShopByID(
+                                  shopId, token);
                               if (response.statusCode == 200) {
                                 logger.d('success');
                                 MaterialPageRoute route = MaterialPageRoute(

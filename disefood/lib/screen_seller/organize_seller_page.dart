@@ -24,12 +24,17 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   bool _isLoading = false;
   int _shopId;
   String foodName;
+  String token;
   ApiProvider apiProvider = ApiProvider();
+  Logger logger = Logger();
   @override
   void initState() {
     Future.microtask(() async {
       // fetchNameFromStorage();
       getFoodByShopId();
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      token = preferences.getString('token');
+      logger.d(token);
     });
     super.initState();
   }
@@ -128,7 +133,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                     ),
                                   ),
                                   trailing: Wrap(
-                                    spacing: 12, // space between two icons
+                                    spacing: 1, // space between two icons
                                     children: <Widget>[
                                       Container(
                                         margin: EdgeInsets.only(top: 13),
@@ -154,6 +159,18 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                                               foodslist:
                                                                   foods[index],
                                                             )));
+                                              })),
+                                      Container(
+                                          child: IconButton(
+                                              icon: Icon(
+                                                Icons.delete,
+                                                color: Colors.amber[800],
+                                              ),
+                                              onPressed: () {
+                                                alertDialog(
+                                                    context,
+                                                    'ลบรายการอาหาร?',
+                                                    foods['id']);
                                               })),
                                       // icon-1
                                     ],
@@ -193,8 +210,19 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                         color: Colors.amber[800],
                       ),
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => AddMenu()));
+                        MaterialPageRoute materialPageRoute =
+                            MaterialPageRoute(builder: (BuildContext context) {
+                          return AddMenu();
+                        });
+
+                        Navigator.of(context)
+                            .push(materialPageRoute)
+                            .then((value) {
+                          setState(() {
+                            initState();
+                            print('Set state work');
+                          });
+                        });
                       },
                     ),
                   )
@@ -203,5 +231,78 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
         ],
       ),
     );
+  }
+
+  Future<void> alertDialog(
+    BuildContext context,
+    String message,
+    int foodId,
+  ) async {
+    showDialog(
+        context: context,
+        builder: (context) => Container(
+              child: SimpleDialog(
+                title: Container(
+                    child: Text(
+                  message,
+                  style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                )),
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(
+                        left: 30, top: 10, bottom: 30, right: 100),
+                    child: Text(
+                      'ท่านต้องการลบรายการอาหารใช่หรือไม่',
+                      style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          color: const Color(0xff838181)),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        child: FlatButton(
+                            onPressed: () async {
+                              var response = await apiProvider.deleteMenuById(
+                                  foodId, token);
+                              if (response.statusCode == 200) {
+                                logger.d('success');
+                                Navigator.of(context).pop(true);
+                                initState();
+                              } else {
+                                logger
+                                    .e('status code = ${response.statusCode}');
+                              }
+                            },
+                            child: Text(
+                              'ยืนยัน',
+                              style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xffFF7C2C)),
+                            )),
+                      ),
+                      FlatButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            'ยกเลิก',
+                            style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xffFF7C2C)),
+                          )),
+                    ],
+                  )
+                ],
+              ),
+            ));
   }
 }

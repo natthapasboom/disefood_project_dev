@@ -166,9 +166,17 @@ class ApiProvider {
     return response;
   }
 
-  Future<http.Response> rejectShopByID(int id) async {
+  Future<http.Response> rejectShopByID(int id, String token) async {
     String _url = 'http://10.0.2.2:8080/api/admin/rejected/$id';
-    http.Response response = await http.delete(_url);
+    http.Response response =
+        await http.delete(_url, headers: {'Authorization': 'Bearer $token'});
+    return response;
+  }
+
+  Future<http.Response> deleteMenuById(int id, String token) async {
+    String _url = 'http://10.0.2.2:8080/api/shop/menu/remove/$id';
+    http.Response response =
+        await http.delete(_url, headers: {'Authorization': 'Bearer $token'});
     return response;
   }
 

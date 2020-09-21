@@ -48,6 +48,7 @@ void main() {
       '/organize_seller': (_) => OrganizeSellerPage(),
       '/Login': (_) => LoginPage(),
       '/order_seller': (_) => OrderSellerPage(),
+      'AddMenu': (_) => AddMenu(),
 
       // '/order_detail_seller': (_) => OrderDetailSeller(),
     },
