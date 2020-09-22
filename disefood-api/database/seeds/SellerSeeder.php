@@ -11,6 +11,7 @@ class SellerSeeder extends Seeder
     {
         DB::table('users')->insert(
             [
+                'id'          => 2,
                 'username'    => 'seller-tester-1',
                 'password'    => Hash::make(123456789),
                 'email'       => 'seller.ts1@gmail.com',
@@ -19,6 +20,7 @@ class SellerSeeder extends Seeder
                 'last_name'   => Str::random(10)
             ],
             [
+                'id'          => 3,
                 'username'    => 'seller-tester-2',
                 'password'    => Hash::make(123456789),
                 'email'       => 'seller.ts2@gmail.com',
@@ -27,6 +29,7 @@ class SellerSeeder extends Seeder
                 'last_name'   => Str::random(10)
             ],
             [
+                'id'          => 4,
                 'username'    => 'seller-tester-3',
                 'password'    => Hash::make(123456789),
                 'email'       => 'seller.ts3@gmail.com',
@@ -35,6 +38,7 @@ class SellerSeeder extends Seeder
                 'last_name'   => Str::random(10)
             ],
             [
+                'id'          => 5,
                 'username'    => 'seller-tester-4',
                 'password'    => Hash::make(123456789),
                 'email'       => 'seller.ts4@gmail.com',
@@ -43,6 +47,7 @@ class SellerSeeder extends Seeder
                 'last_name'   => Str::random(10)
             ],
             [
+                'id'          => 6,
                 'username'    => 'seller-tester-5',
                 'password'    => Hash::make(123456789),
                 'email'       => 'seller.ts5@gmail.com',
