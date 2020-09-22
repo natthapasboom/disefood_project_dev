@@ -52,7 +52,10 @@ class OrderRepository implements OrderRepositoryInterface
         foreach ( $orders as $order) {
             $id = $order['id'];
             $order->find($id)->get();
-            $order->orderDetails;
+            $orderDetails =$order->orderDetails;
+            foreach ($orderDetails as $orderDetail) {
+                $orderDetail->food;
+            }
         }
         return $orders;
     }
