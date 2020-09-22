@@ -14,7 +14,7 @@ class ShopSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('shops')->insert(
+        $shop = [
             [
                 'user_id'     =>  2,
                 'shop_slot'   =>  1,
@@ -50,6 +50,8 @@ class ShopSeeder extends Seeder
                 'cover_img'   =>  '',
                 'approved'    =>  0
             ]
-        );
+        ];
+
+        DB::table('shops')->insert($shop);
     }
 }

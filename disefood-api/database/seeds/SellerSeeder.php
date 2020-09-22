@@ -9,7 +9,8 @@ class SellerSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('users')->insert(
+
+        $seller = [
             [
                 'id'          => 2,
                 'username'    => 'seller-tester-1',
@@ -55,6 +56,8 @@ class SellerSeeder extends Seeder
                 'first_name'  => Str::random(10),
                 'last_name'   => Str::random(10)
             ]
-        );
+        ];
+
+        DB::table('users')->insert($seller);
     }
 }
