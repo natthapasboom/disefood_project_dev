@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/component/sidemenu_seller.dart';
@@ -43,9 +45,12 @@ class _EditMenuPageState extends State<EditMenuPage> {
   String _shopImg;
   bool _isEdit = false;
   bool status;
+  var image;
   var selectOnStock;
   var selectOutOfStock;
   int statusFood;
+  var imageUrl;
+  String contents;
   TextEditingController _nameController = TextEditingController();
 
   TextEditingController _priceController = TextEditingController();
@@ -79,10 +84,15 @@ class _EditMenuPageState extends State<EditMenuPage> {
         );
       }
     } else {
+      setState(() {
+        imageUrl = '${AppConfig.image}${widget.image}';
+      });
+
       return CachedNetworkImage(
           imageUrl: '${AppConfig.image}${widget.image}',
           height: 300,
-          fit: BoxFit.fitHeight,
+          width: 500,
+          fit: BoxFit.fitWidth,
           placeholder: (context, url) => Center(
                   child: Center(
                 child: Container(
@@ -280,6 +290,11 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                           setState(() {
                                             Image.file(File(widget.image));
                                           });
+                                        } else {
+                                          setState(() {
+                                            image =
+                                                Image.file(File(widget.image));
+                                          });
                                         }
 
                                         if (selectedRadio == true) {
@@ -287,6 +302,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                         } else {
                                           statusFood = 0;
                                         }
+
                                         Logger logger = Logger();
 
                                         SharedPreferences preferences =
@@ -296,15 +312,16 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                         String token =
                                             preferences.getString('token');
                                         int menuId = widget.id;
+                                        image = Image.file(File(widget.image));
                                         logger.d(
-                                            'data: $menuId ${_nameController.text}, ${_priceController.text}, $selectedRadio, ${widget.image}');
+                                            'data: $menuId ${_nameController.text}, ${_priceController.text}, $selectedRadio, ${widget.image} // $imageUrl  ');
                                         String _url =
                                             'http://10.0.2.2:8080/api/shop/menu/edit/$menuId';
                                         String name =
                                             _nameController.text.trim();
                                         String fileImage = _isEdit
                                             ? _image.path.split('/').last
-                                            : widget.image.split('/').last;
+                                            : image.split('/').last;
                                         FormData formData = FormData.fromMap({
                                           '_method': 'PUT',
                                           'name': name,
@@ -314,8 +331,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                               ? await MultipartFile.fromFile(
                                                   _image.path,
                                                   filename: fileImage)
-                                              : await MultipartFile.fromFile(
-                                                  widget.image),
+                                              : imageUrl.toString(),
                                         });
 
                                         var response = await Dio().post(
@@ -380,6 +396,8 @@ class _EditMenuPageState extends State<EditMenuPage> {
       menuImage = widget.image;
       print(menuImage);
     });
+    // contents = new File(widget.image).readAsStringSync();
+
     super.initState();
   }
 

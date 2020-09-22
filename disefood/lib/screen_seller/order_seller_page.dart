@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/model/orderByShopId.dart';
 import 'package:disefood/screen_seller/orderdetail.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -21,9 +22,10 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
   List orderSeller = [];
   String _name;
   int _userId;
-  List<Card> carditem = new List<Card>();
   Logger logger = Logger();
-  List orderDetail = [];
+  int userId;
+  String timePickup;
+  int totalPrice;
   @override
   void initState() {
     Future.microtask(() async {
@@ -43,7 +45,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
     });
   }
 
-  Future getOrderByShopId() async {
+  Future<List<OrderByShopId>> getOrderByShopId() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     int shopId = _prefs.getInt("shop_id");
     String token = _prefs.getString("token");
@@ -52,16 +54,22 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
       _url,
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
-    var body = response.body;
-    logger.d(body);
-    setState(() {
-      // var orderDetail = json.decode(body)['data']['order_detail'];
-      // logger.d(orderDetail);
+    var jsonResponse = json.decode(response.body);
 
+    setState(() {
       isLoading = false;
-      orderSeller = jsonDecode(body)['data'];
+      print(isLoading);
+      orderSeller = jsonResponse['data'];
+      logger.d(orderSeller);
+
+      logger.d('');
     });
+    return orderSeller;
   }
+
+  // dispose() {
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +89,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
 
                 return Container(
                   margin: EdgeInsets.all(20),
-                  height: 300,
+                  height: 295,
                   child: InkWell(
                     child: Card(
                       elevation: 8,
@@ -149,7 +157,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                           Container(
                             margin: EdgeInsets.only(left: 15, top: 5),
                             child: Text(
-                              '',
+                              '${item["order_details.id"]}',
                               //ตรงนี้ๆฟกหสาหฟสกสหฟากสหฟาสกฟหาสวกวฟหกาวสฟหกวสหฟวสกาฟหวสกวหฟก
                               // "${orderSeller[]}",
                               style: TextStyle(fontSize: 16),
@@ -213,13 +221,21 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                     ),
                                   ),
                                   RaisedButton(
-                                    onPressed: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            OrderDetailSeller(),
-                                      ),
-                                    ),
+                                    onPressed: () {
+                                      userId = item["user_id"];
+                                      timePickup = item["time_pickup"];
+                                      totalPrice = item["total_price"];
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              OrderDetailSeller(
+                                                  userId: userId,
+                                                  timePickup: timePickup,
+                                                  totalPrice: totalPrice),
+                                        ),
+                                      );
+                                    },
                                     padding:
                                         EdgeInsets.only(left: 20, right: 20),
                                     color: Colors.white,
