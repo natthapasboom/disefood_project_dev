@@ -312,7 +312,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                         String token =
                                             preferences.getString('token');
                                         int menuId = widget.id;
-                                        image = Image.file(File(widget.image));
+
                                         logger.d(
                                             'data: $menuId ${_nameController.text}, ${_priceController.text}, $selectedRadio, ${widget.image} // $imageUrl  ');
                                         String _url =
@@ -321,7 +321,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                             _nameController.text.trim();
                                         String fileImage = _isEdit
                                             ? _image.path.split('/').last
-                                            : image.split('/').last;
+                                            : null;
                                         FormData formData = FormData.fromMap({
                                           '_method': 'PUT',
                                           'name': name,
@@ -331,7 +331,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                               ? await MultipartFile.fromFile(
                                                   _image.path,
                                                   filename: fileImage)
-                                              : imageUrl.toString(),
+                                              : null,
                                         });
 
                                         var response = await Dio().post(

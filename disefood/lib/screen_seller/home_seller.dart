@@ -254,7 +254,18 @@ class _HomeSellerState extends State<HomeSeller> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => EditShop()));
+                                            builder: (context) => EditShop(
+                                                  shopId: _shopId,
+                                                  shopImg: _shopImg,
+                                                  shopName: _shopName,
+                                                  shopSlot: _shopSlot,
+                                                ))).then((value) {
+                                      setState(() {
+                                        fetchShopFromStorage();
+
+                                        print('Set state work');
+                                      });
+                                    });
                                   },
                                 ),
                               ),
