@@ -22,6 +22,48 @@ class ApiProvider {
     return response;
   }
 
+  Future<String> addFood(String name, int price, bool status, File image,
+      String token, int shopId) async {
+    int statusFood;
+    String fileImage = image.path.split('/').last;
+    Logger logger = Logger();
+    logger.d('shop_id : $shopId');
+    logger.d(status);
+    if (status == true) {
+      statusFood = 1;
+    } else {
+      statusFood = 0;
+    }
+    logger.d(statusFood);
+    // logger.d('token : $token');
+    String url = 'http://10.0.2.2:8080/api/shop/menu/$shopId';
+    FormData formData = FormData.fromMap({
+      'name': name,
+      'price': price,
+      'status': status,
+      'cover_img':
+          await MultipartFile.fromFile(image.path, filename: fileImage),
+    });
+
+    logger.d(formData.fields);
+    var response = await Dio().post(
+      url,
+      data: formData,
+      options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+          followRedirects: false,
+          validateStatus: (status) {
+            return status < 500;
+          }),
+    );
+    logger.d('status code : ${response.statusCode}');
+    if (response.statusCode == 200) {
+      logger.d("succes");
+    }
+  }
+
   Future<String> createShop(String name, int shopSlot, File coverImg,
       File documentImg, String token) async {
     try {
@@ -124,9 +166,17 @@ class ApiProvider {
     return response;
   }
 
-  Future<http.Response> rejectShopByID(int id) async {
+  Future<http.Response> rejectShopByID(int id, String token) async {
     String _url = 'http://10.0.2.2:8080/api/admin/rejected/$id';
-    http.Response response = await http.delete(_url);
+    http.Response response =
+        await http.delete(_url, headers: {'Authorization': 'Bearer $token'});
+    return response;
+  }
+
+  Future<http.Response> deleteMenuById(int id, String token) async {
+    String _url = 'http://10.0.2.2:8080/api/shop/menu/remove/$id';
+    http.Response response =
+        await http.delete(_url, headers: {'Authorization': 'Bearer $token'});
     return response;
   }
 

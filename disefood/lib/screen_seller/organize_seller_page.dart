@@ -24,25 +24,20 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   bool _isLoading = false;
   int _shopId;
   String foodName;
+  String token;
   ApiProvider apiProvider = ApiProvider();
+  Logger logger = Logger();
   @override
   void initState() {
     Future.microtask(() async {
       // fetchNameFromStorage();
       getFoodByShopId();
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      token = preferences.getString('token');
+      logger.d(token);
     });
     super.initState();
   }
-
-  // Future fetchNameFromStorage() async {
-  //   SharedPreferences _prefs = await SharedPreferences.getInstance();
-  //   final name = _prefs.getString('first_name');
-  //   final shopId = _prefs.getInt('shop_id');
-  //   setState(() {
-  //     _name = name;
-  //     _shopId = shopId;
-  //   });
-  // }
 
   Future getFoodByShopId() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -64,118 +59,156 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
     return Scaffold(
       body: ListView(
         children: [
-          
-              Row(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(left: 40, top: 30),
-                    child: Text(
-                      "รายการอาหาร",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                    ),
-                  ),
-                  // Container(
-                  //   padding: EdgeInsets.only(left: 150, top: 38),
-                  //   child: IconButton(
-                  //   icon: Icon(
-                  //     Icons.add_circle,
-                  //     color: Colors.amber[800],
-                  //   ),
-                  //   onPressed: () {
-                  //     Navigator.push(context,
-                  //         MaterialPageRoute(builder: (context) => AddMenu()));
-                  //   }
-                  //   ),
-                  // ),
-                ],
-              ),
+          Row(
+            children: <Widget>[
               Container(
-                padding: EdgeInsets.only(top: 10),
-                child: Divider(
-                  indent: 40,
-                  color: Colors.black,
-                  endIndent: 40,
+                padding: EdgeInsets.only(left: 40, top: 30),
+                child: Text(
+                  "รายการอาหาร",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                 ),
               ),
-              Expanded(
-                child: !_isLoading
-                    ? Container(
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.amber[900],
-                          ),
-                        ),
-                      )
-                    : Expanded(
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: foodList != null ? foodList.length : 0,
-                          itemBuilder: (BuildContext context, int index) {
-                            var foods = foodList[index];
-                            return Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  ListTile(
-                                    leading: Container(
-                                      margin: EdgeInsets.only(
-                                        left: 30,
-                                      ),
-                                      child: Text(
-                                        '${foods['name']}',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                        ),
-                                      ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(top: 15, left: 40),
+                child: Text(
+                  'ชื่อ',
+                  style: TextStyle(
+                      fontFamily: 'Aleo',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 15, left: 195),
+                child: Text(
+                  'ราคา',
+                  style: TextStyle(
+                      fontFamily: 'Aleo',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10),
+            child: Divider(
+              indent: 40,
+              color: Colors.black,
+              endIndent: 40,
+            ),
+          ),
+          Container(
+            child: !_isLoading
+                ? Container(
+                    margin: EdgeInsets.only(top: 150),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 5.0,
+                        valueColor:
+                            AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                      ),
+                    ),
+                  )
+                : Container(
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: foodList != null ? foodList.length : 0,
+                        itemBuilder: (BuildContext context, int index) {
+                          var foods = foodList[index];
+                          return Container(
+                            child: Column(
+                              children: <Widget>[
+                                ListTile(
+                                  leading: Container(
+                                    margin: EdgeInsets.only(
+                                      left: 30,
                                     ),
-                                    trailing: Wrap(
-                                      spacing: 12, // space between two icons
-                                      children: <Widget>[
-                                        Container(
-                                          margin: EdgeInsets.only(top: 13),
-                                          child: Text(
-                                            '${foods['price']}',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                            child: IconButton(
-                                                icon: Icon(
-                                                  Icons.edit,
-                                                  color: Colors.amber[800],
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              EditMenuPage(
-                                                                foodslist:
-                                                                    foods[index],
-                                                              )));
-                                                })),
-                                        // icon-1
-                                      ],
+                                    child: Text(
+                                      '${foods['name']}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                      ),
                                     ),
                                   ),
-                                  Container(
-                                          padding: EdgeInsets.only(top: 0),
-                                          child: Divider(
-                                            indent: 40,
-                                            color: Colors.black,
-                                            endIndent: 40,
+                                  trailing: Wrap(
+                                    spacing: 1.0,
+                                    // space between two icons
+                                    children: <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 13, right: 5, left: 50),
+                                        child: Text(
+                                          '${foods['price']}฿',
+                                          style: TextStyle(
+                                            color: const Color(0xff11AB17),
+                                            fontSize: 18,
                                           ),
                                         ),
-                                ],
-                              ),
-                            );
-                          }),
-                    ),
-              ),
-              Expanded(
-                child: _isLoading
-                    ? ListTile(
+                                      ),
+
+                                      IconButton(
+                                          icon: Icon(
+                                            Icons.edit,
+                                            color: Colors.amber[800],
+                                          ),
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EditMenuPage(
+                                                          image: foods[
+                                                              'cover_img'],
+                                                          name: foods['name'],
+                                                          price: foods['price'],
+                                                          status:
+                                                              foods['status'],
+                                                          id: foods['id'],
+                                                        ))).then((value) {
+                                              setState(() {
+                                                initState();
+                                                print('Set state work');
+                                              });
+                                            });
+                                          }),
+
+                                      IconButton(
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.amber[800],
+                                          ),
+                                          onPressed: () {
+                                            alertDialog(context,
+                                                'ลบรายการอาหาร?', foods['id']);
+                                          }),
+                                      // icon-1
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(top: 0),
+                                  child: Divider(
+                                    indent: 40,
+                                    color: Colors.black,
+                                    endIndent: 40,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                  ),
+          ),
+          Container(
+            child: _isLoading
+                ? Column(
+                    children: <Widget>[
+                      ListTile(
                         leading: Container(
                           margin: EdgeInsets.only(
                             left: 30,
@@ -193,15 +226,110 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                             color: Colors.amber[800],
                           ),
                           onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => AddMenu()));
+                            MaterialPageRoute materialPageRoute =
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                              return AddMenu();
+                            });
+
+                            Navigator.of(context)
+                                .push(materialPageRoute)
+                                .then((value) {
+                              setState(() {
+                                initState();
+                                print('Set state work');
+                              });
+                            });
                           },
                         ),
-                      )
-                    : Container(),
-              ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(top: 5),
+                        child: Divider(
+                          indent: 40,
+                          color: Colors.black,
+                          endIndent: 40,
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(),
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> alertDialog(
+    BuildContext context,
+    String message,
+    int foodId,
+  ) async {
+    showDialog(
+        context: context,
+        builder: (context) => Container(
+              child: SimpleDialog(
+                title: Container(
+                    child: Text(
+                  message,
+                  style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                )),
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(
+                        left: 30, top: 10, bottom: 30, right: 100),
+                    child: Text(
+                      'ท่านต้องการลบรายการอาหารใช่หรือไม่',
+                      style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          color: const Color(0xff838181)),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        child: FlatButton(
+                            onPressed: () async {
+                              var response = await apiProvider.deleteMenuById(
+                                  foodId, token);
+                              if (response.statusCode == 200) {
+                                logger.d('success');
+                                Navigator.of(context).pop(true);
+                                initState();
+                              } else {
+                                logger
+                                    .e('status code = ${response.statusCode}');
+                              }
+                            },
+                            child: Text(
+                              'ยืนยัน',
+                              style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xffFF7C2C)),
+                            )),
+                      ),
+                      FlatButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            'ยกเลิก',
+                            style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xffFF7C2C)),
+                          )),
+                    ],
+                  )
+                ],
+              ),
+            ));
   }
 }

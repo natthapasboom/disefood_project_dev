@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderDetail extends Model
 {
-    protected $table = 'order_details';
+    protected $table = 'order_detail';
     protected $primaryKey = 'id';
     protected $fillable = [
         'description', 'quantity', 'price', 'order_id', 'food_id',
@@ -16,5 +16,10 @@ class OrderDetail extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function food()
+    {
+        return $this->belongsTo(Food::class);
     }
 }

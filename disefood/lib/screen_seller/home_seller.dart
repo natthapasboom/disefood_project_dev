@@ -4,24 +4,10 @@ import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen_seller/create_shop.dart';
 import 'package:disefood/screen_seller/edit_shop.dart';
 import 'package:disefood/services/api_provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart';
-import 'package:disefood/component/feedback_seller_bottombar.dart';
-import 'package:disefood/component/organize_seller_bottombar.dart';
-import 'package:disefood/component/signout_process.dart';
-import 'package:disefood/component/summary_seller_bottombar.dart';
 import 'package:disefood/model/shop_id.dart';
-import 'package:disefood/model/user_profile.dart';
-import 'package:disefood/screen/login_customer_page.dart';
-import 'package:disefood/screen_seller/order_seller_page.dart';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:disefood/component/sidemenu_seller.dart';
-import 'package:disefood/component/order_seller_bottombar.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'organize_seller_page.dart';
 
 class HomeSeller extends StatefulWidget {
   // final UserProfile userData;
@@ -115,7 +101,10 @@ class _HomeSellerState extends State<HomeSeller> {
     return new Scaffold(
       body: _isLoading == false
           ? Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                strokeWidth: 5.0,
+                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
+              ),
             )
           : _shopId != null
               ? approve == 0
@@ -265,7 +254,18 @@ class _HomeSellerState extends State<HomeSeller> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => EditShop()));
+                                            builder: (context) => EditShop(
+                                                  shopId: _shopId,
+                                                  shopImg: _shopImg,
+                                                  shopName: _shopName,
+                                                  shopSlot: _shopSlot,
+                                                ))).then((value) {
+                                      setState(() {
+                                        fetchShopFromStorage();
+
+                                        print('Set state work');
+                                      });
+                                    });
                                   },
                                 ),
                               ),
@@ -347,7 +347,7 @@ class _HomeSellerState extends State<HomeSeller> {
                     'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
                 width: 430.0,
                 height: 160.0,
-                fit: BoxFit.fitHeight,
+                fit: BoxFit.fill,
                 placeholder: (context, url) => Center(
                     child: Container(
                         margin: EdgeInsets.only(top: 50, bottom: 35),

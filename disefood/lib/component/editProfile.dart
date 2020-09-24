@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/services/api_provider.dart';
@@ -26,6 +27,7 @@ class _EditProfileState extends State<EditProfile> {
   String profileImg;
   int userId;
   int _userId;
+  String password;
   String tel;
   String email;
   bool _isLoading = false;
@@ -71,6 +73,7 @@ class _EditProfileState extends State<EditProfile> {
         profileImg = msg.data.profileImg;
         email = msg.data.email;
         tel = msg.data.tel;
+        logger.d(profileImg);
       });
     } else {
       logger.e("statuscode != 200");
@@ -211,7 +214,12 @@ class _EditProfileState extends State<EditProfile> {
                                             margin: EdgeInsets.fromLTRB(
                                                 60, 0, 30, 0),
                                             child: new TextFormField(
-                                              controller: _nameController,
+                                              controller: nameUser == null ||
+                                                      lastNameUser == null
+                                                  ? _nameController
+                                                  : TextEditingController()
+                                                ..text =
+                                                    '$nameUser $lastNameUser',
                                               decoration: InputDecoration(
                                                 contentPadding:
                                                     EdgeInsets.fromLTRB(
@@ -822,7 +830,10 @@ class _EditProfileState extends State<EditProfile> {
                                           width: 132,
                                           height: 40,
                                           child: RaisedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              String url =
+                                                  'http://127.0.0.1:8000/api/user/$userId';
+                                            },
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(5),

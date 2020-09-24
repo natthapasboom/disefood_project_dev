@@ -6,48 +6,45 @@ import 'package:dio/dio.dart';
 import 'package:disefood/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class EditShop extends StatefulWidget {
+  final String shopName;
+  final int shopSlot;
+  final String shopImg;
+  final int shopId;
   static const routeName = '/create_seller';
+
+  const EditShop(
+      {Key key,
+      @required this.shopName,
+      @required this.shopSlot,
+      @required this.shopImg,
+      @required this.shopId})
+      : super(key: key);
   @override
   _EditShopState createState() => _EditShopState();
 }
 
 class _EditShopState extends State<EditShop> {
   bool _isEdit = false;
-  
+
   String _shopName;
   int _shopId;
   String _shopImg;
   int _shopSlot;
-
-@override
+  Logger logger = Logger();
+  @override
   void initState() {
+    _shopName = widget.shopName;
+    _shopNameController.text = '${widget.shopName}';
+    _shopSlotController.text = '${widget.shopSlot}';
+    _shopId = widget.shopId;
+
     super.initState();
-    Future.microtask(() {
-      
-      fetchShopFromStorage();
-    });
-  }
-  
-    
-
-
-  Future<Null> fetchShopFromStorage() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-    
-    final shopName = _prefs.getString('shop_name');
-    final shopId = _prefs.getInt('shop_id');
-    final shopImg = _prefs.getString('cover_img');
-    final shopSlot = _prefs.getInt('shop_slot');
-    setState(() {
-      _shopName = shopName;
-      _shopId = shopId;
-      _shopImg = shopImg;
-      _shopSlot = shopSlot;
-    });
+    Future.microtask(() {});
   }
 
   Widget _checkImage() {
@@ -63,7 +60,7 @@ class _EditShopState extends State<EditShop> {
         return Center(
           child: IconButton(
             onPressed: () {
-              getImage();
+              getImage(ImageSource.gallery);
               setState(() {
                 _isEdit = true;
                 Image.file(_image);
@@ -77,20 +74,41 @@ class _EditShopState extends State<EditShop> {
       }
     } else {
       return CachedNetworkImage(
-        imageUrl: '${AppConfig.image}$_shopImg',
-        height: 150,
-        width: 500,
-        fit: BoxFit.cover,
-      );
+          imageUrl: '${AppConfig.image}${widget.shopImg}',
+          height: 150,
+          width: 500,
+          fit: BoxFit.fitWidth,
+          placeholder: (context, url) => Container(
+                height: 150,
+                width: 500,
+                color: const Color(0xff7FC9C5),
+                child: Center(
+                    child: Center(
+                  child: Container(
+                      child: CircularProgressIndicator(
+                    strokeWidth: 5.0,
+                    valueColor: AlwaysStoppedAnimation(Colors.white),
+                  )),
+                )),
+              ),
+          errorWidget: (context, url, error) => Icon(
+                Icons.store,
+                color: Colors.white,
+                size: 48,
+              ));
     }
   }
 
   File _image;
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = image;
-    });
+  Future<void> getImage(ImageSource imageSource) async {
+    try {
+      var image = await ImagePicker.pickImage(
+          source: imageSource, maxWidth: 400.0, maxHeight: 400.0);
+
+      setState(() {
+        _image = image;
+      });
+    } catch (e) {}
   }
 
   TextEditingController _shopNameController = TextEditingController();
@@ -133,35 +151,94 @@ class _EditShopState extends State<EditShop> {
   }
 
   Widget _buildPhoto() {
-    return Container(
-      height: 150,
-      color: _shopImg == null ?
-      Colors.amber[500]: Colors.white,
-      child: _shopImg == null
-          ? Center(
-              child: IconButton(
-                onPressed: () {
-                  getImage();
-                  setState(() {
-                    _isEdit = true;
-                    Image.file(_image);
-                  });
-                },
-                iconSize: 36,
-                color: Colors.white,
-                icon: Icon(Icons.add_a_photo),
+    return Column(
+      children: <Widget>[
+        Container(
+          height: 150,
+          color: const Color(0xff7FC9C5),
+          child: widget.shopImg == null
+              ? Center(
+                  child: IconButton(
+                    onPressed: () {
+                      getImage(ImageSource.gallery);
+                      setState(() {
+                        _isEdit = true;
+                        Image.file(_image);
+                      });
+                    },
+                    iconSize: 36,
+                    color: Colors.white,
+                    icon: Icon(Icons.store),
+                  ),
+                )
+              : Container(
+                  child: _checkImage(),
+                ),
+        ),
+        Transform.translate(
+          offset: Offset(0, -30.0),
+          child: Container(
+            margin: EdgeInsets.only(left: 290),
+            child: FloatingActionButton(
+              child: Icon(
+                Icons.add_a_photo,
+                size: 20,
               ),
-            )
-          : Container(
-              child: CachedNetworkImage(
-                imageUrl: 'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
-                height: 150,
-                width: 500,
-                fit: BoxFit.cover,
-              ),
+              backgroundColor: const Color(000000).withOpacity(0.6),
+              onPressed: () {
+                getImage(ImageSource.gallery);
+                setState(() {
+                  _isEdit = true;
+                  Image.file(_image);
+                });
+              },
             ),
-          
+          ),
+        )
+      ],
     );
+    // return Container(
+    //   height: 150,
+    //   color: _shopImg == null ? Colors.amber[500] : Colors.white,
+    //   child: widget.shopImg == null
+    //       ? Center(
+    //           child: IconButton(
+    //             onPressed: () {
+    //               getImage();
+    //               setState(() {
+    //                 _isEdit = true;
+    //                 Image.file(_image);
+    //               });
+    //             },
+    //             iconSize: 36,
+    //             color: Colors.white,
+    //             icon: Icon(Icons.add_a_photo),
+    //           ),
+    //         )
+    //       : Container(
+    //           child: _checkImage(),
+    //         ),
+    //          Transform.translate(
+    //       offset: Offset(0, -30.0),
+    //       child: Container(
+    //         margin: EdgeInsets.only(left: 290),
+    //         child: FloatingActionButton(
+    //           child: Icon(
+    //             Icons.add_a_photo,
+    //             size: 20,
+    //           ),
+    //           backgroundColor: const Color(000000).withOpacity(0.6),
+    //           onPressed: () {
+    //             getImage(ImageSource.gallery);
+    //             setState(() {
+    //               _isEdit = true;
+    //               Image.file(_image);
+    //             });
+    //           },
+    //         ),
+    //       ),
+    //     )
+    // );
   }
 
   Widget _buildform() {
@@ -170,9 +247,7 @@ class _EditShopState extends State<EditShop> {
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(top: 30, left: 40, right: 40, bottom: 10),
-          child: Text(
-            'ชื่อร้านค้า :'
-          ),
+          child: Text('ชื่อร้านค้า :'),
         ),
         Container(
           margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
@@ -189,9 +264,7 @@ class _EditShopState extends State<EditShop> {
         ),
         Container(
           margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
-          child: Text(
-            'สล็อตของร้าน :'
-          ),
+          child: Text('สล็อตของร้าน :'),
         ),
         Container(
           margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
@@ -230,51 +303,47 @@ class _EditShopState extends State<EditShop> {
             ),
           ),
           color: Colors.orange,
-          onPressed: () {
-            _createShop();
+          onPressed: () async {
+            logger.d(_shopId);
+            SharedPreferences sharedPreferences =
+                await SharedPreferences.getInstance();
+            String token = sharedPreferences.getString('token');
+            String _url = 'http://10.0.2.2:8080/api/shop/owner/$_shopId';
+            String name = _shopNameController.text.trim();
+            String fileImage = _isEdit ? _image.path.split('/').last : null;
+            FormData formData = FormData.fromMap({
+              '_method': 'PUT',
+              'name': name,
+              'shop_slot': _shopSlot,
+              'cover_img': _isEdit
+                  ? await MultipartFile.fromFile(_image.path,
+                      filename: fileImage)
+                  : null,
+            });
+            logger.d('FormData : ${formData.fields}');
+            var response = await Dio().post(
+              _url,
+              data: formData,
+              options: Options(
+                  headers: {
+                    'Authorization': 'Bearer $token',
+                  },
+                  followRedirects: false,
+                  validateStatus: (status) {
+                    return status < 500;
+                  }),
+            );
+
+            logger.d("Status: ${response.statusCode}");
+            logger.d("Data: ${response.data}");
+
+            if (response.statusCode == 200) {
+              logger.d('success');
+              Navigator.of(context).pop(true);
+            } else {
+              logger.e(response.statusMessage);
+            }
           }),
     );
-  }
-
-  Future<void> _createShop() async {
-    Dio dio = Dio();
-    var uuid = Uuid();
-    String url = 'http://10.0.2.2:8080/api/shop/';
-
-    try {
-      var formData = FormData.fromMap({
-        "name": _shopNameController.text.trim(),
-        "shopslot": _shopSlotController.text.trim(),
-        "cover_img": await MultipartFile.fromFile(
-          _image.path,
-          filename: '${uuid.v4()}.png',
-        ),
-      });
-
-      print(formData.fields);
-      Response response = await dio.put(
-        url,
-        data: formData,
-        options: Options(
-            followRedirects: false,
-            validateStatus: (status) {
-              return status < 500;
-            }),
-      );
-      response.headers.set('content-type', 'application/json');
-
-      print('status : ${response.statusCode}');
-      if (response.statusCode == 200) {
-        print('response : ${response.data}');
-        print('Success');
-        
-      } else {
-        print('error code');
-      
-       
-      }
-    } catch (error) {
-      print('error: $error');
-    }
   }
 }

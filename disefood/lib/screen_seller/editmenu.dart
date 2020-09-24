@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:disefood/component/sidemenu_seller.dart';
 import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/foods_list.dart';
@@ -9,11 +12,23 @@ import 'package:flutter/material.dart';
 import 'package:disefood/screen_seller/organize_seller_page.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EditMenuPage extends StatefulWidget {
-  final FoodsList foodslist;
-  EditMenuPage({Key key, this.foodslist}) : super(key: key);
+  final String image;
+  final String name;
+  final int price;
+  final int status;
+  final int id;
+  EditMenuPage({
+    Key key,
+    @required this.image,
+    @required this.name,
+    @required this.price,
+    @required this.status,
+    @required this.id,
+  }) : super(key: key);
   @override
   _EditMenuPageState createState() => _EditMenuPageState();
 }
@@ -22,37 +37,20 @@ class _EditMenuPageState extends State<EditMenuPage> {
   String nameUser;
   String lastNameUser;
   int userId;
+  String menuImage;
   String coverImg;
   int shopId;
   String _shopName;
   int _shopId;
   String _shopImg;
   bool _isEdit = false;
- 
-  Future<Null> findUser() async {
-    SharedPreferences preference = await SharedPreferences.getInstance();
-    setState(() {
-      nameUser = preference.getString('first_name');
-      userId = preference.getInt('user_id');
-      lastNameUser = preference.getString('last_name');
-      coverImg = preference.getString('profile_img');
-    });
-  }
-
-  Future<Null> fetchShopFromStorage() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-    final shopName = _prefs.getString('shop_name');
-    final shopId = _prefs.getInt('shop_id');
-    final shopImg = _prefs.getString('cover_img');
-    setState(() {
-      _shopName = shopName;
-      _shopId = shopId;
-      _shopImg = shopImg;
-    });
-  }
-
+  bool status;
+  var image;
   var selectOnStock;
   var selectOutOfStock;
+  int statusFood;
+  var imageUrl;
+  String contents;
   TextEditingController _nameController = TextEditingController();
 
   TextEditingController _priceController = TextEditingController();
@@ -69,7 +67,11 @@ class _EditMenuPageState extends State<EditMenuPage> {
   Widget _checkImage() {
     if (_isEdit) {
       if (_image != null) {
-        return Image.file(_image,fit: BoxFit.cover,height: 300,);
+        return Image.file(
+          _image,
+          fit: BoxFit.cover,
+          height: 300,
+        );
       } else {
         return CircleAvatar(
           backgroundColor: Colors.orangeAccent,
@@ -82,42 +84,57 @@ class _EditMenuPageState extends State<EditMenuPage> {
         );
       }
     } else {
+      setState(() {
+        imageUrl = '${AppConfig.image}${widget.image}';
+      });
+
       return CachedNetworkImage(
-        imageUrl:
-            '${AppConfig.image}${widget.foodslist.coverImage}',
-        height: 300,
-        fit: BoxFit.cover,
-      );
+          imageUrl: '${AppConfig.image}${widget.image}',
+          height: 300,
+          width: 500,
+          fit: BoxFit.fitWidth,
+          placeholder: (context, url) => Center(
+                  child: Center(
+                child: Container(
+                    child: CircularProgressIndicator(
+                  strokeWidth: 5.0,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                )),
+              )),
+          errorWidget: (context, url, error) => Icon(
+                Icons.error,
+                color: Colors.white,
+                size: 48,
+              ));
     }
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
-          Container(
-            padding: EdgeInsets.all(0),
-            margin: EdgeInsets.only(left: 0, top: 0, right: 170),
-            child: Center(
-              child: Text(
-                "EditMenu",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18),
+          Center(
+            child: Container(
+              padding: EdgeInsets.all(0),
+              margin: EdgeInsets.only(
+                left: 0,
+                top: 0,
+                right: 130,
+              ),
+              child: Center(
+                child: Text(
+                  "แก้ไขรายการอาหาร",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
+                ),
               ),
             ),
           ),
         ],
       ),
-      drawer: SideMenuSeller(
-          firstName: nameUser,
-          userId: userId,
-          lastName: lastNameUser,
-          coverImg: coverImg),
       body: ListView(
         children: <Widget>[
           Container(
@@ -126,7 +143,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
               child: Stack(
                 alignment: Alignment.center,
                 children: <Widget>[
-                  widget.foodslist.coverImage == null
+                  widget.image == null
                       ? CircleAvatar(
                           backgroundColor: Colors.orangeAccent,
                           radius: 75,
@@ -137,9 +154,9 @@ class _EditMenuPageState extends State<EditMenuPage> {
                           ),
                         )
                       : CircleAvatar(
-                          radius: 75,
+                          backgroundColor: const Color(0xffF6A911),
+                          radius: 70,
                           child: ClipOval(
-                            
                             child: _checkImage(),
                           ),
                         ),
@@ -179,9 +196,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                           child: Text("ชื่อ"),
                         ),
                         TextFormField(
-                          decoration: InputDecoration(
-                            labelText: '${widget.foodslist.name}',
-                          ),
+                          decoration: InputDecoration(),
                           validator: (value) {
                             if (value.isEmpty) {
                               return 'โปรดใส่ชื่ออาหาร';
@@ -195,8 +210,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                         ),
                         TextFormField(
                           keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                              labelText: '${widget.foodslist.price}'),
+                          decoration: InputDecoration(),
                           validator: (value) {
                             if (value.isEmpty) {
                               return 'โปรดใส่ราคา';
@@ -219,24 +233,24 @@ class _EditMenuPageState extends State<EditMenuPage> {
                           children: <Widget>[
                             RadioListTile(
                               title: Text("พร้อมขาย"),
-                              value: 0,
+                              value: true,
                               groupValue: selectedRadio,
-                              onChanged: (val) {
-                                print("Radio $val");
-                                selectOnStock = setSelectedRadio(val);
+                              onChanged: (newValue) {
+                                print("สถานะ = $newValue");
+                                setSelectedRadio(newValue);
+                                status = newValue;
                               },
-                              selected: selectedRadio == 0,
                               activeColor: Colors.green,
                             ),
                             RadioListTile(
                               title: Text("ของหมด"),
-                              value: 1,
+                              value: false,
                               groupValue: selectedRadio,
-                              onChanged: (val) {
-                                print("Radio $val");
-                                selectOutOfStock = setSelectedRadio(val);
+                              onChanged: (newValue) {
+                                print("สถานะ = $newValue");
+                                setSelectedRadio(newValue);
+                                status = newValue;
                               },
-                              selected: selectedRadio == 1,
                               activeColor: Colors.red,
                             ),
                           ],
@@ -249,7 +263,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Expanded(
-                                 child: RaisedButton(
+                                child: RaisedButton(
                                   color: Colors.red,
                                   onPressed: () {
                                     Navigator.pop(context);
@@ -260,7 +274,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                         fontSize: 18, color: Colors.white),
                                   ),
                                 ),
-                                
                               ),
                               Container(
                                 padding: EdgeInsets.only(left: 30),
@@ -269,18 +282,81 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                 child: Container(
                                   child: RaisedButton(
                                     color: Colors.green,
-                                    onPressed: () {
+                                    onPressed: () async {
                                       final form = _formKey.currentState;
                                       if (form.validate()) {
                                         form.save();
+                                        if (_image == null) {
+                                          setState(() {
+                                            Image.file(File(widget.image));
+                                          });
+                                        } else {
+                                          setState(() {
+                                            image =
+                                                Image.file(File(widget.image));
+                                          });
+                                        }
 
-                                        var addMenuRoute =
-                                            new MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              OrganizeSellerPage(),
+                                        if (selectedRadio == true) {
+                                          statusFood = 1;
+                                        } else {
+                                          statusFood = 0;
+                                        }
+
+                                        Logger logger = Logger();
+
+                                        SharedPreferences preferences =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        _shopId = preferences.getInt('shop_id');
+                                        String token =
+                                            preferences.getString('token');
+                                        int menuId = widget.id;
+
+                                        logger.d(
+                                            'data: $menuId ${_nameController.text}, ${_priceController.text}, $selectedRadio, ${widget.image} // $imageUrl  ');
+                                        String _url =
+                                            'http://10.0.2.2:8080/api/shop/menu/edit/$menuId';
+                                        String name =
+                                            _nameController.text.trim();
+                                        String fileImage = _isEdit
+                                            ? _image.path.split('/').last
+                                            : null;
+                                        FormData formData = FormData.fromMap({
+                                          '_method': 'PUT',
+                                          'name': name,
+                                          'price': _priceController.text.trim(),
+                                          'status': statusFood.toString(),
+                                          'cover_img': _isEdit
+                                              ? await MultipartFile.fromFile(
+                                                  _image.path,
+                                                  filename: fileImage)
+                                              : null,
+                                        });
+
+                                        var response = await Dio().post(
+                                          _url,
+                                          data: formData,
+                                          options: Options(
+                                              headers: {
+                                                "ContentType": ContentType.parse(
+                                                    "application/x-www-form-urlencoded"),
+                                                "Authorization":
+                                                    "Bearer $token",
+                                              },
+                                              followRedirects: false,
+                                              validateStatus: (status) {
+                                                return status < 500;
+                                              }),
                                         );
-                                        Navigator.of(context)
-                                            .push(addMenuRoute);
+
+                                        logger.d(response.statusCode);
+                                        if (response.statusCode == 200) {
+                                          logger.d('success');
+                                          Navigator.of(context).pop(true);
+                                        } else {
+                                          logger.d(response.statusMessage);
+                                        }
                                       }
                                     },
                                     child: Text(
@@ -306,19 +382,26 @@ class _EditMenuPageState extends State<EditMenuPage> {
     );
   }
 
-  int selectedRadio;
+  bool selectedRadio;
   void initState() {
-    selectedRadio = widget.foodslist.status;
-    _nameController.text = '${widget.foodslist.name}';
-    _priceController.text = '${widget.foodslist.price}';
+    if (widget.status == 1) {
+      selectedRadio = true;
+    } else {
+      selectedRadio = false;
+    }
+
+    _nameController.text = '${widget.name}';
+    _priceController.text = '${widget.price}';
     Future.microtask(() {
-      findUser();
-      fetchShopFromStorage();
+      menuImage = widget.image;
+      print(menuImage);
     });
+    // contents = new File(widget.image).readAsStringSync();
+
     super.initState();
   }
 
-  setSelectedRadio(int val) {
+  setSelectedRadio(bool val) {
     setState(() {
       selectedRadio = val;
     });

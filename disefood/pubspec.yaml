@@ -36,7 +36,8 @@ dependencies:
   uuid: ^2.0.4
   logger: ^0.9.1
   cached_network_image: ^2.2.0+1
-  
+  image_downloader: any
+  awesome_dialog: ^1.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -59,7 +59,7 @@ class ShopController extends Controller
         }
     }
 
-//    admin
+    //    admin
     public function approved(Request $request, $shopId)
     {
         $admin = $this->isAdmin();
@@ -114,6 +114,9 @@ class ShopController extends Controller
         $seller = $this->isSeller();
         if($seller){
             $req = $request->validated();
+
+            if(!$req) response()->json(['msg' => 'Failed Validation'], 422);
+
             $pathImg = Storage::disk('s3')->put('images/shop/cover_img', $request->file('cover_img'),'public');
             $docImg = Storage::disk('s3')->put('images/shop/doc_img', $request->file('document_img'), 'public');
             $req['cover_img'] = $pathImg;
@@ -132,27 +135,50 @@ class ShopController extends Controller
     public function update(UpdateShopRequest $request, $shopId)
     {
         $seller = $this->isSeller();
-        if($seller){
+        $isOwner = $this->isOwner($seller->id, $shopId);
+        if($isOwner){
             $shop = $this->shopRepo->findById($shopId);
-            if(!$shop) {
-                return response()->json(['msg' => 'Shop Not Found'], 404);
-            }
-            else {
+
+            if(!$shop) response()->json(['msg' => 'Shop Not Found'], 404);
+
+            if($request->cover_img != null) {
                 $req = $request->validated();
-                if(!isset($req['cover_img'])){
-                    $this->shopRepo->updateShop($req, $shopId);
-                    $res = $this->shopRepo->findById($shopId);
-                    return response()->json(['data' => $res, 'msg' => 'Updated Success'], 200);
-                } else {
-                    $oldPath = $shop['cover_img'];
-                    Storage::disk('s3')->delete($oldPath);
-                    $newPath = Storage::disk('s3')->put('images/shop/cover_img', $request->file('cover_img'), 'public');
-                    $req['cover_img'] = $newPath;
-                    $this->shopRepo->updateShop($req, $shopId);
-                    $res = $this->shopRepo->findById($shopId);
-                    return response()->json(['data' => $res, 'msg' => 'Updated With Image Success'], 200);
-                }
+
+                if(!$req) response()->json(['msg' => 'Failed Validation'], 422);
+
+                $oldPath = $shop['cover_img'];
+                Storage::disk('s3')->delete($oldPath);
+                $newPath = Storage::disk('s3')->put('images/shop/cover_img', $request->file('cover_img'), 'public');
+                $req['cover_img'] = $newPath;
+                $this->shopRepo->updateShop($req, $shopId);
+                $newShop = $this->shopRepo->findById($shopId);
+                return response()->json(['data' => $newShop, 'msg' => 'Updated With Image Success'], 200);
+            } else {
+                $req = $request->except(['_method']);
+                $this->shopRepo->updateShop($req, $shopId);
+                $newShop = $this->shopRepo->findById($shopId);
+                return response()->json(['data' => $newShop, 'msg' => 'Updated Success'], 200);
             }
+//            $shop = $this->shopRepo->findById($shopId);
+//            if(!$shop) {
+//                return response()->json(['msg' => 'Shop Not Found'], 404);
+//            }
+//            else {
+//                if(!isset($req['cover_img'])){
+//                    $req['cover_img'] = $shop->cover_img;
+//                    $this->shopRepo->updateShop($req, $shopId);
+//                    $res = $this->shopRepo->findById($shopId);
+//                    return response()->json(['data' => $res, 'msg' => 'Updated Success'], 200);
+//                } else {
+//                    $oldPath = $shop['cover_img'];
+//                    Storage::disk('s3')->delete($oldPath);
+//                    $newPath = Storage::disk('s3')->put('images/shop/cover_img', $request->file('cover_img'), 'public');
+//                    $req['cover_img'] = $newPath;
+//                    $this->shopRepo->updateShop($req, $shopId);
+//                    $res = $this->shopRepo->findById($shopId);
+//                    return response()->json(['data' => $res, 'msg' => 'Updated With Image Success'], 200);
+//                }
+//            }
         } else {
             return response()->json(['msg' => 'No Permission'], 401);
         }
@@ -163,8 +189,12 @@ class ShopController extends Controller
     {
         $seller = $this->isSeller();
         $sellerId = $seller['id'];
-        if($this->isOwner($sellerId, $shopId)) {
+        $isOwner = $this->isOwner($sellerId, $shopId);
+        if($isOwner) {
             $req = $request->validated();
+
+            if(!$req) response()->json(['msg' => 'Failed Validation'], 422);
+
             $pathImg = Storage::disk('s3')->put('images/shop/food/cover_img', $request->file('cover_img'), 'public');
             $req['cover_img'] = $pathImg;
             $menu = $this->foodRepo->addMenuByShopId($req, $shopId);
@@ -180,25 +210,47 @@ class ShopController extends Controller
         $shopId = $food['shop_id'];
         $seller = $this->isSeller();
         $sellerId = $seller['id'];
-        if($this->isOwner($sellerId, $shopId)) {
-            if(!$food) {
-                return response()->json(['data' => $food, 'msg' => 'Food Not Found'], 404);
-            } else {
+        $isOwner = $this->isOwner($sellerId, $shopId);
+        if($isOwner) {
+            if(!$food) response()->json(['msg' => 'Food not found'], 404);
+
+            if($request->cover_img != null) {
                 $req = $request->validated();
-                if(!isset($req['cover_img'])) {
-                    $this->foodRepo->update($req, $foodId);
-                    $food = $this->foodRepo->findByFoodId($foodId);
-                    return response()->json(['data' => $food, 'msg' => 'Updated Success'], 200);
-                } else {
-                    $oldPath = $food['cover_img'];
-                    Storage::disk('s3')->delete($oldPath);
-                    $newPath = Storage::disk('s3')->put('images/shop/food/cover_img', $request->file('cover_img'), 'public');
-                    $req['cover_img'] = $newPath;
-                    $this->foodRepo->update($req, $foodId);
-                    $food = $this->foodRepo->findByFoodId($foodId);
-                    return response()->json(['data' => $food, 'msg' => 'Updated with Image Success']);
-                }
+
+                if(!$req) response()->json(['msg' => 'Failed Validation'], 422);
+
+                $oldPath = $food['cover_img'];
+                Storage::disk('s3')->delete($oldPath);
+                $newPath = Storage::disk('s3')->put('images/shop/food/cover_img', $request->file('cover_img'), 'public');
+                $req['cover_img'] = $newPath;
+                $this->foodRepo->update($req, $foodId);
+                $newFood = $this->foodRepo->findByFoodId($foodId);
+                return response()->json(['data' => $newFood, 'msg' => 'Updated with Image Success']);
+            } else {
+                $req = $request->except(['_method']);
+                $this->foodRepo->update($req, $foodId);
+                $newFood = $this->foodRepo->findByFoodId($foodId);
+                return response()->json(['data' => $newFood, 'msg' => 'Updated Success'], 200);
             }
+//            if(!$food) {
+//                return response()->json(['data' => $food, 'msg' => 'Food Not Found'], 404);
+//            } else {
+//                $req = $request->validated();
+//                if(!isset($req['cover_img'])) {
+//                    $req['cover_img'] = $food['cover_img'];
+//                    $this->foodRepo->update($req, $foodId);
+//                    $food = $this->foodRepo->findByFoodId($foodId);
+//                    return response()->json(['data' => $food, 'msg' => 'Updated Success'], 200);
+//                } else {
+//                    $oldPath = $food['cover_img'];
+//                    Storage::disk('s3')->delete($oldPath);
+//                    $newPath = Storage::disk('s3')->put('images/shop/food/cover_img', $request->file('cover_img'), 'public');
+//                    $req['cover_img'] = $newPath;
+//                    $this->foodRepo->update($req, $foodId);
+//                    $food = $this->foodRepo->findByFoodId($foodId);
+//                    return response()->json(['data' => $food, 'msg' => 'Updated with Image Success']);
+//                }
+//            }
         } else {
             return response()->json(['msg' => 'No Permission'], 401);
         }
@@ -210,7 +262,8 @@ class ShopController extends Controller
         $shopId = $food['shop_id'];
         $seller = $this->isSeller();
         $sellerId = $seller['id'];
-        if($this->isOwner($sellerId, $shopId)) {
+        $isOwner = $this->isOwner($sellerId, $shopId);
+        if($isOwner) {
             if(!$food) {
                 return response()->json(['data' => $food, 'msg' => 'Food Not Found'], 404);
             } else {
@@ -242,8 +295,13 @@ class ShopController extends Controller
 
     private function isOwner($userId, $shopId)
     {
+        $isOwner = null;
         $shop = $this->shopRepo->findById($shopId);
-        if( $shop['user_id'] == $userId )
-            return true;
+        if( $shop['user_id'] == $userId ){
+            $isOwner = true;
+        } else {
+            $isOwner = false;
+        }
+        return $isOwner;
     }
 }

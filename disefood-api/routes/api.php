@@ -67,3 +67,28 @@ Route::group([
        });
     });
 });
+
+Route::group([
+    'prefix' => 'order'
+], function () {
+
+    Route::get('/', 'OrderController@getAll');
+
+    Route::group([
+        'prefix' => 'me',
+        'middleware' => 'auth:api'
+    ], function () {
+        Route::get('/', 'OrderController@getOrderMe');
+        Route::delete('/{orderId}', 'OrderController@rejectedOrder');
+
+    });
+
+    Route::group([
+        'prefix' => 'shop',
+        'middleware' => 'auth:api'
+    ], function () {
+        Route::get('/{shopId}', 'OrderController@getByShopId');
+        Route::post('/{shopId}', 'OrderController@createOrder');
+        Route::put('/{orderId}', 'OrderController@updateStatus');
+    });
+});
