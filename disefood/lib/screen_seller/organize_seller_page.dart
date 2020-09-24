@@ -70,6 +70,30 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
               ),
             ],
           ),
+          Row(
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(top: 15, left: 40),
+                child: Text(
+                  'ชื่อ',
+                  style: TextStyle(
+                      fontFamily: 'Aleo',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 15, left: 195),
+                child: Text(
+                  'ราคา',
+                  style: TextStyle(
+                      fontFamily: 'Aleo',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+            ],
+          ),
           Container(
             padding: EdgeInsets.only(top: 10),
             child: Divider(
@@ -119,8 +143,9 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                         margin: EdgeInsets.only(
                                             top: 13, right: 5, left: 50),
                                         child: Text(
-                                          '${foods['price']}',
+                                          '${foods['price']}฿',
                                           style: TextStyle(
+                                            color: const Color(0xff11AB17),
                                             fontSize: 18,
                                           ),
                                         ),
