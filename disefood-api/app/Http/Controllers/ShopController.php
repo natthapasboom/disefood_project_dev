@@ -103,7 +103,7 @@ class ShopController extends Controller
         $shop = $this->shopRepo->getBySellerId($userId);
         if(!$shop) return response()->json(['msg' => 'Shop Not Found'], 404);
 
-        if(!boolean_value($shop['approved'])) return response()->json(['msg' => 'Waiting for Approved']);
+        if(!boolean_value($shop['approved'])) return response()->json(['data' => $shop, 'msg' => 'Waiting for Approved']);
 
         return response()->json(['data' => $shop], 200);
     }
