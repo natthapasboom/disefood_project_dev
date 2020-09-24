@@ -35,6 +35,7 @@ Route::group([
     ], function () {
         Route::get('/logout', 'AuthController@logout');
         Route::get('/detail', 'AuthController@detail');
+        Route::put('/profile', 'AuthController@updateProfile');
     });
 });
 
