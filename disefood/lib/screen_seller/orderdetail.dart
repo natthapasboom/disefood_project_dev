@@ -10,19 +10,26 @@ class OrderDetailSeller extends StatefulWidget {
   final int userId;
   final String timePickup;
   final int totalPrice;
-  const OrderDetailSeller(
-      {Key key,
-      @required this.userId,
-      @required this.timePickup,
-      @required this.totalPrice})
-      : super(key: key);
+  final List orderDetail;
+  final String userFName;
+  final String userLName;
+  final String userTel;
+  const OrderDetailSeller({
+    Key key,
+    @required this.userId,
+    @required this.timePickup,
+    @required this.totalPrice,
+    @required this.orderDetail,
+    @required this.userFName,
+    @required this.userLName,
+    @required this.userTel,
+  }) : super(key: key);
   @override
   _OrderDetailSellerState createState() => _OrderDetailSellerState();
 }
 
 class _OrderDetailSellerState extends State<OrderDetailSeller> {
   bool isLoading = true;
-  List orderSeller = [];
   bool isthisbuttonselected = true;
   String nameUser;
   String lastNameUser;
@@ -31,7 +38,10 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   int userId;
   String timePickup;
   int totalPrice;
-
+  List orderDetail;
+  String userFName;
+  String userLName;
+  String userTel;
   @override
   void initState() {
     // Timer.periodic(Duration(seconds: 1), (Timer t) => _getCurrentTime());
@@ -41,6 +51,10 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
       userId = widget.userId;
       timePickup = widget.timePickup;
       totalPrice = widget.totalPrice;
+      orderDetail = widget.orderDetail;
+      userFName = widget.userFName;
+      userLName = widget.userLName;
+      userTel = widget.userTel;
     });
   }
 
@@ -312,7 +326,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
               children: [
                 Image.network(
                   'https://sifu.unileversolutions.com/image/th-TH/recipe-topvisual/2/1260-709/%E0%B8%81%E0%B9%8B%E0%B8%A7%E0%B8%A2%E0%B9%80%E0%B8%95%E0%B8%B5%E0%B9%8B%E0%B8%A2%E0%B8%A7%E0%B8%95%E0%B9%89%E0%B8%A1%E0%B8%A2%E0%B8%B3%E0%B8%AA%E0%B8%B8%E0%B9%82%E0%B8%82%E0%B8%97%E0%B8%B1%E0%B8%A2-50357483.jpg',
-                  height: 160.0,
+                  height: 140,
                   width: 430.0,
                   fit: BoxFit.cover,
                 ),
@@ -461,48 +475,38 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                     ],
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.only(left: 40, right: 60),
-                  alignment: Alignment.centerLeft,
-                  width: double.maxFinite,
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "อาหาร 1",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        "1",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
-                Divider(
-                  color: Colors.grey[200],
-                  thickness: 2,
-                  height: 0,
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 40, right: 60),
-                  alignment: Alignment.centerLeft,
-                  width: double.maxFinite,
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "อาหาร 2",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        "1",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
+                ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: orderDetail != null ? orderDetail.length : 0,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        Container(
+                          height: 40,
+                          margin: EdgeInsets.only(left: 40, right: 60),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "${orderDetail[index]["food"]["name"]}",
+                                style: TextStyle(fontSize: 14),
+                              ),
+                              Text(
+                                "${orderDetail[index]["quantity"]}",
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.grey[200],
+                          thickness: 2,
+                          height: 0,
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 Container(
                   padding: EdgeInsets.only(left: 40),
@@ -533,7 +537,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                                   TextStyle(fontSize: 14, color: Colors.black),
                             ),
                             Text(
-                              "Nawapan DeprasertKul",
+                              "$userFName $userLName",
                               style:
                                   TextStyle(fontSize: 14, color: Colors.black),
                             ),
@@ -546,7 +550,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                         height: 0,
                       ),
                       Container(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         margin: EdgeInsets.only(left: 40, right: 40),
                         height: 40,
                         child: Row(
@@ -558,7 +562,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                                   TextStyle(fontSize: 14, color: Colors.black),
                             ),
                             Text(
-                              "0863882908",
+                              "$userTel",
                               style:
                                   TextStyle(fontSize: 14, color: Colors.black),
                             ),
@@ -572,18 +576,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
             ),
           ),
         )
-        // ListView(
-        //   children: <Widget>[
-        //     headerImage,
 
-        //     texTimeProcess,
-        //     Container(
-        //       child: Divider(
-        //         indent: 40,
-        //         color: Colors.black,
-        //         endIndent: 40,
-        //       ),
-        //     ),
         //     Row(
         //       children: <Widget>[
         //         Container(
