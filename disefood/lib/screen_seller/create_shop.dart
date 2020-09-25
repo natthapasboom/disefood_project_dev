@@ -363,6 +363,107 @@ class _CreateShopState extends State<CreateShop> {
     );
   }
 
+  Future<void> dialogError(BuildContext context) async {
+    return showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Container(
+                  height: 300.0,
+                  width: 200.0,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
+                  child: Column(
+                    children: <Widget>[
+                      Stack(
+                        children: <Widget>[
+                          Container(height: 150.0),
+                          // Container(
+                          //   height: 100.0,
+                          //   decoration: BoxDecoration(
+                          //       borderRadius: BorderRadius.only(
+                          //         topLeft: Radius.circular(10.0),
+                          //         topRight: Radius.circular(10.0),
+                          //       ),
+                          //       color: Colors.red),
+                          // ),
+                          Positioned(
+                              top: 30.0,
+                              left: 94.0,
+                              child: Container(
+                                height: 90.0,
+                                width: 90.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/red-cross.png'),
+                                      fit: BoxFit.cover,
+                                    )),
+                              ))
+                        ],
+                      ),
+                      SizedBox(height: 0.0),
+                      Container(
+                          margin: EdgeInsets.only(
+                              top: 0, left: 10, right: 10, bottom: 0),
+                          child: Center(
+                            child: Text(
+                              'มีอะไรผิดพลาด',
+                              style: TextStyle(
+                                fontFamily: 'Aleo-Bold',
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )),
+                      Container(
+                          margin: EdgeInsets.only(
+                              top: 5, left: 10, right: 10, bottom: 5),
+                          child: Center(
+                            child: Text(
+                              'กรุณากรอกฟอร์มใหม่',
+                              style: TextStyle(
+                                fontFamily: 'Aleo-Bold',
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )),
+                      SizedBox(height: 10.0),
+                      Container(
+                        margin:
+                            EdgeInsets.only(top: 10, left: 20.0, right: 20.0),
+                        child: RaisedButton(
+                            padding: EdgeInsets.only(top: 5, bottom: 5),
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side:
+                                    BorderSide(color: const Color(0xffF6A911))),
+                            child: Center(
+                              child: Text(
+                                'ตกลง',
+                                style: TextStyle(
+                                    fontFamily: 'Aleo-Bold',
+                                    fontSize: 16.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            color: const Color(0xffF6A911)),
+                      )
+                    ],
+                  )));
+        });
+  }
+
   Future<String> _createShop() async {
     int _slot = int.parse(_shopSlotController.text);
     String name = _shopNameController.text.trim();
@@ -379,7 +480,7 @@ class _CreateShopState extends State<CreateShop> {
     };
     logger.d("body $body");
 
-      try {
+    try {
       String _url = 'http://10.0.2.2:8080/api/shop/owner';
       Dio().options.headers['Authorization'] = 'Bearer $token';
 
@@ -414,10 +515,11 @@ class _CreateShopState extends State<CreateShop> {
       if (response.statusCode == 200) {
         Navigator.of(context).pop(true);
         return "success";
-      } else {}
+      } else {
+        dialogError(context);
+      }
     } catch (err) {
       print('ERROR  $err');
     }
-   
   }
 }

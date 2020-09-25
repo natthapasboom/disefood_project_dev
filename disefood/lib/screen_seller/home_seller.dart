@@ -88,6 +88,7 @@ class _HomeSellerState extends State<HomeSeller> {
         approve = msg.data.approved;
         logger.d(msg.data.approved);
         preference.setInt('shop_id', msg.data.id);
+        preference.setInt('approved', approve);
       });
     } else {
       setState(() {
@@ -100,7 +101,7 @@ class _HomeSellerState extends State<HomeSeller> {
 
   @override
   Widget build(BuildContext context) {
-   logger.d(_shopId);
+    logger.d(_shopId);
     return new Scaffold(
       body: _isLoading == false
           ? Center(
@@ -274,9 +275,14 @@ class _HomeSellerState extends State<HomeSeller> {
                           ),
                           onPressed: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CreateShop()));
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => CreateShop()))
+                                .then((value) {
+                              setState(() {
+                                initState();
+                              });
+                            });
                           },
                         ),
                       ),
@@ -290,7 +296,7 @@ class _HomeSellerState extends State<HomeSeller> {
                       )
                     ],
                   ),
-                ),              
+                ),
     );
   }
 
@@ -323,28 +329,26 @@ class _HomeSellerState extends State<HomeSeller> {
                 width: 430.0,
                 height: 160.0,
                 fit: BoxFit.fill,
-               placeholder: (context, url) => Center(
-                                            child: Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 50, bottom: 35),
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  backgroundColor:
-                                                      Colors.amber[900],
-                                                ))),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                          height: 121,
-                                          width: 380,
-                                          color: const Color(0xff7FC9C5),
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.store,
-                                              size: 50,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                            ),
-            ),
+                placeholder: (context, url) => Center(
+                    child: Container(
+                        margin: EdgeInsets.only(top: 50, bottom: 35),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 5.0,
+                          valueColor:
+                              AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                        ))),
+                errorWidget: (context, url, error) => Container(
+                  height: 121,
+                  width: 380,
+                  color: const Color(0xff7FC9C5),
+                  child: Center(
+                    child: Icon(
+                      Icons.store,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
       );
 }

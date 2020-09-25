@@ -18,12 +18,18 @@ import 'package:disefood/screen_seller/organize_seller_page.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen_seller/addmenu.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'component/register.dart';
 import 'screen_seller/home_seller.dart';
 import 'package:disefood/screen_seller/create_shop.dart';
 
 //#Clt+Alt+L จัดระเบียบ
-void main() {
+void main() async {
+  // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  // String token = sharedPreferences.getString('token');
+  // Logger logger = Logger();
+  // logger.d(token);
   runApp(new MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(

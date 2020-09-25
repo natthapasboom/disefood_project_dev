@@ -25,6 +25,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   int _shopId;
   String foodName;
   String token;
+  int approve;
   ApiProvider apiProvider = ApiProvider();
   Logger logger = Logger();
   @override
@@ -34,6 +35,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
       getFoodByShopId();
       SharedPreferences preferences = await SharedPreferences.getInstance();
       token = preferences.getString('token');
+      approve = preferences.getInt('approved');
       logger.d(token);
     });
     super.initState();
@@ -205,56 +207,61 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                   ),
           ),
           Container(
-            child: _isLoading
-                ? Column(
-                    children: <Widget>[
-                      ListTile(
-                        leading: Container(
-                          margin: EdgeInsets.only(
-                            left: 30,
-                          ),
-                          child: Text(
-                            'เพิ่มรายการอาหาร',
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(
-                            Icons.add_circle,
-                            color: Colors.amber[800],
-                          ),
-                          onPressed: () {
-                            MaterialPageRoute materialPageRoute =
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                              return AddMenu();
-                            });
+              child: _isLoading
+                  ? approve == 1
+                      ? Column(
+                          children: <Widget>[
+                            ListTile(
+                              leading: Container(
+                                margin: EdgeInsets.only(
+                                  left: 30,
+                                ),
+                                child: Text(
+                                  'เพิ่มรายการอาหาร',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                              trailing: IconButton(
+                                icon: Icon(
+                                  Icons.add_circle,
+                                  color: Colors.amber[800],
+                                ),
+                                onPressed: () {
+                                  MaterialPageRoute materialPageRoute =
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                    return AddMenu();
+                                  });
 
-                            Navigator.of(context)
-                                .push(materialPageRoute)
-                                .then((value) {
-                              setState(() {
-                                initState();
-                                print('Set state work');
-                              });
-                            });
-                          },
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Divider(
-                          indent: 40,
-                          color: Colors.black,
-                          endIndent: 40,
-                        ),
-                      ),
-                    ],
-                  )
-                : Container(),
-          ),
+                                  Navigator.of(context)
+                                      .push(materialPageRoute)
+                                      .then((value) {
+                                    setState(() {
+                                      initState();
+                                      print('Set state work');
+                                    });
+                                  });
+                                },
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(top: 5),
+                              child: Divider(
+                                indent: 40,
+                                color: Colors.black,
+                                endIndent: 40,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Center(
+                          child: Container(
+                              margin: EdgeInsets.only(top: 150),
+                              child: Text('รอแอดมินอณุมัติร้านค้า')),
+                        )
+                  : Container()),
         ],
       ),
     );

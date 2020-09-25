@@ -56,7 +56,8 @@ class SideMenuSeller extends StatelessWidget {
                           )
                         : CachedNetworkImageProvider(
                             'https://disefood.s3-ap-southeast-1.amazonaws.com/' +
-                                '$coverImg'),
+                                '$coverImg',
+                          ),
                     backgroundColor: coverImg == null
                         ? const Color(0xffFF7C2C)
                         : Colors.white,

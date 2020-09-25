@@ -30,7 +30,7 @@ class _RegisState extends State<Regis> {
   ApiProvider apiProvider = ApiProvider();
   String status;
   var uuid = Uuid();
-  
+
   Future<void> getImage(ImageSource imageSource) async {
     try {
       var image = await ImagePicker.pickImage(
@@ -114,24 +114,12 @@ class _RegisState extends State<Regis> {
       print('res : ${response.data}');
       print(response.statusCode);
       if (response.statusCode == 200) {
-        // var _timer = Timer.periodic(Duration(seconds: 6), (timer) {
-        //   setState(() {
-        //     dialogSucces(context);
-        //   });
-        //   print('response : ${response.data}');
-        //   print('Success');
-        // });
-        
-        Timer timer = Timer(Duration(milliseconds: 5000), () {
-          dialogSucces(context);
-        });
-           timer?.cancel();
-      timer = null;
+        dialogSucces(context);
       } else {
         dialogError(context);
         print('error code');
       }
-      
+
       print('res : $response');
     }
   }
@@ -551,8 +539,8 @@ class _RegisState extends State<Regis> {
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(50.0),
                                     image: DecorationImage(
-                                      image: NetworkImage(
-                                          'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Cross_red_circle.svg/1024px-Cross_red_circle.svg.png'),
+                                      image: AssetImage(
+                                          'assets/images/red-cross.png'),
                                       fit: BoxFit.cover,
                                     )),
                               ))
@@ -652,8 +640,8 @@ class _RegisState extends State<Regis> {
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(50.0),
                                     image: DecorationImage(
-                                      image: NetworkImage(
-                                          'https://lh3.googleusercontent.com/proxy/upNqvvfrfz1jIQwqAk4sBBEfcV3SEpn7WUsZrG5olPoe3SQJ5PPgdVUT_BaU02ay5InPV76k15yz9RRFPfHfPs_NA4z5_ezuQHOA9oxo2P83YGx3HoFg'),
+                                      image: AssetImage(
+                                          'assets/images/success.png'),
                                       fit: BoxFit.cover,
                                     )),
                               ))
@@ -687,35 +675,36 @@ class _RegisState extends State<Regis> {
                             ),
                           )),
                       SizedBox(height: 10.0),
-                      // Container(
-                      //   margin:
-                      //       EdgeInsets.only(top: 10, left: 20.0, right: 20.0),
-                      //   child: RaisedButton(
-                      //       padding: EdgeInsets.only(top: 5, bottom: 5),
-                      //       elevation: 5,
-                      //       shape: RoundedRectangleBorder(
-                      //           borderRadius: BorderRadius.circular(18.0),
-                      //           side: BorderSide(color: Colors.green)),
-                      //       child: Center(
-                      //         child: Text(
-                      //           'ตกลง',
-                      //           style: TextStyle(
-                      //               fontFamily: 'Aleo-Bold',
-                      //               fontSize: 16.0,
-                      //               color: Colors.white,
-                      //               fontWeight: FontWeight.bold),
-                      //         ),
-                      //       ),
-                      //       onPressed: () {
-                      //         Navigator.of(context).pop();
-                      //       },
-                      //       color: Colors.green),
-                      // )
+                      Container(
+                        margin:
+                            EdgeInsets.only(top: 10, left: 20.0, right: 20.0),
+                        child: RaisedButton(
+                            padding: EdgeInsets.only(top: 5, bottom: 5),
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: BorderSide(color: Colors.green)),
+                            child: Center(
+                              child: Text(
+                                'ตกลง',
+                                style: TextStyle(
+                                    fontFamily: 'Aleo-Bold',
+                                    fontSize: 16.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginPage()));
+                            },
+                            color: Colors.green),
+                      )
                     ],
                   )));
-        }).then((value) {
-   
-    });
+        }).then((value) {});
   }
 
   Widget _radiocheck() {
