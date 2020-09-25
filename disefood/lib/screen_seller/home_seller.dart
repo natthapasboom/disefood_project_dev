@@ -78,6 +78,7 @@ class _HomeSellerState extends State<HomeSeller> {
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       ShopById msg = ShopById.fromJson(map);
+      logger.d(msg.data);
       setState(() {
         _isLoading = true;
         _shopName = msg.data.name;
@@ -85,6 +86,7 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
         approve = msg.data.approved;
+        logger.d(msg.data.approved);
         preference.setInt('shop_id', msg.data.id);
       });
     } else {
@@ -98,6 +100,7 @@ class _HomeSellerState extends State<HomeSeller> {
 
   @override
   Widget build(BuildContext context) {
+   logger.d(_shopId);
     return new Scaffold(
       body: _isLoading == false
           ? Center(
@@ -109,35 +112,7 @@ class _HomeSellerState extends State<HomeSeller> {
           : _shopId != null
               ? approve == 0
                   ? Center(
-                      child: Column(
-                        children: <Widget>[
-                          // headerImage(),
-                          Container(
-                            margin: EdgeInsets.only(top: 250),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.add_circle,
-                                color: Colors.amber[900],
-                                size: 36,
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => CreateShop()));
-                              },
-                            ),
-                          ),
-                          Center(
-                            child: Text(
-                              'เพิ่มร้านค้า',
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+                      child: Text('รอแอดมินอณุมัติร้านค้า'),
                     )
                   : ListView(
                       children: <Widget>[
@@ -315,7 +290,7 @@ class _HomeSellerState extends State<HomeSeller> {
                       )
                     ],
                   ),
-                ),
+                ),              
     );
   }
 
@@ -348,12 +323,28 @@ class _HomeSellerState extends State<HomeSeller> {
                 width: 430.0,
                 height: 160.0,
                 fit: BoxFit.fill,
-                placeholder: (context, url) => Center(
-                    child: Container(
-                        margin: EdgeInsets.only(top: 50, bottom: 35),
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.amber[900],
-                        ))),
-                errorWidget: (context, url, error) => Icon(Icons.error)),
+               placeholder: (context, url) => Center(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+                                                    top: 50, bottom: 35),
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  backgroundColor:
+                                                      Colors.amber[900],
+                                                ))),
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                          height: 121,
+                                          width: 380,
+                                          color: const Color(0xff7FC9C5),
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.store,
+                                              size: 50,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                            ),
+            ),
       );
 }

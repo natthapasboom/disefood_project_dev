@@ -30,7 +30,7 @@ class _RegisState extends State<Regis> {
   ApiProvider apiProvider = ApiProvider();
   String status;
   var uuid = Uuid();
-
+  
   Future<void> getImage(ImageSource imageSource) async {
     try {
       var image = await ImagePicker.pickImage(
@@ -121,12 +121,17 @@ class _RegisState extends State<Regis> {
         //   print('response : ${response.data}');
         //   print('Success');
         // });
-
-        Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
+        
+        Timer timer = Timer(Duration(milliseconds: 5000), () {
+          dialogSucces(context);
+        });
+           timer?.cancel();
+      timer = null;
       } else {
         dialogError(context);
         print('error code');
       }
+      
       print('res : $response');
     }
   }
@@ -708,7 +713,9 @@ class _RegisState extends State<Regis> {
                       // )
                     ],
                   )));
-        });
+        }).then((value) {
+   
+    });
   }
 
   Widget _radiocheck() {

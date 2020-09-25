@@ -155,7 +155,7 @@ class _EditShopState extends State<EditShop> {
       children: <Widget>[
         Container(
           height: 150,
-          color: const Color(0xff7FC9C5),
+          color: Colors.white,
           child: widget.shopImg == null
               ? Center(
                   child: IconButton(
