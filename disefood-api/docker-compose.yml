@@ -1,0 +1,23 @@
+version: '2'
+services:
+
+  php:
+    build: ./docker-php
+    working_dir: /var/www/disefood
+    volumes:
+      - ./:/var/www/disefood
+
+  nginx:
+    build: ./docker-nginx
+    working_dir: /var/www/disefood
+    volumes_from:
+      - php
+    ports:
+      - 8000:80
+
+  composer:
+    build: ./docker-php
+    working_dir: /var/www/disefood
+    volumes_from:
+      - php
+    command: "composer install"

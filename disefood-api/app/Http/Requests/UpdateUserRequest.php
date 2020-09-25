@@ -30,6 +30,7 @@ class UpdateUserRequest extends FormRequest
             'last_name'         => 'string|max:50',
             'tel'               => 'string|min:10|max:10|unique:users,tel',
             'profile_img'       => 'image',
+            'confirm_password'  => 'string'
         ];
     }
 }

@@ -39,16 +39,6 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
     super.initState();
   }
 
-  // Future fetchNameFromStorage() async {
-  //   SharedPreferences _prefs = await SharedPreferences.getInstance();
-  //   final name = _prefs.getString('first_name');
-  //   final shopId = _prefs.getInt('shop_id');
-  //   setState(() {
-  //     _name = name;
-  //     _shopId = shopId;
-  //   });
-  // }
-
   Future getFoodByShopId() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     _shopId = preferences.getInt('shop_id');
@@ -78,19 +68,30 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                 ),
               ),
-              // Container(
-              //   padding: EdgeInsets.only(left: 150, top: 38),
-              //   child: IconButton(
-              //   icon: Icon(
-              //     Icons.add_circle,
-              //     color: Colors.amber[800],
-              //   ),
-              //   onPressed: () {
-              //     Navigator.push(context,
-              //         MaterialPageRoute(builder: (context) => AddMenu()));
-              //   }
-              //   ),
-              // ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(top: 15, left: 40),
+                child: Text(
+                  'ชื่อ',
+                  style: TextStyle(
+                      fontFamily: 'Aleo',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 15, left: 195),
+                child: Text(
+                  'ราคา',
+                  style: TextStyle(
+                      fontFamily: 'Aleo',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
             ],
           ),
           Container(
@@ -107,7 +108,9 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                     margin: EdgeInsets.only(top: 150),
                     child: Center(
                       child: CircularProgressIndicator(
-                        backgroundColor: Colors.amber[900],
+                        strokeWidth: 5.0,
+                        valueColor:
+                            AlwaysStoppedAnimation(const Color(0xffF6A911)),
                       ),
                     ),
                   )
@@ -133,45 +136,56 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                     ),
                                   ),
                                   trailing: Wrap(
-                                    spacing: 1, // space between two icons
+                                    spacing: 1.0,
+                                    // space between two icons
                                     children: <Widget>[
                                       Container(
-                                        margin: EdgeInsets.only(top: 13),
+                                        margin: EdgeInsets.only(
+                                            top: 13, right: 5, left: 50),
                                         child: Text(
-                                          '${foods['price']}',
+                                          '${foods['price']}฿',
                                           style: TextStyle(
+                                            color: const Color(0xff11AB17),
                                             fontSize: 18,
                                           ),
                                         ),
                                       ),
-                                      Container(
-                                          child: IconButton(
-                                              icon: Icon(
-                                                Icons.edit,
-                                                color: Colors.amber[800],
-                                              ),
-                                              onPressed: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            EditMenuPage(
-                                                              foodslist:
-                                                                  foods[index],
-                                                            )));
-                                              })),
-                                      Container(
-                                          child: IconButton(
-                                              icon: Icon(
-                                                Icons.delete,
-                                                color: Colors.amber[800],
-                                              ),
-                                              onPressed: () {
-                                                alertDialog(
-                                                    context,
-                                                    'ลบรายการอาหาร?',
-                                                    foods['id']);
-                                              })),
+
+                                      IconButton(
+                                          icon: Icon(
+                                            Icons.edit,
+                                            color: Colors.amber[800],
+                                          ),
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EditMenuPage(
+                                                          image: foods[
+                                                              'cover_img'],
+                                                          name: foods['name'],
+                                                          price: foods['price'],
+                                                          status:
+                                                              foods['status'],
+                                                          id: foods['id'],
+                                                        ))).then((value) {
+                                              setState(() {
+                                                initState();
+                                                print('Set state work');
+                                              });
+                                            });
+                                          }),
+
+                                      IconButton(
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Colors.amber[800],
+                                          ),
+                                          onPressed: () {
+                                            alertDialog(context,
+                                                'ลบรายการอาหาร?', foods['id']);
+                                          }),
                                       // icon-1
                                     ],
                                   ),
@@ -192,39 +206,52 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
           ),
           Container(
             child: _isLoading
-                ? ListTile(
-                    leading: Container(
-                      margin: EdgeInsets.only(
-                        left: 30,
-                      ),
-                      child: Text(
-                        'เพิ่มรายการอาหาร',
-                        style: TextStyle(
-                          fontSize: 18,
+                ? Column(
+                    children: <Widget>[
+                      ListTile(
+                        leading: Container(
+                          margin: EdgeInsets.only(
+                            left: 30,
+                          ),
+                          child: Text(
+                            'เพิ่มรายการอาหาร',
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(
+                            Icons.add_circle,
+                            color: Colors.amber[800],
+                          ),
+                          onPressed: () {
+                            MaterialPageRoute materialPageRoute =
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                              return AddMenu();
+                            });
+
+                            Navigator.of(context)
+                                .push(materialPageRoute)
+                                .then((value) {
+                              setState(() {
+                                initState();
+                                print('Set state work');
+                              });
+                            });
+                          },
                         ),
                       ),
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(
-                        Icons.add_circle,
-                        color: Colors.amber[800],
+                      Container(
+                        padding: EdgeInsets.only(top: 5),
+                        child: Divider(
+                          indent: 40,
+                          color: Colors.black,
+                          endIndent: 40,
+                        ),
                       ),
-                      onPressed: () {
-                        MaterialPageRoute materialPageRoute =
-                            MaterialPageRoute(builder: (BuildContext context) {
-                          return AddMenu();
-                        });
-
-                        Navigator.of(context)
-                            .push(materialPageRoute)
-                            .then((value) {
-                          setState(() {
-                            initState();
-                            print('Set state work');
-                          });
-                        });
-                      },
-                    ),
+                    ],
                   )
                 : Container(),
           ),

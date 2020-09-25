@@ -4,24 +4,10 @@ import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen_seller/create_shop.dart';
 import 'package:disefood/screen_seller/edit_shop.dart';
 import 'package:disefood/services/api_provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart';
-import 'package:disefood/component/feedback_seller_bottombar.dart';
-import 'package:disefood/component/organize_seller_bottombar.dart';
-import 'package:disefood/component/signout_process.dart';
-import 'package:disefood/component/summary_seller_bottombar.dart';
 import 'package:disefood/model/shop_id.dart';
-import 'package:disefood/model/user_profile.dart';
-import 'package:disefood/screen/login_customer_page.dart';
-import 'package:disefood/screen_seller/order_seller_page.dart';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:disefood/component/sidemenu_seller.dart';
-import 'package:disefood/component/order_seller_bottombar.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'organize_seller_page.dart';
 
 class HomeSeller extends StatefulWidget {
   // final UserProfile userData;
@@ -92,6 +78,7 @@ class _HomeSellerState extends State<HomeSeller> {
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       ShopById msg = ShopById.fromJson(map);
+      logger.d(msg.data);
       setState(() {
         _isLoading = true;
         _shopName = msg.data.name;
@@ -99,6 +86,7 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
         approve = msg.data.approved;
+        logger.d(msg.data.approved);
         preference.setInt('shop_id', msg.data.id);
       });
     } else {
@@ -112,45 +100,19 @@ class _HomeSellerState extends State<HomeSeller> {
 
   @override
   Widget build(BuildContext context) {
+   logger.d(_shopId);
     return new Scaffold(
       body: _isLoading == false
           ? Center(
               child: CircularProgressIndicator(
-                backgroundColor: Colors.amber[900],
+                strokeWidth: 5.0,
+                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
               ),
             )
           : _shopId != null
               ? approve == 0
                   ? Center(
-                      child: Column(
-                        children: <Widget>[
-                          // headerImage(),
-                          Container(
-                            margin: EdgeInsets.only(top: 250),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.add_circle,
-                                color: Colors.amber[900],
-                                size: 36,
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => CreateShop()));
-                              },
-                            ),
-                          ),
-                          Center(
-                            child: Text(
-                              'เพิ่มร้านค้า',
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+                      child: Text('รอแอดมินอณุมัติร้านค้า'),
                     )
                   : ListView(
                       children: <Widget>[
@@ -267,7 +229,18 @@ class _HomeSellerState extends State<HomeSeller> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => EditShop()));
+                                            builder: (context) => EditShop(
+                                                  shopId: _shopId,
+                                                  shopImg: _shopImg,
+                                                  shopName: _shopName,
+                                                  shopSlot: _shopSlot,
+                                                ))).then((value) {
+                                      setState(() {
+                                        fetchShopFromStorage();
+
+                                        print('Set state work');
+                                      });
+                                    });
                                   },
                                 ),
                               ),
@@ -317,7 +290,7 @@ class _HomeSellerState extends State<HomeSeller> {
                       )
                     ],
                   ),
-                ),
+                ),              
     );
   }
 
@@ -349,13 +322,29 @@ class _HomeSellerState extends State<HomeSeller> {
                     'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
                 width: 430.0,
                 height: 160.0,
-                fit: BoxFit.fitHeight,
-                placeholder: (context, url) => Center(
-                    child: Container(
-                        margin: EdgeInsets.only(top: 50, bottom: 35),
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.amber[900],
-                        ))),
-                errorWidget: (context, url, error) => Icon(Icons.error)),
+                fit: BoxFit.fill,
+               placeholder: (context, url) => Center(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+                                                    top: 50, bottom: 35),
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  backgroundColor:
+                                                      Colors.amber[900],
+                                                ))),
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                          height: 121,
+                                          width: 380,
+                                          color: const Color(0xff7FC9C5),
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.store,
+                                              size: 50,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                            ),
+            ),
       );
 }

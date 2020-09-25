@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/shop_id.dart';
+import 'package:disefood/screen_seller/home_seller.dart';
 import 'package:disefood/screen_seller/home_seller_tab.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
@@ -378,9 +379,45 @@ class _CreateShopState extends State<CreateShop> {
     };
     logger.d("body $body");
 
-    var response =
-        await apiProvider.createShop(name, _slot, _image, documentImg, token);
+      try {
+      String _url = 'http://10.0.2.2:8080/api/shop/owner';
+      Dio().options.headers['Authorization'] = 'Bearer $token';
 
-    return response;
+      String shopImage = _image.path.split('/').last;
+      String docImage = documentImg.path.split('/').last;
+
+      FormData formData = FormData.fromMap({
+        "name": name,
+        "shop_slot": _slot,
+        "cover_img":
+            await MultipartFile.fromFile(_image.path, filename: shopImage),
+        "document_img":
+            await MultipartFile.fromFile(documentImg.path, filename: docImage),
+      });
+      logger.d('FormData : ${formData.fields}');
+      var response = await Dio().post(
+        _url,
+        data: formData,
+        options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+            followRedirects: false,
+            validateStatus: (status) {
+              return status < 500;
+            }),
+      );
+
+      logger.d("Status: ${response.statusCode}");
+      logger.d("Data: ${response.data}");
+
+      if (response.statusCode == 200) {
+        Navigator.of(context).pop(true);
+        return "success";
+      } else {}
+    } catch (err) {
+      print('ERROR  $err');
+    }
+   
   }
 }
