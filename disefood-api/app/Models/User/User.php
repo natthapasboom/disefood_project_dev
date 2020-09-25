@@ -24,11 +24,6 @@ class User extends Authenticatable
         'password', 'remember_token'
     ];
 
-//    public function OauthAccessToken()
-//    {
-//        return $this->hasMany(OauthAccessToken::class);
-//    }
-
     public function shop()
     {
         return $this->hasOne(Shop::class, 'user_id', 'id');
@@ -42,5 +37,9 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class, 'user_id', 'id');
+    }
+
+    public function AauthAccessToken(){
+        return $this->hasMany(OauthAccessToken::class);
     }
 }
