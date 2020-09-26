@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:disefood/model/orderByShopId.dart';
 import 'package:disefood/screen_seller/orderdetail.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -20,12 +19,21 @@ class OrderSellerPage extends StatefulWidget {
 class _OrderSellerPageState extends State<OrderSellerPage> {
   bool isLoading = true;
   List orderSeller = [];
+
   String _name;
   int _userId;
   Logger logger = Logger();
   int userId;
   String timePickup;
   int totalPrice;
+  String allFoodName = "";
+  List orderDetail = [];
+  String userFName;
+  String userLName;
+  String userTel;
+  int tempColor = 0;
+  String tempStatus = "";
+
   @override
   void initState() {
     Future.microtask(() async {
@@ -45,7 +53,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
     });
   }
 
-  Future<List<OrderByShopId>> getOrderByShopId() async {
+  Future getOrderByShopId() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     int shopId = _prefs.getInt("shop_id");
     String token = _prefs.getString("token");
@@ -54,42 +62,69 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
       _url,
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
-    var jsonResponse = json.decode(response.body);
+    var body = response.body;
 
+    // logger.d(body);
     setState(() {
       isLoading = false;
-      print(isLoading);
-      orderSeller = jsonResponse['data'];
+      orderSeller = jsonDecode(body)['data'];
       logger.d(orderSeller);
-
-      logger.d('');
     });
-    return orderSeller;
+  }
+
+  colorCheck(item) {
+    if (item["status"] == "not confirmed") {
+      tempColor = 0;
+      tempStatus = "ยังไม่ยืนยัน";
+    } else if (item["status"] == "in process") {
+      tempColor = 1;
+      tempStatus = "กำลังทำ";
+    } else if (item["status"] == "success") {
+      tempColor = 2;
+      tempStatus = "เสร็จสิ้น";
+    }
+  }
+
+  Color getColor() {
+    if (tempColor == 0) {
+      return Colors.redAccent;
+    } else if (tempColor == 1) {
+      return Colors.yellow[600];
+    } else if (tempColor == 2) {
+      return Colors.lightGreen;
+    } else {
+      return Colors.redAccent;
+    }
   }
 
   // dispose() {
   //   super.dispose();
   // }
-
   @override
   Widget build(BuildContext context) {
     print('$_userId $_name');
+
     return Scaffold(
       body: isLoading
           ? Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 5.0,
-                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
-              ),
+              child: CircularProgressIndicator(),
             )
           : new ListView.builder(
               itemCount: orderSeller != null ? orderSeller.length : 0,
               itemBuilder: (BuildContext context, int index) {
                 var item = orderSeller[index];
-
+                colorCheck(item);
+                logger.d(tempColor);
+                // Todo: Improve coding next time, Boom.
+                var i;
+                if (allFoodName == "") {
+                  for (i = 0; i < item["order_details"].length; i++) {
+                    allFoodName +=
+                        item["order_details"][i]["food"]["name"] + " ";
+                  }
+                }
                 return Container(
                   margin: EdgeInsets.all(20),
-                  height: 295,
                   child: InkWell(
                     child: Card(
                       elevation: 8,
@@ -103,51 +138,79 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                 imageUrl:
                                     "https://disefood.s3-ap-southeast-1.amazonaws.com/${item['cover_img']}",
                                 fit: BoxFit.cover,
-                                height: 120,
+                                height: 100,
                                 width: 380,
                                 placeholder: (context, url) => Center(
                                     child: Container(
                                         margin:
                                             EdgeInsets.only(top: 50, bottom: 0),
                                         child: CircularProgressIndicator(
-                                          strokeWidth: 5.0,
-                                          valueColor: AlwaysStoppedAnimation(
-                                              const Color(0xffF6A911)),
+                                          backgroundColor: Colors.amber[900],
                                         ))),
                                 errorWidget: (context, url, error) => Container(
-                                  height: 120,
+                                  height: 100,
                                   width: 380,
-                                  color: const Color(0xff7FC9C5),
+                                  // color: const Color(0xff7FC9C5),
+                                  color: getColor(),
                                   child: Center(
-                                    child: Icon(
-                                      Icons.fastfood,
-                                      size: 50,
-                                      color: Colors.white,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.fastfood,
+                                          size: 30,
+                                          color: Colors.white,
+                                        ),
+                                        Transform.translate(
+                                          offset: Offset(0, 0),
+                                          child: Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding:
+                                                EdgeInsets.fromLTRB(5, 4, 5, 5),
+                                            decoration: BoxDecoration(
+                                                // color: Colors.red,
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            child: Text(
+                                              "$tempStatus",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
-                              Transform.translate(
-                                offset: Offset(10, 10),
-                                child: Container(
-                                  padding: EdgeInsets.fromLTRB(5, 4, 5, 5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black54,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Text(
-                                    "คิวที่ ${index + 1}",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white),
+                              Container(
+                                child: Transform.translate(
+                                  offset: Offset(10, 10),
+                                  child: Container(
+                                    padding: EdgeInsets.fromLTRB(5, 4, 5, 5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Text(
+                                      "คิวที่ ${index + 1}",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white),
+                                    ),
                                   ),
                                 ),
                               ),
                             ],
                           ),
                           Container(
-                            margin: EdgeInsets.only(left: 15, top: 5),
+                            padding: EdgeInsets.only(left: 15, top: 5),
                             child: Text(
                               "รายละเอียด",
                               style: TextStyle(
@@ -157,9 +220,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                           Container(
                             margin: EdgeInsets.only(left: 15, top: 5),
                             child: Text(
-                              '${item["order_details.id"]}',
-                              //ตรงนี้ๆฟกหสาหฟสกสหฟากสหฟาสกฟหาสวกวฟหกาวสฟหกวสหฟวสกาฟหวสกวหฟก
-                              // "${orderSeller[]}",
+                              '${allFoodName}',
                               style: TextStyle(fontSize: 16),
                             ),
                           ),
@@ -203,190 +264,67 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                               ],
                             ),
                           ),
-
-                          Row(
-                            children: <Widget>[
-                              ButtonBar(
-                                children: <Widget>[
-                                  RaisedButton(
-                                    onPressed: () {},
-                                    padding:
-                                        EdgeInsets.only(left: 20, right: 20),
-                                    color: Colors.orange,
-                                    child: Text(
-                                      "เสร็จสิ้น",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
+                          Container(
+                            margin: EdgeInsets.only(right: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                ButtonBar(
+                                  children: <Widget>[
+                                    RaisedButton(
+                                      onPressed: () {
+                                        userId = item["user_id"];
+                                        timePickup = item["time_pickup"];
+                                        totalPrice = item["total_price"];
+                                        orderDetail = item["order_details"];
+                                        userFName = item["user"]["first_name"];
+                                        userLName = item["user"]["last_name"];
+                                        userTel = item["user"]["tel"];
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                OrderDetailSeller(
+                                              userId: userId,
+                                              timePickup: timePickup,
+                                              totalPrice: totalPrice,
+                                              orderDetail: orderDetail,
+                                              userFName: userFName,
+                                              userLName: userLName,
+                                              userTel: userTel,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      color: Colors.white,
+                                      child: Text(
+                                        "แก้ไข",
+                                        style: TextStyle(
+                                            color: Colors.orangeAccent,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
-                                  ),
-                                  RaisedButton(
-                                    onPressed: () {
-                                      userId = item["user_id"];
-                                      timePickup = item["time_pickup"];
-                                      totalPrice = item["total_price"];
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              OrderDetailSeller(
-                                                  userId: userId,
-                                                  timePickup: timePickup,
-                                                  totalPrice: totalPrice),
-                                        ),
-                                      );
-                                    },
-                                    padding:
-                                        EdgeInsets.only(left: 20, right: 20),
-                                    color: Colors.white,
-                                    child: Text(
-                                      "แก้ไข",
-                                      style: TextStyle(
-                                          color: Colors.orangeAccent,
-                                          fontWeight: FontWeight.bold),
+                                    RaisedButton(
+                                      onPressed: () {
+                                        logger.d(orderSeller);
+                                      },
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      color: Colors.orange,
+                                      child: Text(
+                                        "ยอมรับ",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                          // Transform.translate(
-                          //   offset: Offset(10, -20),
-                          //   child: Row(
-                          //     children: <Widget>[
-                          //       Text(
-                          //         "รายการอาหาร",
-                          //         style: TextStyle(
-                          //             fontWeight: FontWeight.bold,
-                          //             fontSize: 18),
-                          //       )
-                          //     ],
-                          //   ),
-                          // ),
-                          // Transform.translate(
-                          //   offset: Offset(10, -20),
-                          //   child: Container(
-                          //     child: Row(
-                          //       children: <Widget>[
-                          //         Container(
-                          //           padding: EdgeInsets.only(right: 5),
-                          //           child: Text("ก๋วยเตี๋ยวต้มยำพิเศษ"),
-                          //         ),
-                          //         Container(
-                          //           padding: EdgeInsets.only(right: 5, top: 2),
-                          //           child: Text("2"),
-                          //         ),
-                          //         Container(
-                          //           height: 15,
-                          //           padding: EdgeInsets.only(right: 5, top: 2),
-                          //           child: VerticalDivider(
-                          //             color: Colors.black54,
-                          //             thickness: 2,
-                          //           ),
-                          //         ),
-                          //         Container(
-                          //           padding: EdgeInsets.only(right: 5),
-                          //           child: Text("ก๋วยเตี๋ยวเย็นตาโฟ"),
-                          //         ),
-                          //         Container(
-                          //           padding: EdgeInsets.only(right: 5, top: 2),
-                          //           child: Text("1"),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
-                          // Transform.translate(
-                          //   offset: Offset(10, -20),
-                          //   child: Container(
-                          //     child: Row(
-                          //       children: <Widget>[
-                          //         Container(
-                          //           padding: EdgeInsets.only(right: 5),
-                          //           child: Text("ราคา"),
-                          //         ),
-                          //         Container(
-                          //           padding: EdgeInsets.only(right: 0, top: 3),
-                          //           child: Text(
-                          //             "135",
-                          //             style: TextStyle(
-                          //               color: Colors.green,
-                          //               fontWeight: FontWeight.bold,
-                          //             ),
-                          //           ),
-                          //         ),
-                          //         Container(
-                          //           padding: EdgeInsets.only(right: 5, top: 2),
-                          //           child: Icon(
-                          //             Icons.attach_money,
-                          //             color: Colors.green,
-                          //             size: 20,
-                          //           ),
-                          //         )
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
-                          // Transform.translate(
-                          //   offset: Offset(10, -20),
-                          //   child: Container(
-                          //     child: Row(
-                          //       children: <Widget>[
-                          //         Container(
-                          //           padding: EdgeInsets.only(right: 5),
-                          //           child: Text("เวลาที่จะมารับ"),
-                          //         ),
-                          //         Container(
-                          //           padding: EdgeInsets.only(right: 5),
-                          //           child: Text("11.30 AM"),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
-                          // Transform.translate(
-                          //   offset: Offset(2, -20),
-                          //   child: Container(
-                          //     child: Row(
-                          //       children: <Widget>[
-                          //         ButtonBar(
-                          //           children: <Widget>[
-                          //             RaisedButton(
-                          //               onPressed: () {},
-                          //               padding: EdgeInsets.only(
-                          //                   left: 20, right: 20),
-                          //               color: Colors.orange,
-                          //               child: Text(
-                          //                 "เสร็จสิ้น",
-                          //                 style: TextStyle(
-                          //                     color: Colors.white,
-                          //                     fontWeight: FontWeight.bold),
-                          //               ),
-                          //             ),
-                          //             RaisedButton(
-                          //               onPressed: () => Navigator.push(
-                          //                 context,
-                          //                 MaterialPageRoute(
-                          //                   builder: (context) =>
-                          //                       OrderDetailSeller(),
-                          //                 ),
-                          //               ),
-                          //               padding: EdgeInsets.only(
-                          //                   left: 20, right: 20),
-                          //               color: Colors.white,
-                          //               child: Text(
-                          //                 "แก้ไข",
-                          //                 style: TextStyle(
-                          //                     color: Colors.orangeAccent,
-                          //                     fontWeight: FontWeight.bold),
-                          //               ),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),

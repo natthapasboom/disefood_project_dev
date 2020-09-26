@@ -10,19 +10,26 @@ class OrderDetailSeller extends StatefulWidget {
   final int userId;
   final String timePickup;
   final int totalPrice;
-  const OrderDetailSeller(
-      {Key key,
-      @required this.userId,
-      @required this.timePickup,
-      @required this.totalPrice})
-      : super(key: key);
+  final List orderDetail;
+  final String userFName;
+  final String userLName;
+  final String userTel;
+  const OrderDetailSeller({
+    Key key,
+    @required this.userId,
+    @required this.timePickup,
+    @required this.totalPrice,
+    @required this.orderDetail,
+    @required this.userFName,
+    @required this.userLName,
+    @required this.userTel,
+  }) : super(key: key);
   @override
   _OrderDetailSellerState createState() => _OrderDetailSellerState();
 }
 
 class _OrderDetailSellerState extends State<OrderDetailSeller> {
   bool isLoading = true;
-  List orderSeller = [];
   bool isthisbuttonselected = true;
   String nameUser;
   String lastNameUser;
@@ -31,7 +38,13 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   int userId;
   String timePickup;
   int totalPrice;
-
+  List orderDetail;
+  String userFName;
+  String userLName;
+  String userTel;
+  bool isAddTime = false;
+  TextEditingController addTimeController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     // Timer.periodic(Duration(seconds: 1), (Timer t) => _getCurrentTime());
@@ -41,9 +54,22 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
       userId = widget.userId;
       timePickup = widget.timePickup;
       totalPrice = widget.totalPrice;
+      orderDetail = widget.orderDetail;
+      userFName = widget.userFName;
+      userLName = widget.userLName;
+      userTel = widget.userTel;
     });
   }
 
+  addTimeCheck() {
+    setState(() {
+      if (addTimeController.text != null) {
+        isAddTime = true;
+      } else {
+        isAddTime = false;
+      }
+    });
+  }
   // void _getCurrentTime() {}
 
   Future<void> _neverSatisfied() async {
@@ -52,131 +78,62 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            'เพิ่มเวลา',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-          ),
+          contentPadding: EdgeInsets.all(0.0),
+          // title: Container(
+          //   color: Colors.red,
+          //   child: Text(
+          //     'เพิ่มเวลา',
+          //     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          //   ),
+          // ),
           content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(left: 50, top: 5),
-                          child: SizedBox(
-                            width: 30.0,
-                            height: 30.0,
-                            child: const Card(
-                              child: Center(),
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 35, top: 5),
-                          child: SizedBox(
-                            width: 30.0,
-                            height: 30.0,
-                            child: const Card(
-                              child: Center(),
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ),
-                      ],
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  height: 50,
+                  width: double.maxFinite,
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(3),
+                      topRight: Radius.circular(3),
                     ),
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(left: 40, top: 10),
-                          child: SizedBox(
-                            width: 50.0,
-                            height: 50.0,
-                            child: const Card(
-                              child: Center(
-                                child: Text(
-                                  '03',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                              color: Colors.black26,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 5, top: 10),
-                          child: Text(
-                            ":",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 5, top: 10),
-                          child: SizedBox(
-                            width: 50.0,
-                            height: 50.0,
-                            child: const Card(
-                              child: Center(
-                                child: Text(
-                                  '03',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                              color: Colors.black26,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 5, top: 10),
-                          child: Text(
-                            "นาที",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(left: 50, top: 5),
-                          child: SizedBox(
-                            width: 30.0,
-                            height: 30.0,
-                            child: const Card(
-                              child: Center(),
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 35, top: 5),
-                          child: SizedBox(
-                            width: 30.0,
-                            height: 30.0,
-                            child: const Card(
-                              child: Center(),
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
+                  child: Text(
+                    "เพิ่มเวลา (นาที)",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22),
+                  ),
                 ),
+                Container(
+                  margin: EdgeInsets.only(left: 60, right: 60, top: 20),
+                  child: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      controller: addTimeController,
+                      decoration: InputDecoration(
+                        hintText: "กรอกเวลาที่ต้องการเพิ่ม",
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(color: Colors.black38)),
+                        enabledBorder: new OutlineInputBorder(
+                          borderRadius: new BorderRadius.circular(10.0),
+                          borderSide: new BorderSide(color: Colors.black38),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return "โปรดระบุเวลา";
+                        }
+                      },
+                    ),
+                  ),
+                )
               ],
             ),
           ),
@@ -202,7 +159,13 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                 ),
                 RaisedButton(
                   elevation: 5,
-                  onPressed: () => {},
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      print("${addTimeController.text}");
+                    }
+                    addTimeCheck();
+                    Navigator.of(context).pop(true);
+                  },
                   padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
                   color: Colors.orange,
                   child: Text(
@@ -306,284 +269,347 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
         ),
         // drawer: _sideMenuSeller(params.userData),
         body: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.network(
-                  'https://sifu.unileversolutions.com/image/th-TH/recipe-topvisual/2/1260-709/%E0%B8%81%E0%B9%8B%E0%B8%A7%E0%B8%A2%E0%B9%80%E0%B8%95%E0%B8%B5%E0%B9%8B%E0%B8%A2%E0%B8%A7%E0%B8%95%E0%B9%89%E0%B8%A1%E0%B8%A2%E0%B8%B3%E0%B8%AA%E0%B8%B8%E0%B9%82%E0%B8%82%E0%B8%97%E0%B8%B1%E0%B8%A2-50357483.jpg',
-                  height: 160.0,
-                  width: 430.0,
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 40),
-                  width: double.maxFinite,
-                  height: 40,
-                  decoration: BoxDecoration(color: Colors.grey[200]),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "เวลาทำอาหาร",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
+          child: Stack(
+            children: [
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.network(
+                      'https://sifu.unileversolutions.com/image/th-TH/recipe-topvisual/2/1260-709/%E0%B8%81%E0%B9%8B%E0%B8%A7%E0%B8%A2%E0%B9%80%E0%B8%95%E0%B8%B5%E0%B9%8B%E0%B8%A2%E0%B8%A7%E0%B8%95%E0%B9%89%E0%B8%A1%E0%B8%A2%E0%B8%B3%E0%B8%AA%E0%B8%B8%E0%B9%82%E0%B8%82%E0%B8%97%E0%B8%B1%E0%B8%A2-50357483.jpg',
+                      height: 140,
+                      width: 430.0,
+                      fit: BoxFit.cover,
+                    ),
                     Container(
-                      padding: EdgeInsets.only(
-                        left: 40,
-                      ),
-                      child: SizedBox(
-                        width: 50.0,
-                        height: 50.0,
-                        child: const Card(
-                          child: Center(
-                            child: Text(
-                              '03',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
+                      padding: EdgeInsets.only(left: 40),
+                      width: double.maxFinite,
+                      height: 40,
+                      decoration: BoxDecoration(color: Colors.grey[200]),
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          Text(
+                            "เวลาทำอาหาร",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
                           ),
-                          color: Colors.black26,
-                        ),
+                        ],
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(
-                        left: 5,
-                      ),
-                      child: Text(
-                        ":",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(
-                        left: 5,
-                      ),
-                      child: SizedBox(
-                        width: 50.0,
-                        height: 50.0,
-                        child: const Card(
-                          child: Center(
-                            child: Text(
-                              '03',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
-                          ),
-                          color: Colors.black26,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(
-                        left: 5,
-                      ),
-                      child: Text(
-                        "นาที",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(
-                        left: 100,
-                      ),
-                      child: ButtonBar(
+                      margin: EdgeInsets.only(left: 40, right: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          RaisedButton(
-                            onPressed: () {
-                              _neverSatisfied();
-                            },
-                            padding: EdgeInsets.all(10),
-                            color: Colors.orange,
+                          // Row(
+                          //   children: [
+                          //     Container(
+                          //       child: SizedBox(
+                          //         width: 50.0,
+                          //         height: 50.0,
+                          //         child: const Card(
+                          //           child: Center(
+                          //             child: Text(
+                          //               '03',
+                          //               textAlign: TextAlign.center,
+                          //               style: TextStyle(
+                          //                   fontWeight: FontWeight.bold,
+                          //                   color: Colors.white),
+                          //             ),
+                          //           ),
+                          //           color: Colors.black26,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     Container(
+                          //       child: Text(
+                          //         "นาที",
+                          //         style: TextStyle(fontSize: 14),
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                          // Container(
+                          //   padding: EdgeInsets.only(
+                          //     left: 5,
+                          //   ),
+                          //   child: Text(
+                          //     ":",
+                          //     style: TextStyle(
+                          //         fontWeight: FontWeight.bold, fontSize: 14),
+                          //   ),
+                          // ),
+                          // Container(
+                          //   padding: EdgeInsets.only(
+                          //     left: 5,
+                          //   ),
+                          //   child: SizedBox(
+                          //     width: 50.0,
+                          //     height: 50.0,
+                          //     child: const Card(
+                          //       child: Center(
+                          //         child: Text(
+                          //           '03',
+                          //           textAlign: TextAlign.center,
+                          //           style: TextStyle(
+                          //               fontWeight: FontWeight.bold,
+                          //               color: Colors.white),
+                          //         ),
+                          //       ),
+                          //       color: Colors.black26,
+                          //     ),
+                          //   ),
+                          // ),
+
+                          // Container(
+                          //   child: RaisedButton(
+                          //     onPressed: () {
+                          //       _neverSatisfied();
+                          //     },
+                          //     padding: EdgeInsets.all(0),
+                          //     color: Colors.orange,
+                          //     child: Text(
+                          //       'เพิ่มเวลา',
+                          //       style: TextStyle(
+                          //         fontWeight: FontWeight.bold,
+                          //         fontSize: 16,
+                          //         color: Colors.white,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                    Visibility(
+                      visible: isAddTime,
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 40,
+                            width: double.maxFinite,
+                            padding: EdgeInsets.only(left: 40, right: 40),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  child: Text(
+                                    "เวลาที่เพิ่ม : ",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(top: 7),
+                                  child: Text(
+                                    '${addTimeController.text} นาที',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            color: Colors.grey[200],
+                            thickness: 2,
+                            height: 0,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: 40,
+                      width: double.maxFinite,
+                      padding: EdgeInsets.only(left: 40, right: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Container(
                             child: Text(
-                              'เพิ่มเวลา',
+                              "เวลาที่จะมารับ : ",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 7),
+                            child: Text(
+                              '$timePickup',
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.white,
+                                  fontSize: 16,
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 40, right: 45),
+                      alignment: Alignment.centerLeft,
+                      width: double.maxFinite,
+                      height: 40,
+                      decoration: BoxDecoration(color: Colors.grey[200]),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "รายการอาหาร",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
+                          Text(
+                            "จำนวน",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: orderDetail != null ? orderDetail.length : 0,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Column(
+                          children: [
+                            Container(
+                              height: 40,
+                              margin: EdgeInsets.only(left: 40, right: 60),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${orderDetail[index]["food"]["name"]}",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  Text(
+                                    "${orderDetail[index]["quantity"]}",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ],
                               ),
                             ),
+                            Divider(
+                              color: Colors.grey[200],
+                              thickness: 2,
+                              height: 0,
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 40),
+                      alignment: Alignment.centerLeft,
+                      width: double.maxFinite,
+                      height: 40,
+                      decoration: BoxDecoration(color: Colors.grey[200]),
+                      child: Text(
+                        "รายละเอียดผู้สั่ง",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                    ),
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            margin: EdgeInsets.only(left: 40, right: 40),
+                            height: 40,
+                            width: double.maxFinite,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "ชื่อ  ",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                                Text(
+                                  "$userFName $userLName",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            color: Colors.grey[200],
+                            thickness: 2,
+                            height: 0,
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(left: 40, right: 40),
+                            height: 40,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "เบอร์ติดต่อ",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                                Text(
+                                  "$userTel",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            color: Colors.grey[200],
+                            thickness: 2,
+                            height: 0,
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                Container(
-                  width: double.maxFinite,
-                  padding: EdgeInsets.only(left: 40, right: 40),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.only(bottom: 7),
-                        child: Text(
-                          "เวลาที่จะมารับ : ",
-                          style: TextStyle(fontSize: 18),
+              ),
+              Transform.translate(
+                offset: Offset(265, 120),
+                child: Container(
+                  width: 110,
+                  height: 40,
+                  child: RaisedButton(
+                    elevation: 8,
+                    onPressed: () {
+                      _neverSatisfied();
+                    },
+                    padding: EdgeInsets.all(5),
+                    color: Colors.orange,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.timer,
+                          color: Colors.white,
                         ),
-                      ),
-                      Text(
-                        '$timePickup',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.orange,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 40, right: 45),
-                  alignment: Alignment.centerLeft,
-                  width: double.maxFinite,
-                  height: 40,
-                  decoration: BoxDecoration(color: Colors.grey[200]),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "รายการอาหาร",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Text(
-                        "จำนวน",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 40, right: 60),
-                  alignment: Alignment.centerLeft,
-                  width: double.maxFinite,
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "อาหาร 1",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        "1",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
-                Divider(
-                  color: Colors.grey[200],
-                  thickness: 2,
-                  height: 0,
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 40, right: 60),
-                  alignment: Alignment.centerLeft,
-                  width: double.maxFinite,
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "อาหาร 2",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        "1",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 40),
-                  alignment: Alignment.centerLeft,
-                  width: double.maxFinite,
-                  height: 40,
-                  decoration: BoxDecoration(color: Colors.grey[200]),
-                  child: Text(
-                    "รายละเอียดผู้สั่ง",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(left: 40, right: 40),
-                        height: 40,
-                        width: double.maxFinite,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "ชื่อ  ",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
-                            ),
-                            Text(
-                              "Nawapan DeprasertKul",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
-                            ),
-                          ],
+                        Text(
+                          'เพิ่มเวลา',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      Divider(
-                        color: Colors.grey[200],
-                        thickness: 2,
-                        height: 0,
-                      ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(left: 40, right: 40),
-                        height: 40,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "เบอร์ติดต่อ",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
-                            ),
-                            Text(
-                              "0863882908",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         )
-        // ListView(
-        //   children: <Widget>[
-        //     headerImage,
 
-        //     texTimeProcess,
-        //     Container(
-        //       child: Divider(
-        //         indent: 40,
-        //         color: Colors.black,
-        //         endIndent: 40,
-        //       ),
-        //     ),
         //     Row(
         //       children: <Widget>[
         //         Container(
