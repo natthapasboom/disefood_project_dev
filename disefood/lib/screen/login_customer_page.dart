@@ -67,7 +67,9 @@ class _LoginPageState extends State<LoginPage> {
           }
         } else {
           print('error code');
+
           setState(() {
+            dialogError(context);
             _isLoading = false;
           });
         }
