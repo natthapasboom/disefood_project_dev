@@ -44,7 +44,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   Future getFoodByShopId() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     _shopId = preferences.getInt('shop_id');
-    String _url = 'http://10.0.2.2:8080/api/shop/menu/$_shopId';
+    String _url = 'http://54.151.194.224:8000/api/shop/menu/$_shopId';
     final response = await http.get(_url);
     var body = response.body;
     setState(() {

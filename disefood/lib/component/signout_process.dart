@@ -13,7 +13,7 @@ Future<Null> signOutProcess(BuildContext context) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
 
   try {
-    String url = 'http://10.0.2.2:8080/api/auth/logout';
+    String url = 'http://54.151.194.224:8000/api/auth/logout';
 
     String token = preferences.getString('token');
     print(token);

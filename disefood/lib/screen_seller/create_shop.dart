@@ -34,35 +34,9 @@ class _CreateShopState extends State<CreateShop> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      findUser();
-      fetchShopFromStorage();
     });
   }
 
-  Future<Null> findUser() async {
-    SharedPreferences preference = await SharedPreferences.getInstance();
-    setState(() {
-      nameUser = preference.getString('first_name');
-      userId = preference.getInt('user_id');
-      lastNameUser = preference.getString('last_name');
-      coverImg = preference.getString('profile_img');
-    });
-  }
-
-  Future<Null> fetchShopFromStorage() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-
-    final shopName = _prefs.getString('shop_name');
-    final shopId = _prefs.getInt('shop_id');
-    final shopImg = _prefs.getString('cover_img');
-    final shopSlot = _prefs.getInt('shop_slot');
-    setState(() {
-      _shopName = shopName;
-      _shopId = shopId;
-      _shopImg = shopImg;
-      _shopSlot = shopSlot;
-    });
-  }
 
   Widget _checkImage() {
     if (_isEdit) {
@@ -481,7 +455,7 @@ class _CreateShopState extends State<CreateShop> {
     logger.d("body $body");
 
     try {
-      String _url = 'http://10.0.2.2:8080/api/shop/owner';
+      String _url = 'http://54.151.194.224:8000/api/shop/owner';
       Dio().options.headers['Authorization'] = 'Bearer $token';
 
       String shopImage = _image.path.split('/').last;

@@ -68,7 +68,7 @@ class _HomeAdminState extends State<HomeAdmin> {
   }
 
   Future getShops() async {
-    String _url = 'http://10.0.2.2:8080/api/shop';
+    String _url = 'http://54.151.194.224:8000/api/shop';
     final response = await http.get(_url);
     var body = response.body;
     setState(() {

@@ -57,7 +57,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     int shopId = _prefs.getInt("shop_id");
     String token = _prefs.getString("token");
-    String _url = 'http://10.0.2.2:8080/api/order/shop/$shopId';
+    String _url = 'http://54.151.194.224:8000/api/order/shop/$shopId';
     final response = await http.get(
       _url,
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
