@@ -113,7 +113,13 @@ class _HomeSellerState extends State<HomeSeller> {
           : _shopId != null
               ? approve == 0
                   ? Center(
-                      child: Text('รอแอดมินอณุมัติร้านค้า'),
+                      child: Text('รอแอดมินอนุมัติร้านค้า'
+                      ,
+                       style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black38,
+                              fontSize: 20),),
+                      
                     )
                   : ListView(
                       children: <Widget>[

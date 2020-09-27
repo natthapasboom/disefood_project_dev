@@ -62,14 +62,25 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
       _url,
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
+    logger.d('${response.statusCode}');
+    print('${response.statusCode}');
     var body = response.body;
-
-    // logger.d(body);
-    setState(() {
+    if(response.statusCode == 200) {
+      // logger.d(response.body);
+      setState(() {
       isLoading = false;
       orderSeller = jsonDecode(body)['data'];
-      logger.d(orderSeller);
+      print('order seller: ${orderSeller.length}');
     });
+    }else if(response.statusCode != 200){
+      setState(() {
+        isLoading = false;
+        orderSeller =jsonDecode(body)['data'];
+        
+      });
+    }
+    // logger.d(body);
+    
   }
 
   colorCheck(item) {
@@ -102,17 +113,22 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
   // }
   @override
   Widget build(BuildContext context) {
-    print('$_userId $_name');
+    // print('$_userId $_name');
 
     return Scaffold(
       body: isLoading
           ? Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                 strokeWidth: 5.0,
+                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
+              ),
             )
-          : new ListView.builder(
+          : orderSeller.length != 0 ?
+          new ListView.builder(
               itemCount: orderSeller != null ? orderSeller.length : 0,
               itemBuilder: (BuildContext context, int index) {
                 var item = orderSeller[index];
+                print('${orderSeller.length}');
                 colorCheck(item);
                 logger.d(tempColor);
                 // Todo: Improve coding next time, Boom.
@@ -123,7 +139,8 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                         item["order_details"][i]["food"]["name"] + " ";
                   }
                 }
-                return Container(
+                return 
+                Container(
                   margin: EdgeInsets.all(20),
                   child: InkWell(
                     child: Card(
@@ -145,7 +162,8 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                         margin:
                                             EdgeInsets.only(top: 50, bottom: 0),
                                         child: CircularProgressIndicator(
-                                          backgroundColor: Colors.amber[900],
+                                          strokeWidth: 5.0,
+                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
                                         ))),
                                 errorWidget: (context, url, error) => Container(
                                   height: 100,
@@ -331,7 +349,16 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                   ),
                 );
               },
-            ),
+            ):
+           Center(
+                        child: Text(
+                          "ยังไม่มีออเดอร์ในขณะนี้",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black38,
+                              fontSize: 20),
+                        ),
+                      ),
     );
   }
 }

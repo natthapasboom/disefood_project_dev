@@ -92,7 +92,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
           imageUrl: '${AppConfig.image}${widget.image}',
           height: 300,
           width: 500,
-          fit: BoxFit.fitWidth,
+          fit: BoxFit.cover,
           placeholder: (context, url) => Center(
                   child: Center(
                 child: Container(

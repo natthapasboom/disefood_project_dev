@@ -129,8 +129,17 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                   leading: Container(
                                     margin: EdgeInsets.only(
                                       left: 30,
+                                      top: 5,
                                     ),
-                                    child: Text(
+                                    child: '${foods['name']}'.length > 10 ?
+                                    Text(
+                                      '${foods['name']}'.substring(0,8)+'...',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        
+                                      ),
+                                    ):
+                                    Text(
                                       '${foods['name']}',
                                       style: TextStyle(
                                         fontSize: 18,
@@ -145,7 +154,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                         margin: EdgeInsets.only(
                                             top: 13, right: 5, left: 50),
                                         child: Text(
-                                          '${foods['price']}฿',
+                                          '${foods['price']} ฿',
                                           style: TextStyle(
                                             color: const Color(0xff11AB17),
                                             fontSize: 18,

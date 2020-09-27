@@ -121,8 +121,10 @@ class _RegisState extends State<Regis> {
       }
 
       print('res : $response');
-    }
+    }else{
       dialogError(context);
+    }
+      
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
