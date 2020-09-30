@@ -88,7 +88,7 @@ class AuthController extends Controller
         $credentials['password'] = $request['confirm_password'];
         unset($request['confirm_password']);
         if(!Auth::guard('web')->attempt($credentials)) {
-            return response()->json(['msg' => 'Wrong password ']);
+            return response()->json(['msg' => 'Wrong password'], 401);
         }
 
         if($request->profile_img != null) {
