@@ -59,6 +59,31 @@ class ShopController extends Controller
         }
     }
 
+//    public function shopSearch(Request $request){
+//        $data = $request->query();
+//        $shopSlot = $data['shop_slot'];
+//        $name = $data['name'];
+//        $approved = $data['approved'];
+//
+//        if($data['shop_slot'] != null && $data['name'] == null && $data['approved'] == null) {
+//            dd($data['shop_slot']);
+//        } elseif($data['name'] != null && $data['approved'] == null && $data['shop_slot'] == null) {
+//            dd($data['name']);
+//        } elseif ($data['approved'] != null && $data['name'] == null && $data['shop_slot'] == null) {
+//            dd($data['approved']);
+//        } else {
+//            dd(12313);
+//        }
+
+//        $shops = $this->shopRepo->shopSearchName($data);
+
+//        if(!$shops) {
+//            return response()->json(['msg' => 'shop not found', 'status' => 404]);
+//        }
+
+//        return response()->json(['data' => $shops], 200);
+//    }
+
     //    admin
     public function approved(Request $request, $shopId)
     {

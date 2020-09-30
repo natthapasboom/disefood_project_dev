@@ -44,6 +44,7 @@ Route::group([
 ], function () {
     Route::get('/', 'ShopController@getShopsList');
     Route::get('/{shopId}/detail', 'ShopController@findShopById');
+//    Route::post('/search', 'ShopController@shopSearch');
 
     Route::group([
         'prefix' => 'owner',

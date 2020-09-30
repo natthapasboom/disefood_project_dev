@@ -13,4 +13,7 @@ interface ShopRepositoryInterface
     public function findMenuByShopId($shopId);
     public function getBySellerId($userId);
     public function delete($shopId);
+//    public function shopSearchName($data);
+//    public function shopSearchShopSlot($data);
+//    public function shopSearchShopApproved($data);
 }
