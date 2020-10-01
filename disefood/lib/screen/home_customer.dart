@@ -1,12 +1,8 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
-import 'package:disefood/model/foods_list.dart';
-import 'package:disefood/model/shops_list.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/services/api_provider.dart';
-import 'package:disefood/services/shopservice.dart';
 import 'package:disefood/screen/login_customer_page.dart';
 import 'package:disefood/screen/menu_page.dart';
 import 'package:flutter/cupertino.dart';
