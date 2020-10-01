@@ -19,21 +19,21 @@ class ShopSeeder extends Seeder
                 'user_id'     =>  2,
                 'shop_slot'   =>  1,
                 'name'        =>  'KFC',
-                'cover_img'   =>  'https://disefood.s3-ap-southeast-1.amazonaws.com/forSeeder/Shops/KFC_shop_cover_img.png',
+                'cover_img'   =>  'forSeeder/Shops/KFC_shop_cover_img.png',
                 'approved'    =>  1
             ],
             [
                 'user_id'     =>  3,
                 'shop_slot'   =>  2,
                 'name'        =>  'YAYOI',
-                'cover_img'   =>  'https://disefood.s3-ap-southeast-1.amazonaws.com/forSeeder/Shops/YAYOI_cover_img.png',
+                'cover_img'   =>  'forSeeder/Shops/YAYOI_cover_img.png',
                 'approved'    =>  1
             ],
             [
                 'user_id'     =>  4,
                 'shop_slot'   =>  3,
                 'name'        =>  'BUN\'TOWN',
-                'cover_img'   =>  'https://disefood.s3-ap-southeast-1.amazonaws.com/forSeeder/Shops/Bun_Town_shop_cover_img.jpg',
+                'cover_img'   =>  'forSeeder/Shops/Bun_Town_shop_cover_img.jpg',
                 'approved'    =>  1
             ],
             [

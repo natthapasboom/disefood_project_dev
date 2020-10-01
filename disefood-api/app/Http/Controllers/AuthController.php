@@ -49,6 +49,7 @@ class AuthController extends Controller
 
         $tokenResult = $user->createToken('Auth Token');
         $token = $tokenResult->token;
+        $token->expires_at = Carbon::now()->addWeek(1);
         $token->save();
         return response()->json([
             'data'  => $user,
@@ -74,18 +75,41 @@ class AuthController extends Controller
         }
     }
 
-    //TODO: if u want to update profile. u must type password to verified
     public function updateProfile(UpdateUserRequest $request)
     {
-//        $req = $request->validated();
-//        if( Auth::check() ) {
-//            $user = Auth::user();
-//            $username = $user->username;
-//            $credentials['username'] = $username;
-//            $credentials['password'] = $req['confirm_password'];
-//            dd(Auth::attempt($credentials));
-//        } else {
-//            response()->json(['msg' => 'No permission'], 401);
-//        }
+        if (!Auth::check()) {
+            return response()->json(['msg' => 'No permission'], 401);
+        }
+
+        $user = Auth::user();
+        $userId = $user->id;
+        $username = $user->username;
+        $credentials['username'] = $username;
+        $credentials['password'] = $request['confirm_password'];
+        unset($request['confirm_password']);
+        if(!Auth::guard('web')->attempt($credentials)) {
+            return response()->json(['msg' => 'Wrong password'], 401);
+        }
+
+        if($request->profile_img != null) {
+            $req = $request->validated();
+            unset($req['confirm_password']);
+            if(!$req) {
+                return response()->json(['msg' => 'Failed Validation'], 422);
+            }
+
+            $oldPath = $user['profile_img'];
+            Storage::disk('s3')->delete($oldPath);
+            $newPath = Storage::disk('s3')->put('images/user/profile_img', $request->file('profile_img'), 'public');
+            $req['profile_img'] = $newPath;
+            $this->userRepo->updateById($req, $userId);
+            $newUser = $this->userRepo->getUserById($userId);
+            return response()->json(['data' => $newUser, 'msg' => 'Updated Profile With Image Success'], 200);
+        } else {
+            $req = $request->except(['_method']);
+            $this->userRepo->updateById($req, $userId);
+            $newUser = $this->userRepo->getUserById($userId);
+            return response()->json(['data' => $newUser, 'msg' => 'Updated Profile Success'], 200);
+        }
     }
 }
