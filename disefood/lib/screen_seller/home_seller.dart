@@ -332,9 +332,9 @@ class _HomeSellerState extends State<HomeSeller> {
             : CachedNetworkImage(
                 imageUrl:
                     'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
-                width: 430.0,
-                height: 160.0,
-                fit: BoxFit.fill,
+                height: 150,
+          width: 500,
+          fit: BoxFit.fitWidth,
                 placeholder: (context, url) => Center(
                     child: Container(
                         margin: EdgeInsets.only(top: 50, bottom: 35),

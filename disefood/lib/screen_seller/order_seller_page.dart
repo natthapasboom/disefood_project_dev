@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/model/orderList.dart';
 import 'package:disefood/screen_seller/orderdetail.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -33,7 +34,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
   String userTel;
   int tempColor = 0;
   String tempStatus = "";
-
+  List<OrderLIst> list =List();
   @override
   void initState() {
     Future.microtask(() async {
@@ -53,7 +54,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
     });
   }
 
-  Future getOrderByShopId() async {
+  Future<List<OrderLIst>> getOrderByShopId() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     int shopId = _prefs.getInt("shop_id");
     String token = _prefs.getString("token");
@@ -64,29 +65,61 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
     );
     logger.d('${response.statusCode}');
     print('${response.statusCode}');
-    var body = response.body;
     if(response.statusCode == 200) {
-      // logger.d(response.body);
-      setState(() {
-      isLoading = false;
-      orderSeller = jsonDecode(body)['data'];
-      print('order seller: ${orderSeller.length}');
-    });
-    }else if(response.statusCode != 200){
+      list = (json.decode(response.body) as List).map((data) => new OrderLIst.fromJson(data)).toList();
       setState(() {
         isLoading = false;
-        orderSeller =jsonDecode(body)['data'];
-        
       });
+      var body = json.decode(response.body);
+      var orderDetail = json.decode(response.body)['order_details'];
+      print('order_detail : $orderDetail');
+      for (Map<String,dynamic> m in body['order_details']){
+       var order = list.add(OrderLIst.fromJson(m));
+      }
+      //Replace above line with your model implemtation
+  //  }
+      // logger.d(response.body);
+    //   setState(() {
+       
+    //   // return OrderLIst.fromJson(jsonDecode(body));
+    //   // print('orderSeller : ${orderList.data}');
+    //   // isLoading = false;
+    //   // orderSeller = jsonDecode(body)['data'];
+    //   // print('order seller: $orderSeller');
+    // });
+    }else if(response.statusCode != 200){
+      var body = json.decode(response.body);
+      List data = body['data'];
+       return  data.map((m) => OrderLIst.fromJson(m)).toList();
     }
     // logger.d(body);
     
+  }
+
+   String _foodName(dynamic item){
+    return item['order_details']['food']['name'];
   }
 
   colorCheck(item) {
     if (item["status"] == "not confirmed") {
       tempColor = 0;
       tempStatus = "ยังไม่ยืนยัน";
+      
+    } else if (item["status"] == "in process") {
+      tempColor = 1;
+      tempStatus = "กำลังทำ";
+    } else if (item["status"] == "success") {
+      tempColor = 2;
+      tempStatus = "เสร็จสิ้น";
+    }
+
+  }
+
+  Text checkStatus(var item) {
+ if (item["status"] == "not confirmed") {
+      tempColor = 0;
+     tempStatus = "ยังไม่ยืนยัน";
+      
     } else if (item["status"] == "in process") {
       tempColor = 1;
       tempStatus = "กำลังทำ";
@@ -96,21 +129,237 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
     }
   }
 
-  Color getColor() {
-    if (tempColor == 0) {
+  Color getColor(var status) {
+    if (status == 'not confirmed') {
       return Colors.redAccent;
-    } else if (tempColor == 1) {
+    } else if (status == 'in process') {
       return Colors.yellow[600];
-    } else if (tempColor == 2) {
+    } else if (status == 'success') {
       return Colors.lightGreen;
     } else {
       return Colors.redAccent;
     }
   }
 
-  // dispose() {
-  //   super.dispose();
-  // }
+  ListView _order(data) {
+  return ListView.builder(
+    itemCount: data.length,
+    itemBuilder: (context, index) {
+      return Container(
+                  margin: EdgeInsets.all(20),
+                  child: InkWell(
+                    child: Card(
+                      elevation: 8,
+                      color: Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Stack(
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl:
+                                    "https://disefood.s3-ap-southeast-1.amazonaws.com/${data['cover_img']}",
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 380,
+                                placeholder: (context, url) => Center(
+                                    child: Container(
+                                        margin:
+                                            EdgeInsets.only(top: 50, bottom: 0),
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 5.0,
+                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                                        ))),
+                                errorWidget: (context, url, error) => Container(
+                                  height: 100,
+                                  width: 380,
+                                  // color: const Color(0xff7FC9C5),
+                                  color: getColor(data[index]),
+                                  child: Center(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.fastfood,
+                                          size: 30,
+                                          color: Colors.white,
+                                        ),
+                                        Transform.translate(
+                                          offset: Offset(0, 0),
+                                          child: Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding:
+                                                EdgeInsets.fromLTRB(5, 4, 5, 5),
+                                            decoration: BoxDecoration(
+                                                // color: Colors.red,
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            child: Text(
+                                              data['status'],
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: Transform.translate(
+                                  offset: Offset(10, 10),
+                                  child: Container(
+                                    padding: EdgeInsets.fromLTRB(5, 4, 5, 5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Text(
+                                      "คิวที่ ${index + 1}",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 15, top: 5),
+                            child: Text(
+                              "รายละเอียด",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 15, top: 5),
+                            child: Text(
+                              '${data['order_details']['food']['name']}',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 15),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "ราคา  ",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                Container(
+                                  child: Text(
+                                    "${data["total_price"]} บาท",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 15),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "เวลาที่จะมารับ  ",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                    "${data["time_pickup"]}",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                ButtonBar(
+                                  children: <Widget>[
+                                    RaisedButton(
+                                      onPressed: () {
+                                        userId = data["user_id"];
+                                        timePickup = data["time_pickup"];
+                                        totalPrice = data["total_price"];
+                                        orderDetail = data["order_details"];
+                                        userFName = data["user"]["first_name"];
+                                        userLName = data["user"]["last_name"];
+                                        userTel = data["user"]["tel"];
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                OrderDetailSeller(
+                                              userId: userId,
+                                              timePickup: timePickup,
+                                              totalPrice: totalPrice,
+                                              orderDetail: orderDetail,
+                                              userFName: userFName,
+                                              userLName: userLName,
+                                              userTel: userTel,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      color: Colors.white,
+                                      child: Text(
+                                        "แก้ไข",
+                                        style: TextStyle(
+                                            color: Colors.orangeAccent,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    RaisedButton(
+                                      onPressed: () {
+                                        logger.d(orderSeller);
+                                      },
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      color: Colors.orange,
+                                      child: Text(
+                                        "ยอมรับ",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+    }
+  );
+}
+
+  dispose() {
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     // print('$_userId $_name');
@@ -124,6 +373,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
               ),
             )
           : orderSeller.length != 0 ?
+         
           new ListView.builder(
               itemCount: orderSeller != null ? orderSeller.length : 0,
               itemBuilder: (BuildContext context, int index) {
@@ -134,9 +384,12 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                 // Todo: Improve coding next time, Boom.
                 var i;
                 if (allFoodName == "") {
-                  for (i = 0; i < item["order_details"].length; i++) {
+                  for (i = 0; i < orderSeller.length; i++) {
                     allFoodName +=
                         item["order_details"][i]["food"]["name"] + " ";
+                          // allFoodName +=
+                    //     item["order_details"][i];
+                        print('order_details: ${item["order_details"][i]["food"]} ');
                   }
                 }
                 return 
@@ -169,7 +422,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                   height: 100,
                                   width: 380,
                                   // color: const Color(0xff7FC9C5),
-                                  color: getColor(),
+                                  color: getColor(item['status']),
                                   child: Center(
                                     child: Column(
                                       crossAxisAlignment:
@@ -193,7 +446,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(5)),
                                             child: Text(
-                                              "$tempStatus",
+                                              item['status'],
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w600,
