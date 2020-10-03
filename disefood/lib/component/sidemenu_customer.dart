@@ -3,6 +3,8 @@ import 'package:disefood/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/screen/home_customer.dart';
 
+import 'editProfile.dart';
+
 
 
 class SideMenuCustomer extends StatelessWidget {
@@ -55,6 +57,10 @@ class SideMenuCustomer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.edit),
             title: Text('Edit Profile'),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EditProfile()));
+            }
           ),
           Divider(height: 2,color: Colors.grey,),
           ListTile(

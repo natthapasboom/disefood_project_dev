@@ -113,7 +113,13 @@ class _HomeSellerState extends State<HomeSeller> {
           : _shopId != null
               ? approve == 0
                   ? Center(
-                      child: Text('รอแอดมินอณุมัติร้านค้า'),
+                      child: Text('รอแอดมินอนุมัติร้านค้า'
+                      ,
+                       style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black38,
+                              fontSize: 20),),
+                      
                     )
                   : ListView(
                       children: <Widget>[
@@ -326,9 +332,9 @@ class _HomeSellerState extends State<HomeSeller> {
             : CachedNetworkImage(
                 imageUrl:
                     'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
-                width: 430.0,
-                height: 160.0,
-                fit: BoxFit.fill,
+                height: 150,
+          width: 500,
+          fit: BoxFit.fitWidth,
                 placeholder: (context, url) => Center(
                     child: Container(
                         margin: EdgeInsets.only(top: 50, bottom: 35),

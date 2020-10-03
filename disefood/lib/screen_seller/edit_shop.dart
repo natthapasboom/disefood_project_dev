@@ -30,7 +30,7 @@ class EditShop extends StatefulWidget {
 
 class _EditShopState extends State<EditShop> {
   bool _isEdit = false;
-
+    
   String _shopName;
   int _shopId;
   String _shopImg;
@@ -308,7 +308,7 @@ class _EditShopState extends State<EditShop> {
             SharedPreferences sharedPreferences =
                 await SharedPreferences.getInstance();
             String token = sharedPreferences.getString('token');
-            String _url = 'http://10.0.2.2:8080/api/shop/owner/$_shopId';
+            String _url = 'http://54.151.194.224:8000/api/shop/owner/$_shopId';
             String name = _shopNameController.text.trim();
             String fileImage = _isEdit ? _image.path.split('/').last : null;
             FormData formData = FormData.fromMap({
