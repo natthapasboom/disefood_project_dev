@@ -92,7 +92,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
           imageUrl: '${AppConfig.image}${widget.image}',
           height: 300,
           width: 500,
-          fit: BoxFit.fitWidth,
+          fit: BoxFit.cover,
           placeholder: (context, url) => Center(
                   child: Center(
                 child: Container(
@@ -316,7 +316,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                         logger.d(
                                             'data: $menuId ${_nameController.text}, ${_priceController.text}, $selectedRadio, ${widget.image} // $imageUrl  ');
                                         String _url =
-                                            'http://10.0.2.2:8080/api/shop/menu/edit/$menuId';
+                                            'http://54.151.194.224:8000/api/shop/menu/edit/$menuId';
                                         String name =
                                             _nameController.text.trim();
                                         String fileImage = _isEdit

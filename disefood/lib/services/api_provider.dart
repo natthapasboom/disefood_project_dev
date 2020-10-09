@@ -15,7 +15,7 @@ class ApiProvider {
   String url = 'http://10.0.2.2:8080';
 
   Future<http.Response> doLogin(String username, String password) async {
-    String _url = 'http://10.0.2.2:8080/api/auth/login';
+    String _url = 'http://54.151.194.224:8000/api/auth/login';
 
     var body = {"username": username, "password": password};
     http.Response response = await http.post(_url, body: body);
@@ -36,7 +36,7 @@ class ApiProvider {
     }
     logger.d(statusFood);
     // logger.d('token : $token');
-    String url = 'http://10.0.2.2:8080/api/shop/menu/$shopId';
+    String url = 'http://54.151.194.224:8000/api/shop/menu/$shopId';
     FormData formData = FormData.fromMap({
       'name': name,
       'price': price,
@@ -67,7 +67,7 @@ class ApiProvider {
   Future<String> createShop(String name, int shopSlot, File coverImg,
       File documentImg, String token) async {
     try {
-      String _url = 'http://10.0.2.2:8080/api/shop/owner';
+      String _url = 'http://54.151.194.224:8000/api/shop/owner';
       Dio().options.headers['Authorization'] = 'Bearer $token';
 
       String shopImage = coverImg.path.split('/').last;
@@ -116,7 +116,7 @@ class ApiProvider {
       File image,
       String role) async {
     try {
-      String url = 'http://10.0.2.2:8080/api/auth/register';
+      String url = 'http://54.151.194.224:8000/api/auth/register';
       String fileName = image.path.split('/').last;
       print('after try ==> ');
       FormData formData = FormData.fromMap({
@@ -159,7 +159,7 @@ class ApiProvider {
 
   Future<http.Response> approveShopById(
       String token, int shopId, String approved, String _method) async {
-    String _url = 'http://10.0.2.2:8080/api/admin/approved/$shopId';
+    String _url = 'http://54.151.194.224:8000/api/admin/approved/$shopId';
     var body = {"approved": approved, "_method": _method};
     http.Response response = await http.post(_url,
         headers: {'Authorization': 'Bearer $token'}, body: body);
@@ -167,40 +167,40 @@ class ApiProvider {
   }
 
   Future<http.Response> rejectShopByID(int id, String token) async {
-    String _url = 'http://10.0.2.2:8080/api/admin/rejected/$id';
+    String _url = 'http://54.151.194.224:8000/api/admin/rejected/$id';
     http.Response response =
         await http.delete(_url, headers: {'Authorization': 'Bearer $token'});
     return response;
   }
 
   Future<http.Response> deleteMenuById(int id, String token) async {
-    String _url = 'http://10.0.2.2:8080/api/shop/menu/remove/$id';
+    String _url = 'http://54.151.194.224:8000/api/shop/menu/remove/$id';
     http.Response response =
         await http.delete(_url, headers: {'Authorization': 'Bearer $token'});
     return response;
   }
 
   Future<http.Response> getUserById(int userId) async {
-    String _url = 'http://10.0.2.2:8080/api/user/$userId';
+    String _url = 'http://54.151.194.224:8000/api/user/$userId';
     http.Response response = await http.get(_url);
     return response;
   }
 
   Future<http.Response> getFoodByShopId(int shopId) async {
-    String _url = 'http://10.0.2.2:8080/api/shop/menu/$shopId';
+    String _url = 'http://54.151.194.224:8000/api/shop/menu/$shopId';
     http.Response response = await http.get(_url);
     return response;
   }
 
   Future<http.Response> getShopId(String token) async {
-    String _url = 'http://10.0.2.2:8080/api/shop/owner';
+    String _url = 'http://54.151.194.224:8000/api/shop/owner';
     http.Response response =
         await http.get(_url, headers: {'Authorization': 'Bearer $token'});
     return response;
   }
 
   Future<String> getShops() async {
-    String _url = 'http://10.0.2.2:8080/api/shop';
+    String _url = 'http://54.151.194.224:8000/api/shop';
     final response = await http.get(_url);
     var body = response.body;
     var arr = json.decode(body)['data'];
@@ -209,7 +209,7 @@ class ApiProvider {
   }
 
   Future<List<ShopList>> getShopList(http.Client client) async {
-    String _url = 'http://10.0.2.2:8080/api/shop';
+    String _url = 'http://54.151.194.224:8000/api/shop';
     final response = await client.get(_url);
     print(response.statusCode);
     logger.d(response.body);

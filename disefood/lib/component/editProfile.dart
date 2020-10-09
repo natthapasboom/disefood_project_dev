@@ -22,11 +22,13 @@ class _EditProfileState extends State<EditProfile> {
   bool _isEdit = false;
   File _image;
   String coverImg;
-  String nameUser;
+  String firstName;
+  String lastName;
   String lastNameUser;
   String profileImg;
   int userId;
   int _userId;
+  String userName;
   String password;
   String tel;
   String email;
@@ -35,9 +37,11 @@ class _EditProfileState extends State<EditProfile> {
   bool isLoading = true;
   List shops = [];
   ApiProvider apiProvider = ApiProvider();
-  TextEditingController _nameController = TextEditingController();
+  TextEditingController _firstNameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _telController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -51,8 +55,33 @@ class _EditProfileState extends State<EditProfile> {
     _isLoading = false;
     super.initState();
     Future.microtask(() {
+
       findUser();
     });
+  }
+
+  String _validateEmail(String value) {
+    if (value.isEmpty) {
+      // The form is empty
+      return "Enter email address";
+    }
+    // This is just a regular expression for email addresses
+    String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" +
+        "\\@" +
+        "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+        "(" +
+        "\\." +
+        "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+        ")+";
+    RegExp regExp = new RegExp(p);
+
+    if (regExp.hasMatch(value)) {
+      // So, the email is valid
+      return null;
+    }
+
+    // The pattern of the email didn't match the regex above.
+    return 'กรุณากรอกอีเมลล์ใหม่';
   }
 
   Future<UserById> findUser() async {
@@ -68,12 +97,20 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         _isLoading = true;
         userId = preference.getInt('user_id');
-        nameUser = msg.data.firstName;
+        userName = msg.data.username;
+        firstName = msg.data.firstName;
+        lastName = msg.data.lastName;
         lastNameUser = msg.data.lastName;
         profileImg = msg.data.profileImg;
         email = msg.data.email;
         tel = msg.data.tel;
         logger.d(profileImg);
+        _firstNameController.text = '${msg.data.firstName}';
+        _lastNameController.text = '${msg.data.lastName}';
+        _emailController.text = '${msg.data.email}';
+        _telController.text = '${msg.data.tel}';
+        
+
       });
     } else {
       logger.e("statuscode != 200");
@@ -104,8 +141,8 @@ class _EditProfileState extends State<EditProfile> {
       return CachedNetworkImage(
         imageUrl: '${AppConfig.image}$profileImg',
         height: 200,
-        width: 300,
-        fit: BoxFit.fitHeight,
+        width: 500,
+        fit: BoxFit.cover,
       );
     }
   }
@@ -115,7 +152,10 @@ class _EditProfileState extends State<EditProfile> {
     return Scaffold(
       body: _isLoading == false
           ? Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                strokeWidth: 5.0,
+                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
+              ),
             )
           : userId != null
               ? ListView(
@@ -196,7 +236,7 @@ class _EditProfileState extends State<EditProfile> {
                                           margin:
                                               EdgeInsets.fromLTRB(30, 0, 0, 0),
                                           child: Text(
-                                            'Name',
+                                            'First Name',
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w900,
@@ -212,14 +252,9 @@ class _EditProfileState extends State<EditProfile> {
                                                       15.0),
                                             ),
                                             margin: EdgeInsets.fromLTRB(
-                                                60, 0, 30, 0),
+                                                30, 0, 30, 0),
                                             child: new TextFormField(
-                                              controller: nameUser == null ||
-                                                      lastNameUser == null
-                                                  ? _nameController
-                                                  : TextEditingController()
-                                                ..text =
-                                                    '$nameUser $lastNameUser',
+                                              controller: _firstNameController,
                                               decoration: InputDecoration(
                                                 contentPadding:
                                                     EdgeInsets.fromLTRB(
@@ -255,10 +290,7 @@ class _EditProfileState extends State<EditProfile> {
                                                   borderSide: new BorderSide(
                                                       color: Colors.red),
                                                 ),
-                                                hintText: nameUser != null &&
-                                                        lastNameUser != null
-                                                    ? '$nameUser  $lastNameUser'
-                                                    : 'กรอกชื่อ-นามสกุล',
+                                                hintText: _firstNameController != null ? '$firstName': 'กรอกชื่อชริง',
                                               ),
                                             ),
                                           ),
@@ -283,7 +315,7 @@ class _EditProfileState extends State<EditProfile> {
                                         margin:
                                             EdgeInsets.fromLTRB(30, 30, 0, 30),
                                         child: Text(
-                                          'Password',
+                                          'Last Name',
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w900,
@@ -298,9 +330,9 @@ class _EditProfileState extends State<EditProfile> {
                                                 new BorderRadius.circular(15.0),
                                           ),
                                           margin:
-                                              EdgeInsets.fromLTRB(30, 0, 30, 0),
+                                              EdgeInsets.fromLTRB(35, 0, 30, 0),
                                           child: new TextFormField(
-                                            controller: _passwordController,
+                                            controller: _lastNameController,
                                             decoration: InputDecoration(
                                               contentPadding:
                                                   EdgeInsets.fromLTRB(
@@ -333,7 +365,80 @@ class _EditProfileState extends State<EditProfile> {
                                                 borderSide: new BorderSide(
                                                     color: Colors.red),
                                               ),
-                                              hintText: 'กรอกรหัสผ่าน',
+                                              hintText: 'กรอกนามสกุล',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Divider(
+                                      indent: 30,
+                                      color: Colors.black,
+                                      endIndent: 30,
+                                    ),
+                                  ),
+                                   Row(
+                                    children: <Widget>[
+                                      Container(
+                                        margin:
+                                            EdgeInsets.fromLTRB(30, 30, 0, 30),
+                                        child: Text(
+                                          'Email',
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w900,
+                                              fontFamily: 'Roboto'),
+                                        ),
+                                      ),
+                                      Flexible(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[350],
+                                            borderRadius:
+                                                new BorderRadius.circular(15.0),
+                                          ),
+                                          margin:
+                                              EdgeInsets.fromLTRB(75, 0, 30, 0),
+                                          child: new TextFormField(
+                                            validator: _validateEmail,
+                                            keyboardType: TextInputType.emailAddress,
+                                            controller: _emailController,
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  EdgeInsets.fromLTRB(
+                                                      30, 0, 0, 0),
+                                              hintStyle:
+                                                  TextStyle(fontSize: 14),
+                                              fillColor: Colors.grey,
+                                              border: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey[350])),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey[350])),
+                                              enabledBorder:
+                                                  new OutlineInputBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        15.0),
+                                                borderSide: new BorderSide(
+                                                    color: Colors.grey[350]),
+                                              ),
+                                              errorBorder:
+                                                  new OutlineInputBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        15.0),
+                                                borderSide: new BorderSide(
+                                                    color: Colors.red),
+                                              ),
+                                              hintText: 'กรอกอีเมลล์',
                                             ),
                                           ),
                                         ),
@@ -369,8 +474,9 @@ class _EditProfileState extends State<EditProfile> {
                                                 new BorderRadius.circular(15.0),
                                           ),
                                           margin:
-                                              EdgeInsets.fromLTRB(80, 0, 30, 0),
+                                              EdgeInsets.fromLTRB(90, 0, 30, 0),
                                           child: new TextFormField(
+                                            keyboardType: TextInputType.number,
                                             controller: _telController,
                                             decoration: InputDecoration(
                                               contentPadding:
@@ -404,9 +510,8 @@ class _EditProfileState extends State<EditProfile> {
                                                 borderSide: new BorderSide(
                                                     color: Colors.red),
                                               ),
-                                              hintText: tel == null
-                                                  ? 'กรอกเบอร์โทร'
-                                                  : '$tel',
+                                              hintText:  'กรอกเบอร์โทร'
+                                                  ,
                                             ),
                                           ),
                                         ),
@@ -461,7 +566,9 @@ class _EditProfileState extends State<EditProfile> {
                                           width: 132,
                                           height: 40,
                                           child: RaisedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+
+                                            },
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(5),
@@ -595,7 +702,7 @@ class _EditProfileState extends State<EditProfile> {
                                             margin: EdgeInsets.fromLTRB(
                                                 60, 0, 30, 0),
                                             child: new TextFormField(
-                                              controller: _nameController,
+                                              controller: _firstNameController,
                                               decoration: InputDecoration(
                                                 contentPadding:
                                                     EdgeInsets.fromLTRB(

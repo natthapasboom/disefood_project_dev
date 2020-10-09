@@ -45,7 +45,7 @@ class _RegisState extends State<Regis> {
   String _validateEmail(String value) {
     if (value.isEmpty) {
       // The form is empty
-      return "Enter email address";
+      return "โปรดกรอกอีเมลล์";
     }
     // This is just a regular expression for email addresses
     String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" +
@@ -83,7 +83,7 @@ class _RegisState extends State<Regis> {
       String lastName = _lastNameController.text.trim();
       String tel = _phoneController.text.trim();
 
-      String url = 'http://10.0.2.2:8080/api/auth/register';
+      String url = 'http://54.151.194.224:8000/api/auth/register';
       String fileName = _image.path.split('/').last;
       print('after try ==> ');
       FormData formData = FormData.fromMap({
@@ -121,7 +121,10 @@ class _RegisState extends State<Regis> {
       }
 
       print('res : $response');
+    }else{
+      dialogError(context);
     }
+      
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

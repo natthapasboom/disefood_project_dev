@@ -66,7 +66,7 @@ class _AddMenuState extends State<AddMenu> {
     }
     logger.d(statusFood);
     // logger.d('token : $token');
-    String url = 'http://10.0.2.2:8080/api/shop/menu/$shopId';
+    String url = 'http://54.151.194.224:8000/api/shop/menu/$shopId';
     FormData formData = FormData.fromMap({
       'name': name,
       'price': priceController.text.trim(),
