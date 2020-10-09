@@ -44,7 +44,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   Future getFoodByShopId() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     _shopId = preferences.getInt('shop_id');
-    String _url = 'http://10.0.2.2:8080/api/shop/menu/$_shopId';
+    String _url = 'http://54.151.194.224:8000/api/shop/menu/$_shopId';
     final response = await http.get(_url);
     var body = response.body;
     setState(() {
@@ -129,8 +129,17 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                   leading: Container(
                                     margin: EdgeInsets.only(
                                       left: 30,
+                                      top: 5,
                                     ),
-                                    child: Text(
+                                    child: '${foods['name']}'.length > 10 ?
+                                    Text(
+                                      '${foods['name']}'.substring(0,8)+'...',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        
+                                      ),
+                                    ):
+                                    Text(
                                       '${foods['name']}',
                                       style: TextStyle(
                                         fontSize: 18,
@@ -145,7 +154,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                         margin: EdgeInsets.only(
                                             top: 13, right: 5, left: 50),
                                         child: Text(
-                                          '${foods['price']}฿',
+                                          '${foods['price']} ฿',
                                           style: TextStyle(
                                             color: const Color(0xff11AB17),
                                             fontSize: 18,

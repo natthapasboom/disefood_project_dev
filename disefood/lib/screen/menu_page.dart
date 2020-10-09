@@ -57,17 +57,17 @@ class _MenuPageState extends State<MenuPage> {
     });
   }
 
-  Future<Foods> findMenu() async {
+  Future findMenu() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     var response = await apiProvider.getFoodByShopId(shopId);
     print(response.statusCode);
+    var body = response.body;
     if (response.statusCode == 200) {
-      Map map = json.decode(response.body);
-      FoodByShopId msg = FoodByShopId.fromJson(map);
-      var data = msg.data.toJson();
+
+      
       setState(() {
         isLoading = false;
-        foods = msg.data.foods;
+        foods = json.decode(body)['data'];
       });
     } else {
       logger.e("statuscode != 200");
@@ -211,7 +211,10 @@ class _MenuPageState extends State<MenuPage> {
         //   coverImg: profileImg),
         body: isLoading
             ? Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  strokeWidth: 5.0,
+                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                ),
               )
             : SingleChildScrollView(
                 child: Container(
