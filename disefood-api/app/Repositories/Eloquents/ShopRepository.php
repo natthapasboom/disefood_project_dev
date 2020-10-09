@@ -50,21 +50,11 @@ class ShopRepository implements ShopRepositoryInterface
         return $this->shop->where('user_id', $userId)->first();
     }
 
-//    public function shopSearchName($data)
-//    {
-//        $name = $data['name'];
-//        return $this->shop->where('name', 'LIKE', '%'. $name .'%')->get();
-//    }
-//
-//    public function shopSearchShopSlot($data)
-//    {
-//        $shopSlot = $data['shop_slot'];
-//        return $this->shop->where('shop_slot', '=', $shopSlot)->get();
-//    }
-//
-//    public function shopSearchShopApproved($data)
-//    {
-//        $approved = $data['approved'];
-//        return $this->shop->where('name', '=', $approved)->get();
-//    }
+    public function search($data)
+    {
+        if(is_bool($data)) {
+            return $this->shop->where('approved', $data)->get();
+        }
+        return $this->shop->where('name', 'LIKE', '%' .  $data . '%')->get();
+    }
 }
