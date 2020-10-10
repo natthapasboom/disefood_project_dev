@@ -94,3 +94,20 @@ Route::group([
         Route::put('/{orderId}', 'OrderController@updateStatus');
     });
 });
+
+Route::group([
+    'prefix' => 'favorite'
+], function () {
+
+//    Route::get('/', 'FavoriteController@getAll');
+//    Route::get('/{fId}', 'FavoriteController@getById');
+
+    Route::group([
+       'prefix' => 'me',
+       'middleware' => 'auth:api'
+    ], function () {
+        Route::get('/', 'FavoriteController@getByMe');
+        Route::post('/', 'FavoriteController@addFavoriteShop');
+        Route::delete('/{fId}', 'FavoriteController@removeFavoriteShop');
+    });
+});
