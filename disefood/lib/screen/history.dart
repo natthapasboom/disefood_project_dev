@@ -45,14 +45,6 @@ class _HistoryState extends State<History> {
           var jsonString = response.body;
           var jsonMap = json.decode(jsonString);
           orderLists = OrderList.fromJson(jsonMap);
-          // print('order list: ${orderLists.toString()}');
-          // setState(() {
-          //   isLoading = true;
-          //   var list = json.decode(response.body)['data'];
-          //   print('list order: $list \n');
-          //   print('${list[0]['order_details']} \n');
-          // });
-
         }
       }
     } catch (e) {
@@ -112,6 +104,17 @@ class _HistoryState extends State<History> {
         style: TextStyle(
           fontFamily: 'Aleo',
         ));
+  }
+
+  Widget checkTextStatus(String status) {
+    if (status == "success") {
+      return Text(
+        'เสร็จสิ้น',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontFamily: 'Aleo', fontSize: 24, fontWeight: FontWeight.bold),
+      );
+    }
   }
 
   @override
@@ -225,7 +228,16 @@ class _HistoryState extends State<History> {
                           );
                         });
                   } else {
-                    return Center(child: CircularProgressIndicator());
+                    return Container(
+                      margin: EdgeInsets.only(top: 150),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 5.0,
+                          valueColor:
+                              AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                        ),
+                      ),
+                    );
                   }
                 }),
           ),
@@ -268,16 +280,19 @@ class _HistoryState extends State<History> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 30.0, right: 30.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "Add Review",
-                        border: InputBorder.none,
-                      ),
-                      maxLines: 8,
-                    ),
+                  Container(
+                    child: checkTextStatus(status),
                   ),
+                  // Padding(
+                  //   padding: EdgeInsets.only(left: 30.0, right: 30.0),
+                  //   child: TextField(
+                  //     decoration: InputDecoration(
+                  //       hintText: "Add Review",
+                  //       border: InputBorder.none,
+                  //     ),
+                  //     maxLines: 8,
+                  //   ),
+                  // ),
                   InkWell(
                     child: Container(
                       padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
