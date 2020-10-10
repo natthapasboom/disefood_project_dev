@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/model/shops_list.dart';
 import 'package:disefood/model/userById.dart';
+import 'package:disefood/screen/history.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:disefood/services/shopservice.dart';
 import 'package:disefood/screen/login_customer_page.dart';
@@ -159,8 +160,11 @@ class _HomeState extends State<Home> {
               onPressed: () => debugPrint('favorites'),
             ),
             new IconButton(
-              icon: Icon(Icons.archive),
-              onPressed: () => debugPrint("archive"),
+              icon: Icon(Icons.history),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => History()));
+              },
             ),
           ],
         ),
@@ -231,7 +235,10 @@ class _HomeState extends State<Home> {
                                                 child:
                                                     CircularProgressIndicator(
                                                   strokeWidth: 5.0,
-                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation(
+                                                          const Color(
+                                                              0xffF6A911)),
                                                 ))),
                                         errorWidget: (context, url, error) =>
                                             Container(
@@ -306,8 +313,8 @@ Widget headerSection = new Material(
             children: [
               TextFormField(
                 style: TextStyle(
-                  // backgroundColor: const Color(0xffC4C4C4)
-                ),
+                    // backgroundColor: const Color(0xffC4C4C4)
+                    ),
                 decoration: new InputDecoration(
                   prefixIcon: Icon(
                     Icons.search,
