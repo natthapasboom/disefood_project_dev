@@ -1,9 +1,9 @@
-class OrderLIst {
+class OrderList {
   List<Data> data;
 
-  OrderLIst({this.data});
+  OrderList({this.data});
 
-  OrderLIst.fromJson(Map<String, dynamic> json) {
+  OrderList.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
       data = new List<Data>();
       json['data'].forEach((v) {
