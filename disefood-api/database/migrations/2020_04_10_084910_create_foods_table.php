@@ -17,6 +17,7 @@ class CreateFoodsTable extends Migration
             $table->increments('id');
             $table->integer('shop_id')->unsigned();
             $table->string('name');
+            $table->unique(['shop_id', 'name']);
             $table->integer('price');
             $table->boolean('status');
             $table->string('cover_img')->nullable();

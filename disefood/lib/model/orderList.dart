@@ -32,7 +32,6 @@ class Data {
   Null deletedAt;
   Null createdAt;
   Null updatedAt;
-  User user;
   List<OrderDetails> orderDetails;
 
   Data(
@@ -46,7 +45,6 @@ class Data {
       this.deletedAt,
       this.createdAt,
       this.updatedAt,
-      this.user,
       this.orderDetails});
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -60,7 +58,6 @@ class Data {
     deletedAt = json['deleted_at'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
     if (json['order_details'] != null) {
       orderDetails = new List<OrderDetails>();
       json['order_details'].forEach((v) {
@@ -81,9 +78,6 @@ class Data {
     data['deleted_at'] = this.deletedAt;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
-    if (this.user != null) {
-      data['user'] = this.user.toJson();
-    }
     if (this.orderDetails != null) {
       data['order_details'] = this.orderDetails.map((v) => v.toJson()).toList();
     }
@@ -91,69 +85,15 @@ class Data {
   }
 }
 
-class User {
-  int id;
-  String username;
-  String email;
-  String firstName;
-  String lastName;
-  String tel;
-  String profileImg;
-  String role;
-  String createdAt;
-  String updatedAt;
-
-  User(
-      {this.id,
-      this.username,
-      this.email,
-      this.firstName,
-      this.lastName,
-      this.tel,
-      this.profileImg,
-      this.role,
-      this.createdAt,
-      this.updatedAt});
-
-  User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    username = json['username'];
-    email = json['email'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    tel = json['tel'];
-    profileImg = json['profile_img'];
-    role = json['role'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['username'] = this.username;
-    data['email'] = this.email;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['tel'] = this.tel;
-    data['profile_img'] = this.profileImg;
-    data['role'] = this.role;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    return data;
-  }
-}
-
 class OrderDetails {
   int id;
-  Null description;
+  String description;
   int orderId;
   int foodId;
   int price;
   int quantity;
   Null createdAt;
   Null updatedAt;
-  Food food;
 
   OrderDetails(
       {this.id,
@@ -163,8 +103,7 @@ class OrderDetails {
       this.price,
       this.quantity,
       this.createdAt,
-      this.updatedAt,
-      this.food});
+      this.updatedAt});
 
   OrderDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -175,7 +114,6 @@ class OrderDetails {
     quantity = json['quantity'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    food = json['food'] != null ? new Food.fromJson(json['food']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -186,54 +124,6 @@ class OrderDetails {
     data['food_id'] = this.foodId;
     data['price'] = this.price;
     data['quantity'] = this.quantity;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.food != null) {
-      data['food'] = this.food.toJson();
-    }
-    return data;
-  }
-}
-
-class Food {
-  int id;
-  int shopId;
-  String name;
-  int price;
-  int status;
-  String coverImg;
-  Null createdAt;
-  Null updatedAt;
-
-  Food(
-      {this.id,
-      this.shopId,
-      this.name,
-      this.price,
-      this.status,
-      this.coverImg,
-      this.createdAt,
-      this.updatedAt});
-
-  Food.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    shopId = json['shop_id'];
-    name = json['name'];
-    price = json['price'];
-    status = json['status'];
-    coverImg = json['cover_img'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['shop_id'] = this.shopId;
-    data['name'] = this.name;
-    data['price'] = this.price;
-    data['status'] = this.status;
-    data['cover_img'] = this.coverImg;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     return data;

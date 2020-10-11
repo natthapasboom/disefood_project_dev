@@ -49,4 +49,12 @@ class ShopRepository implements ShopRepositoryInterface
     {
         return $this->shop->where('user_id', $userId)->first();
     }
+
+    public function search($data)
+    {
+        if(is_bool($data)) {
+            return $this->shop->where('approved', $data)->get();
+        }
+        return $this->shop->where('name', 'LIKE', '%' .  $data . '%')->get();
+    }
 }

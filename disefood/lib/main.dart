@@ -1,3 +1,4 @@
+import 'package:disefood/circle_indicator.dart';
 import 'package:disefood/component/editProfile.dart';
 import 'package:disefood/component/order_seller_bottombar.dart';
 import 'package:disefood/component/organize_seller_bottombar.dart';
@@ -40,7 +41,7 @@ void main() async {
         iconTheme: IconThemeData(color: Colors.white),
       ),
     ),
-    home: LoginPage(),
+    home: StepIndicator(),
     initialRoute: '/',
     routes: {
       Regis.routeName: (_) => Regis(),
