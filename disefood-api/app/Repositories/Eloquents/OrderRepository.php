@@ -41,19 +41,23 @@ class OrderRepository implements OrderRepositoryInterface
         foreach ( $orders as $order) {
           $id = $order['id'];
           $order->find($id)->get();
-          $order->orderDetails;
+          $orderDetails = $order->orderDetails;
+          foreach ($orderDetails as $orderDetail) {
+              $orderDetail->food->makeHidden('shop_id', 'status', 'created_at', 'updated_at');
+          }
         }
         return $orders;
     }
 
     public function getByShopId($shopId)
     {
-        $orders = $this->order->where('shop_id', $shopId)->get();
+        $orders = $this->order->where('shop_id', $shopId)->orderBy('created_at','asc')->get();
         foreach ( $orders as $order) {
             $id = $order['id'];
             $order->find($id)->get();
-            $order->user;
-            $orderDetails =$order->orderDetails;
+            $order->user->makeHidden('email', 'profile_img', 'role', 'created_at', 'updated_at');
+            $order->shop->makeHidden('user_id', 'created_at', 'updated_at', 'deleted_at', 'cover_img', 'approved');
+            $orderDetails = $order->orderDetails;
             foreach ($orderDetails as $orderDetail) {
                 $orderDetail->food;
             }
