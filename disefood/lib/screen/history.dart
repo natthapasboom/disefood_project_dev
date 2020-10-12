@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:steps_indicator/steps_indicator.dart';
 
 class History extends StatefulWidget {
   @override
@@ -20,12 +21,14 @@ class _HistoryState extends State<History> {
   String token = '';
   var mapData;
   List list = List();
+   var orderLists = null;
   ApiProvider apiProvider = ApiProvider();
   Future<OrderList> _orderLists;
   @override
   void initState() {
     isLoading = false;
     _orderLists = orderByUserId();
+    logger.d(_orderLists);
 
     super.initState();
     Future.microtask(() {});
@@ -35,16 +38,21 @@ class _HistoryState extends State<History> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     userId = sharedPreferences.getInt('user_id');
     token = sharedPreferences.getString('token');
-    var orderLists = null;
+  
     print('user_id: $userId');
     try {
       if (userId != null) {
         var response = await apiProvider.getHistoryById(token);
+        print('response : ${response.body}');
         print('status code: ${response.statusCode}');
         if (response.statusCode == 200) {
-          var jsonString = response.body;
+          setState(() {
+                      var jsonString = response.body;
           var jsonMap = json.decode(jsonString);
           orderLists = OrderList.fromJson(jsonMap);
+          });
+
+
         }
       }
     } catch (e) {
@@ -64,7 +72,7 @@ class _HistoryState extends State<History> {
               color: const Color(0xff11AB17), fontSize: 18, fontFamily: 'Aleo'),
         ),
       );
-    } else if (status == "not confirm") {
+    } else if (status == "not confirmed") {
       return Container(
         margin: EdgeInsets.only(top: 0.0),
         child: Text(
@@ -117,6 +125,61 @@ class _HistoryState extends State<History> {
     }
   }
 
+  Widget indicatorCheck(String status) {
+    if (status == "not confirmed") {
+      return Center(
+        child: StepsIndicator(
+        selectedStep: 0,
+        nbSteps: 3,
+        selectedStepColorOut: const Color(0xff11AB17),
+        selectedStepColorIn: const Color(0xff11AB17),
+        doneStepColor: const Color(0xff11AB17),
+        doneLineColor: const Color(0xff11AB17),
+        undoneLineColor: const Color(0xffAB0B1F),
+        unselectedStepColorIn: const Color(0xffAB0B1F),
+        unselectedStepColorOut: const Color(0xffAB0B1F),
+        unselectedStepSize: 20,
+        selectedStepSize: 20,
+        doneStepSize: 20,
+      )
+      );
+    } else if(status == "in process") {
+      return Center(
+        child: StepsIndicator(
+        selectedStep: 1,
+        nbSteps: 3,
+        selectedStepColorOut: const Color(0xff11AB17),
+        selectedStepColorIn: const Color(0xff11AB17),
+        doneStepColor: const Color(0xff11AB17),
+        doneLineColor: const Color(0xff11AB17),
+        undoneLineColor: const Color(0xffAB0B1F),
+        unselectedStepColorIn: const Color(0xffAB0B1F),
+        unselectedStepColorOut: const Color(0xffAB0B1F),
+        unselectedStepSize: 20,
+        selectedStepSize: 20,
+        doneStepSize: 20,
+      )
+      );
+    } else if(status == "success") {
+      return Center(
+        child: StepsIndicator(
+        selectedStep: 2,
+        nbSteps: 3,
+        selectedStepColorOut: const Color(0xff11AB17),
+        selectedStepColorIn: const Color(0xff11AB17),
+        doneStepColor: const Color(0xff11AB17),
+        doneLineColor: const Color(0xff11AB17),
+        undoneLineColor: const Color(0xffAB0B1F),
+        unselectedStepColorIn: const Color(0xffAB0B1F),
+        unselectedStepColorOut: const Color(0xffAB0B1F),
+        unselectedStepSize: 20,
+        selectedStepSize: 20,
+        doneStepSize: 20,
+      )
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,8 +221,6 @@ class _HistoryState extends State<History> {
                         itemCount: snapshot.data.data.length,
                         itemBuilder: (context, index) {
                           var data = snapshot.data.data[index];
-                          // var detail =
-                          //     snapshot.data.data[index].orderDetails.length;
                           return Container(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -216,6 +277,10 @@ class _HistoryState extends State<History> {
                                                   padding: EdgeInsets.all(10),
                                                   child:
                                                       checkStatus(data.status)),
+                                                      Container(
+                                                        padding: EdgeInsets.all(10),
+                                                        child: indicatorCheck(data.status),
+                                                      )
                                             ],
                                           ),
                                         ),
@@ -240,6 +305,7 @@ class _HistoryState extends State<History> {
                     );
                   }
                 }),
+
           ),
         ],
       ),
