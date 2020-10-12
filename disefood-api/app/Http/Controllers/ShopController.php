@@ -59,6 +59,25 @@ class ShopController extends Controller
         }
     }
 
+    public function search(Request $request) {
+        try {
+            if($request->has('name')) {
+                $data = $request->name;
+                $shops = $this->shopRepo->search($data);
+            } elseif ($request->has('approved')) {
+                $data = boolean_value($request->approved);
+                $shops = $this->shopRepo->search($data);
+            }
+            $countShops = count($shops);
+            if($countShops == 0) {
+                return response()->json(['msg' => 'Shop Not found'], 404);
+            }
+            return response()->json(['data' => $shops], 200);
+        } catch (\Throwable $error) {
+            report($error);
+        }
+    }
+
     //    admin
     public function approved(Request $request, $shopId)
     {
