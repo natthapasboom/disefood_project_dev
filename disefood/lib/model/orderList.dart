@@ -29,9 +29,9 @@ class Data {
   int totalQuantity;
   String timePickup;
   String status;
-  Null deletedAt;
-  Null createdAt;
-  Null updatedAt;
+  String deletedAt;
+  String createdAt;
+  String updatedAt;
   List<OrderDetails> orderDetails;
 
   Data(

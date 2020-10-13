@@ -21,7 +21,7 @@ class _HistoryState extends State<History> {
   String token = '';
   var mapData;
   List list = List();
-   var orderLists = null;
+  var orderLists;
   ApiProvider apiProvider = ApiProvider();
   Future<OrderList> _orderLists;
   @override
@@ -38,7 +38,7 @@ class _HistoryState extends State<History> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     userId = sharedPreferences.getInt('user_id');
     token = sharedPreferences.getString('token');
-  
+
     print('user_id: $userId');
     try {
       if (userId != null) {
@@ -47,15 +47,16 @@ class _HistoryState extends State<History> {
         print('status code: ${response.statusCode}');
         if (response.statusCode == 200) {
           setState(() {
-                      var jsonString = response.body;
-          var jsonMap = json.decode(jsonString);
-          orderLists = OrderList.fromJson(jsonMap);
+            var jsonString = response.body;
+            var jsonMap = json.decode(jsonString);
+            orderLists = OrderList.fromJson(jsonMap);
           });
-
-
+        } else {
+          print('${response.request}');
         }
       }
     } catch (e) {
+      print('error : $e');
       return orderLists;
     }
 
@@ -122,13 +123,43 @@ class _HistoryState extends State<History> {
         style: TextStyle(
             fontFamily: 'Aleo', fontSize: 24, fontWeight: FontWeight.bold),
       );
+    } else if (status == "not confirmed") {
+      return Text(
+        'ยังไม่ได้รับออเดอร์',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontFamily: 'Aleo', fontSize: 24, fontWeight: FontWeight.bold),
+      );
+    } else if (status == "in process") {
+      return Text(
+        'กำลังทำ',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            fontFamily: 'Aleo', fontSize: 24, fontWeight: FontWeight.bold),
+      );
+    }
+  }
+
+  Widget checkImageStatus(String status) {
+    if (status == "not confirmed") {
+      return Center(
+        child: Image.asset('assets/images/baking.png'),
+      );
+    } else if (status == "in process") {
+      return Center(
+        child: Image.asset('assets/images/flambe.png'),
+      );
+    } else if (status == "success") {
+      return Center(
+        child: Image.asset('assets/images/bakery.png'),
+      );
     }
   }
 
   Widget indicatorCheck(String status) {
     if (status == "not confirmed") {
       return Center(
-        child: StepsIndicator(
+          child: StepsIndicator(
         selectedStep: 0,
         nbSteps: 3,
         selectedStepColorOut: const Color(0xff11AB17),
@@ -141,11 +172,10 @@ class _HistoryState extends State<History> {
         unselectedStepSize: 20,
         selectedStepSize: 20,
         doneStepSize: 20,
-      )
-      );
-    } else if(status == "in process") {
+      ));
+    } else if (status == "in process") {
       return Center(
-        child: StepsIndicator(
+          child: StepsIndicator(
         selectedStep: 1,
         nbSteps: 3,
         selectedStepColorOut: const Color(0xff11AB17),
@@ -158,11 +188,10 @@ class _HistoryState extends State<History> {
         unselectedStepSize: 20,
         selectedStepSize: 20,
         doneStepSize: 20,
-      )
-      );
-    } else if(status == "success") {
+      ));
+    } else if (status == "success") {
       return Center(
-        child: StepsIndicator(
+          child: StepsIndicator(
         selectedStep: 2,
         nbSteps: 3,
         selectedStepColorOut: const Color(0xff11AB17),
@@ -175,8 +204,7 @@ class _HistoryState extends State<History> {
         unselectedStepSize: 20,
         selectedStepSize: 20,
         doneStepSize: 20,
-      )
-      );
+      ));
     }
   }
 
@@ -218,6 +246,7 @@ class _HistoryState extends State<History> {
                   if (snapshot.hasData) {
                     return ListView.builder(
                         shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
                         itemCount: snapshot.data.data.length,
                         itemBuilder: (context, index) {
                           var data = snapshot.data.data[index];
@@ -231,7 +260,7 @@ class _HistoryState extends State<History> {
                                         left: 20,
                                         right: 20,
                                         top: 10.0,
-                                        bottom: 15.0),
+                                        bottom: 0.0),
                                     // height: 100,
                                     // width: 350,
                                     child: InkWell(
@@ -277,10 +306,6 @@ class _HistoryState extends State<History> {
                                                   padding: EdgeInsets.all(10),
                                                   child:
                                                       checkStatus(data.status)),
-                                                      Container(
-                                                        padding: EdgeInsets.all(10),
-                                                        child: indicatorCheck(data.status),
-                                                      )
                                             ],
                                           ),
                                         ),
@@ -305,7 +330,6 @@ class _HistoryState extends State<History> {
                     );
                   }
                 }),
-
           ),
         ],
       ),
@@ -347,7 +371,30 @@ class _HistoryState extends State<History> {
                     ),
                   ),
                   Container(
+                    margin: EdgeInsets.only(
+                      top: 20,
+                    ),
                     child: checkTextStatus(status),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 15, bottom: 20),
+                    child: indicatorCheck(status),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    child: checkImageStatus(status),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 15, bottom: 20),
+                    child: Center(
+                      child: Text(
+                        'รายการอาหาร',
+                        style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24),
+                      ),
+                    ),
                   ),
                   // Padding(
                   //   padding: EdgeInsets.only(left: 30.0, right: 30.0),
@@ -372,7 +419,14 @@ class _HistoryState extends State<History> {
                           ? FlatButton(
                               onPressed: () {},
                               child: Center(
-                                child: Text('Review'),
+                                child: Text(
+                                  'Review',
+                                  style: TextStyle(
+                                      fontFamily: 'Roboto',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
                               ))
                           : Text(
                               "",
