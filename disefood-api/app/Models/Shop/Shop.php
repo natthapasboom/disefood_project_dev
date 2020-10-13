@@ -15,7 +15,7 @@ class Shop extends Model
     protected $table = 'shops';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'name', 'shop_slot', 'cover_img', 'document_img', 'user_id', 'approved'
+        'name', 'shop_slot', 'cover_img', 'user_id', 'approved'
     ];
     /**
      * @var mixed
@@ -54,5 +54,10 @@ class Shop extends Model
     public function shopTypes()
     {
         return $this->hasMany(ShopsShopType::class, 'shop_id', 'id');
+    }
+
+    public function accountNumbers()
+    {
+        return $this->hasMany(AccountNumber::class, 'shop_id', 'id');
     }
 }

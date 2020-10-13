@@ -20,7 +20,8 @@ class AppServiceProvider extends ServiceProvider
             'Food',
             'Order',
             'OrderDetail',
-            'Favorite'
+            'Favorite',
+            'AccountNumber'
         );
         foreach($models as $model) {
             $this->app->bind("App\Repositories\Interfaces\\{$model}RepositoryInterface", "App\Repositories\Eloquents\\{$model}Repository");

@@ -45,6 +45,17 @@ Route::group([
     Route::get('/', 'ShopController@getShopsList');
     Route::get('/{shopId}/detail', 'ShopController@findShopById');
     Route::get('/search', 'ShopController@search');
+    Route::get('/account-number', 'ShopController@getAccountNumbers');
+    Route::get('/{shopId}/account-number', 'ShopController@getAccountNumberByShopId');
+
+    Route::group([
+       'prefix' => 'account-number',
+       'middleware' => 'auth:api'
+    ], function () {
+        Route::post('/{shopId}', 'ShopController@addAccountNumber');
+        Route::put('/update/{accNumberId}', 'ShopController@updateAccountNumberById');
+        Route::delete('/delete/{accNumberId}', 'ShopController@deleteById');
+    });
 
     Route::group([
         'prefix' => 'owner',
