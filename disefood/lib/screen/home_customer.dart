@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       UserById msg = UserById.fromJson(map);
-      var data = msg.data.toJson();
+      // var data = msg.data.toJson();
       userId = preference.getInt('user_id');
       setState(() {
         nameUser = msg.data.firstName;
@@ -178,123 +178,156 @@ class _HomeState extends State<Home> {
                   valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
                 ),
               )
-            : Column(
-                children: <Widget>[
-                  headerSection,
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: shops != null ? shops.length : 0,
-                      itemBuilder: (BuildContext context, int index) {
-                        var item = shops[index];
-                        return item['approved'] == 1
-                            ? InkWell(
-                                onTap: () {
-                                  //card
-                                  shopId = item['id'];
-                                  shopName = item['name'];
-                                  shopSlot = item['shop_slot'];
-                                  shopCoverImg = item['cover_img'];
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MenuPage(
-                                              shopId: shopId,
-                                              shopName: shopName,
-                                              shopSlot: shopSlot,
-                                              shopCoverImg: shopCoverImg,
-                                            )),
-                                  );
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                      top: 15, bottom: 15, left: 40, right: 40),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      CachedNetworkImage(
-                                        imageUrl:
-                                            'https://disefood.s3-ap-southeast-1.amazonaws.com/${item['cover_img']}',
-                                        width: 380,
-                                        height: 210,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => Center(
-                                            child: Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 50, bottom: 35),
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  strokeWidth: 5.0,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation(
-                                                          const Color(
-                                                              0xffF6A911)),
-                                                ))),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                          height: 210,
-                                          width: 380,
-                                          height: 120,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) => Center(
-                                              child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      top: 50, bottom: 35),
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    strokeWidth: 5.0,
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation(
-                                                            const Color(
-                                                                0xffF6A911)),
-                                                  ))),
-                                          errorWidget: (context, url, error) =>
-                                              Container(
-                                            height: 120,
+            : Container(
+                color: Colors.grey[200],
+                child: Column(
+                  children: <Widget>[
+                    headerSection,
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: shops != null ? shops.length : 0,
+                        itemBuilder: (BuildContext context, int index) {
+                          var item = shops[index];
+                          return item['approved'] == 1
+                              ? InkWell(
+                                  onTap: () {
+                                    //card
+                                    shopId = item['id'];
+                                    shopName = item['name'];
+                                    shopSlot = item['shop_slot'];
+                                    shopCoverImg = item['cover_img'];
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MenuPage(
+                                                shopId: shopId,
+                                                shopName: shopName,
+                                                shopSlot: shopSlot,
+                                                shopCoverImg: shopCoverImg,
+                                              )),
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(
+                                        bottom: 0, top: 8, left: 20, right: 20),
+                                    child: Card(
+                                      semanticContainer: true,
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      elevation: 2,
+                                      color: Colors.white70,
+                                      // margin: EdgeInsets.only(
+                                      //     top: 8, bottom: 8, left: 40, right: 40),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          CachedNetworkImage(
+                                            imageUrl: '${item['cover_img']}',
                                             width: 380,
-                                            color: const Color(0xff7FC9C5),
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.store,
-                                                size: 50,
-                                                color: Colors.white,
+                                            height: 140,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                Center(
+                                                    child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            top: 50,
+                                                            bottom: 35),
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          strokeWidth: 5.0,
+                                                          valueColor:
+                                                              AlwaysStoppedAnimation(
+                                                                  const Color(
+                                                                      0xffF6A911)),
+                                                        ))),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
+                                              height: 140,
+                                              width: 380,
+                                              color: const Color(0xff7FC9C5),
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.store,
+                                                  size: 50,
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Container(
-                                          child: ListTile(
-                                            title: Text(
-                                              "${item['name']}",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            subtitle: Row(
-                                              children: <Widget>[
-                                                Icon(
-                                                  Icons.star,
-                                                  color: Colors.orange,
-                                                ),
-                                                Text("  4.2 Review(20 Review)")
-                                              ],
+                                          Container(
+                                            color: Colors.grey[50],
+                                            child: ListTile(
+                                              title: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        "${item['id']}",
+                                                        style: TextStyle(
+                                                            fontSize: 26,
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      Container(
+                                                        height: 26,
+                                                        child: VerticalDivider(
+                                                          color: Colors.orange,
+                                                          thickness: 3,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "${item['name']}",
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.star,
+                                                        color: Colors.orange,
+                                                      ),
+                                                      Text("  4.2 Reviews"),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              // subtitle: Row(
+                                              //   children: <Widget>[
+                                              //     Icon(
+                                              //       Icons.star,
+                                              //       color: Colors.orange,
+                                              //     ),
+                                              //     Text("  4.2 Review(20 Review)")
+                                              //   ],
+                                              // ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
 //          crossAxisAlignment: CrossAxisAlignment.start,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                            : null;
-                      },
+                                )
+                              : null;
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
       ),
     );
@@ -319,26 +352,12 @@ Widget headerSection = new Material(
     ),
     child: Column(
       children: <Widget>[
-        new Container(
-          margin: EdgeInsets.fromLTRB(20, 30, 20, 10),
-          child: new Column(
-            children: [
-              TextFormField(
-                style: TextStyle(
-                    // backgroundColor: const Color(0xffC4C4C4)
-                    ),
-                decoration: new InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.black,
-                  ),
-                  labelText: "โปรดใส่ชื่อร้านอาหารที่ต้องการค้นหา",
-                  filled: true,
-                  fillColor: Colors.white10,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(10.0),
-                  ),
-                  //fillColor: Colors.green
+        Container(
+          height: 40,
+          margin: EdgeInsets.only(left: 2, right: 2),
+          child: TextFormField(
+            style: TextStyle(
+                // backgroundColor: const Color(0xffC4C4C4)
                 ),
             decoration: new InputDecoration(
               prefixIcon: Icon(

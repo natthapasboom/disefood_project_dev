@@ -41,7 +41,7 @@ void main() async {
         iconTheme: IconThemeData(color: Colors.white),
       ),
     ),
-    home: StepIndicator(),
+    home: LoginPage(),
     initialRoute: '/',
     routes: {
       Regis.routeName: (_) => Regis(),

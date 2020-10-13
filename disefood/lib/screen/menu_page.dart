@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/model/foodByShopId.dart';
 import 'package:disefood/model/foods_list.dart';
+import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
 import 'package:disefood/screen/order_items.dart';
@@ -37,15 +38,14 @@ class _MenuPageState extends State<MenuPage> {
   String shopName;
   int shopSlot;
   String shopCoverImg;
-
-  int userId;
   ApiProvider apiProvider = ApiProvider();
-  String email;
   bool isLoading = true;
   List foods = [];
+  int userId;
   @override
   void initState() {
     super.initState();
+
     setState(() {
       shopName = widget.shopName;
       shopCoverImg = widget.shopCoverImg;
@@ -54,17 +54,21 @@ class _MenuPageState extends State<MenuPage> {
     });
     Future.microtask(() {
       findMenu();
+      findUser();
     });
   }
 
-  Future findMenu() async {
+  Future<UserById> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
+    userId = preference.getInt('user_id');
+  }
+
+  Future findMenu() async {
+    // SharedPreferences preference = await SharedPreferences.getInstance();
     var response = await apiProvider.getFoodByShopId(shopId);
     print(response.statusCode);
     var body = response.body;
     if (response.statusCode == 200) {
-
-      
       setState(() {
         isLoading = false;
         foods = json.decode(body)['data'];
@@ -133,12 +137,17 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                     backgroundColor: Colors.orange,
                     elevation: 4.0,
-                    label: const Text(
-                      'ยืนยันรายการอาหาร',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+                    label: Row(
+                      children: [
+                        Icon(Icons.shopping_basket),
+                        Text(
+                          'ไปยังตะกร้า',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
                     ),
                     onPressed: () {
                       Navigator.push(
@@ -191,7 +200,7 @@ class _MenuPageState extends State<MenuPage> {
             ),
             new IconButton(
               icon: new Icon(Icons.favorite),
-              onPressed: () => debugPrint('asd'),
+              onPressed: () => debugPrint('Favorite Button pressed'),
             ),
             new IconButton(
               icon: Icon(Icons.archive),
@@ -213,7 +222,7 @@ class _MenuPageState extends State<MenuPage> {
             ? Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 5.0,
-                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                  valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
                 ),
               )
             : SingleChildScrollView(
@@ -221,14 +230,30 @@ class _MenuPageState extends State<MenuPage> {
                   child: Column(
                     children: <Widget>[
                       CachedNetworkImage(
-                        imageUrl:
-                            'https://disefood.s3-ap-southeast-1.amazonaws.com/$shopCoverImg',
-                        height: 200,
+                        imageUrl: '$shopCoverImg',
+                        height: 140,
                         width: double.maxFinite,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        placeholder: (context, url) => Center(
+                            child: Container(
+                                margin: EdgeInsets.only(top: 50, bottom: 35),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 5.0,
+                                  valueColor: AlwaysStoppedAnimation(
+                                      const Color(0xffF6A911)),
+                                ))),
+                        errorWidget: (context, url, error) => Container(
+                          height: 140,
+                          width: 380,
+                          color: const Color(0xff7FC9C5),
+                          child: Center(
+                            child: Icon(
+                              Icons.store,
+                              size: 50,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -257,7 +282,7 @@ class _MenuPageState extends State<MenuPage> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Container(
-                                    height: 65,
+                                    height: 40,
                                     child: VerticalDivider(
                                       color: Colors.orange,
                                       thickness: 3,
@@ -273,7 +298,6 @@ class _MenuPageState extends State<MenuPage> {
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Text("ShopTypeValue"),
                                       Row(
                                         children: <Widget>[
                                           Icon(
@@ -281,7 +305,7 @@ class _MenuPageState extends State<MenuPage> {
                                             color: Colors.orangeAccent,
                                             size: 20,
                                           ),
-                                          Text("RateStarsValue"),
+                                          Text("4.2 Reviews"),
                                         ],
                                       ),
                                     ],
@@ -312,7 +336,7 @@ class _MenuPageState extends State<MenuPage> {
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(width: 45),
+                                SizedBox(width: 65),
                                 Text(
                                   "ราคา",
                                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -328,30 +352,30 @@ class _MenuPageState extends State<MenuPage> {
                                 itemCount: foods != null ? foods.length : 0,
                                 itemBuilder: (BuildContext context, int index) {
                                   var item = foods[index];
-                                  logger.d(foods);
+                                  // logger.d(foods);
                                   return Column(
                                     children: <Widget>[
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Visibility(
-                                            visible: false,
-                                            child: SizedBox(
-                                              width: 25,
-                                              child: Text(
-                                                "0",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.orange),
-                                              ),
-                                            ),
-                                            replacement: SizedBox(
-                                              width: 20,
-                                            ),
-                                          ),
+                                          // Visibility(
+                                          //   visible: false,
+                                          //   child: SizedBox(
+                                          //     width: 25,
+                                          //     child: Text(
+                                          //       "0",
+                                          //       style: TextStyle(
+                                          //           fontWeight: FontWeight.bold,
+                                          //           color: Colors.orange),
+                                          //     ),
+                                          //   ),
+                                          //   replacement: SizedBox(
+                                          //     width: 20,
+                                          //   ),
+                                          // ),
                                           SizedBox(
-                                            width: 140,
+                                            width: 190,
                                             child: Text('${item['name']}'),
                                           ),
                                           SizedBox(
