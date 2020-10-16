@@ -120,6 +120,16 @@
       <path value="$PROJECT_DIR$/disefood-api/vendor/nyholm/psr7" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/laminas/laminas-diactoros" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/laminas/laminas-zendframework-bridge" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/auth" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/cloud-core" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/cloud-vision" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/common-protos" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/gax" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/grpc-gcp" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/protobuf" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/rize/uri-template" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/grpc/grpc" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/psr/cache" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/symfony/http-client-contracts" />
     </include_path>
   </component>

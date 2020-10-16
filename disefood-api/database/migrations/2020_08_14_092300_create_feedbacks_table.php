@@ -18,7 +18,7 @@ class CreateFeedbacksTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('shop_id')->unsigned();
             $table->string('comment')->nullable();
-            $table->integer('rating')->nullable();
+            $table->enum('rating', ['1', '2', '3', '4', '5']);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

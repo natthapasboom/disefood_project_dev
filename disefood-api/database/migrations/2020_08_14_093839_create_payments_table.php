@@ -18,6 +18,7 @@ class CreatePaymentsTable extends Migration
             $table->integer('order_id')->unsigned();
             $table->integer('amount');
             $table->dateTime('payment_date');
+            $table->string('payment_img')->nullable();
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders');

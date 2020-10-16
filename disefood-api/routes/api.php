@@ -82,6 +82,12 @@ Route::group([
 });
 
 Route::group([
+   'prefix' => 'payment'
+], function () {
+    Route::post('/', 'PaymentController@create');
+});
+
+Route::group([
     'prefix' => 'order'
 ], function () {
 
@@ -121,4 +127,28 @@ Route::group([
         Route::post('/', 'FavoriteController@addFavoriteShop');
         Route::delete('/{fId}', 'FavoriteController@removeFavoriteShop');
     });
+});
+
+Route::group([
+    'prefix' => 'feedback'
+], function () {
+
+//   Route::get('/', 'FeedbackController@getAll');
+//   Route::get('/{id}', 'FeedbackController@getById');
+
+   Route::group([
+       'prefix' => 'me',
+       'middleware' => 'auth:api'
+   ], function () {
+       Route::get('/', 'FeedbackController@getByMe');
+       Route::post('/shop/{shopId}', 'FeedbackController@create');
+       Route::delete('/{id}', 'FeedbackController@deleteById');
+   });
+
+   Route::group([
+       'prefix' => 'shop',
+       'middleware' => 'auth:api'
+   ], function () {
+       Route::get('/{shopId}', 'FeedbackController@getByShopId');
+   });
 });
