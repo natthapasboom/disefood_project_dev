@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:disefood/model/shop_id.dart';
+import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:disefood/model/orderList.dart';
 import 'package:disefood/services/api_provider.dart';
@@ -24,6 +25,10 @@ class _HistoryState extends State<History> {
   var orderLists;
   ApiProvider apiProvider = ApiProvider();
   Future<OrderList> _orderLists;
+  List<OrderDetails> orderDetail = [];
+  String _shopName;
+  var orderDetailList;
+  List returnedList = new List();
   @override
   void initState() {
     isLoading = false;
@@ -103,6 +108,42 @@ class _HistoryState extends State<History> {
         style: TextStyle(
           fontFamily: 'Aleo',
         ));
+  }
+
+  Future<Widget> getNameShop(int shopId) async {
+    String url = 'http://54.151.194.224:8000/api/shop/$shopId/detail';
+    Map<String, String> headers = {
+      'Content-Type': 'application/json;charset=UTF-8',
+      'Charset': 'utf-8'
+    };
+    http.Response response = await http.get(url, headers: headers);
+
+    Map map = json.decode(response.body);
+    ShopById msg = ShopById.fromJson(map);
+    setState(() {
+      _shopName = msg.data.name;
+    });
+  }
+
+  Widget getShopName(int shopId) {
+    Future getNameApi(int shopId) async {
+      String url = 'http://54.151.194.224:8000/api/shop/$shopId/detail';
+      Map<String, String> headers = {
+        'Content-Type': 'application/json;charset=UTF-8',
+        'Charset': 'utf-8'
+      };
+      http.Response response = await http.get(url, headers: headers);
+
+      Map map = json.decode(response.body);
+      ShopById msg = ShopById.fromJson(map);
+      setState(() {
+        _shopName = msg.data.name;
+      });
+    }
+
+    return Text("$_shopName",
+        style: TextStyle(
+            fontFamily: 'Aleo', fontSize: 20, fontWeight: FontWeight.bold));
   }
 
   Widget getTime(String timePickup) {
@@ -250,6 +291,7 @@ class _HistoryState extends State<History> {
                         itemCount: snapshot.data.data.length,
                         itemBuilder: (context, index) {
                           var data = snapshot.data.data[index];
+                          // getNameShop(data.shopId);
                           return Container(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -265,6 +307,21 @@ class _HistoryState extends State<History> {
                                     // width: 350,
                                     child: InkWell(
                                       onTap: () async {
+                                        // for (int i = 0;
+                                        //     i < data.orderDetails.length;
+                                        //     i++) {
+                                        //   orderDetailList =
+                                        //       data.orderDetails[i].foodId;
+                                        //   returnedList
+                                        //       .add(data.orderDetails[i]);
+
+                                        //   // print(
+                                        //   //     'order detail: $orderDetailList');
+
+                                        //   String url =
+                                        //       'http://54.151.194.224:8000/api/food/$orderDetailList';
+                                        // }
+
                                         alertDialog(context, data.status);
                                       },
                                       child: Card(
@@ -288,13 +345,7 @@ class _HistoryState extends State<History> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: <Widget>[
-                                                    Text("ชื่อร้านอาหาร",
-                                                        style: TextStyle(
-                                                            fontFamily: 'Aleo',
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
+                                                    getShopName(data.shopId),
                                                     SizedBox(height: 4),
                                                     getDate(data.timePickup),
                                                     getTime(data.timePickup),

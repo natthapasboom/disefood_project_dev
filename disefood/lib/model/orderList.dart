@@ -92,8 +92,9 @@ class OrderDetails {
   int foodId;
   int price;
   int quantity;
-  Null createdAt;
-  Null updatedAt;
+  String createdAt;
+  String updatedAt;
+  Food food;
 
   OrderDetails(
       {this.id,
@@ -103,7 +104,8 @@ class OrderDetails {
       this.price,
       this.quantity,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.food});
 
   OrderDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -114,6 +116,7 @@ class OrderDetails {
     quantity = json['quantity'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    food = json['food'] != null ? new Food.fromJson(json['food']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -126,6 +129,34 @@ class OrderDetails {
     data['quantity'] = this.quantity;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    if (this.food != null) {
+      data['food'] = this.food.toJson();
+    }
+    return data;
+  }
+}
+
+class Food {
+  int id;
+  String name;
+  int price;
+  String coverImg;
+
+  Food({this.id, this.name, this.price, this.coverImg});
+
+  Food.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    price = json['price'];
+    coverImg = json['cover_img'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['price'] = this.price;
+    data['cover_img'] = this.coverImg;
     return data;
   }
 }
