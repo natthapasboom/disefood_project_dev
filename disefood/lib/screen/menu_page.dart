@@ -230,7 +230,8 @@ class _MenuPageState extends State<MenuPage> {
                   child: Column(
                     children: <Widget>[
                       CachedNetworkImage(
-                        imageUrl: '$shopCoverImg',
+                        imageUrl:
+                            'https://disefood.s3-ap-southeast-1.amazonaws.com/$shopCoverImg',
                         height: 140,
                         width: double.maxFinite,
                         fit: BoxFit.cover,
@@ -244,7 +245,7 @@ class _MenuPageState extends State<MenuPage> {
                                 ))),
                         errorWidget: (context, url, error) => Container(
                           height: 140,
-                          width: 380,
+                          width: double.maxFinite,
                           color: const Color(0xff7FC9C5),
                           child: Center(
                             child: Icon(
@@ -309,7 +310,29 @@ class _MenuPageState extends State<MenuPage> {
                                         ],
                                       ),
                                     ],
-                                  )
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 85),
+                                    child: RaisedButton(
+                                        child: Center(
+                                          child: Text(
+                                            'review',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'Aleo',
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18),
+                                          ),
+                                        ),
+                                        color: const Color(0xffF6A911),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(18.0),
+                                            side: BorderSide(
+                                                color:
+                                                    const Color(0xffF6A911))),
+                                        onPressed: () {}),
+                                  ),
                                 ],
                               ),
                             ),
@@ -324,7 +347,7 @@ class _MenuPageState extends State<MenuPage> {
                       ),
                       Container(
                         color: Colors.white,
-                        padding: EdgeInsets.fromLTRB(45, 20, 45, 0),
+                        padding: EdgeInsets.fromLTRB(45, 10, 45, 0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[

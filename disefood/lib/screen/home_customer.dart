@@ -224,7 +224,9 @@ class _HomeState extends State<Home> {
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
                                           CachedNetworkImage(
-                                            imageUrl: '${item['cover_img']}',
+                                            imageUrl:
+                                                "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                                                    '${item['cover_img']}',
                                             width: 380,
                                             height: 140,
                                             fit: BoxFit.cover,

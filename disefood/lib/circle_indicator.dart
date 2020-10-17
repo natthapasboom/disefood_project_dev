@@ -25,7 +25,6 @@ class _StepIndicatorState extends State<StepIndicator> {
         unselectedStepSize: 20,
         selectedStepSize: 20,
         doneStepSize: 20,
-        
       )),
     );
   }
