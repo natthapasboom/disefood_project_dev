@@ -199,12 +199,13 @@ class _HomeState extends State<Home> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => MenuPage(
-                                                shopId: shopId,
-                                                shopName: shopName,
-                                                shopSlot: shopSlot,
-                                                shopCoverImg: shopCoverImg,
-                                              )),
+                                        builder: (context) => MenuPage(
+                                          shopId: shopId,
+                                          shopName: shopName,
+                                          shopSlot: shopSlot,
+                                          shopCoverImg: shopCoverImg,
+                                        ),
+                                      ),
                                     );
                                   },
                                   child: Container(

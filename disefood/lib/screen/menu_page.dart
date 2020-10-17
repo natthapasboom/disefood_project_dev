@@ -16,6 +16,8 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'customer_dialog/order_amount_dialog.dart';
+
 class MenuPage extends StatefulWidget {
   final int shopId;
   final String shopName;
@@ -72,6 +74,7 @@ class _MenuPageState extends State<MenuPage> {
       setState(() {
         isLoading = false;
         foods = json.decode(body)['data'];
+        logger.d(foods);
       });
     } else {
       logger.e("statuscode != 200");
@@ -417,16 +420,19 @@ class _MenuPageState extends State<MenuPage> {
                                               color: Colors.orange,
                                             ),
                                             onPressed: () {
-                                              // Navigator.push(
-                                              //   context,
-                                              //   MaterialPageRoute(
-                                              //     builder: (context) =>
-                                              //         OrderAmount(
-                                              //             foodList:
-                                              //                 snapshot.data,
-                                              //             index: index),
-                                              //   ),
-                                              // );
+                                              int foodId = item['id'];
+                                              String foodname = item['name'];
+                                              String foodImg =
+                                                  item['cover_img'];
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      OrderAmountDialog(
+                                                        shopId: shopId,
+                                                        foodId: foodId,
+                                                        foodName: foodname,
+                                                        foodImg: foodImg,
+                                                      ));
                                             },
                                           ),
                                           IconButton(
