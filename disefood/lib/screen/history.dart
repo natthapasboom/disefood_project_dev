@@ -33,7 +33,7 @@ class _HistoryState extends State<History> {
   void initState() {
     isLoading = false;
     _orderLists = orderByUserId();
-    logger.d(_orderLists);
+    // logger.d(_orderLists);
 
     super.initState();
     Future.microtask(() {});
@@ -48,13 +48,16 @@ class _HistoryState extends State<History> {
     try {
       if (userId != null) {
         var response = await apiProvider.getHistoryById(token);
-        print('response : ${response.body}');
-        print('status code: ${response.statusCode}');
+        // print('response : ${response.body}');
+        // print('status code: ${response.statusCode}');
         if (response.statusCode == 200) {
+          
           setState(() {
             var jsonString = response.body;
             var jsonMap = json.decode(jsonString);
-            orderLists = OrderList.fromJson(jsonMap);
+            logger.d('json map: $jsonMap');
+            orderLists = OrderList.fromJson(jsonMap);  
+            logger.d('Orderlist: $orderLists');
           });
         } else {
           print('${response.request}');
@@ -307,6 +310,10 @@ class _HistoryState extends State<History> {
                                     // width: 350,
                                     child: InkWell(
                                       onTap: () async {
+                                        print(data.orderDetails);
+                                        for (var item in data.orderDetails){
+                                          print("item");
+                                        }
                                         // for (int i = 0;
                                         //     i < data.orderDetails.length;
                                         //     i++) {

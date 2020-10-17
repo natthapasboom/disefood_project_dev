@@ -63,8 +63,6 @@ class _MenuPageState extends State<MenuPage> {
     print(response.statusCode);
     var body = response.body;
     if (response.statusCode == 200) {
-
-      
       setState(() {
         isLoading = false;
         foods = json.decode(body)['data'];
@@ -213,7 +211,7 @@ class _MenuPageState extends State<MenuPage> {
             ? Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 5.0,
-                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                  valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
                 ),
               )
             : SingleChildScrollView(
@@ -285,6 +283,31 @@ class _MenuPageState extends State<MenuPage> {
                                         ],
                                       ),
                                     ],
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 70),
+                                    child: RaisedButton(
+                                        child: Center(
+                                          child: Text(
+                                            'review',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'Aleo',
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18
+                                                ),
+                                          ),
+                                        ),
+                                        color: const Color(0xffF6A911),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(18.0),
+                                            side: BorderSide(
+                                                color:
+                                                    const Color(0xffF6A911))),
+                                        onPressed: () {
+                                          
+                                        }),
                                   )
                                 ],
                               ),
