@@ -6,7 +6,7 @@ import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
-import 'package:disefood/screen/order_items.dart';
+import 'package:disefood/screen/order_cart.dart';
 import 'package:disefood/screen/view_order_page.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:disefood/services/getfoodmenupageservice.dart';
@@ -424,6 +424,7 @@ class _MenuPageState extends State<MenuPage> {
                                               String foodname = item['name'];
                                               String foodImg =
                                                   item['cover_img'];
+                                              int foodPrice = item["price"];
                                               showDialog(
                                                   context: context,
                                                   builder: (context) =>
@@ -432,6 +433,7 @@ class _MenuPageState extends State<MenuPage> {
                                                         foodId: foodId,
                                                         foodName: foodname,
                                                         foodImg: foodImg,
+                                                        foodPrice: foodPrice,
                                                       ));
                                             },
                                           ),

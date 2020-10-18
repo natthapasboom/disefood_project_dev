@@ -6,7 +6,6 @@ import 'package:disefood/screen/keepdata.dart';
 import 'package:disefood/screen/login_customer_page.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
 import 'package:disefood/screen/menu_page.dart';
-import 'package:disefood/screen/order_items.dart';
 import 'package:disefood/screen/order_promptpay_page.dart';
 import 'package:disefood/screen/view_order_page.dart';
 import 'package:disefood/screen_admin/home.dart';

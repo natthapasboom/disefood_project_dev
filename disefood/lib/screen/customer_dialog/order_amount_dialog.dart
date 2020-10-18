@@ -11,12 +11,14 @@ class OrderAmountDialog extends StatefulWidget {
   final int foodId;
   final String foodName;
   final String foodImg;
+  final int foodPrice;
   const OrderAmountDialog({
     Key key,
     @required this.foodName,
     @required this.foodImg,
     @required this.foodId,
     @required this.shopId,
+    @required this.foodPrice,
   }) : super(key: key);
   @override
   _OrderAmountDialogState createState() => _OrderAmountDialogState();
@@ -29,6 +31,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
   String foodName;
   String foodImg;
   int foodQuantity = 1;
+  int foodPrice;
   final myController = TextEditingController();
   @override
   void initState() {
@@ -39,6 +42,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
       foodImg = widget.foodImg;
       foodId = widget.foodId;
       shopId = widget.shopId.toString();
+      foodPrice = widget.foodPrice;
     });
     Future.microtask(() {});
   }
@@ -90,6 +94,8 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
     orderMap['foodName'] = foodName;
     orderMap['foodQuantity'] = foodQuantity;
     orderMap['foodDescription'] = myController.text;
+    orderMap['foodPrice'] = foodPrice;
+    orderMap['foodSumPrice'] = foodPrice * foodQuantity;
     print('orderMap Data :  ${orderMap.toString()} ');
     CartModel cartModel = CartModel.fromJson(orderMap);
 
