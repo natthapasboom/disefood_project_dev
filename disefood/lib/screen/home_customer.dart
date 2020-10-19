@@ -271,18 +271,18 @@ class _HomeState extends State<Home> {
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        "${item['id']}",
+                                                        "0.${item['id']}",
                                                         style: TextStyle(
-                                                            fontSize: 26,
+                                                            fontSize: 16,
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold),
                                                       ),
                                                       Container(
-                                                        height: 26,
+                                                        height: 20,
                                                         child: VerticalDivider(
-                                                          color: Colors.orange,
+                                                          color: Colors.black38,
                                                           thickness: 3,
                                                         ),
                                                       ),
