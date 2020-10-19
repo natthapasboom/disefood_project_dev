@@ -7,6 +7,7 @@ class CartModel {
   String foodDescription;
   int foodPrice;
   int foodSumPrice;
+  String foodImg;
 
   CartModel({
     this.id,
@@ -17,6 +18,7 @@ class CartModel {
     this.foodDescription,
     this.foodPrice,
     this.foodSumPrice,
+    this.foodImg,
   });
 
   CartModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class CartModel {
     foodDescription = json['foodDescription'];
     foodPrice = json['foodPrice'];
     foodSumPrice = json['foodSumPrice'];
+    foodImg = json['foodImg'];
   }
 
   Map<String, dynamic> toJson() {
@@ -40,6 +43,7 @@ class CartModel {
     data['foodDescription'] = this.foodDescription;
     data['foodPrice'] = this.foodPrice;
     data['foodSumPrice'] = this.foodSumPrice;
+    data['foodImg'] = this.foodImg;
     return data;
   }
 }

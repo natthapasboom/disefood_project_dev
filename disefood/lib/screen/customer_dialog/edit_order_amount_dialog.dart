@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:toast/toast.dart';
 
-class OrderAmountDialog extends StatefulWidget {
+class EditOrderAmountDialog extends StatefulWidget {
   final int shopId;
   final int foodId;
   final String foodName;
   final String foodImg;
   final int foodPrice;
-  const OrderAmountDialog({
+  const EditOrderAmountDialog({
     Key key,
     @required this.foodName,
     @required this.foodImg,
@@ -21,10 +21,10 @@ class OrderAmountDialog extends StatefulWidget {
     @required this.foodPrice,
   }) : super(key: key);
   @override
-  _OrderAmountDialogState createState() => _OrderAmountDialogState();
+  _EditOrderAmountDialogState createState() => _EditOrderAmountDialogState();
 }
 
-class _OrderAmountDialogState extends State<OrderAmountDialog> {
+class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
   Logger logger = Logger();
   int foodId;
   String shopId;
@@ -80,11 +80,11 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
   }
 
   void showToast(String msg) {
-    Toast.show(
-      msg,
-      context,
-      textColor: Colors.white,
-    );
+    Toast.show(msg, context,
+        duration: Toast.LENGTH_LONG,
+        textColor: Colors.white,
+        backgroundColor: const Color(0xff1BCC2E),
+        gravity: Toast.CENTER);
   }
 
   Future<Null> addFoodToCart() async {
@@ -106,14 +106,17 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
       await SQLiteHelper().insertDataToSQLite(cartModel).then(
         (value) {
           showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
+          print("Insert Success");
         },
       );
     } else {
       String idShopSQLite = object[0].shopId;
+      print(idShopSQLite);
       if (shopId == idShopSQLite) {
         await SQLiteHelper().insertDataToSQLite(cartModel).then(
           (value) {
             showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
+            print("Insert Success");
           },
         );
       } else {

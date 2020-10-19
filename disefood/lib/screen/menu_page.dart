@@ -132,7 +132,7 @@ class _MenuPageState extends State<MenuPage> {
                   height: 70,
                 ),
                 Container(
-                  width: 320,
+                  width: 370,
                   height: 40,
                   child: FloatingActionButton.extended(
                     shape: RoundedRectangleBorder(
@@ -426,15 +426,16 @@ class _MenuPageState extends State<MenuPage> {
                                                   item['cover_img'];
                                               int foodPrice = item["price"];
                                               showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      OrderAmountDialog(
-                                                        shopId: shopId,
-                                                        foodId: foodId,
-                                                        foodName: foodname,
-                                                        foodImg: foodImg,
-                                                        foodPrice: foodPrice,
-                                                      ));
+                                                context: context,
+                                                builder: (context) =>
+                                                    OrderAmountDialog(
+                                                  shopId: shopId,
+                                                  foodId: foodId,
+                                                  foodName: foodname,
+                                                  foodImg: foodImg,
+                                                  foodPrice: foodPrice,
+                                                ),
+                                              );
                                             },
                                           ),
                                           IconButton(

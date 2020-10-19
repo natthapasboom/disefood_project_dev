@@ -1,8 +1,11 @@
 import 'package:disefood/model/cart.dart';
+import 'package:disefood/screen/customer_dialog/edit_order_amount_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
 import 'package:disefood/screen/view_order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+
+import 'customer_dialog/order_amount_dialog.dart';
 
 class OrderItemPage extends StatefulWidget {
   @override
@@ -12,18 +15,35 @@ class OrderItemPage extends StatefulWidget {
 class _OrderItemPageState extends State<OrderItemPage> {
   String _time = "  ยังไม่ได้เลือกเวลา";
   List<CartModel> cartModels = List();
-
+  int totalPrice = 0;
+  bool isCartNotEmpty = false;
   @override
   void initState() {
     super.initState();
     readSQLite();
   }
 
+  void checkEmptyCart() {
+    if (cartModels.length == 0) {
+      setState(() {
+        isCartNotEmpty = false;
+      });
+    } else {
+      setState(() {
+        isCartNotEmpty = true;
+      });
+    }
+  }
+
   Future<Null> readSQLite() async {
     var object = await SQLiteHelper().readAllDataFromSQLite();
-    setState(() {
-      cartModels = object;
-    });
+    for (var model in object) {
+      setState(() {
+        cartModels = object;
+        totalPrice = totalPrice + model.foodSumPrice;
+      });
+    }
+    checkEmptyCart();
   }
 
   @override
@@ -44,60 +64,63 @@ class _OrderItemPageState extends State<OrderItemPage> {
             )
           ],
         ),
-        child: BottomAppBar(
-          shape: CircularNotchedRectangle(),
-          child: Container(
-            padding: EdgeInsets.only(top: 10),
-            height: 120,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 20, right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "ราคารวม",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Text("00 บาท",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green,
-                              fontSize: 18)),
-                    ],
-                  ),
-                ),
-                Divider(
-                  thickness: 5,
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 15),
-                  width: 370,
-                  height: 40,
-                  child: FloatingActionButton.extended(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    backgroundColor: Colors.orange,
-                    elevation: 4.0,
-                    label: Row(
+        child: Visibility(
+          visible: isCartNotEmpty,
+          child: BottomAppBar(
+            shape: CircularNotchedRectangle(),
+            child: Container(
+              padding: EdgeInsets.only(top: 10),
+              height: 120,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 20, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'ยืนยันการสั่งซื้อ',
+                          "ราคารวม",
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                              fontWeight: FontWeight.bold, fontSize: 18),
                         ),
+                        Text("$totalPrice บาท",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                                fontSize: 18)),
                       ],
                     ),
-                    onPressed: () {},
                   ),
-                ),
-              ],
+                  Divider(
+                    thickness: 5,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 15),
+                    width: 370,
+                    height: 40,
+                    child: FloatingActionButton.extended(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: Colors.orange,
+                      elevation: 4.0,
+                      label: Row(
+                        children: [
+                          Text(
+                            'ยืนยันการสั่งซื้อ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -129,8 +152,25 @@ class _OrderItemPageState extends State<OrderItemPage> {
         ],
       ),
       body: cartModels.length == 0
-          ? Center(
-              child: Text("ยังไม่มีอาหารในตะกร้าสินค้า"),
+          ? Container(
+              margin: EdgeInsets.only(top: 200),
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.remove_shopping_cart,
+                    size: 70,
+                    color: Colors.grey[700],
+                  ),
+                  Text(
+                    "ยังไม่มีอาหารในตะกร้าสินค้า",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700]),
+                  ),
+                ],
+              ),
             )
           : SingleChildScrollView(
               child: Container(
@@ -166,12 +206,12 @@ class _OrderItemPageState extends State<OrderItemPage> {
                     ),
                     Container(
                       height: 40,
-                      margin: EdgeInsets.only(left: 30, right: 30),
+                      margin: EdgeInsets.only(left: 25),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            width: 230,
+                            width: 200,
                             child: Text(
                               "ชื่ออาหาร",
                               style: TextStyle(
@@ -201,6 +241,17 @@ class _OrderItemPageState extends State<OrderItemPage> {
                               ),
                             ),
                           ),
+                          Container(
+                            margin: EdgeInsets.only(right: 5),
+                            width: 50,
+                            child: Text(
+                              "แก้ไข",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -220,11 +271,9 @@ class _OrderItemPageState extends State<OrderItemPage> {
                             child: Column(
                               children: [
                                 Container(
+                                  margin: EdgeInsets.only(left: 25),
                                   height: 40,
-                                  padding: EdgeInsets.fromLTRB(30, 0, 40, 0),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       Container(
                                         width: 220,
@@ -245,6 +294,9 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                           ),
                                         ),
                                       ),
+                                      SizedBox(
+                                        width: 30,
+                                      ),
                                       Container(
                                         alignment: Alignment.center,
                                         width: 30,
@@ -252,6 +304,37 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                           "${cartModels[index].foodSumPrice}",
                                           style: TextStyle(
                                             fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                OrderAmountDialog(
+                                              shopId: int.parse(
+                                                  cartModels[index].shopId),
+                                              foodId: cartModels[index].foodId,
+                                              foodName:
+                                                  cartModels[index].foodName,
+                                              foodImg:
+                                                  cartModels[index].foodImg,
+                                              foodPrice:
+                                                  cartModels[index].foodPrice,
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          width: 50,
+                                          child: Icon(
+                                            Icons.edit,
+                                            size: 20,
+                                            color: Colors.orange,
                                           ),
                                         ),
                                       ),
