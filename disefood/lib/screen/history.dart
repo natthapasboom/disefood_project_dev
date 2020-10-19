@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:disefood/model/shop_id.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:disefood/model/orderList.dart';
@@ -26,9 +27,11 @@ class _HistoryState extends State<History> {
   ApiProvider apiProvider = ApiProvider();
   Future<OrderList> _orderLists;
   List<OrderDetails> orderDetail = [];
+  List<OrderList> orderList = [];
   String _shopName;
   var orderDetailList;
   List returnedList = new List();
+  OrderDetails food;
   @override
   void initState() {
     isLoading = false;
@@ -51,13 +54,13 @@ class _HistoryState extends State<History> {
         // print('response : ${response.body}');
         // print('status code: ${response.statusCode}');
         if (response.statusCode == 200) {
-          
           setState(() {
             var jsonString = response.body;
-            var jsonMap = json.decode(jsonString);
+            Map jsonMap = json.decode(jsonString);
             logger.d('json map: $jsonMap');
-            orderLists = OrderList.fromJson(jsonMap);  
-            logger.d('Orderlist: $orderLists');
+            orderLists = OrderList.fromJson(jsonMap);
+
+            logger.d('Orderlist: ${orderLists.toString()}');
           });
         } else {
           print('${response.request}');
@@ -294,6 +297,7 @@ class _HistoryState extends State<History> {
                         itemCount: snapshot.data.data.length,
                         itemBuilder: (context, index) {
                           var data = snapshot.data.data[index];
+
                           // getNameShop(data.shopId);
                           return Container(
                             child: Column(
@@ -309,27 +313,13 @@ class _HistoryState extends State<History> {
                                     // height: 100,
                                     // width: 350,
                                     child: InkWell(
-                                      onTap: () async {
-                                        print(data.orderDetails);
-                                        for (var item in data.orderDetails){
-                                          print("item");
-                                        }
-                                        // for (int i = 0;
-                                        //     i < data.orderDetails.length;
-                                        //     i++) {
-                                        //   orderDetailList =
-                                        //       data.orderDetails[i].foodId;
-                                        //   returnedList
-                                        //       .add(data.orderDetails[i]);
-
-                                        //   // print(
-                                        //   //     'order detail: $orderDetailList');
-
-                                        //   String url =
-                                        //       'http://54.151.194.224:8000/api/food/$orderDetailList';
-                                        // }
-
-                                        alertDialog(context, data.status);
+                                      onTap: () {
+                                        print(data.orderDetails.length);
+                                        alertDialog(
+                                          context,
+                                          data.status,
+                                          data.orderDetails,
+                                        );
                                       },
                                       child: Card(
                                         shape: RoundedRectangleBorder(
@@ -352,7 +342,14 @@ class _HistoryState extends State<History> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: <Widget>[
-                                                    getShopName(data.shopId),
+                                                    Text("ร้าน TEST",
+                                                        style:
+                                                            GoogleFonts.roboto(
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
+                                                    // getShopName(data.shopId),
                                                     SizedBox(height: 4),
                                                     getDate(data.timePickup),
                                                     getTime(data.timePickup),
@@ -394,8 +391,9 @@ class _HistoryState extends State<History> {
     );
   }
 
-  alertDialog(BuildContext context, String status) {
-    print('alert');
+  alertDialog(
+      BuildContext context, String status, List<OrderDetails> orderDetail) {
+    print(orderDetail.length);
     showDialog(
         context: context,
         builder: (context) {
@@ -454,18 +452,43 @@ class _HistoryState extends State<History> {
                       ),
                     ),
                   ),
-                  // Padding(
-                  //   padding: EdgeInsets.only(left: 30.0, right: 30.0),
-                  //   child: TextField(
-                  //     decoration: InputDecoration(
-                  //       hintText: "Add Review",
-                  //       border: InputBorder.none,
-                  //     ),
-                  //     maxLines: 8,
-                  //   ),
-                  // ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: orderDetail.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        // final Map parsed = json.decode(orderDetail.toString());
+                        // final food = Food.fromJson(parsed);
+                        // var data = orderDetail[index];
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: Expanded(
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 5),
+                                  child: Text(
+                                    '${orderDetail[index].food.name} ${orderDetail[index].quantity}',
+                                    style: TextStyle(
+                                        fontFamily: 'Roboto',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xff838181)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      // itemCount: ,
+                    ),
+                  ),
                   InkWell(
                     child: Container(
+                      height: 51,
                       padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                       decoration: BoxDecoration(
                         color: Color(0xffFF7C2C),
@@ -473,24 +496,6 @@ class _HistoryState extends State<History> {
                             bottomLeft: Radius.circular(25.0),
                             bottomRight: Radius.circular(25.0)),
                       ),
-                      child: status == "success"
-                          ? FlatButton(
-                              onPressed: () {},
-                              child: Center(
-                                child: Text(
-                                  'Review',
-                                  style: TextStyle(
-                                      fontFamily: 'Roboto',
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                ),
-                              ))
-                          : Text(
-                              "",
-                              style: TextStyle(color: Colors.white),
-                              textAlign: TextAlign.center,
-                            ),
                     ),
                   ),
                 ],

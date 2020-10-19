@@ -209,71 +209,106 @@ class _HomeState extends State<Home> {
                                             )),
                                   );
                                 },
-                                child: Card(
-                                  semanticContainer: true,
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  elevation: 5,
-                                  color: Colors.white70,
-                                  margin: EdgeInsets.only(
-                                      top: 15, bottom: 15, left: 40, right: 40),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      CachedNetworkImage(
-                                        imageUrl:
-                                            'https://disefood.s3-ap-southeast-1.amazonaws.com/${item['cover_img']}',
-                                        width: 380,
-                                        height: 210,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => Center(
-                                            child: Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 50, bottom: 35),
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  strokeWidth: 5.0,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation(
-                                                          const Color(
-                                                              0xffF6A911)),
-                                                ))),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                          height: 210,
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 10),
+                                  child: Card(
+                                    semanticContainer: true,
+                                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                                    elevation: 8,
+                                    color: Colors.white,
+                                    margin: EdgeInsets.only(
+                                        top: 15,
+                                        bottom: 15,
+                                        left: 40,
+                                        right: 40),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        CachedNetworkImage(
+                                          imageUrl:
+                                              'https://disefood.s3-ap-southeast-1.amazonaws.com/${item['cover_img']}',
                                           width: 380,
-                                          color: const Color(0xff7FC9C5),
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.store,
-                                              size: 50,
-                                              color: Colors.white,
+                                          height: 150,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) => Center(
+                                              child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      top: 50, bottom: 35),
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 5.0,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation(
+                                                            const Color(
+                                                                0xffF6A911)),
+                                                  ))),
+                                          errorWidget: (context, url, error) =>
+                                              Container(
+                                            height: 210,
+                                            width: 380,
+                                            color: const Color(0xff7FC9C5),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.store,
+                                                size: 50,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      ListTile(
-                                        title: Text(
-                                          "${item['name']}",
-                                          style: TextStyle(
-                                              fontSize: 24,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold),
+                                        ListTile(
+                                          title: Wrap(
+                                            children: [
+                                              Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 5),
+                                                child: Text(
+                                                  "0.${item['id']}",
+                                                  style: TextStyle(
+                                                      fontSize: 24,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              Container(
+                                                margin: EdgeInsets.only(top: 3),
+                                                height: 20,
+                                                child: VerticalDivider(
+                                                  color: Colors.black38,
+                                                  thickness: 3,
+                                                ),
+                                              ),
+                                              Container(
+                                                margin:
+                                                    EdgeInsets.only(left: 5),
+                                                child: Text(
+                                                  "${item['name']}",
+                                                  style: TextStyle(
+                                                      fontSize: 24,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          subtitle: Row(
+                                            children: <Widget>[
+                                              Icon(
+                                                Icons.star,
+                                                color: const Color(0xffFFC107),
+                                              ),
+                                              Text("  4.2 Review(20 Review)")
+                                            ],
+                                          ),
                                         ),
-                                        subtitle: Row(
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.star,
-                                              color: Colors.orange,
-                                            ),
-                                            Text("  4.2 Review(20 Review)")
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                      ],
 //          crossAxisAlignment: CrossAxisAlignment.start,
+                                    ),
                                   ),
                                 ),
                               )

@@ -157,52 +157,52 @@ class _MenuPageState extends State<MenuPage> {
         ),
         appBar: AppBar(
           actions: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 265),
-              child: new IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  return
-                      // Navigator.pop(context);
-                      Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation) {
-                        return Home();
-                      },
-                      transitionsBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation,
-                          Widget child) {
-                        return FadeTransition(
-                          opacity: Tween<double>(
-                            begin: 0,
-                            end: 1,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      transitionDuration: Duration(milliseconds: 400),
-                    ),
-                  );
-                },
-              ),
-            ),
-            new IconButton(
-              icon: new Icon(Icons.favorite),
-              onPressed: () => debugPrint('asd'),
-            ),
-            new IconButton(
-              icon: Icon(Icons.archive),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ViewOrder(),
-                ),
-              ),
-            ),
+            // Container(
+            //   margin: EdgeInsets.only(right: 265),
+            //   child: new IconButton(
+            //     icon: Icon(Icons.arrow_back),
+            //     onPressed: () {
+            //       return
+            //           // Navigator.pop(context);
+            //           Navigator.push(
+            //         context,
+            //         PageRouteBuilder(
+            //           pageBuilder: (BuildContext context,
+            //               Animation<double> animation,
+            //               Animation<double> secondaryAnimation) {
+            //             return Home();
+            //           },
+            //           transitionsBuilder: (BuildContext context,
+            //               Animation<double> animation,
+            //               Animation<double> secondaryAnimation,
+            //               Widget child) {
+            //             return FadeTransition(
+            //               opacity: Tween<double>(
+            //                 begin: 0,
+            //                 end: 1,
+            //               ).animate(animation),
+            //               child: child,
+            //             );
+            //           },
+            //           transitionDuration: Duration(milliseconds: 400),
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
+            // new IconButton(
+            //   icon: new Icon(Icons.favorite),
+            //   onPressed: () => debugPrint('asd'),
+            // ),
+            // new IconButton(
+            //   icon: Icon(Icons.archive),
+            //   onPressed: () => Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => ViewOrder(),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
         // drawer: SideMenuCustomer(
@@ -447,13 +447,14 @@ class _MenuPageState extends State<MenuPage> {
     showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(25.0))),
-            contentPadding: EdgeInsets.only(top: 0.0),
-            content: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
+          var mediaQuery = MediaQuery.of(context);
+
+          return Container(
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25.0))),
+              contentPadding: EdgeInsets.only(top: 0.0),
+              content: Container(
                 width: 342.0,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -589,7 +590,9 @@ class _MenuPageState extends State<MenuPage> {
                           ),
                           child: FlatButton(
                               onPressed: () {
-                                logger.d('body : $reviewController  $rating');
+                                this.rating.toString();
+                                logger.d(
+                                    'body : ${reviewController.text.trim}  ${rating.toString()}');
                               },
                               child: Center(
                                 child: Text(
