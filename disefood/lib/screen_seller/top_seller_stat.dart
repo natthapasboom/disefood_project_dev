@@ -5,7 +5,6 @@ import 'package:disefood/model/foodByShopId.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
-import 'package:disefood/screen/order_items.dart';
 import 'package:disefood/screen/view_order_page.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:disefood/services/getfoodmenupageservice.dart';

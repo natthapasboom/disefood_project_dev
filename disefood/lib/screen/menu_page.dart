@@ -4,9 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/foodByShopId.dart';
 import 'package:disefood/model/foods_list.dart';
+import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
-import 'package:disefood/screen/order_items.dart';
+import 'package:disefood/screen/order_cart.dart';
 import 'package:disefood/screen/view_order_page.dart';
 import 'package:disefood/screen_seller/editmenu.dart';
 import 'package:disefood/services/api_provider.dart';
@@ -16,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'customer_dialog/order_amount_dialog.dart';
 
 class MenuPage extends StatefulWidget {
   final int shopId;
@@ -39,16 +42,16 @@ class _MenuPageState extends State<MenuPage> {
   String shopName;
   int shopSlot;
   String shopCoverImg;
-  TextEditingController reviewController = new TextEditingController();
-  int userId;
+  TextEditingController reviewController = TextEditingController();
   ApiProvider apiProvider = ApiProvider();
-  String email;
   bool isLoading = true;
   List foods = [];
   double rating;
+  int userId;
   @override
   void initState() {
     super.initState();
+
     setState(() {
       shopName = widget.shopName;
       shopCoverImg = widget.shopCoverImg;
@@ -57,11 +60,17 @@ class _MenuPageState extends State<MenuPage> {
     });
     Future.microtask(() {
       findMenu();
+      findUser();
     });
   }
 
-  Future findMenu() async {
+  Future<UserById> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
+    userId = preference.getInt('user_id');
+  }
+
+  Future findMenu() async {
+    // SharedPreferences preference = await SharedPreferences.getInstance();
     var response = await apiProvider.getFoodByShopId(shopId);
     print(response.statusCode);
     var body = response.body;
@@ -69,6 +78,7 @@ class _MenuPageState extends State<MenuPage> {
       setState(() {
         isLoading = false;
         foods = json.decode(body)['data'];
+        logger.d(foods);
       });
     } else {
       logger.e("statuscode != 200");
@@ -126,7 +136,7 @@ class _MenuPageState extends State<MenuPage> {
                   height: 70,
                 ),
                 Container(
-                  width: 320,
+                  width: 370,
                   height: 40,
                   child: FloatingActionButton.extended(
                     shape: RoundedRectangleBorder(
@@ -134,12 +144,17 @@ class _MenuPageState extends State<MenuPage> {
                     ),
                     backgroundColor: Colors.orange,
                     elevation: 4.0,
-                    label: const Text(
-                      'ยืนยันรายการอาหาร',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+                    label: Row(
+                      children: [
+                        Icon(Icons.shopping_basket),
+                        Text(
+                          'ไปยังตะกร้า',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
                     ),
                     onPressed: () {
                       Navigator.push(
@@ -224,12 +239,29 @@ class _MenuPageState extends State<MenuPage> {
                       CachedNetworkImage(
                         imageUrl:
                             'https://disefood.s3-ap-southeast-1.amazonaws.com/$shopCoverImg',
-                        height: 200,
+                        height: 140,
                         width: double.maxFinite,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) =>
-                            Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        placeholder: (context, url) => Center(
+                            child: Container(
+                                margin: EdgeInsets.only(top: 50, bottom: 35),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 5.0,
+                                  valueColor: AlwaysStoppedAnimation(
+                                      const Color(0xffF6A911)),
+                                ))),
+                        errorWidget: (context, url, error) => Container(
+                          height: 140,
+                          width: double.maxFinite,
+                          color: const Color(0xff7FC9C5),
+                          child: Center(
+                            child: Icon(
+                              Icons.store,
+                              size: 50,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -258,7 +290,7 @@ class _MenuPageState extends State<MenuPage> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Container(
-                                    height: 65,
+                                    height: 40,
                                     child: VerticalDivider(
                                       color: Colors.orange,
                                       thickness: 3,
@@ -274,7 +306,6 @@ class _MenuPageState extends State<MenuPage> {
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Text("ShopTypeValue"),
                                       Row(
                                         children: <Widget>[
                                           Icon(
@@ -282,7 +313,7 @@ class _MenuPageState extends State<MenuPage> {
                                             color: Colors.orangeAccent,
                                             size: 20,
                                           ),
-                                          Text("RateStarsValue"),
+                                          Text("4.2 Reviews"),
                                         ],
                                       ),
                                     ],
@@ -326,7 +357,7 @@ class _MenuPageState extends State<MenuPage> {
                       ),
                       Container(
                         color: Colors.white,
-                        padding: EdgeInsets.fromLTRB(45, 20, 45, 0),
+                        padding: EdgeInsets.fromLTRB(45, 10, 45, 0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
@@ -338,7 +369,7 @@ class _MenuPageState extends State<MenuPage> {
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(width: 45),
+                                SizedBox(width: 65),
                                 Text(
                                   "ราคา",
                                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -354,30 +385,30 @@ class _MenuPageState extends State<MenuPage> {
                                 itemCount: foods != null ? foods.length : 0,
                                 itemBuilder: (BuildContext context, int index) {
                                   var item = foods[index];
-                                  logger.d(foods);
+                                  // logger.d(foods);
                                   return Column(
                                     children: <Widget>[
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Visibility(
-                                            visible: false,
-                                            child: SizedBox(
-                                              width: 25,
-                                              child: Text(
-                                                "0",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.orange),
-                                              ),
-                                            ),
-                                            replacement: SizedBox(
-                                              width: 20,
-                                            ),
-                                          ),
+                                          // Visibility(
+                                          //   visible: false,
+                                          //   child: SizedBox(
+                                          //     width: 25,
+                                          //     child: Text(
+                                          //       "0",
+                                          //       style: TextStyle(
+                                          //           fontWeight: FontWeight.bold,
+                                          //           color: Colors.orange),
+                                          //     ),
+                                          //   ),
+                                          //   replacement: SizedBox(
+                                          //     width: 20,
+                                          //   ),
+                                          // ),
                                           SizedBox(
-                                            width: 140,
+                                            width: 190,
                                             child: Text('${item['name']}'),
                                           ),
                                           SizedBox(
@@ -396,16 +427,22 @@ class _MenuPageState extends State<MenuPage> {
                                               color: Colors.orange,
                                             ),
                                             onPressed: () {
-                                              // Navigator.push(
-                                              //   context,
-                                              //   MaterialPageRoute(
-                                              //     builder: (context) =>
-                                              //         OrderAmount(
-                                              //             foodList:
-                                              //                 snapshot.data,
-                                              //             index: index),
-                                              //   ),
-                                              // );
+                                              int foodId = item['id'];
+                                              String foodname = item['name'];
+                                              String foodImg =
+                                                  item['cover_img'];
+                                              int foodPrice = item["price"];
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    OrderAmountDialog(
+                                                  shopId: shopId,
+                                                  foodId: foodId,
+                                                  foodName: foodname,
+                                                  foodImg: foodImg,
+                                                  foodPrice: foodPrice,
+                                                ),
+                                              );
                                             },
                                           ),
                                           IconButton(
