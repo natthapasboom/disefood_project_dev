@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:disefood/model/cart.dart';
 import 'package:disefood/screen/customer_dialog/edit_order_amount_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
@@ -19,8 +21,8 @@ class _OrderItemPageState extends State<OrderItemPage> {
   bool isCartNotEmpty = false;
   @override
   void initState() {
-    super.initState();
     readSQLite();
+    super.initState();
   }
 
   void checkEmptyCart() {
@@ -38,8 +40,9 @@ class _OrderItemPageState extends State<OrderItemPage> {
   Future<Null> readSQLite() async {
     var object = await SQLiteHelper().readAllDataFromSQLite();
     for (var model in object) {
+      cartModels = object;
+
       setState(() {
-        cartModels = object;
         totalPrice = totalPrice + model.foodSumPrice;
       });
     }
@@ -138,7 +141,9 @@ class _OrderItemPageState extends State<OrderItemPage> {
           ),
           new IconButton(
             icon: new Icon(Icons.favorite),
-            onPressed: () => debugPrint('Favorite'),
+            onPressed: () {
+              readSQLite();
+            },
           ),
           new IconButton(
             icon: Icon(Icons.archive),
