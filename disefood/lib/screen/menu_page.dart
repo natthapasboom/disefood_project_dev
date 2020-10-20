@@ -1,6 +1,7 @@
 import 'dart:convert';
-
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/foodByShopId.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/model/userById.dart';
@@ -8,6 +9,7 @@ import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_order_detail_amount.dart';
 import 'package:disefood/screen/order_cart.dart';
 import 'package:disefood/screen/view_order_page.dart';
+import 'package:disefood/screen_seller/editmenu.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:disefood/services/getfoodmenupageservice.dart';
 import 'package:flutter/foundation.dart';
@@ -40,9 +42,11 @@ class _MenuPageState extends State<MenuPage> {
   String shopName;
   int shopSlot;
   String shopCoverImg;
+  TextEditingController reviewController = TextEditingController();
   ApiProvider apiProvider = ApiProvider();
   bool isLoading = true;
   List foods = [];
+  double rating;
   int userId;
   @override
   void initState() {
@@ -168,52 +172,52 @@ class _MenuPageState extends State<MenuPage> {
         ),
         appBar: AppBar(
           actions: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 265),
-              child: new IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  return
-                      // Navigator.pop(context);
-                      Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation) {
-                        return Home();
-                      },
-                      transitionsBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation,
-                          Widget child) {
-                        return FadeTransition(
-                          opacity: Tween<double>(
-                            begin: 0,
-                            end: 1,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      transitionDuration: Duration(milliseconds: 400),
-                    ),
-                  );
-                },
-              ),
-            ),
-            new IconButton(
-              icon: new Icon(Icons.favorite),
-              onPressed: () => debugPrint('Favorite Button pressed'),
-            ),
-            new IconButton(
-              icon: Icon(Icons.archive),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ViewOrder(),
-                ),
-              ),
-            ),
+            // Container(
+            //   margin: EdgeInsets.only(right: 265),
+            //   child: new IconButton(
+            //     icon: Icon(Icons.arrow_back),
+            //     onPressed: () {
+            //       return
+            //           // Navigator.pop(context);
+            //           Navigator.push(
+            //         context,
+            //         PageRouteBuilder(
+            //           pageBuilder: (BuildContext context,
+            //               Animation<double> animation,
+            //               Animation<double> secondaryAnimation) {
+            //             return Home();
+            //           },
+            //           transitionsBuilder: (BuildContext context,
+            //               Animation<double> animation,
+            //               Animation<double> secondaryAnimation,
+            //               Widget child) {
+            //             return FadeTransition(
+            //               opacity: Tween<double>(
+            //                 begin: 0,
+            //                 end: 1,
+            //               ).animate(animation),
+            //               child: child,
+            //             );
+            //           },
+            //           transitionDuration: Duration(milliseconds: 400),
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
+            // new IconButton(
+            //   icon: new Icon(Icons.favorite),
+            //   onPressed: () => debugPrint('asd'),
+            // ),
+            // new IconButton(
+            //   icon: Icon(Icons.archive),
+            //   onPressed: () => Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => ViewOrder(),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
         // drawer: SideMenuCustomer(
@@ -315,7 +319,7 @@ class _MenuPageState extends State<MenuPage> {
                                     ],
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(left: 85),
+                                    margin: EdgeInsets.only(left: 70),
                                     child: RaisedButton(
                                         child: Center(
                                           child: Text(
@@ -334,7 +338,10 @@ class _MenuPageState extends State<MenuPage> {
                                             side: BorderSide(
                                                 color:
                                                     const Color(0xffF6A911))),
-                                        onPressed: () {}),
+                                        onPressed: () {
+                                          alertDialog(
+                                              context, shopName, shopCoverImg);
+                                        }),
                                   ),
                                 ],
                               ),
@@ -466,5 +473,180 @@ class _MenuPageState extends State<MenuPage> {
               ),
       ),
     );
+  }
+
+  alertDialog(
+    BuildContext context,
+    String name,
+    String shopImg,
+  ) {
+    print('alert');
+    showDialog(
+        context: context,
+        builder: (context) {
+          var mediaQuery = MediaQuery.of(context);
+
+          return Container(
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25.0))),
+              contentPadding: EdgeInsets.only(top: 0.0),
+              content: Container(
+                width: 342.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                      decoration: BoxDecoration(
+                        color: Color(0xffFF7C2C),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(25.0),
+                            topRight: Radius.circular(25.0)),
+                      ),
+                      child: Text(
+                        "Review",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Aleo',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 20,
+                      ),
+                      child: Center(
+                        child: Text(
+                          name,
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Roboto'),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 15, bottom: 20),
+                      child: shopImg == null
+                          ? CircleAvatar(
+                              backgroundColor: Colors.orangeAccent,
+                              radius: 75,
+                              child: Icon(
+                                Icons.image,
+                                size: 80,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Center(
+                              child: CircleAvatar(
+                                backgroundColor: const Color(0xffF6A911),
+                                radius: 60,
+                                child: ClipOval(
+                                  child: CachedNetworkImage(
+                                      imageUrl: '${AppConfig.image}$shopImg',
+                                      height: 300,
+                                      width: 500,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Center(
+                                              child: Center(
+                                            child: Container(
+                                                child:
+                                                    CircularProgressIndicator(
+                                              strokeWidth: 5.0,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                      Colors.white),
+                                            )),
+                                          )),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(
+                                            Icons.error,
+                                            color: Colors.white,
+                                            size: 48,
+                                          )),
+                                ),
+                              ),
+                            ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Center(
+                        child: RatingBar(
+                          initialRating: 0,
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                          itemBuilder: (context, _) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (rating) {
+                            setState(() {
+                              this.rating = rating;
+                            });
+                            print(rating);
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 30, left: 30, right: 30),
+                      child: Center(
+                        child: Material(
+                          elevation: 5.0,
+                          child: Container(
+                            padding: EdgeInsets.only(top: 20, left: 20),
+                            child: TextField(
+                              controller: reviewController,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.zero,
+                                hintText: "Add Review",
+                                border: InputBorder.none,
+                              ),
+                              maxLines: 8,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      child: Container(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                          decoration: BoxDecoration(
+                            color: Color(0xffFF7C2C),
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(25.0),
+                                bottomRight: Radius.circular(25.0)),
+                          ),
+                          child: FlatButton(
+                              onPressed: () {
+                                this.rating.toString();
+                                logger.d(
+                                    'body : ${reviewController.text.trim}  ${rating.toString()}');
+                              },
+                              child: Center(
+                                child: Text(
+                                  'Submit',
+                                  style: TextStyle(
+                                      fontFamily: 'Roboto',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                              ))),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 }

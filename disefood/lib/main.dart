@@ -18,11 +18,15 @@ import 'package:disefood/screen_seller/organize_seller_page.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen_seller/addmenu.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'component/register.dart';
 import 'screen_seller/home_seller.dart';
 import 'package:disefood/screen_seller/create_shop.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 //#Clt+Alt+L จัดระเบียบ
 void main() async {
@@ -33,7 +37,9 @@ void main() async {
   runApp(new MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
-      fontFamily: 'Aleo',
+      textTheme: TextTheme(
+        bodyText1: GoogleFonts.roboto(),
+      ),
       primaryColor: const Color(0xffFF7C2C),
       appBarTheme: AppBarTheme(
         color: const Color(0xffFF7C2C),
