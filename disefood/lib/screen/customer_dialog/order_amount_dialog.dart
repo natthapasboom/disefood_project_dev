@@ -266,10 +266,10 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
                         elevation: 8,
                         onPressed: () {
                           if (foodQuantity == 0) {
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pop(true);
                           } else {
                             addFoodToCart();
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pop(true);
                           }
                         },
                         padding: EdgeInsets.only(left: 20, right: 20),

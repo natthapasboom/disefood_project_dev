@@ -56,14 +56,14 @@ class _MenuPageState extends State<MenuPage> {
     });
     Future.microtask(() {
       findMenu();
-      findUser();
+      // findUser();
     });
   }
 
-  Future<UserById> findUser() async {
-    SharedPreferences preference = await SharedPreferences.getInstance();
-    userId = preference.getInt('user_id');
-  }
+  // Future<UserById> findUser() async {
+  //   SharedPreferences preference = await SharedPreferences.getInstance();
+  //   userId = preference.getInt('user_id');
+  // }
 
   Future findMenu() async {
     // SharedPreferences preference = await SharedPreferences.getInstance();
