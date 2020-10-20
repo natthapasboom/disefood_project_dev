@@ -150,13 +150,32 @@ class _HomeState extends State<Home> {
       ),
       child: new Scaffold(
         appBar: AppBar(
+          leading: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 0),
+            child: Builder(
+              builder: (context) => IconButton(
+                icon: Icon(
+                  Icons.account_circle,
+                  size: 30,
+                ),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+          ),
+          automaticallyImplyLeading: false,
           actions: <Widget>[
             new IconButton(
-              icon: new Icon(Icons.favorite),
+              icon: new Icon(
+                Icons.favorite,
+                size: 30,
+              ),
               onPressed: () => debugPrint('favorites'),
             ),
             new IconButton(
-              icon: Icon(Icons.history),
+              icon: Icon(
+                Icons.history,
+                size: 30,
+              ),
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => History()));
@@ -179,7 +198,7 @@ class _HomeState extends State<Home> {
                 ),
               )
             : Container(
-                color: Colors.grey[200],
+                margin: EdgeInsets.only(bottom: 20),
                 child: Column(
                   children: <Widget>[
                     headerSection,
@@ -210,11 +229,14 @@ class _HomeState extends State<Home> {
                                   },
                                   child: Container(
                                     margin: EdgeInsets.only(
-                                        bottom: 0, top: 8, left: 20, right: 20),
+                                        bottom: 0,
+                                        top: 20,
+                                        left: 20,
+                                        right: 20),
                                     child: Card(
                                       semanticContainer: true,
                                       clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      elevation: 2,
+                                      elevation: 5,
                                       color: Colors.white70,
                                       // margin: EdgeInsets.only(
                                       //     top: 8, bottom: 8, left: 40, right: 40),
@@ -339,7 +361,7 @@ class _HomeState extends State<Home> {
 
 Widget headerSection = new Material(
   child: Container(
-    padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+    padding: EdgeInsets.only(left: 20, right: 20, top: 20),
     height: 100,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.only(
@@ -380,7 +402,7 @@ Widget headerSection = new Material(
         Row(
           children: <Widget>[
             Container(
-              margin: EdgeInsets.fromLTRB(8, 8, 0, 0),
+              margin: EdgeInsets.fromLTRB(8, 10, 0, 10),
               alignment: Alignment.topLeft,
               child: Text(
                 "รายการร้านอาหาร",
