@@ -362,7 +362,7 @@ class _HomeState extends State<Home> {
 Widget headerSection = new Material(
   child: Container(
     padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-    height: 100,
+    height: 120,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(0), bottomRight: Radius.circular(0)),
