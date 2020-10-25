@@ -6,7 +6,7 @@ import 'package:disefood/model/foodByShopId.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen/home_customer.dart';
-import 'package:disefood/screen/menu_order_detail_amount.dart';
+import 'package:disefood/screen/menu_amount_select.dart';
 import 'package:disefood/screen/order_cart.dart';
 import 'package:disefood/screen/view_order_page.dart';
 import 'package:disefood/screen_seller/editmenu.dart';
@@ -78,7 +78,7 @@ class _MenuPageState extends State<MenuPage> {
       setState(() {
         isLoading = false;
         foods = json.decode(body)['data'];
-        logger.d(foods);
+        // logger.d(foods);
       });
     } else {
       logger.e("statuscode != 200");
@@ -161,7 +161,12 @@ class _MenuPageState extends State<MenuPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => OrderItemPage(),
+                          builder: (context) => OrderItemPage(
+                            shopId: shopId,
+                            shopName: shopName,
+                            shopSlot: shopSlot,
+                            shopCoverImg: shopCoverImg,
+                          ),
                         ),
                       );
                     },
@@ -206,26 +211,21 @@ class _MenuPageState extends State<MenuPage> {
             //     },
             //   ),
             // ),
-            // new IconButton(
-            //   icon: new Icon(Icons.favorite),
-            //   onPressed: () => debugPrint('asd'),
-            // ),
-            // new IconButton(
-            //   icon: Icon(Icons.archive),
-            //   onPressed: () => Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => ViewOrder(),
-            //     ),
-            //   ),
-            // ),
+            new IconButton(
+              icon: new Icon(Icons.favorite),
+              onPressed: () => debugPrint('asd'),
+            ),
+            new IconButton(
+              icon: Icon(Icons.archive),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ViewOrder(),
+                ),
+              ),
+            ),
           ],
         ),
-        // drawer: SideMenuCustomer(
-        //   firstName: nameUser,
-        //   userId: userId,
-        //   lastName: lastNameUser,
-        //   coverImg: profileImg),
         body: isLoading
             ? Center(
                 child: CircularProgressIndicator(
