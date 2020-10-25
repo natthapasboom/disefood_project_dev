@@ -636,21 +636,20 @@ class _MenuPageState extends State<MenuPage> {
                           child: Center(
                             child: Material(
                               elevation: 5.0,
-                              child: SingleChildScrollView(
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                    top: 20,
-                                    left: 20,
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                  top: 20,
+                                  left: 20,
+                                ),
+                                child: TextField(
+                                  autofocus: false,
+                                  controller: reviewController,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
+                                    hintText: "Add Review",
+                                    border: InputBorder.none,
                                   ),
-                                  child: TextField(
-                                    controller: reviewController,
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.zero,
-                                      hintText: "Add Review",
-                                      border: InputBorder.none,
-                                    ),
-                                    maxLines: 4,
-                                  ),
+                                  maxLines: 4,
                                 ),
                               ),
                             ),
