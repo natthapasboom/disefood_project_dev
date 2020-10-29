@@ -13,6 +13,9 @@ class EditOrderAmountDialog extends StatefulWidget {
   final String foodName;
   final String foodImg;
   final int foodPrice;
+  final String shopName;
+  final int shopSlot;
+  final String shopCoverImg;
 
   const EditOrderAmountDialog({
     Key key,
@@ -21,6 +24,9 @@ class EditOrderAmountDialog extends StatefulWidget {
     @required this.foodId,
     @required this.shopId,
     @required this.foodPrice,
+    @required this.shopName,
+    @required this.shopSlot,
+    @required this.shopCoverImg,
   }) : super(key: key);
   @override
   _EditOrderAmountDialogState createState() => _EditOrderAmountDialogState();
@@ -34,7 +40,9 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
   String foodImg;
   int foodQuantity = 1;
   int foodPrice;
-
+  String shopName;
+  int shopSlot;
+  String shopCoverImg;
   final myController = TextEditingController();
   @override
   void initState() {
@@ -46,6 +54,9 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
       foodId = widget.foodId;
       shopId = widget.shopId.toString();
       foodPrice = widget.foodPrice;
+      shopName = widget.shopName;
+      shopSlot = widget.shopSlot;
+      shopCoverImg = widget.shopCoverImg;
     });
     Future.microtask(() {});
   }
@@ -201,8 +212,9 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
                             if (foodQuantity == 0) {
                               Navigator.of(context).pop(false);
                             } else {
+                              print("Updating food to SQLite");
                               addFoodToCart();
-                              Navigator.of(context).pop(true);
+                              // Navigator.of(context).pop(true);
                               // Navigator.push(
                               //   context,
                               //   MaterialPageRoute(
@@ -214,6 +226,35 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
                               //     ),
                               //   ),
                               // );
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (BuildContext context,
+                                      Animation<double> animation,
+                                      Animation<double> secondaryAnimation) {
+                                    return OrderItemPage(
+                                      shopId: int.parse(shopId),
+                                      shopName: shopName,
+                                      shopSlot: shopSlot,
+                                      shopCoverImg: shopCoverImg,
+                                    );
+                                  },
+                                  transitionsBuilder: (BuildContext context,
+                                      Animation<double> animation,
+                                      Animation<double> secondaryAnimation,
+                                      Widget child) {
+                                    return FadeTransition(
+                                      opacity: Tween<double>(
+                                        begin: 0,
+                                        end: 1,
+                                      ).animate(animation),
+                                      child: child,
+                                    );
+                                  },
+                                  transitionDuration:
+                                      Duration(milliseconds: 300),
+                                ),
+                              );
                             }
                           },
                           padding: EdgeInsets.only(left: 20, right: 20),
@@ -301,5 +342,6 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
         showDialog(context: context, builder: (context) => OrderFailed());
       }
     }
+    print("Food has been Updated");
   }
 }
