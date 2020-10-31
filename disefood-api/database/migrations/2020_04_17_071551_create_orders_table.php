@@ -21,6 +21,7 @@ class CreateOrdersTable extends Migration
             $table->integer('total_quantity')->nullable();
             $table->dateTime('time_pickup')->nullable();
             $table->enum('status', ['not confirmed', 'in process', 'success']);
+            $table->boolean('confirmed_by_customer')->default(false);
             $table->softDeletes('deleted_at', 0);
             $table->timestamps();
             $table->foreign('shop_id')->references('id')->on('shops');

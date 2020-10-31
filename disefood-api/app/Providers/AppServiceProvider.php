@@ -22,7 +22,8 @@ class AppServiceProvider extends ServiceProvider
             'OrderDetail',
             'Favorite',
             'AccountNumber',
-            'Feedback'
+            'Feedback',
+            'Payment'
         );
         foreach($models as $model) {
             $this->app->bind("App\Repositories\Interfaces\\{$model}RepositoryInterface", "App\Repositories\Eloquents\\{$model}Repository");

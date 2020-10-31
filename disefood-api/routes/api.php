@@ -84,7 +84,10 @@ Route::group([
 Route::group([
    'prefix' => 'payment'
 ], function () {
-    Route::post('/', 'PaymentController@create');
+    Route::get('/', 'PaymentController@getAllPayments');
+    Route::get('/{paymentId}', 'PaymentController@getPaymentById');
+    Route::get('/check/order/{orderId}', 'PaymentController@checkPayInFullAmount');
+    Route::get('/confirmation/order/{orderId}','PaymentController@orderPaymentConfirmation');
 });
 
 Route::group([
@@ -99,7 +102,8 @@ Route::group([
     ], function () {
         Route::get('/', 'OrderController@getOrderMe');
         Route::delete('/{orderId}', 'OrderController@rejectedOrder');
-
+        Route::post('/{orderId}/payment', 'PaymentController@create');
+        Route::get('/{orderId}/payment', 'PaymentController@getPaymentByOrderId');
     });
 
     Route::group([
