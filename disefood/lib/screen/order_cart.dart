@@ -3,26 +3,48 @@ import 'dart:async';
 import 'package:disefood/model/cart.dart';
 import 'package:disefood/screen/customer_dialog/edit_order_amount_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
+import 'package:disefood/screen/menu_page.dart';
 import 'package:disefood/screen/view_order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-import 'customer_dialog/order_amount_dialog.dart';
-
 class OrderItemPage extends StatefulWidget {
+  final int shopId;
+  final String shopName;
+  final int shopSlot;
+  final String shopCoverImg;
+  const OrderItemPage(
+      {Key key,
+      @required this.shopId,
+      @required this.shopName,
+      @required this.shopSlot,
+      @required this.shopCoverImg})
+      : super(key: key);
   @override
   _OrderItemPageState createState() => _OrderItemPageState();
 }
 
 class _OrderItemPageState extends State<OrderItemPage> {
+  int shopId;
+  String shopName;
+  int shopSlot;
+  String shopCoverImg;
   String _time = "  ยังไม่ได้เลือกเวลา";
   List<CartModel> cartModels = List();
-  int totalPrice = 0;
+  int totalPrice;
   bool isCartNotEmpty = false;
+  String text = "before";
+
   @override
   void initState() {
     readSQLite();
     super.initState();
+    setState(() {
+      shopId = widget.shopId;
+      shopName = widget.shopName;
+      shopSlot = widget.shopSlot;
+      shopCoverImg = widget.shopCoverImg;
+    });
   }
 
   void checkEmptyCart() {
@@ -39,10 +61,10 @@ class _OrderItemPageState extends State<OrderItemPage> {
 
   Future<Null> readSQLite() async {
     var object = await SQLiteHelper().readAllDataFromSQLite();
+    totalPrice = 0;
     for (var model in object) {
-      cartModels = object;
-
       setState(() {
+        cartModels = object;
         totalPrice = totalPrice + model.foodSumPrice;
       });
     }
@@ -111,7 +133,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                       label: Row(
                         children: [
                           Text(
-                            'ยืนยันการสั่งซื้อ',
+                            'ยืนยัน',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -135,7 +157,34 @@ class _OrderItemPageState extends State<OrderItemPage> {
             child: new IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation) {
+                      return MenuPage(
+                        shopId: shopId,
+                        shopName: shopName,
+                        shopSlot: shopSlot,
+                        shopCoverImg: shopCoverImg,
+                      );
+                    },
+                    transitionsBuilder: (BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation,
+                        Widget child) {
+                      return FadeTransition(
+                        opacity: Tween<double>(
+                          begin: 0,
+                          end: 1,
+                        ).animate(animation),
+                        child: child,
+                      );
+                    },
+                    transitionDuration: Duration(milliseconds: 400),
+                  ),
+                );
               },
             ),
           ),
@@ -272,6 +321,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                         shrinkWrap: true,
                         itemCount: cartModels.length,
                         itemBuilder: (BuildContext context, int index) {
+                          var items = cartModels[index];
                           return Container(
                             child: Column(
                               children: [
@@ -283,7 +333,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                       Container(
                                         width: 220,
                                         child: Text(
-                                          "${cartModels[index].foodName}",
+                                          "${items.foodName} $text",
                                           style: TextStyle(
                                             fontSize: 14,
                                           ),
@@ -293,7 +343,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                         alignment: Alignment.center,
                                         width: 30,
                                         child: Text(
-                                          "${cartModels[index].foodQuantity}",
+                                          "${items.foodQuantity}",
                                           style: TextStyle(
                                             fontSize: 14,
                                           ),
@@ -306,7 +356,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                         alignment: Alignment.center,
                                         width: 30,
                                         child: Text(
-                                          "${cartModels[index].foodSumPrice}",
+                                          "${items.foodSumPrice}",
                                           style: TextStyle(
                                             fontSize: 14,
                                           ),
@@ -320,18 +370,18 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                           showDialog(
                                             context: context,
                                             builder: (context) =>
-                                                OrderAmountDialog(
-                                              shopId: int.parse(
-                                                  cartModels[index].shopId),
-                                              foodId: cartModels[index].foodId,
-                                              foodName:
-                                                  cartModels[index].foodName,
-                                              foodImg:
-                                                  cartModels[index].foodImg,
-                                              foodPrice:
-                                                  cartModels[index].foodPrice,
+                                                EditOrderAmountDialog(
+                                              shopId: int.parse(items.shopId),
+                                              foodId: items.foodId,
+                                              foodName: items.foodName,
+                                              foodImg: items.foodImg,
+                                              foodPrice: items.foodPrice,
                                             ),
-                                          );
+                                          ).then((value) {
+                                            setState(() {
+                                              text = "after";
+                                            });
+                                          });
                                         },
                                         child: Container(
                                           alignment: Alignment.center,
