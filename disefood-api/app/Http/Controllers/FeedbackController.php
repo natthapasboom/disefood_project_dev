@@ -42,7 +42,13 @@ class FeedbackController extends Controller
         $isOwner = $this->isOwner($sellerId, $shopId);
         if($isOwner) {
             $feedbacks = $this->feedbackRepo->getByShopId($shopId);
-            return response()->json(['data' => $feedbacks], 200);
+            if (isset($_GET["rating"])) {
+                $rating = $_GET["rating"];
+                $feedbacks = $this->feedbackRepo->filterByRating($rating);
+                return  response()->json(['data' => $feedbacks], 200);
+            } else {
+                return response()->json(['data' => $feedbacks], 200);
+            }
         } else {
             return response()->json(['msg' => 'No Permission'], 401);
         }

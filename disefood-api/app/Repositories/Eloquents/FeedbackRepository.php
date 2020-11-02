@@ -45,4 +45,9 @@ class FeedbackRepository implements FeedbackRepositoryInterface
     {
         return $this->feedbackRepo->where('id', $id)->delete();
     }
+
+    public function filterByRating($rating)
+    {
+        return $this->feedbackRepo->where('rating', $rating)->get();
+    }
 }

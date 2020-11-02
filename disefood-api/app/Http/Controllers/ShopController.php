@@ -37,12 +37,23 @@ class ShopController extends Controller
     public function getShopsList()
     {
         $shops = $this->shopRepo->getAll();
+        foreach ($shops as $shop) {
+            $feedbacks = $shop->feedbacks;
+            $sumOfRating = 0;
+            $shop["averageRating"] = 0;
+            foreach ($feedbacks as $feedback) {
+                $rating = $feedback->rating;
+                $sumOfRating += $rating;
+                $shop["averageRating"] = $sumOfRating / count($feedbacks);
+            }
+        }
         return response()->json(['data' => $shops, 'msg' => 'Get shop lists success', 'status' => 200]);
     }
 
     public function findShopById($shopId)
     {
         $shop = $this->shopRepo->findById($shopId);
+        $shop->accountNumbers;
         if(!$shop) {
             return response()->json(['msg' => 'Shop not found', 'status' => 404]);
         } else {
