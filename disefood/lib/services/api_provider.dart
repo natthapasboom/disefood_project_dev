@@ -16,6 +16,7 @@ class ApiProvider {
 
   Future<http.Response> doLogin(String username, String password) async {
     String _url = 'http://54.151.194.224:8000/api/auth/login';
+    // String _url = 'http://10.0.2.2:8080/api/auth/login';
 
     var body = {"username": username, "password": password};
     http.Response response = await http.post(_url, body: body);
@@ -163,6 +164,14 @@ class ApiProvider {
     var body = {"approved": approved, "_method": _method};
     http.Response response = await http.post(_url,
         headers: {'Authorization': 'Bearer $token'}, body: body);
+    return response;
+  }
+
+  Future<http.Response> getHistoryById(String token) async {
+    String _url = 'http://54.151.194.224:8000/api/order/me';
+    // String _url = 'http://10.0.2.2:8080/api/order/me';
+    http.Response response =
+        await http.get(_url, headers: {'Authorization': 'Bearer $token'});
     return response;
   }
 

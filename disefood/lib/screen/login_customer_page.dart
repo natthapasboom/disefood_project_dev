@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:disefood/component/dialogcomponents/alert_dialog.dart';
 import 'package:disefood/component/register.dart';
+import 'package:disefood/model/message.dart';
 import 'package:disefood/model/shop_id.dart';
 import 'package:disefood/model/user_profile.dart';
 import 'package:disefood/screen/home_customer.dart';
@@ -49,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         var username = _usernameController.text.trim();
         var password = _passwordController.text.trim();
         var response = await apiProvider.doLogin(username, password);
-
+        var message = response.isRedirect.toString();
         print(response.statusCode);
         if (response.statusCode == 200) {
           Map map = json.decode(response.body);
@@ -65,11 +66,13 @@ class _LoginPageState extends State<LoginPage> {
           } else if (role == "seller") {
             routeToService(Homepage(), msg);
           }
-        } else {
+        } else if (response.statusCode == 401) {
           print('error code');
-
+          Map map = json.decode(response.body);
+          Message msg = Message.fromJson(map);
+          print('message: ${msg.msg}');
           setState(() {
-            dialogError(context);
+            dialogError(context, msg.msg);
             _isLoading = false;
           });
         }
@@ -77,7 +80,9 @@ class _LoginPageState extends State<LoginPage> {
         print('error: $error');
         setState(() {
           _isLoading = false;
-          dialogError(context);
+          // dialogError(
+          //   context,
+          // );
         });
       }
     } else {
@@ -113,7 +118,6 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                         
                           Center(
                             child: Text(
                               'Cafeteria',
@@ -314,7 +318,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> dialogError(BuildContext context) async {
+  Future<void> dialogError(BuildContext context, String msg) async {
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -324,14 +328,14 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(10.0)),
               child: Container(
                   height: 300.0,
-                  width: 200.0,
+                  width: 300.0,
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
                   child: Column(
                     children: <Widget>[
                       Stack(
                         children: <Widget>[
-                          Container(height: 150.0),
+                          // Container(height: 150.0),
                           // Container(
                           //   height: 100.0,
                           //   decoration: BoxDecoration(
@@ -341,32 +345,31 @@ class _LoginPageState extends State<LoginPage> {
                           //       ),
                           //       color: Colors.red),
                           // ),
-                          Positioned(
-                              top: 30.0,
-                              left: 94.0,
-                              child: Container(
-                                height: 90.0,
-                                width: 90.0,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                          'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Cross_red_circle.svg/1024px-Cross_red_circle.svg.png'),
-                                      fit: BoxFit.cover,
-                                    )),
-                              ))
+                          Center(
+                            child: Container(
+                              margin: EdgeInsets.only(top: 40),
+                              height: 90.0,
+                              width: 90.0,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50.0),
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Cross_red_circle.svg/1024px-Cross_red_circle.svg.png'),
+                                    fit: BoxFit.cover,
+                                  )),
+                            ),
+                          ),
                         ],
                       ),
-                      SizedBox(height: 0.0),
                       Container(
                           margin: EdgeInsets.only(
-                              top: 0, left: 10, right: 10, bottom: 0),
+                              top: 5, left: 10, right: 10, bottom: 0),
                           child: Center(
                             child: Text(
-                              'มีอะไรผิดพลาด',
+                              'ไอดี หรือ รหัสผ่านผิด',
                               style: TextStyle(
                                 fontFamily: 'Aleo-Bold',
-                                fontSize: 18.0,
+                                fontSize: 24.0,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -380,6 +383,7 @@ class _LoginPageState extends State<LoginPage> {
                               style: TextStyle(
                                 fontFamily: 'Aleo-Bold',
                                 fontSize: 18.0,
+                                color: Colors.black38,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -387,12 +391,12 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 10.0),
                       Container(
                         margin:
-                            EdgeInsets.only(top: 10, left: 20.0, right: 20.0),
+                            EdgeInsets.only(top: 5, left: 90.0, right: 90.0),
                         child: RaisedButton(
-                            padding: EdgeInsets.only(top: 5, bottom: 5),
+                            padding: EdgeInsets.only(top: 10, bottom: 10),
                             elevation: 5,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
+                                borderRadius: BorderRadius.circular(10.0),
                                 side:
                                     BorderSide(color: const Color(0xffF6A911))),
                             child: Center(
