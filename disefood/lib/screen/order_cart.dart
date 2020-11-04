@@ -37,13 +37,12 @@ class _OrderItemPageState extends State<OrderItemPage> {
   @override
   void initState() {
     super.initState();
+    readSQLite();
     setState(() {
-      readSQLite();
       shopId = widget.shopId;
       shopName = widget.shopName;
       shopSlot = widget.shopSlot;
       shopCoverImg = widget.shopCoverImg;
-      super.didChangeDependencies();
     });
   }
 
@@ -73,7 +72,6 @@ class _OrderItemPageState extends State<OrderItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("Cart Page Widget Building");
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       bottomNavigationBar: Container(
@@ -380,6 +378,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                               shopName: shopName,
                                               shopSlot: shopSlot,
                                               shopCoverImg: shopCoverImg,
+                                              readSQLite: readSQLite,
                                             ),
                                           );
                                         },

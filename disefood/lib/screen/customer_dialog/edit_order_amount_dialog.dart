@@ -8,6 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:toast/toast.dart';
 
 class EditOrderAmountDialog extends StatefulWidget {
+  final VoidCallback readSQLite;
   final int shopId;
   final int foodId;
   final String foodName;
@@ -27,12 +28,14 @@ class EditOrderAmountDialog extends StatefulWidget {
     @required this.shopName,
     @required this.shopSlot,
     @required this.shopCoverImg,
+    @required this.readSQLite,
   }) : super(key: key);
   @override
   _EditOrderAmountDialogState createState() => _EditOrderAmountDialogState();
 }
 
 class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
+  VoidCallback readSQLite;
   Logger logger = Logger();
   int foodId;
   String shopId;
@@ -47,7 +50,7 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
   @override
   void initState() {
     super.initState();
-
+    readSQLite = widget.readSQLite;
     setState(() {
       foodName = widget.foodName;
       foodImg = widget.foodImg;
@@ -212,9 +215,8 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
                             if (foodQuantity == 0) {
                               Navigator.of(context).pop(false);
                             } else {
-                              print("Updating food to SQLite");
                               addFoodToCart();
-                              // Navigator.of(context).pop(true);
+                              Navigator.of(context).pop(true);
                               // Navigator.push(
                               //   context,
                               //   MaterialPageRoute(
@@ -226,35 +228,35 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
                               //     ),
                               //   ),
                               // );
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  pageBuilder: (BuildContext context,
-                                      Animation<double> animation,
-                                      Animation<double> secondaryAnimation) {
-                                    return OrderItemPage(
-                                      shopId: int.parse(shopId),
-                                      shopName: shopName,
-                                      shopSlot: shopSlot,
-                                      shopCoverImg: shopCoverImg,
-                                    );
-                                  },
-                                  transitionsBuilder: (BuildContext context,
-                                      Animation<double> animation,
-                                      Animation<double> secondaryAnimation,
-                                      Widget child) {
-                                    return FadeTransition(
-                                      opacity: Tween<double>(
-                                        begin: 0,
-                                        end: 1,
-                                      ).animate(animation),
-                                      child: child,
-                                    );
-                                  },
-                                  transitionDuration:
-                                      Duration(milliseconds: 300),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   PageRouteBuilder(
+                              //     pageBuilder: (BuildContext context,
+                              //         Animation<double> animation,
+                              //         Animation<double> secondaryAnimation) {
+                              //       return OrderItemPage(
+                              //         shopId: int.parse(shopId),
+                              //         shopName: shopName,
+                              //         shopSlot: shopSlot,
+                              //         shopCoverImg: shopCoverImg,
+                              //       );
+                              //     },
+                              //     transitionsBuilder: (BuildContext context,
+                              //         Animation<double> animation,
+                              //         Animation<double> secondaryAnimation,
+                              //         Widget child) {
+                              //       return FadeTransition(
+                              //         opacity: Tween<double>(
+                              //           begin: 0,
+                              //           end: 1,
+                              //         ).animate(animation),
+                              //         child: child,
+                              //       );
+                              //     },
+                              //     transitionDuration:
+                              //         Duration(milliseconds: 300),
+                              //   ),
+                              // );
                             }
                           },
                           padding: EdgeInsets.only(left: 20, right: 20),
@@ -328,6 +330,7 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
       await SQLiteHelper().insertDataToSQLite(cartModel).then(
         (value) {
           showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
+          readSQLite();
         },
       );
     } else {
@@ -336,12 +339,12 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
         await SQLiteHelper().insertDataToSQLite(cartModel).then(
           (value) {
             showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
+            readSQLite();
           },
         );
       } else {
         showDialog(context: context, builder: (context) => OrderFailed());
       }
     }
-    print("Food has been Updated");
   }
 }
