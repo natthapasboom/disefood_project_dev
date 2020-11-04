@@ -53,7 +53,7 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
                   SizedBox(
                     width: 5,
                   ),
-                  Icon(Icons.filter_list_rounded),
+                  Icon(Icons.filter_list),
                 ],
               ),
               color: Color(0xffE8E8E8),
@@ -201,7 +201,7 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
                 new FlatButton(
                   child: new Text('CANCEL'),
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.pop(context, _currentIndex);
                   },
                 )
               ],
