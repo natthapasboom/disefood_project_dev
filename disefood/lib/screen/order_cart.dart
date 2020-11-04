@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:provider/provider.dart';
 import 'package:disefood/model/cart.dart';
 import 'package:disefood/screen/customer_dialog/edit_order_amount_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
@@ -33,17 +33,17 @@ class _OrderItemPageState extends State<OrderItemPage> {
   List<CartModel> cartModels = List();
   int totalPrice;
   bool isCartNotEmpty = false;
-  String text = "before";
 
   @override
   void initState() {
-    readSQLite();
     super.initState();
     setState(() {
+      readSQLite();
       shopId = widget.shopId;
       shopName = widget.shopName;
       shopSlot = widget.shopSlot;
       shopCoverImg = widget.shopCoverImg;
+      super.didChangeDependencies();
     });
   }
 
@@ -73,6 +73,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("Cart Page Widget Building");
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       bottomNavigationBar: Container(
@@ -333,7 +334,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                       Container(
                                         width: 220,
                                         child: Text(
-                                          "${items.foodName} $text",
+                                          "${items.foodName}",
                                           style: TextStyle(
                                             fontSize: 14,
                                           ),
@@ -376,12 +377,11 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                               foodName: items.foodName,
                                               foodImg: items.foodImg,
                                               foodPrice: items.foodPrice,
+                                              shopName: shopName,
+                                              shopSlot: shopSlot,
+                                              shopCoverImg: shopCoverImg,
                                             ),
-                                          ).then((value) {
-                                            setState(() {
-                                              text = "after";
-                                            });
-                                          });
+                                          );
                                         },
                                         child: Container(
                                           alignment: Alignment.center,

@@ -1,4 +1,5 @@
 import 'package:disefood/model/cart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -37,7 +38,7 @@ class SQLiteHelper {
     var result = await database.query(tableDatabase,
         where: "$foodId = ${cartModel.foodId}");
     if (result.isEmpty) {
-      print("Not exist Item Insert Data");
+      print("Not exist Item Inserting Data to SQLite");
       try {
         database.insert(
           tableDatabase,
@@ -48,7 +49,7 @@ class SQLiteHelper {
         print('e insertData ===> ${e.toString()}');
       }
     } else {
-      print("Exist Item Update Data");
+      print("Exist Item Updating Data to SQLite");
       try {
         database.rawUpdate(
           "UPDATE $tableDatabase SET $foodQuantity = ${cartModel.foodQuantity} , $foodSumPrice = ${cartModel.foodSumPrice} WHERE $foodId = ${cartModel.foodId}",
