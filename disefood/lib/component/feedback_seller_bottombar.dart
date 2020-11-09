@@ -11,6 +11,16 @@ class FeedbackSeller extends StatefulWidget {
 class _FeedbackSellerState extends State<FeedbackSeller> {
   int rate;
   int _currentIndex = 0;
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  Future
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
