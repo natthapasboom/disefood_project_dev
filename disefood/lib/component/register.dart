@@ -121,10 +121,9 @@ class _RegisState extends State<Regis> {
       }
 
       print('res : $response');
-    }else{
+    } else {
       dialogError(context);
     }
-      
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -397,21 +396,6 @@ class _RegisState extends State<Regis> {
             padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
             child: TextFormField(
               validator: _validateEmail,
-              // onFieldSubmitted: (value) {
-              //   if (isValidEmail(value)) {
-              //     logger.d(value);
-              //   } else {
-              //     logger.e('โปรดกรอกอีเมลล์ให้ถูกต้อง');
-              //   }
-              // },
-              // validator: (value) {
-              //   if (isValidEmail(value)) {
-              //     logger.d(value);
-              //   } else {
-              //     return 'โปรดกรอกอีเมลล์ให้ถูกต้อง';
-              //   }
-              // },
-              //
               keyboardType: TextInputType.emailAddress,
               textCapitalization: TextCapitalization.none,
               maxLength: 50,
