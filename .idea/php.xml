@@ -69,7 +69,6 @@
       <path value="$PROJECT_DIR$/disefood-api/vendor/phpunit/php-timer" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/phpunit/php-token-stream" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/phpunit/phpunit" />
-      <path value="$PROJECT_DIR$/disefood-api/vendor/scrivo/highlight.php" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/brick/math" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/doctrine/instantiator" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/guzzlehttp/guzzle" />
@@ -103,7 +102,6 @@
       <path value="$PROJECT_DIR$/disefood-api/vendor/doctrine/lexer" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/opis/closure" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/symfony/translation-contracts" />
-      <path value="$PROJECT_DIR$/disefood-api/vendor/symfony/polyfill-php70" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/paragonie/random_compat" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/league/mime-type-detection" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/aws/aws-sdk-php" />
@@ -120,6 +118,16 @@
       <path value="$PROJECT_DIR$/disefood-api/vendor/nyholm/psr7" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/laminas/laminas-diactoros" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/laminas/laminas-zendframework-bridge" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/auth" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/cloud-core" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/cloud-vision" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/common-protos" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/gax" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/grpc-gcp" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/google/protobuf" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/rize/uri-template" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/grpc/grpc" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/psr/cache" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/symfony/http-client-contracts" />
     </include_path>
   </component>

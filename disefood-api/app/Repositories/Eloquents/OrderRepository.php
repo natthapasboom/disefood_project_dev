@@ -41,6 +41,7 @@ class OrderRepository implements OrderRepositoryInterface
         foreach ( $orders as $order) {
           $id = $order['id'];
           $order->find($id)->get();
+          $order->shop->makeHidden('user_id', 'shop_slot', 'approved', 'created_at', 'updated_at', 'deleted_at');
           $orderDetails = $order->orderDetails;
           foreach ($orderDetails as $orderDetail) {
               $orderDetail->food->makeHidden('shop_id', 'status', 'created_at', 'updated_at');
@@ -57,6 +58,7 @@ class OrderRepository implements OrderRepositoryInterface
             $order->find($id)->get();
             $order->user->makeHidden('email', 'profile_img', 'role', 'created_at', 'updated_at');
             $order->shop->makeHidden('user_id', 'created_at', 'updated_at', 'deleted_at', 'cover_img', 'approved');
+            $order->payment;
             $orderDetails = $order->orderDetails;
             foreach ($orderDetails as $orderDetail) {
                 $orderDetail->food;

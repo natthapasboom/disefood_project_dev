@@ -45,6 +45,17 @@ Route::group([
     Route::get('/', 'ShopController@getShopsList');
     Route::get('/{shopId}/detail', 'ShopController@findShopById');
     Route::get('/search', 'ShopController@search');
+    Route::get('/account-number', 'ShopController@getAccountNumbers');
+    Route::get('/{shopId}/account-number', 'ShopController@getAccountNumberByShopId');
+
+    Route::group([
+       'prefix' => 'account-number',
+       'middleware' => 'auth:api'
+    ], function () {
+        Route::post('/{shopId}', 'ShopController@addAccountNumber');
+        Route::put('/update/{accNumberId}', 'ShopController@updateAccountNumberById');
+        Route::delete('/delete/{accNumberId}', 'ShopController@deleteById');
+    });
 
     Route::group([
         'prefix' => 'owner',
@@ -71,6 +82,15 @@ Route::group([
 });
 
 Route::group([
+   'prefix' => 'payment'
+], function () {
+    Route::get('/', 'PaymentController@getAllPayments');
+    Route::get('/{paymentId}', 'PaymentController@getPaymentById');
+    Route::get('/check/order/{orderId}', 'PaymentController@checkPayInFullAmount');
+    Route::get('/confirmation/order/{orderId}','PaymentController@orderPaymentConfirmation');
+});
+
+Route::group([
     'prefix' => 'order'
 ], function () {
 
@@ -82,7 +102,8 @@ Route::group([
     ], function () {
         Route::get('/', 'OrderController@getOrderMe');
         Route::delete('/{orderId}', 'OrderController@rejectedOrder');
-
+        Route::post('/{orderId}/payment', 'PaymentController@create');
+        Route::get('/{orderId}/payment', 'PaymentController@getPaymentByOrderId');
     });
 
     Route::group([
@@ -110,4 +131,28 @@ Route::group([
         Route::post('/', 'FavoriteController@addFavoriteShop');
         Route::delete('/{fId}', 'FavoriteController@removeFavoriteShop');
     });
+});
+
+Route::group([
+    'prefix' => 'feedback'
+], function () {
+
+//   Route::get('/', 'FeedbackController@getAll');
+//   Route::get('/{id}', 'FeedbackController@getById');
+
+   Route::group([
+       'prefix' => 'me',
+       'middleware' => 'auth:api'
+   ], function () {
+       Route::get('/', 'FeedbackController@getByMe');
+       Route::post('/shop/{shopId}', 'FeedbackController@create');
+       Route::delete('/{id}', 'FeedbackController@deleteById');
+   });
+
+   Route::group([
+       'prefix' => 'shop',
+       'middleware' => 'auth:api'
+   ], function () {
+       Route::get('/{shopId}', 'FeedbackController@getByShopId');
+   });
 });

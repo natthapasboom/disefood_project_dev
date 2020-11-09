@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateAccountNumberRequest;
+use App\Http\Requests\UpdateAccountNumberInShopRequest;
 use App\Http\Requests\UpdateFoodInShop;
+use App\Repositories\Interfaces\AccountNumberRepositoryInterface;
 use App\Repositories\Interfaces\ShopRepositoryInterface;
 use App\Repositories\Interfaces\FoodRepositoryInterface;
 use App\Http\Requests\CreateShopRequest;
@@ -17,26 +20,40 @@ class ShopController extends Controller
 {
     private $shopRepo;
     private $foodRepo;
+    private $accNumberRepo;
 
     public function __construct
     (
         ShopRepositoryInterface $shopRepo,
-        FoodRepositoryInterface $foodRepo
+        FoodRepositoryInterface $foodRepo,
+        AccountNumberRepositoryInterface $accNumber
     )
     {
         $this->shopRepo = $shopRepo;
         $this->foodRepo = $foodRepo;
+        $this->accNumberRepo = $accNumber;
     }
 
     public function getShopsList()
     {
         $shops = $this->shopRepo->getAll();
+        foreach ($shops as $shop) {
+            $feedbacks = $shop->feedbacks;
+            $sumOfRating = 0;
+            $shop["averageRating"] = 0;
+            foreach ($feedbacks as $feedback) {
+                $rating = $feedback->rating;
+                $sumOfRating += $rating;
+                $shop["averageRating"] = $sumOfRating / count($feedbacks);
+            }
+        }
         return response()->json(['data' => $shops, 'msg' => 'Get shop lists success', 'status' => 200]);
     }
 
     public function findShopById($shopId)
     {
         $shop = $this->shopRepo->findById($shopId);
+        $shop->accountNumbers;
         if(!$shop) {
             return response()->json(['msg' => 'Shop not found', 'status' => 404]);
         } else {
@@ -137,9 +154,7 @@ class ShopController extends Controller
             if(!$req) response()->json(['msg' => 'Failed Validation'], 422);
 
             $pathImg = Storage::disk('s3')->put('images/shop/cover_img', $request->file('cover_img'),'public');
-            $docImg = Storage::disk('s3')->put('images/shop/doc_img', $request->file('document_img'), 'public');
             $req['cover_img'] = $pathImg;
-            $req['document_img'] = $docImg;
             $req['approved'] = false;
             $req['user_id'] = $seller['id'];
             $shop = $this->shopRepo->create($req);
@@ -178,26 +193,6 @@ class ShopController extends Controller
                 $newShop = $this->shopRepo->findById($shopId);
                 return response()->json(['data' => $newShop, 'msg' => 'Updated Success'], 200);
             }
-//            $shop = $this->shopRepo->findById($shopId);
-//            if(!$shop) {
-//                return response()->json(['msg' => 'Shop Not Found'], 404);
-//            }
-//            else {
-//                if(!isset($req['cover_img'])){
-//                    $req['cover_img'] = $shop->cover_img;
-//                    $this->shopRepo->updateShop($req, $shopId);
-//                    $res = $this->shopRepo->findById($shopId);
-//                    return response()->json(['data' => $res, 'msg' => 'Updated Success'], 200);
-//                } else {
-//                    $oldPath = $shop['cover_img'];
-//                    Storage::disk('s3')->delete($oldPath);
-//                    $newPath = Storage::disk('s3')->put('images/shop/cover_img', $request->file('cover_img'), 'public');
-//                    $req['cover_img'] = $newPath;
-//                    $this->shopRepo->updateShop($req, $shopId);
-//                    $res = $this->shopRepo->findById($shopId);
-//                    return response()->json(['data' => $res, 'msg' => 'Updated With Image Success'], 200);
-//                }
-//            }
         } else {
             return response()->json(['msg' => 'No Permission'], 401);
         }
@@ -251,25 +246,6 @@ class ShopController extends Controller
                 $newFood = $this->foodRepo->findByFoodId($foodId);
                 return response()->json(['data' => $newFood, 'msg' => 'Updated Success'], 200);
             }
-//            if(!$food) {
-//                return response()->json(['data' => $food, 'msg' => 'Food Not Found'], 404);
-//            } else {
-//                $req = $request->validated();
-//                if(!isset($req['cover_img'])) {
-//                    $req['cover_img'] = $food['cover_img'];
-//                    $this->foodRepo->update($req, $foodId);
-//                    $food = $this->foodRepo->findByFoodId($foodId);
-//                    return response()->json(['data' => $food, 'msg' => 'Updated Success'], 200);
-//                } else {
-//                    $oldPath = $food['cover_img'];
-//                    Storage::disk('s3')->delete($oldPath);
-//                    $newPath = Storage::disk('s3')->put('images/shop/food/cover_img', $request->file('cover_img'), 'public');
-//                    $req['cover_img'] = $newPath;
-//                    $this->foodRepo->update($req, $foodId);
-//                    $food = $this->foodRepo->findByFoodId($foodId);
-//                    return response()->json(['data' => $food, 'msg' => 'Updated with Image Success']);
-//                }
-//            }
         } else {
             return response()->json(['msg' => 'No Permission'], 401);
         }
@@ -294,6 +270,67 @@ class ShopController extends Controller
         } else {
             return response()->json(['msg' => 'No Permission'], 401);
         }
+    }
+
+    public function getAccountNumbers()
+    {
+        return $this->accNumberRepo->getAll();
+    }
+
+    public function getAccountNumberByShopId($shopId)
+    {
+        $accNumbers = $this->accNumberRepo->getByShopId($shopId);
+        return response()->json(['data' => $accNumbers], 200);
+    }
+
+    public function addAccountNumber(CreateAccountNumberRequest $request, $shopId)
+    {
+        $seller = $this->isSeller();
+        $sellerId = $seller['id'];
+        $isOwner = $this->isOwner($sellerId, $shopId);
+        if($isOwner) {
+            $req = $request->validated();
+            $accountNumber = $this->accNumberRepo->create($req, $shopId);
+            return response()->json(['data' => $accountNumber, 'msg' => 'Add account number success'], 200);
+        } else {
+            return response()->json(['msg' => 'No Permission'], 401);
+        }
+    }
+
+    public function updateAccountNumberById(UpdateAccountNumberInShopRequest $request, $accNumberId)
+    {
+        $accNumber = $this->accNumberRepo->getById($accNumberId);
+        $shopId = $accNumber['shop_id'];
+        $seller = $this->isSeller();
+        $sellerId = $seller['id'];
+        $isOwner = $this->isOwner($sellerId, $shopId);
+        if($isOwner) {
+            $req = $request->validated();
+
+            if(!$req) return response()->json(['msg' => 'Failed Validation'], 422);
+
+            $this->accNumberRepo->updateById($req, $accNumberId);
+            $newAccNumber = $this->accNumberRepo->getById($accNumberId);
+            return response()->json(['data' => $newAccNumber, 'msg' => 'Updated Success'], 200);
+        } else {
+            return response()->json(['msg' => 'No Permission'], 401);
+        }
+    }
+
+    public function deleteById($accNumberId)
+    {
+        $accNumber = $this->accNumberRepo->getById($accNumberId);
+        $shopId = $accNumber['shop_id'];
+        $seller = $this->isSeller();
+        $sellerId = $seller['id'];
+        $isOwner = $this->isOwner($sellerId, $shopId);
+        if($isOwner) {
+            $accNumber = $this->accNumberRepo->delete($accNumberId);
+            return response()->json(['data' => $accNumber, 'msg' => 'Remove Success'], 200);
+        } else {
+            return response()->json(['msg' => 'No Permission'], 401);
+        }
+
     }
 
     private function isSeller()

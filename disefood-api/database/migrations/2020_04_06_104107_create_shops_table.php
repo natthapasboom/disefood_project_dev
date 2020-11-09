@@ -19,7 +19,6 @@ class CreateShopsTable extends Migration
             $table->integer('shop_slot')->unique();
             $table->string('name')->unique();
             $table->string('cover_img')->nullable();
-            $table->string('document_img')->nullable();
             $table->boolean('approved');
             $table->softDeletes('deleted_at', 0);
             $table->timestamps();
