@@ -64,6 +64,7 @@ Route::group([
         Route::get('/', 'ShopController@getShopByOwner');
         Route::post('/','ShopController@create');
         Route::put('/{shopId}', 'ShopController@update');
+        Route::get('/{shopId}/dataSum', 'ShopController@dataSummary');
     });
 
     Route::group([

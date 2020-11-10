@@ -2,6 +2,7 @@
 
 namespace App\Models\Shop;
 
+use App\Models\Order\OrderDetail;
 use Illuminate\Database\Eloquent\Model;
 
 class Food extends Model
@@ -15,5 +16,10 @@ class Food extends Model
     public function shop()
     {
         return $this->belongsTo(Shop::class);
+    }
+
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class, 'food_id', 'id');
     }
 }
