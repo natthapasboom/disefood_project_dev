@@ -1,9 +1,9 @@
-class Feedback {
+class Feedbacks {
   List<Data> data;
 
-  Feedback({this.data});
+  Feedbacks({this.data});
 
-  Feedback.fromJson(Map<String, dynamic> json) {
+  Feedbacks.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
       data = new List<Data>();
       json['data'].forEach((v) {
