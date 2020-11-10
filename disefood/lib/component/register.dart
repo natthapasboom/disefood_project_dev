@@ -121,10 +121,9 @@ class _RegisState extends State<Regis> {
       }
 
       print('res : $response');
-    }else{
+    } else {
       dialogError(context);
     }
-      
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -397,21 +396,6 @@ class _RegisState extends State<Regis> {
             padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
             child: TextFormField(
               validator: _validateEmail,
-              // onFieldSubmitted: (value) {
-              //   if (isValidEmail(value)) {
-              //     logger.d(value);
-              //   } else {
-              //     logger.e('โปรดกรอกอีเมลล์ให้ถูกต้อง');
-              //   }
-              // },
-              // validator: (value) {
-              //   if (isValidEmail(value)) {
-              //     logger.d(value);
-              //   } else {
-              //     return 'โปรดกรอกอีเมลล์ให้ถูกต้อง';
-              //   }
-              // },
-              //
               keyboardType: TextInputType.emailAddress,
               textCapitalization: TextCapitalization.none,
               maxLength: 50,
@@ -612,11 +596,15 @@ class _RegisState extends State<Regis> {
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) {
+          Future.delayed(Duration(seconds: 3), () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          });
           return Dialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               child: Container(
-                  height: 300.0,
+                  height: 240.0,
                   width: 200.0,
                   decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
@@ -678,33 +666,33 @@ class _RegisState extends State<Regis> {
                             ),
                           )),
                       SizedBox(height: 10.0),
-                      Container(
-                        margin:
-                            EdgeInsets.only(top: 10, left: 20.0, right: 20.0),
-                        child: RaisedButton(
-                            padding: EdgeInsets.only(top: 5, bottom: 5),
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                                side: BorderSide(color: Colors.green)),
-                            child: Center(
-                              child: Text(
-                                'ตกลง',
-                                style: TextStyle(
-                                    fontFamily: 'Aleo-Bold',
-                                    fontSize: 16.0,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginPage()));
-                            },
-                            color: Colors.green),
-                      )
+                      // Container(
+                      //   margin:
+                      //       EdgeInsets.only(top: 10, left: 20.0, right: 20.0),
+                      //   child: RaisedButton(
+                      //       padding: EdgeInsets.only(top: 5, bottom: 5),
+                      //       elevation: 5,
+                      //       shape: RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.circular(18.0),
+                      //           side: BorderSide(color: Colors.green)),
+                      //       child: Center(
+                      //         child: Text(
+                      //           'ตกลง',
+                      //           style: TextStyle(
+                      //               fontFamily: 'Aleo-Bold',
+                      //               fontSize: 16.0,
+                      //               color: Colors.white,
+                      //               fontWeight: FontWeight.bold),
+                      //         ),
+                      //       ),
+                      //       onPressed: () {
+                      //         Navigator.push(
+                      //             context,
+                      //             MaterialPageRoute(
+                      //                 builder: (context) => LoginPage()));
+                      //       },
+                      //       color: Colors.green),
+                      // )
                     ],
                   )));
         }).then((value) {});

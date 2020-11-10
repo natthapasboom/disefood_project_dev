@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/config/app_config.dart';
@@ -17,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'customer_dialog/order_amount_dialog.dart';
 
 class MenuPage extends StatefulWidget {
@@ -53,6 +53,7 @@ class _MenuPageState extends State<MenuPage> {
     super.initState();
 
     setState(() {
+      rating = 0;
       shopName = widget.shopName;
       shopCoverImg = widget.shopCoverImg;
       shopSlot = widget.shopSlot;
@@ -62,6 +63,30 @@ class _MenuPageState extends State<MenuPage> {
       findMenu();
       // findUser();
     });
+  }
+
+  _ackAlert(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'มีบางอย่างผิดพลาด',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: const Text('โปรดกรอกรีวิว'),
+          actions: [
+            FlatButton(
+              textColor: const Color(0xffFF7C2C),
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Future<UserById> findUser() async {
@@ -344,7 +369,7 @@ class _MenuPageState extends State<MenuPage> {
                                             reverse: true,
                                             children: [
                                               alertDialog(context, shopName,
-                                                  shopCoverImg),
+                                                  shopCoverImg, shopId),
                                             ],
                                           );
                                         }),
@@ -485,7 +510,11 @@ class _MenuPageState extends State<MenuPage> {
     BuildContext context,
     String name,
     String shopImg,
-  ) {
+    int shopId,
+  ) async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    String token = preference.getString('token');
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     print('alert');
     showDialog(
         context: context,
@@ -497,195 +526,319 @@ class _MenuPageState extends State<MenuPage> {
                 // child: Padding(
                 // padding: EdgeInsets.only(
                 //     bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: AlertDialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                  contentPadding: EdgeInsets.only(top: 0.0),
-                  content: Container(
-                    width: 342.0,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                          decoration: BoxDecoration(
-                            color: Color(0xffFF7C2C),
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(25.0),
-                                topRight: Radius.circular(25.0)),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(left: 120),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "Review",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'Aleo',
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 24),
-                                  // textAlign: TextAlign.center,
+                child: StatefulBuilder(builder: (context, setState) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                    contentPadding: EdgeInsets.only(top: 0.0),
+                    content: Container(
+                      width: 342.0,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                            decoration: BoxDecoration(
+                              color: Color(0xffFF7C2C),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(25.0),
+                                  topRight: Radius.circular(25.0)),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(left: 120),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "Review",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Aleo',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 24),
+                                    // textAlign: TextAlign.center,
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.only(left: 60),
-                                child: IconButton(
-                                    icon: Icon(
-                                      Icons.clear,
-                                      color: Colors.white,
-                                      size: 36,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    }),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(
-                            top: 20,
-                          ),
-                          child: Center(
-                            child: Text(
-                              name,
-                              style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Roboto'),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  margin: EdgeInsets.only(left: 60),
+                                  child: IconButton(
+                                      icon: Icon(
+                                        Icons.clear,
+                                        color: Colors.white,
+                                        size: 36,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      }),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 15, bottom: 20),
-                          child: shopImg == null
-                              ? CircleAvatar(
-                                  backgroundColor: Colors.orangeAccent,
-                                  radius: 75,
-                                  child: Icon(
-                                    Icons.image,
-                                    size: 80,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : Center(
-                                  child: CircleAvatar(
-                                    backgroundColor: const Color(0xffF6A911),
-                                    radius: 60,
-                                    child: ClipOval(
-                                      child: CachedNetworkImage(
-                                          imageUrl:
-                                              '${AppConfig.image}$shopImg',
-                                          height: 300,
-                                          width: 500,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) => Center(
-                                                  child: Center(
-                                                child: Container(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                  strokeWidth: 5.0,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation(
-                                                          Colors.white),
+                          Container(
+                            margin: EdgeInsets.only(
+                              top: 20,
+                            ),
+                            child: Center(
+                              child: Text(
+                                name,
+                                style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 15, bottom: 20),
+                            child: shopImg == null
+                                ? CircleAvatar(
+                                    backgroundColor: Colors.orangeAccent,
+                                    radius: 75,
+                                    child: Icon(
+                                      Icons.image,
+                                      size: 80,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : Center(
+                                    child: CircleAvatar(
+                                      backgroundColor: const Color(0xffF6A911),
+                                      radius: 60,
+                                      child: ClipOval(
+                                        child: CachedNetworkImage(
+                                            imageUrl:
+                                                '${AppConfig.image}$shopImg',
+                                            height: 300,
+                                            width: 500,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                Center(
+                                                    child: Center(
+                                                  child: Container(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                    strokeWidth: 5.0,
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation(
+                                                            Colors.white),
+                                                  )),
                                                 )),
-                                              )),
-                                          errorWidget: (context, url, error) =>
-                                              Icon(
-                                                Icons.error,
-                                                color: Colors.white,
-                                                size: 48,
-                                              )),
+                                            errorWidget:
+                                                (context, url, error) => Icon(
+                                                      Icons.error,
+                                                      color: Colors.white,
+                                                      size: 48,
+                                                    )),
+                                      ),
                                     ),
                                   ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                            child: Center(
+                              child: RatingBar(
+                                initialRating: rating,
+                                minRating: 1,
+                                direction: Axis.horizontal,
+                                allowHalfRating: false,
+                                itemCount: 5,
+                                itemPadding:
+                                    EdgeInsets.symmetric(horizontal: 4.0),
+                                itemBuilder: (context, _) => Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
                                 ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: Center(
-                            child: RatingBar(
-                              initialRating: 0,
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              itemCount: 5,
-                              itemPadding:
-                                  EdgeInsets.symmetric(horizontal: 4.0),
-                              itemBuilder: (context, _) => Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                              ),
-                              onRatingUpdate: (rating) {
-                                setState(() {
+                                onRatingUpdate: (rating) {
                                   this.rating = rating;
-                                });
-                                print(rating);
-                              },
+
+                                  print(rating);
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          margin:
-                              EdgeInsets.only(bottom: 30, left: 30, right: 30),
-                          child: Center(
-                            child: Material(
-                              elevation: 5.0,
-                              child: SingleChildScrollView(
+                          Container(
+                            margin: EdgeInsets.only(
+                                bottom: 30, left: 30, right: 30),
+                            child: Center(
+                              child: Material(
+                                elevation: 5.0,
                                 child: Container(
                                   padding: EdgeInsets.only(
                                     top: 20,
                                     left: 20,
                                   ),
-                                  child: TextField(
-                                    controller: reviewController,
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.zero,
-                                      hintText: "Add Review",
-                                      border: InputBorder.none,
+                                  child: Form(
+                                    key: _formKey,
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value.isEmpty) {
+                                          return _ackAlert(context);
+                                        }
+                                      },
+                                      autofocus: false,
+                                      controller: reviewController,
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.zero,
+                                        hintText: "Add Review",
+                                        border: InputBorder.none,
+                                      ),
+                                      maxLines: 4,
                                     ),
-                                    maxLines: 4,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        InkWell(
-                          child: Container(
-                              padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                              decoration: BoxDecoration(
-                                color: Color(0xffFF7C2C),
-                                borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(25.0),
-                                    bottomRight: Radius.circular(25.0)),
-                              ),
-                              child: FlatButton(
-                                  onPressed: () {
-                                    this.rating.toString();
-                                    logger.d(
-                                        'body : ${reviewController.text.trim}  ${rating.toString()}');
-                                  },
-                                  child: Center(
-                                    child: Text(
-                                      'Submit',
-                                      style: TextStyle(
-                                          fontFamily: 'Roboto',
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ),
-                                  ))),
-                        ),
-                      ],
+                          InkWell(
+                            child: Container(
+                                padding:
+                                    EdgeInsets.only(top: 10.0, bottom: 10.0),
+                                decoration: BoxDecoration(
+                                  color: Color(0xffFF7C2C),
+                                  borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(25.0),
+                                      bottomRight: Radius.circular(25.0)),
+                                ),
+                                child: FlatButton(
+                                    onPressed: () async {
+                                      String review =
+                                          reviewController.text.trim();
+                                      int rating1 = this.rating.toInt();
+                                      logger.d('body : $review  $rating1 ');
+                                      if (_formKey.currentState.validate()) {
+                                        String url =
+                                            'http://54.151.194.224:8000/api/feedback/me/shop/$shopId';
+                                        var formData = FormData.fromMap({
+                                          'comment': review,
+                                          'rating': rating1,
+                                        });
+                                        // logger.d(formData.fields);
+                                        var response = await Dio().post(url,
+                                            data: formData,
+                                            options: Options(
+                                                headers: {
+                                                  'Authorization':
+                                                      'Bearer $token',
+                                                },
+                                                followRedirects: false,
+                                                validateStatus: (status) {
+                                                  return status < 500;
+                                                }));
+                                        logger.d(
+                                            'review status: ${response.statusCode}');
+                                        if (response.statusCode == 200) {
+                                          showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    Future.delayed(
+                                                        Duration(seconds: 3),
+                                                        () {
+                                                      Navigator.of(context)
+                                                          .pop(true);
+                                                    });
+                                                    return Dialog(
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0)),
+                                                        child: Container(
+                                                            height: 250.0,
+                                                            width: 300.0,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20.0)),
+                                                            child: Column(
+                                                              children: <
+                                                                  Widget>[
+                                                                Stack(
+                                                                  children: <
+                                                                      Widget>[
+                                                                    // Container(height: 150.0),
+                                                                    // Container(
+                                                                    //   height: 100.0,
+                                                                    //   decoration: BoxDecoration(
+                                                                    //       borderRadius: BorderRadius.only(
+                                                                    //         topLeft: Radius.circular(10.0),
+                                                                    //         topRight: Radius.circular(10.0),
+                                                                    //       ),
+                                                                    //       color: Colors.red),
+                                                                    // ),
+                                                                    Center(
+                                                                      child:
+                                                                          Container(
+                                                                        margin: EdgeInsets.only(
+                                                                            top:
+                                                                                40),
+                                                                        height:
+                                                                            90.0,
+                                                                        width:
+                                                                            90.0,
+                                                                        decoration: BoxDecoration(
+                                                                            borderRadius: BorderRadius.circular(50.0),
+                                                                            image: DecorationImage(
+                                                                              image: AssetImage('assets/images/success.png'),
+                                                                              fit: BoxFit.cover,
+                                                                            )),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Container(
+                                                                    margin: EdgeInsets.only(
+                                                                        top: 20,
+                                                                        left:
+                                                                            10,
+                                                                        right:
+                                                                            10,
+                                                                        bottom:
+                                                                            0),
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          Text(
+                                                                        'รีวิวสำเร็จ',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontFamily:
+                                                                              'Aleo-Bold',
+                                                                          fontSize:
+                                                                              24.0,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
+                                                                      ),
+                                                                    )),
+                                                              ],
+                                                            )));
+                                                  })
+                                              .then((value) =>
+                                                  Navigator.pop(context));
+                                        }
+                                      } else {}
+                                    },
+                                    child: Center(
+                                      child: Text(
+                                        'Submit',
+                                        style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                      ),
+                                    ))),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                }),
               ),
             ],
           );

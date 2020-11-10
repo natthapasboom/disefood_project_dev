@@ -8,6 +8,7 @@ import 'package:disefood/screen/menu_page.dart';
 import 'package:disefood/screen/order_promptpay_page.dart';
 import 'package:disefood/screen/view_order_page.dart';
 import 'package:disefood/screen_admin/home.dart';
+import 'package:disefood/screen_seller/donut_chart.dart';
 import 'package:disefood/screen_seller/top_seller_stat.dart';
 import 'package:disefood/screen_seller/home_seller.dart';
 import 'package:disefood/screen_seller/home_seller_tab.dart';

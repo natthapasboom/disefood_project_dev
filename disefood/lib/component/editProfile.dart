@@ -55,7 +55,6 @@ class _EditProfileState extends State<EditProfile> {
     _isLoading = false;
     super.initState();
     Future.microtask(() {
-
       findUser();
     });
   }
@@ -109,8 +108,6 @@ class _EditProfileState extends State<EditProfile> {
         _lastNameController.text = '${msg.data.lastName}';
         _emailController.text = '${msg.data.email}';
         _telController.text = '${msg.data.tel}';
-        
-
       });
     } else {
       logger.e("statuscode != 200");
@@ -169,14 +166,15 @@ class _EditProfileState extends State<EditProfile> {
                           height: 160,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  const Color(0xffFF7C2C),
-                                  const Color(0xffFF7C2C),
-                                  const Color(0xffF6A341),
-                                  const Color(0xffFFC888),
-                                ]),
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                const Color(0xffFF7C2C),
+                                const Color(0xffFF7C2C),
+                                const Color(0xffF6A341),
+                                const Color(0xffFFC888),
+                              ],
+                            ),
                           ),
                         ),
                         Transform.translate(
@@ -290,7 +288,10 @@ class _EditProfileState extends State<EditProfile> {
                                                   borderSide: new BorderSide(
                                                       color: Colors.red),
                                                 ),
-                                                hintText: _firstNameController != null ? '$firstName': 'กรอกชื่อชริง',
+                                                hintText:
+                                                    _firstNameController != null
+                                                        ? '$firstName'
+                                                        : 'กรอกชื่อชริง',
                                               ),
                                             ),
                                           ),
@@ -380,7 +381,7 @@ class _EditProfileState extends State<EditProfile> {
                                       endIndent: 30,
                                     ),
                                   ),
-                                   Row(
+                                  Row(
                                     children: <Widget>[
                                       Container(
                                         margin:
@@ -404,7 +405,8 @@ class _EditProfileState extends State<EditProfile> {
                                               EdgeInsets.fromLTRB(75, 0, 30, 0),
                                           child: new TextFormField(
                                             validator: _validateEmail,
-                                            keyboardType: TextInputType.emailAddress,
+                                            keyboardType:
+                                                TextInputType.emailAddress,
                                             controller: _emailController,
                                             decoration: InputDecoration(
                                               contentPadding:
@@ -510,8 +512,7 @@ class _EditProfileState extends State<EditProfile> {
                                                 borderSide: new BorderSide(
                                                     color: Colors.red),
                                               ),
-                                              hintText:  'กรอกเบอร์โทร'
-                                                  ,
+                                              hintText: 'กรอกเบอร์โทร',
                                             ),
                                           ),
                                         ),
@@ -566,9 +567,7 @@ class _EditProfileState extends State<EditProfile> {
                                           width: 132,
                                           height: 40,
                                           child: RaisedButton(
-                                            onPressed: () {
-
-                                            },
+                                            onPressed: () {},
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(5),
@@ -612,14 +611,15 @@ class _EditProfileState extends State<EditProfile> {
                           height: 200,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  const Color(0xffFF7C2C),
-                                  const Color(0xffF6A341),
-                                  const Color(0xffF6A341),
-                                  const Color(0xffFFC888),
-                                ]),
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                const Color(0xffFF7C2C),
+                                const Color(0xffF6A341),
+                                const Color(0xffF6A341),
+                                const Color(0xffFFC888),
+                              ],
+                            ),
                           ),
                         ),
                         Transform.translate(
