@@ -75,6 +75,14 @@ class _LoginPageState extends State<LoginPage> {
             dialogError(context, msg.msg);
             _isLoading = false;
           });
+        } else if (response.statusCode == 500) {
+          Map map = json.decode(response.body);
+          Message msg = Message.fromJson(map);
+          print('message: ${msg.msg}');
+          setState(() {
+            dialogError(context, msg.msg);
+            _isLoading = false;
+          });
         }
       } catch (error) {
         print('error: $error');

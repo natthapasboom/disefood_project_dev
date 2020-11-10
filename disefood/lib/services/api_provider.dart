@@ -175,6 +175,13 @@ class ApiProvider {
     return response;
   }
 
+  Future<http.Response> getFeedback(String token, int shopId) async {
+    String url = 'http://54.151.194.224:8000/api/feedback/shop/$shopId';
+    http.Response response =
+        await http.get(url, headers: {'Authorization': 'Bearer $token'});
+    return response;
+  }
+
   Future<http.Response> rejectShopByID(int id, String token) async {
     String _url = 'http://54.151.194.224:8000/api/admin/rejected/$id';
     http.Response response =
