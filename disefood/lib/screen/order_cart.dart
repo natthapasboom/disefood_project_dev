@@ -216,7 +216,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                     color: Colors.grey[700],
                   ),
                   Text(
-                    "ยังไม่มีอาหารในตะกร้าสินค้า",
+                    "ไม่มีรายการในตะกร้าสินค้า",
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -380,7 +380,9 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                               shopCoverImg: shopCoverImg,
                                               readSQLite: readSQLite,
                                             ),
-                                          );
+                                          ).then((value) {
+                                            setState(() {});
+                                          });
                                         },
                                         child: Container(
                                           alignment: Alignment.center,

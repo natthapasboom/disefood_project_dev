@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:disefood/model/cart.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/config/app_config.dart';
@@ -19,6 +20,7 @@ import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'customer_dialog/order_amount_dialog.dart';
+import 'customer_utilities/sqlite_helper.dart';
 
 class MenuPage extends StatefulWidget {
   final int shopId;
@@ -44,14 +46,16 @@ class _MenuPageState extends State<MenuPage> {
   String shopCoverImg;
   TextEditingController reviewController = TextEditingController();
   ApiProvider apiProvider = ApiProvider();
+  List<CartModel> cartModels = List();
   bool isLoading = true;
   List foods = [];
+  List quantities;
   double rating;
   int userId;
   @override
   void initState() {
     super.initState();
-
+    readSQLite();
     setState(() {
       rating = 0;
       shopName = widget.shopName;
@@ -62,6 +66,13 @@ class _MenuPageState extends State<MenuPage> {
     Future.microtask(() {
       findMenu();
       // findUser();
+    });
+  }
+
+  Future<Null> readSQLite() async {
+    var object = await SQLiteHelper().readAllDataFromSQLite();
+    setState(() {
+      cartModels = object;
     });
   }
 
@@ -89,6 +100,15 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
+  void checkQuantity(int index, int quantity) {
+    setState(() {
+      if (quantity == 0) {
+        foods[index]['quantity'] = " ";
+      } else {
+        foods[index]['quantity'] = "+$quantity";
+      }
+    });
+  }
   // Future<UserById> findUser() async {
   //   SharedPreferences preference = await SharedPreferences.getInstance();
   //   userId = preference.getInt('user_id');
@@ -97,13 +117,23 @@ class _MenuPageState extends State<MenuPage> {
   Future findMenu() async {
     // SharedPreferences preference = await SharedPreferences.getInstance();
     var response = await apiProvider.getFoodByShopId(shopId);
-    print(response.statusCode);
+    print("Connection Status Code: " + "${response.statusCode}");
     var body = response.body;
     if (response.statusCode == 200) {
       setState(() {
         isLoading = false;
         foods = json.decode(body)['data'];
-        // logger.d(foods);
+        // quantities = new List(foods.length);
+        foods.forEach((food) {
+          food['quantity'] = " ";
+        });
+        for (var i = 0; i < cartModels.length; i++) {
+          foods.forEach((food) {
+            if (cartModels[i].foodId == food['id']) {
+              food['quantity'] = "+${cartModels[i].foodQuantity}";
+            }
+          });
+        }
       });
     } else {
       logger.e("statuscode != 200");
@@ -387,60 +417,61 @@ class _MenuPageState extends State<MenuPage> {
                         ),
                       ),
                       Container(
-                        color: Colors.white,
-                        padding: EdgeInsets.fromLTRB(45, 10, 45, 0),
+                        margin: EdgeInsets.only(right: 40, left: 40),
+                        padding: EdgeInsets.only(top: 10),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                Text(
-                                  "รายการอาหาร",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                                SizedBox(
+                                  width: 190,
+                                  child: Text(
+                                    "รายการอาหาร",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                                SizedBox(width: 65),
-                                Text(
-                                  "ราคา",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                SizedBox(
+                                  width: 40,
+                                ),
+                                SizedBox(
+                                  child: Text(
+                                    "ราคา",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ],
                             ),
                             Container(
                               margin: EdgeInsets.only(bottom: 20),
-                              width: double.maxFinite,
                               child: ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 itemCount: foods != null ? foods.length : 0,
                                 itemBuilder: (BuildContext context, int index) {
                                   var item = foods[index];
-                                  // logger.d(foods);
+
                                   return Column(
                                     children: <Widget>[
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          // Visibility(
-                                          //   visible: false,
-                                          //   child: SizedBox(
-                                          //     width: 25,
-                                          //     child: Text(
-                                          //       "0",
-                                          //       style: TextStyle(
-                                          //           fontWeight: FontWeight.bold,
-                                          //           color: Colors.orange),
-                                          //     ),
-                                          //   ),
-                                          //   replacement: SizedBox(
-                                          //     width: 20,
-                                          //   ),
-                                          // ),
                                           SizedBox(
                                             width: 190,
                                             child: Text('${item['name']}'),
+                                          ),
+                                          SizedBox(
+                                            width: 25,
+                                            child: Text(
+                                              "${item['quantity']}",
+                                              style: TextStyle(
+                                                  color: Colors.orange,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                           SizedBox(
                                             width: 30,
@@ -450,38 +481,47 @@ class _MenuPageState extends State<MenuPage> {
                                             ),
                                           ),
                                           SizedBox(
-                                            width: 5,
-                                          ),
-                                          IconButton(
-                                            icon: new Icon(
-                                              Icons.add_circle_outline,
-                                              color: Colors.orange,
+                                            width: 30,
+                                            child: IconButton(
+                                              icon: new Icon(
+                                                Icons.add_circle_outline,
+                                                color: Colors.orange,
+                                              ),
+                                              onPressed: () {
+                                                int foodId = item['id'];
+                                                String foodname = item['name'];
+                                                String foodImg =
+                                                    item['cover_img'];
+                                                int foodPrice = item["price"];
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      OrderAmountDialog(
+                                                    shopId: shopId,
+                                                    foodId: foodId,
+                                                    foodName: foodname,
+                                                    foodImg: foodImg,
+                                                    foodPrice: foodPrice,
+                                                    readSQLite: readSQLite,
+                                                    checkQuantity:
+                                                        checkQuantity,
+                                                    foodIndex: index,
+                                                    foodQuantity:
+                                                        item['quantity'],
+                                                  ),
+                                                );
+                                              },
                                             ),
-                                            onPressed: () {
-                                              int foodId = item['id'];
-                                              String foodname = item['name'];
-                                              String foodImg =
-                                                  item['cover_img'];
-                                              int foodPrice = item["price"];
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    OrderAmountDialog(
-                                                  shopId: shopId,
-                                                  foodId: foodId,
-                                                  foodName: foodname,
-                                                  foodImg: foodImg,
-                                                  foodPrice: foodPrice,
-                                                ),
-                                              );
-                                            },
                                           ),
-                                          IconButton(
-                                            icon: new Icon(
-                                              Icons.favorite_border,
-                                              color: Colors.orange,
+                                          SizedBox(
+                                            width: 30,
+                                            child: IconButton(
+                                              icon: new Icon(
+                                                Icons.favorite_border,
+                                                color: Colors.orange,
+                                              ),
+                                              onPressed: () {},
                                             ),
-                                            onPressed: () {},
                                           ),
                                         ],
                                       ),

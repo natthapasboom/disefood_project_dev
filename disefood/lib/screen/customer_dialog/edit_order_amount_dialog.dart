@@ -46,6 +46,7 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
   String shopName;
   int shopSlot;
   String shopCoverImg;
+  // List<CartModel> cartModels = List();
   final myController = TextEditingController();
   @override
   void initState() {
@@ -213,50 +214,39 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
                           elevation: 8,
                           onPressed: () {
                             if (foodQuantity == 0) {
-                              Navigator.of(context).pop(false);
+                              deleteFoodInCart();
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder: (BuildContext context,
+                                      Animation<double> animation,
+                                      Animation<double> secondaryAnimation) {
+                                    return OrderItemPage(
+                                      shopId: int.parse(shopId),
+                                      shopName: shopName,
+                                      shopCoverImg: shopCoverImg,
+                                      shopSlot: shopSlot,
+                                    );
+                                  },
+                                  transitionsBuilder: (BuildContext context,
+                                      Animation<double> animation,
+                                      Animation<double> secondaryAnimation,
+                                      Widget child) {
+                                    return FadeTransition(
+                                      opacity: Tween<double>(
+                                        begin: 0,
+                                        end: 1,
+                                      ).animate(animation),
+                                      child: child,
+                                    );
+                                  },
+                                  transitionDuration:
+                                      Duration(milliseconds: 200),
+                                ),
+                              );
                             } else {
                               addFoodToCart();
                               Navigator.of(context).pop(true);
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => OrderItemPage(
-                              //       shopId: int.parse(shopId),
-                              //       shopName: shopName,
-                              //       shopSlot: shopSlot,
-                              //       shopCoverImg: shopCoverImg,
-                              //     ),
-                              //   ),
-                              // );
-                              // Navigator.push(
-                              //   context,
-                              //   PageRouteBuilder(
-                              //     pageBuilder: (BuildContext context,
-                              //         Animation<double> animation,
-                              //         Animation<double> secondaryAnimation) {
-                              //       return OrderItemPage(
-                              //         shopId: int.parse(shopId),
-                              //         shopName: shopName,
-                              //         shopSlot: shopSlot,
-                              //         shopCoverImg: shopCoverImg,
-                              //       );
-                              //     },
-                              //     transitionsBuilder: (BuildContext context,
-                              //         Animation<double> animation,
-                              //         Animation<double> secondaryAnimation,
-                              //         Widget child) {
-                              //       return FadeTransition(
-                              //         opacity: Tween<double>(
-                              //           begin: 0,
-                              //           end: 1,
-                              //         ).animate(animation),
-                              //         child: child,
-                              //       );
-                              //     },
-                              //     transitionDuration:
-                              //         Duration(milliseconds: 300),
-                              //   ),
-                              // );
                             }
                           },
                           padding: EdgeInsets.only(left: 20, right: 20),
@@ -321,7 +311,7 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
     orderMap['foodPrice'] = foodPrice;
     orderMap['foodSumPrice'] = foodPrice * foodQuantity;
     orderMap['foodImg'] = foodImg;
-    print('orderMap Data :  ${orderMap.toString()} ');
+    print('Food Data :  ${orderMap.toString()} ');
     CartModel cartModel = CartModel.fromJson(orderMap);
 
     var object = await SQLiteHelper().readAllDataFromSQLite();
@@ -329,7 +319,7 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
     if (object.length == 0) {
       await SQLiteHelper().insertDataToSQLite(cartModel).then(
         (value) {
-          showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
+          showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
           readSQLite();
         },
       );
@@ -338,13 +328,27 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
       if (shopId == idShopSQLite) {
         await SQLiteHelper().insertDataToSQLite(cartModel).then(
           (value) {
-            showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
+            showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
             readSQLite();
           },
         );
       } else {
         showDialog(context: context, builder: (context) => OrderFailed());
       }
+    }
+  }
+
+  Future<Null> deleteFoodInCart() async {
+    int id = foodId;
+    print("Deleting FoodID : $id in cart");
+    try {
+      await SQLiteHelper().deleteDataWhereId(foodId).then((value) {
+        print("FoodID : $id  has been deleted.");
+        showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
+        readSQLite();
+      });
+    } catch (e) {
+      print(e);
     }
   }
 }
