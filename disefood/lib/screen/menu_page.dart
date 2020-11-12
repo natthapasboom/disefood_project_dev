@@ -188,70 +188,6 @@ class _MenuPageState extends State<MenuPage> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         resizeToAvoidBottomPadding: false,
-        // bottomNavigationBar: Container(
-        //   decoration: new BoxDecoration(
-        //     boxShadow: [
-        //       BoxShadow(
-        //         color: Colors.black,
-        //         blurRadius: 12.0,
-        //         spreadRadius: 5.0,
-        //         offset: Offset(
-        //           10.0,
-        //           10.0,
-        //         ),
-        //       )
-        //     ],
-        //   ),
-        //   // child:
-        //   // BottomAppBar(
-        //   //   shape: CircularNotchedRectangle(),
-        //   //   child: new Row(
-        //   //     mainAxisSize: MainAxisSize.max,
-        //   //     mainAxisAlignment: MainAxisAlignment.center,
-        //   //     children: <Widget>[
-        //   //       SizedBox(
-        //   //         height: 70,
-        //   //       ),
-        //   //       Container(
-        //   //         width: 370,
-        //   //         height: 40,
-        //   //         child: FloatingActionButton.extended(
-        //   //           shape: RoundedRectangleBorder(
-        //   //             borderRadius: BorderRadius.circular(8),
-        //   //           ),
-        //   //           backgroundColor: Colors.orange,
-        //   //           elevation: 4.0,
-        //   //           label: Row(
-        //   //             children: [
-        //   //               Icon(Icons.shopping_basket),
-        //   //               Text(
-        //   //                 'ไปยังตะกร้า',
-        //   //                 style: TextStyle(
-        //   //                   fontWeight: FontWeight.bold,
-        //   //                   fontSize: 18,
-        //   //                 ),
-        //   //               ),
-        //   //             ],
-        //   //           ),
-        //   //           onPressed: () {
-        //   //             Navigator.push(
-        //   //               context,
-        //   //               MaterialPageRoute(
-        //   //                 builder: (context) => OrderItemPage(
-        //   //                   shopId: shopId,
-        //   //                   shopName: shopName,
-        //   //                   shopSlot: shopSlot,
-        //   //                   shopCoverImg: shopCoverImg,
-        //   //                 ),
-        //   //               ),
-        //   //             );
-        //   //           },
-        //   //         ),
-        //   //       ),
-        //   //     ],
-        //   //   ),
-        //   // ),
-        // ),
         appBar: AppBar(
           actions: <Widget>[
             new IconButton(
@@ -319,7 +255,6 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ],
         ),
-
         body: isLoading
             ? Center(
                 child: CircularProgressIndicator(

@@ -156,34 +156,35 @@ class _OrderItemPageState extends State<OrderItemPage> {
             child: new IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (BuildContext context,
-                        Animation<double> animation,
-                        Animation<double> secondaryAnimation) {
-                      return MenuPage(
-                        shopId: shopId,
-                        shopName: shopName,
-                        shopSlot: shopSlot,
-                        shopCoverImg: shopCoverImg,
-                      );
-                    },
-                    transitionsBuilder: (BuildContext context,
-                        Animation<double> animation,
-                        Animation<double> secondaryAnimation,
-                        Widget child) {
-                      return FadeTransition(
-                        opacity: Tween<double>(
-                          begin: 0,
-                          end: 1,
-                        ).animate(animation),
-                        child: child,
-                      );
-                    },
-                    transitionDuration: Duration(milliseconds: 400),
-                  ),
-                );
+                Navigator.of(context).pop();
+                // Navigator.push(
+                //   context,
+                //   PageRouteBuilder(
+                //     pageBuilder: (BuildContext context,
+                //         Animation<double> animation,
+                //         Animation<double> secondaryAnimation) {
+                //       return MenuPage(
+                //         shopId: shopId,
+                //         shopName: shopName,
+                //         shopSlot: shopSlot,
+                //         shopCoverImg: shopCoverImg,
+                //       );
+                //     },
+                //     transitionsBuilder: (BuildContext context,
+                //         Animation<double> animation,
+                //         Animation<double> secondaryAnimation,
+                //         Widget child) {
+                //       return FadeTransition(
+                //         opacity: Tween<double>(
+                //           begin: 0,
+                //           end: 1,
+                //         ).animate(animation),
+                //         child: child,
+                //       );
+                //     },
+                //     transitionDuration: Duration(milliseconds: 400),
+                //   ),
+                // );
               },
             ),
           ),

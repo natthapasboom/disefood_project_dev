@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/model/cart.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen/history.dart';
 import 'package:disefood/services/api_provider.dart';
@@ -13,6 +14,9 @@ import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'customer_utilities/sqlite_helper.dart';
+import 'order_cart.dart';
 
 class Home extends StatefulWidget {
   //  final UserProfile userData;
@@ -40,9 +44,13 @@ class _HomeState extends State<Home> {
   String shopName;
   int shopSlot;
   String shopCoverImg;
-
+  //QTY
+  bool isCartNotEmpty = false;
+  int totalQty;
+  List<CartModel> cartModels = List();
   @override
   void initState() {
+    readSQLite();
     super.initState();
     Future.microtask(() {
       findUser();
@@ -91,6 +99,30 @@ class _HomeState extends State<Home> {
       // }
       // print(shops);
     });
+  }
+
+  Future<Null> readSQLite() async {
+    var object = await SQLiteHelper().readAllDataFromSQLite();
+    totalQty = 0;
+    setState(() {
+      for (var model in object) {
+        cartModels = object;
+        totalQty = totalQty + model.foodQuantity;
+      }
+    });
+    checkEmptyCart();
+  }
+
+  void checkEmptyCart() {
+    if (cartModels.length == 0) {
+      setState(() {
+        isCartNotEmpty = false;
+      });
+    } else {
+      setState(() {
+        isCartNotEmpty = true;
+      });
+    }
   }
 
   // Future<List<Shops>> fetchShopAndFood(int shopId) async {
@@ -167,6 +199,56 @@ class _HomeState extends State<Home> {
         coverImg: profileImg,
         email: email,
       ), //EndAppbar
+      floatingActionButton: Stack(
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrderItemPage(
+                    shopId: shopId,
+                    shopName: shopName,
+                    shopSlot: shopSlot,
+                    shopCoverImg: shopCoverImg,
+                  ),
+                ),
+              );
+            },
+            child: Icon(
+              Icons.shopping_bag,
+              color: Colors.white,
+            ),
+            backgroundColor: Colors.orange,
+          ),
+          Visibility(
+            visible: isCartNotEmpty,
+            child: Positioned(
+              right: 11,
+              top: 11,
+              child: new Container(
+                padding: EdgeInsets.all(2),
+                decoration: new BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                constraints: BoxConstraints(
+                  minWidth: 14,
+                  minHeight: 14,
+                ),
+                child: Text(
+                  '$totalQty',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(
