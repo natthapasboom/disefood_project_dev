@@ -14,6 +14,7 @@ class EditOrderAmountDialog extends StatefulWidget {
   final String foodName;
   final String foodImg;
   final int foodPrice;
+  final int foodQuantity;
   final String shopName;
   final int shopSlot;
   final String shopCoverImg;
@@ -29,6 +30,7 @@ class EditOrderAmountDialog extends StatefulWidget {
     @required this.shopSlot,
     @required this.shopCoverImg,
     @required this.readSQLite,
+    @required this.foodQuantity,
   }) : super(key: key);
   @override
   _EditOrderAmountDialogState createState() => _EditOrderAmountDialogState();
@@ -53,6 +55,11 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
     super.initState();
     readSQLite = widget.readSQLite;
     setState(() {
+      if (widget.foodQuantity == null) {
+        foodQuantity = 1;
+      } else {
+        foodQuantity = widget.foodQuantity;
+      }
       foodName = widget.foodName;
       foodImg = widget.foodImg;
       foodId = widget.foodId;

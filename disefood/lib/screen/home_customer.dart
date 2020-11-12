@@ -45,12 +45,12 @@ class _HomeState extends State<Home> {
   int shopSlot;
   String shopCoverImg;
   //QTY
-  bool isCartNotEmpty = false;
-  int totalQty;
-  List<CartModel> cartModels = List();
+  // bool isCartNotEmpty = false;
+  // int totalQty;
+  // List<CartModel> cartModels = List();
   @override
   void initState() {
-    readSQLite();
+    // readSQLite();
     super.initState();
     Future.microtask(() {
       findUser();
@@ -101,29 +101,29 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<Null> readSQLite() async {
-    var object = await SQLiteHelper().readAllDataFromSQLite();
-    totalQty = 0;
-    setState(() {
-      for (var model in object) {
-        cartModels = object;
-        totalQty = totalQty + model.foodQuantity;
-      }
-    });
-    checkEmptyCart();
-  }
+  // Future<Null> readSQLite() async {
+  //   var object = await SQLiteHelper().readAllDataFromSQLite();
+  //   totalQty = 0;
+  //   setState(() {
+  //     for (var model in object) {
+  //       cartModels = object;
+  //       totalQty = totalQty + model.foodQuantity;
+  //     }
+  //   });
+  //   checkEmptyCart();
+  // }
 
-  void checkEmptyCart() {
-    if (cartModels.length == 0) {
-      setState(() {
-        isCartNotEmpty = false;
-      });
-    } else {
-      setState(() {
-        isCartNotEmpty = true;
-      });
-    }
-  }
+  // void checkEmptyCart() {
+  //   if (cartModels.length == 0) {
+  //     setState(() {
+  //       isCartNotEmpty = false;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isCartNotEmpty = true;
+  //     });
+  //   }
+  // }
 
   // Future<List<Shops>> fetchShopAndFood(int shopId) async {
   //   String shopUrl = "http://10.0.2.2:8080/api/shops/+$shopId";
@@ -199,56 +199,56 @@ class _HomeState extends State<Home> {
         coverImg: profileImg,
         email: email,
       ), //EndAppbar
-      floatingActionButton: Stack(
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => OrderItemPage(
-                    shopId: shopId,
-                    shopName: shopName,
-                    shopSlot: shopSlot,
-                    shopCoverImg: shopCoverImg,
-                  ),
-                ),
-              );
-            },
-            child: Icon(
-              Icons.shopping_bag,
-              color: Colors.white,
-            ),
-            backgroundColor: Colors.orange,
-          ),
-          Visibility(
-            visible: isCartNotEmpty,
-            child: Positioned(
-              right: 11,
-              top: 11,
-              child: new Container(
-                padding: EdgeInsets.all(2),
-                decoration: new BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                constraints: BoxConstraints(
-                  minWidth: 14,
-                  minHeight: 14,
-                ),
-                child: Text(
-                  '$totalQty',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 8,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      // floatingActionButton: Stack(
+      //   children: [
+      //     FloatingActionButton(
+      //       onPressed: () {
+      //         Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //             builder: (context) => OrderItemPage(
+      //               shopId: shopId,
+      //               shopName: shopName,
+      //               shopSlot: shopSlot,
+      //               shopCoverImg: shopCoverImg,
+      //             ),
+      //           ),
+      //         );
+      //       },
+      //       child: Icon(
+      //         Icons.shopping_bag,
+      //         color: Colors.white,
+      //       ),
+      //       backgroundColor: Colors.orange,
+      //     ),
+      //     Visibility(
+      //       visible: isCartNotEmpty,
+      //       child: Positioned(
+      //         right: 11,
+      //         top: 11,
+      //         child: new Container(
+      //           padding: EdgeInsets.all(2),
+      //           decoration: new BoxDecoration(
+      //             color: Colors.red,
+      //             borderRadius: BorderRadius.circular(6),
+      //           ),
+      //           constraints: BoxConstraints(
+      //             minWidth: 14,
+      //             minHeight: 14,
+      //           ),
+      //           child: Text(
+      //             '$totalQty',
+      //             style: TextStyle(
+      //               color: Colors.white,
+      //               fontSize: 8,
+      //             ),
+      //             textAlign: TextAlign.center,
+      //           ),
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(
@@ -257,7 +257,6 @@ class _HomeState extends State<Home> {
               ),
             )
           : Container(
-              margin: EdgeInsets.only(bottom: 20),
               child: Column(
                 children: <Widget>[
                   headerSection,
@@ -288,14 +287,12 @@ class _HomeState extends State<Home> {
                                 },
                                 child: Container(
                                   margin: EdgeInsets.only(
-                                      bottom: 0, top: 20, left: 20, right: 20),
+                                      bottom: 5, top: 5, left: 20, right: 20),
                                   child: Card(
                                     semanticContainer: true,
                                     clipBehavior: Clip.antiAliasWithSaveLayer,
                                     elevation: 5,
                                     color: Colors.white70,
-                                    // margin: EdgeInsets.only(
-                                    //     top: 8, bottom: 8, left: 40, right: 40),
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
