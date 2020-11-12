@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Disefood</string>
+
+    <!-- Replace "000000000000" with your Facebook App ID here. -->
+    <string name="facebook_app_id">2256164067848953</string>
+
+    <!--
+      Replace "000000000000" with your Facebook App ID here.
+      *NOTE*: The scheme needs to start with fb and then your ID.
+    -->
+    <string name="fb_login_protocol_scheme">fb2256164067848953</string>
+</resources>
+<!-- <string name="facebook_app_id">2256164067848953</string> 
+<string name="fb_login_protocol_s
+cheme">fb2256164067848953</string> -->

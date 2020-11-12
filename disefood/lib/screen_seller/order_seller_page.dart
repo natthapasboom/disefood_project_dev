@@ -357,7 +357,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
     // print('$_userId $_name');
 
     return Scaffold(
-      body: isLoading
+      body: !isLoading
           ? Center(
               child: CircularProgressIndicator(
                 strokeWidth: 5.0,

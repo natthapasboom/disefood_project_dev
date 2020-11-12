@@ -32,6 +32,7 @@ class _EditProfileState extends State<EditProfile> {
   String password;
   String tel;
   String email;
+  var imageUrl;
   bool _isLoading = false;
   final logger = Logger();
   bool isLoading = true;
@@ -42,12 +43,18 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _telController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _image = image;
-    });
+
+  Future<void> getImage(ImageSource imageSource) async {
+    try {
+      var image = await ImagePicker.pickImage(
+          source: imageSource, maxWidth: 400.0, maxHeight: 400.0);
+
+      setState(() {
+        _image = image;
+      });
+    } catch (e) {}
   }
 
   @override
@@ -86,6 +93,7 @@ class _EditProfileState extends State<EditProfile> {
   Future<UserById> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     userId = preference.getInt('user_id');
+    password = preference.getString('password');
     var response = await apiProvider.getUserById(userId);
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -104,6 +112,7 @@ class _EditProfileState extends State<EditProfile> {
         email = msg.data.email;
         tel = msg.data.tel;
         logger.d(profileImg);
+        // _passwordController.text = '$password';
         _firstNameController.text = '${msg.data.firstName}';
         _lastNameController.text = '${msg.data.lastName}';
         _emailController.text = '${msg.data.email}';
@@ -120,27 +129,49 @@ class _EditProfileState extends State<EditProfile> {
         return Image.file(
           _image,
           fit: BoxFit.cover,
-          height: 300,
-          width: 300,
+          height: 150,
+          width: 500,
         );
       } else {
-        return CircleAvatar(
-          backgroundColor: Colors.orangeAccent,
-          radius: 70,
-          child: Icon(
-            Icons.image,
-            size: 80,
+        return Center(
+          child: IconButton(
+            onPressed: () {
+              getImage(ImageSource.gallery);
+              setState(() {
+                _isEdit = true;
+                Image.file(_image);
+              });
+            },
+            iconSize: 36,
             color: Colors.white,
+            icon: Icon(Icons.add_a_photo),
           ),
         );
       }
     } else {
       return CachedNetworkImage(
-        imageUrl: '${AppConfig.image}$profileImg',
-        height: 200,
-        width: 500,
-        fit: BoxFit.cover,
-      );
+          imageUrl: '${AppConfig.image}$profileImg',
+          height: 150,
+          width: 500,
+          fit: BoxFit.fitWidth,
+          placeholder: (context, url) => Container(
+                height: 150,
+                width: 500,
+                color: const Color(0xff7FC9C5),
+                child: Center(
+                    child: Center(
+                  child: Container(
+                      child: CircularProgressIndicator(
+                    strokeWidth: 5.0,
+                    valueColor: AlwaysStoppedAnimation(Colors.white),
+                  )),
+                )),
+              ),
+          errorWidget: (context, url, error) => Icon(
+                Icons.store,
+                color: Colors.white,
+                size: 48,
+              ));
     }
   }
 
@@ -185,11 +216,23 @@ class _EditProfileState extends State<EditProfile> {
                                   ? CircleAvatar(
                                       backgroundColor: Colors.white,
                                       radius: 70,
-                                      child: Icon(
-                                        Icons.photo,
-                                        size: 50,
-                                        color: Colors.orange,
-                                      ),
+                                      child: _image == null
+                                          ? Icon(
+                                              Icons.photo,
+                                              size: 50,
+                                              color: Colors.orange,
+                                            )
+                                          : CircleAvatar(
+                                              radius: 70,
+                                              child: ClipOval(
+                                                child: Image.file(
+                                                  _image,
+                                                  fit: BoxFit.cover,
+                                                  height: 150,
+                                                  width: 500,
+                                                ),
+                                              ),
+                                            ),
                                     )
                                   : CircleAvatar(
                                       radius: 70,
@@ -205,7 +248,7 @@ class _EditProfileState extends State<EditProfile> {
                                     backgroundColor:
                                         const Color(000000).withOpacity(0.6),
                                     onPressed: () {
-                                      getImage();
+                                      getImage(ImageSource.gallery);
                                       setState(() {
                                         _isEdit = true;
                                         Image.file(_image);
@@ -521,6 +564,79 @@ class _EditProfileState extends State<EditProfile> {
                                   ),
                                   Container(
                                     padding:
+                                        EdgeInsets.only(top: 10, bottom: 20),
+                                    child: Divider(
+                                      indent: 30,
+                                      color: Colors.black,
+                                      endIndent: 30,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Container(
+                                        margin:
+                                            EdgeInsets.fromLTRB(30, 20, 0, 30),
+                                        child: Text(
+                                          'Password',
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w900,
+                                              fontFamily: 'Roboto'),
+                                        ),
+                                      ),
+                                      Flexible(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[350],
+                                            borderRadius:
+                                                new BorderRadius.circular(15.0),
+                                          ),
+                                          margin:
+                                              EdgeInsets.fromLTRB(40, 0, 30, 0),
+                                          child: new TextFormField(
+                                            keyboardType: TextInputType.number,
+                                            controller: _passwordController,
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  EdgeInsets.fromLTRB(
+                                                      30, 0, 0, 0),
+                                              hintStyle:
+                                                  TextStyle(fontSize: 14),
+                                              fillColor: Colors.grey,
+                                              border: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey[350])),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey[350])),
+                                              enabledBorder:
+                                                  new OutlineInputBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        15.0),
+                                                borderSide: new BorderSide(
+                                                    color: Colors.grey[350]),
+                                              ),
+                                              errorBorder:
+                                                  new OutlineInputBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        15.0),
+                                                borderSide: new BorderSide(
+                                                    color: Colors.red),
+                                              ),
+                                              hintText: 'กรอกรหัสผ่าน',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding:
                                         EdgeInsets.only(top: 10, bottom: 30),
                                     child: Divider(
                                       indent: 30,
@@ -567,7 +683,103 @@ class _EditProfileState extends State<EditProfile> {
                                           width: 132,
                                           height: 40,
                                           child: RaisedButton(
-                                            onPressed: () {},
+                                            onPressed: () async {
+                                              if (_formKey.currentState
+                                                  .validate()) {
+                                                String url =
+                                                    'http://54.151.194.224:8000/api/auth/profile';
+                                                String fileImage = _isEdit
+                                                    ? _image.path
+                                                        .split('/')
+                                                        .last
+                                                    : null;
+                                                SharedPreferences
+                                                    sharedPreferences =
+                                                    await SharedPreferences
+                                                        .getInstance();
+                                                String token = sharedPreferences
+                                                    .getString('token');
+                                                String email = _emailController
+                                                    .text
+                                                    .trim();
+                                                String firstName =
+                                                    _firstNameController.text
+                                                        .trim();
+                                                String lastName =
+                                                    _lastNameController.text
+                                                        .trim();
+                                                String tel =
+                                                    _telController.text.trim();
+                                                String password =
+                                                    _passwordController.text
+                                                        .trim();
+                                                logger.d(
+                                                    'data : $password  $userName  $token');
+                                                FormData formData =
+                                                    FormData.fromMap({
+                                                  'username': userName != null
+                                                      ? userName.toString()
+                                                      : null,
+                                                  'email': email != null
+                                                      ? email
+                                                      : null,
+                                                  'first_name':
+                                                      firstName != null
+                                                          ? email
+                                                          : null,
+                                                  'last_name': lastName != null
+                                                      ? lastName
+                                                      : null,
+                                                  'tel':
+                                                      tel != null ? tel : null,
+                                                  'profile_img': _isEdit
+                                                      ? await MultipartFile
+                                                          .fromFile(_image.path,
+                                                              filename:
+                                                                  fileImage)
+                                                      : null,
+                                                  'confirm_password': password,
+                                                  '_method': 'PUT',
+                                                });
+                                                // logger.d('${formData.fields}');
+                                                // logger.d(
+                                                //     '${formData.files.toString()}');
+                                                try {
+                                                  var response =
+                                                      await Dio().post(
+                                                    url,
+                                                    data: formData,
+                                                    options: Options(
+                                                        headers: {
+                                                          "Authorization":
+                                                              "Bearer $token",
+                                                        },
+                                                        followRedirects: false,
+                                                        validateStatus:
+                                                            (status) {
+                                                          return status < 500;
+                                                        }),
+                                                  );
+
+                                                  logger.d(response.statusCode);
+                                                  if (response.statusCode ==
+                                                      200) {
+                                                    logger.d('success');
+                                                    Navigator.of(context)
+                                                        .pop(true);
+                                                  } else {
+                                                    logger.e(
+                                                        response.statusMessage);
+                                                  }
+                                                } catch (error) {
+                                                  if (error.response
+                                                          .statusCode ==
+                                                      302) {
+                                                    logger.e(error);
+                                                  }
+                                                }
+                                              }
+                                            },
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(5),
@@ -655,7 +867,7 @@ class _EditProfileState extends State<EditProfile> {
                                     backgroundColor:
                                         const Color(000000).withOpacity(0.6),
                                     onPressed: () {
-                                      getImage();
+                                      getImage(ImageSource.gallery);
                                       setState(() {
                                         _isEdit = true;
                                         Image.file(_image);
@@ -937,9 +1149,86 @@ class _EditProfileState extends State<EditProfile> {
                                           width: 132,
                                           height: 40,
                                           child: RaisedButton(
-                                            onPressed: () {
-                                              String url =
-                                                  'http://127.0.0.1:8000/api/user/$userId';
+                                            onPressed: () async {
+                                              if (_formKey.currentState
+                                                  .validate()) {
+                                                String url =
+                                                    'http://54.151.194.224:8000/api/auth/profile';
+                                                String fileImage = _isEdit
+                                                    ? _image.path
+                                                        .split('/')
+                                                        .last
+                                                    : null;
+                                                SharedPreferences
+                                                    sharedPreferences =
+                                                    await SharedPreferences
+                                                        .getInstance();
+                                                String token = sharedPreferences
+                                                    .getString('token');
+
+                                                logger.d(
+                                                    'data : $password  $userName  $token');
+                                                FormData formData =
+                                                    FormData.fromMap({
+                                                  'username': userName,
+                                                  'email': _emailController.text
+                                                      .trim(),
+                                                  'first_name':
+                                                      _firstNameController.text
+                                                          .trim(),
+                                                  'last_name':
+                                                      _lastNameController.text
+                                                          .trim(),
+                                                  'tel': _telController.text
+                                                      .trim(),
+                                                  'profile_img': _isEdit
+                                                      ? await MultipartFile
+                                                          .fromFile(_image.path,
+                                                              filename:
+                                                                  fileImage)
+                                                      : null,
+                                                  'confirm_password':
+                                                      _passwordController.text,
+                                                  '_method': 'PUT',
+                                                });
+                                                // logger.d('${formData.fields}');
+                                                // logger.d(
+                                                //     '${formData.files.toString()}');
+                                                try {
+                                                  var response =
+                                                      await Dio().post(
+                                                    url,
+                                                    data: formData,
+                                                    options: Options(
+                                                        headers: {
+                                                          "Authorization":
+                                                              "Bearer $token",
+                                                        },
+                                                        followRedirects: false,
+                                                        validateStatus:
+                                                            (status) {
+                                                          return status < 500;
+                                                        }),
+                                                  );
+
+                                                  logger.d(response.statusCode);
+                                                  if (response.statusCode ==
+                                                      200) {
+                                                    logger.d('success');
+                                                    Navigator.of(context)
+                                                        .pop(true);
+                                                  } else {
+                                                    logger.e(
+                                                        response.statusMessage);
+                                                  }
+                                                } catch (error) {
+                                                  if (error.response
+                                                          .statusCode ==
+                                                      302) {
+                                                    logger.e(error);
+                                                  }
+                                                }
+                                              }
                                             },
                                             shape: RoundedRectangleBorder(
                                               borderRadius:

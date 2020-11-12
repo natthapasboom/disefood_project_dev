@@ -309,6 +309,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                             await SharedPreferences
                                                 .getInstance();
                                         _shopId = preferences.getInt('shop_id');
+
                                         String token =
                                             preferences.getString('token');
                                         int menuId = widget.id;
