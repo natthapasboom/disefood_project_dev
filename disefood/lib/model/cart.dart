@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 class CartModel {
   int id;
   String shopId;
+  String shopName;
   int foodId;
   String foodName;
   int foodQuantity;
@@ -14,6 +15,7 @@ class CartModel {
   CartModel({
     this.id,
     this.shopId,
+    this.shopName,
     this.foodId,
     this.foodName,
     this.foodQuantity,
@@ -26,6 +28,7 @@ class CartModel {
   CartModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     shopId = json['shopId'];
+    shopName = json['shopName'];
     foodId = json['foodId'];
     foodName = json['foodName'];
     foodQuantity = json['foodQuantity'];
@@ -39,6 +42,7 @@ class CartModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['shopId'] = this.shopId;
+    data['shopName'] = this.shopName;
     data['foodId'] = this.foodId;
     data['foodName'] = this.foodName;
     data['foodQuantity'] = this.foodQuantity;

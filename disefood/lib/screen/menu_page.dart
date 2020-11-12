@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:disefood/component/goToCartButton.dart';
 import 'package:disefood/model/cart.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -52,6 +53,8 @@ class _MenuPageState extends State<MenuPage> {
   List quantities;
   double rating;
   int userId;
+  bool isCartNotEmpty = false;
+  int totalQty;
   @override
   void initState() {
     super.initState();
@@ -71,9 +74,14 @@ class _MenuPageState extends State<MenuPage> {
 
   Future<Null> readSQLite() async {
     var object = await SQLiteHelper().readAllDataFromSQLite();
+    totalQty = 0;
     setState(() {
-      cartModels = object;
+      for (var model in object) {
+        cartModels = object;
+        totalQty = totalQty + model.foodQuantity;
+      }
     });
+    checkEmptyCart();
   }
 
   _ackAlert(BuildContext context) {
@@ -98,6 +106,18 @@ class _MenuPageState extends State<MenuPage> {
         );
       },
     );
+  }
+
+  void checkEmptyCart() {
+    if (cartModels.length == 0) {
+      setState(() {
+        isCartNotEmpty = false;
+      });
+    } else {
+      setState(() {
+        isCartNotEmpty = true;
+      });
+    }
   }
 
   void checkQuantity(int index, int quantity) {
@@ -168,104 +188,72 @@ class _MenuPageState extends State<MenuPage> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         resizeToAvoidBottomPadding: false,
-        bottomNavigationBar: Container(
-          decoration: new BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                blurRadius: 12.0,
-                spreadRadius: 5.0,
-                offset: Offset(
-                  10.0,
-                  10.0,
-                ),
-              )
-            ],
-          ),
-          child: BottomAppBar(
-            shape: CircularNotchedRectangle(),
-            child: new Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 70,
-                ),
-                Container(
-                  width: 370,
-                  height: 40,
-                  child: FloatingActionButton.extended(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    backgroundColor: Colors.orange,
-                    elevation: 4.0,
-                    label: Row(
-                      children: [
-                        Icon(Icons.shopping_basket),
-                        Text(
-                          'ไปยังตะกร้า',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OrderItemPage(
-                            shopId: shopId,
-                            shopName: shopName,
-                            shopSlot: shopSlot,
-                            shopCoverImg: shopCoverImg,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // bottomNavigationBar: Container(
+        //   decoration: new BoxDecoration(
+        //     boxShadow: [
+        //       BoxShadow(
+        //         color: Colors.black,
+        //         blurRadius: 12.0,
+        //         spreadRadius: 5.0,
+        //         offset: Offset(
+        //           10.0,
+        //           10.0,
+        //         ),
+        //       )
+        //     ],
+        //   ),
+        //   // child:
+        //   // BottomAppBar(
+        //   //   shape: CircularNotchedRectangle(),
+        //   //   child: new Row(
+        //   //     mainAxisSize: MainAxisSize.max,
+        //   //     mainAxisAlignment: MainAxisAlignment.center,
+        //   //     children: <Widget>[
+        //   //       SizedBox(
+        //   //         height: 70,
+        //   //       ),
+        //   //       Container(
+        //   //         width: 370,
+        //   //         height: 40,
+        //   //         child: FloatingActionButton.extended(
+        //   //           shape: RoundedRectangleBorder(
+        //   //             borderRadius: BorderRadius.circular(8),
+        //   //           ),
+        //   //           backgroundColor: Colors.orange,
+        //   //           elevation: 4.0,
+        //   //           label: Row(
+        //   //             children: [
+        //   //               Icon(Icons.shopping_basket),
+        //   //               Text(
+        //   //                 'ไปยังตะกร้า',
+        //   //                 style: TextStyle(
+        //   //                   fontWeight: FontWeight.bold,
+        //   //                   fontSize: 18,
+        //   //                 ),
+        //   //               ),
+        //   //             ],
+        //   //           ),
+        //   //           onPressed: () {
+        //   //             Navigator.push(
+        //   //               context,
+        //   //               MaterialPageRoute(
+        //   //                 builder: (context) => OrderItemPage(
+        //   //                   shopId: shopId,
+        //   //                   shopName: shopName,
+        //   //                   shopSlot: shopSlot,
+        //   //                   shopCoverImg: shopCoverImg,
+        //   //                 ),
+        //   //               ),
+        //   //             );
+        //   //           },
+        //   //         ),
+        //   //       ),
+        //   //     ],
+        //   //   ),
+        //   // ),
+        // ),
         appBar: AppBar(
           actions: <Widget>[
-            // Container(
-            //   margin: EdgeInsets.only(right: 265),
-            //   child: new IconButton(
-            //     icon: Icon(Icons.arrow_back),
-            //     onPressed: () {
-            //       return
-            //           // Navigator.pop(context);
-            //           Navigator.push(
-            //         context,
-            //         PageRouteBuilder(
-            //           pageBuilder: (BuildContext context,
-            //               Animation<double> animation,
-            //               Animation<double> secondaryAnimation) {
-            //             return Home();
-            //           },
-            //           transitionsBuilder: (BuildContext context,
-            //               Animation<double> animation,
-            //               Animation<double> secondaryAnimation,
-            //               Widget child) {
-            //             return FadeTransition(
-            //               opacity: Tween<double>(
-            //                 begin: 0,
-            //                 end: 1,
-            //               ).animate(animation),
-            //               child: child,
-            //             );
-            //           },
-            //           transitionDuration: Duration(milliseconds: 400),
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
             new IconButton(
               icon: new Icon(Icons.favorite),
               onPressed: () => debugPrint('asd'),
@@ -281,6 +269,57 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ],
         ),
+        floatingActionButton: Stack(
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OrderItemPage(
+                      shopId: shopId,
+                      shopName: shopName,
+                      shopSlot: shopSlot,
+                      shopCoverImg: shopCoverImg,
+                    ),
+                  ),
+                );
+              },
+              child: Icon(
+                Icons.shopping_bag,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.orange,
+            ),
+            Visibility(
+              visible: isCartNotEmpty,
+              child: Positioned(
+                right: 11,
+                top: 11,
+                child: new Container(
+                  padding: EdgeInsets.all(2),
+                  decoration: new BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  constraints: BoxConstraints(
+                    minWidth: 14,
+                    minHeight: 14,
+                  ),
+                  child: Text(
+                    '$totalQty',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+
         body: isLoading
             ? Center(
                 child: CircularProgressIndicator(
@@ -498,6 +537,7 @@ class _MenuPageState extends State<MenuPage> {
                                                   builder: (context) =>
                                                       OrderAmountDialog(
                                                     shopId: shopId,
+                                                    shopName: shopName,
                                                     foodId: foodId,
                                                     foodName: foodname,
                                                     foodImg: foodImg,
@@ -537,6 +577,9 @@ class _MenuPageState extends State<MenuPage> {
                             ),
                           ],
                         ),
+                      ),
+                      SizedBox(
+                        height: 40,
                       ),
                     ],
                   ),

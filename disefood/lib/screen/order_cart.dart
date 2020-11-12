@@ -243,19 +243,51 @@ class _OrderItemPageState extends State<OrderItemPage> {
                         Icon(Icons.shopping_basket),
                       ],
                     ),
-                    Column(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                          width: double.maxFinite,
-                          color: Colors.grey[400],
-                          child: Text(
-                            "สรุปรายการอาหาร",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                    Container(
+                      height: 45,
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(left: 20),
+                            width: double.maxFinite,
+                            color: Colors.grey[400],
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "สรุปรายการอาหาร",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
+                                Container(
+                                  height: 45,
+                                  padding: EdgeInsets.only(right: 15, left: 15),
+                                  decoration: new BoxDecoration(
+                                    color: Colors.orange,
+                                    // shape: BoxShape.rectangle,
+                                    // borderRadius: BorderRadius.all(
+                                    //   Radius.circular(4.0),
+                                    // ),
+                                  ),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "ร้าน : ${cartModels[0].shopName}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        // decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     Container(
                       height: 40,

@@ -14,6 +14,7 @@ class OrderAmountDialog extends StatefulWidget {
   final String foodQuantity;
   final String foodName;
   final String foodImg;
+  final String shopName;
   final int foodPrice;
   final VoidCallback readSQLite;
   final Function(int, int) checkQuantity;
@@ -24,6 +25,7 @@ class OrderAmountDialog extends StatefulWidget {
     @required this.foodImg,
     @required this.foodId,
     @required this.shopId,
+    @required this.shopName,
     @required this.foodPrice,
     @required this.readSQLite,
     @required this.checkQuantity,
@@ -68,6 +70,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
       foodId = widget.foodId;
       shopId = widget.shopId.toString();
       foodPrice = widget.foodPrice;
+      shopName = widget.shopName;
     });
     Future.microtask(() {});
   }
@@ -283,6 +286,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
   Future<Null> addFoodToCart() async {
     Map<String, dynamic> orderMap = Map();
     orderMap['shopId'] = shopId;
+    orderMap['shopName'] = shopName;
     orderMap['foodId'] = foodId;
     orderMap['foodName'] = foodName;
     orderMap['foodQuantity'] = qty;
@@ -299,6 +303,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
       await SQLiteHelper().insertDataToSQLite(cartModel).then(
         (value) {
           showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
+          readSQLite();
           checkQuantity(foodIndex, qty);
         },
       );
@@ -308,6 +313,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
         await SQLiteHelper().insertDataToSQLite(cartModel).then(
           (value) {
             showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
+            readSQLite();
             checkQuantity(foodIndex, qty);
           },
         );

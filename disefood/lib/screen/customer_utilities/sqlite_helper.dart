@@ -10,6 +10,7 @@ class SQLiteHelper {
 
   final String idColumn = 'id';
   final String shopId = 'shopId';
+  final String shopName = 'shopName';
   final String foodId = 'foodId';
   final String foodName = 'foodName';
   final String foodQuantity = 'foodQuantity';
@@ -25,7 +26,7 @@ class SQLiteHelper {
   Future<Null> initDatabase() async {
     await openDatabase(join(await getDatabasesPath(), nameDatabase),
         onCreate: (db, version) => db.execute(
-            'CREATE TABLE $tableDatabase ($idColumn INTEGER PRIMARY KEY,$shopId TEXT, $foodId INTEGER, $foodName TEXT, $foodQuantity INTEGER, $foodDescription TEXT, $foodPrice INTEGER, $foodSumPrice INTEGER, $foodImg TEXT)'),
+            'CREATE TABLE $tableDatabase ($idColumn INTEGER PRIMARY KEY,$shopId TEXT,$shopName TEXT, $foodId INTEGER, $foodName TEXT, $foodQuantity INTEGER, $foodDescription TEXT, $foodPrice INTEGER, $foodSumPrice INTEGER, $foodImg TEXT)'),
         version: version);
   }
 
@@ -73,15 +74,13 @@ class SQLiteHelper {
     return cartModels;
   }
 
-  Future<List<CartModel>> getProductByFoodId(int id) async {
+  Future<List<CartModel>> readAllQuantity() async {
     Database database = await connectedDatabase();
     List<CartModel> cartModels = List();
-    List<Map<String, dynamic>> maps =
-        await database.query(tableDatabase, where: '$foodId = $id');
+    List<Map<String, dynamic>> maps = await database.query(tableDatabase);
     for (var map in maps) {
       CartModel cartModel = CartModel.fromJson(map);
       cartModels.add(cartModel);
-      print(cartModels.toString());
     }
     return cartModels;
   }
