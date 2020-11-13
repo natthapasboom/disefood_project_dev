@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:disefood/model/feedback.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/model/menuyShopId.dart';
 import 'package:disefood/screen_seller/addmenu.dart';
@@ -28,6 +29,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   int approve;
   ApiProvider apiProvider = ApiProvider();
   Logger logger = Logger();
+  List<Feedbacks> _feedbackLists = new List<Feedbacks>();
   @override
   void initState() {
     Future.microtask(() async {
@@ -131,20 +133,20 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                       left: 30,
                                       top: 5,
                                     ),
-                                    child: '${foods['name']}'.length > 10 ?
-                                    Text(
-                                      '${foods['name']}'.substring(0,8)+'...',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        
-                                      ),
-                                    ):
-                                    Text(
-                                      '${foods['name']}',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    ),
+                                    child: '${foods['name']}'.length > 10
+                                        ? Text(
+                                            '${foods['name']}'.substring(0, 8) +
+                                                '...',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                            ),
+                                          )
+                                        : Text(
+                                            '${foods['name']}',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                            ),
+                                          ),
                                   ),
                                   trailing: Wrap(
                                     spacing: 1.0,

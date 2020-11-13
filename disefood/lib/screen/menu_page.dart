@@ -44,10 +44,14 @@ class _MenuPageState extends State<MenuPage> {
   String shopCoverImg;
   TextEditingController reviewController = TextEditingController();
   ApiProvider apiProvider = ApiProvider();
+  bool isTrue;
+  bool isFalse;
   bool isLoading = true;
   List foods = [];
+  List fav = [];
   double rating;
   int userId;
+  bool isFav = false;
   @override
   void initState() {
     super.initState();
@@ -60,6 +64,7 @@ class _MenuPageState extends State<MenuPage> {
       shopId = widget.shopId;
     });
     Future.microtask(() {
+      getFavoriteByMe();
       findMenu();
       // findUser();
     });
@@ -107,6 +112,156 @@ class _MenuPageState extends State<MenuPage> {
       });
     } else {
       logger.e("statuscode != 200");
+    }
+  }
+
+  Future getFavoriteByMe() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token');
+    var response = await apiProvider.getFavoriteByMe(token);
+    if (response.statusCode == 200) {
+      setState(() {
+        fav = json.decode(response.body)['data'];
+        logger.d('fav response : ${fav.toList()}');
+      });
+    } else {
+      logger.e('status : ${response.statusCode}');
+    }
+  }
+
+  Future postFavorite() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token');
+    var response = await apiProvider.postFavorite(shopId, token);
+    if (response.statusCode == 200) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            Future.delayed(Duration(seconds: 3), () {
+              Navigator.of(context).pop(true);
+            });
+            return Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: Container(
+                    height: 250.0,
+                    width: 300.0,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    child: Column(
+                      children: <Widget>[
+                        Stack(
+                          children: <Widget>[
+                            // Container(height: 150.0),
+                            // Container(
+                            //   height: 100.0,
+                            //   decoration: BoxDecoration(
+                            //       borderRadius: BorderRadius.only(
+                            //         topLeft: Radius.circular(10.0),
+                            //         topRight: Radius.circular(10.0),
+                            //       ),
+                            //       color: Colors.red),
+                            // ),
+                            Center(
+                              child: Container(
+                                margin: EdgeInsets.only(top: 40),
+                                height: 90.0,
+                                width: 90.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/success.png'),
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: 20, left: 10, right: 10, bottom: 0),
+                            child: Center(
+                              child: Text(
+                                'เพิ่มรายการโปรดสำเร็จ',
+                                style: TextStyle(
+                                  fontFamily: 'Aleo-Bold',
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )),
+                      ],
+                    )));
+          }).then((value) => Navigator.pop(context));
+    }
+  }
+
+  Future deleteFavorite() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token');
+    var response = await apiProvider.deleteFavorite(shopId, token);
+    if (response.statusCode == 200) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            Future.delayed(Duration(seconds: 3), () {
+              Navigator.of(context).pop(true);
+            });
+            return Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: Container(
+                    height: 250.0,
+                    width: 300.0,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    child: Column(
+                      children: <Widget>[
+                        Stack(
+                          children: <Widget>[
+                            // Container(height: 150.0),
+                            // Container(
+                            //   height: 100.0,
+                            //   decoration: BoxDecoration(
+                            //       borderRadius: BorderRadius.only(
+                            //         topLeft: Radius.circular(10.0),
+                            //         topRight: Radius.circular(10.0),
+                            //       ),
+                            //       color: Colors.red),
+                            // ),
+                            Center(
+                              child: Container(
+                                margin: EdgeInsets.only(top: 40),
+                                height: 90.0,
+                                width: 90.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/red-cross.png'),
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: 20, left: 10, right: 10, bottom: 0),
+                            child: Center(
+                              child: Text(
+                                'ลบรายการโปรดสำเร็จ',
+                                style: TextStyle(
+                                  fontFamily: 'Aleo-Bold',
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )),
+                      ],
+                    )));
+          }).then((value) => Navigator.pop(context));
     }
   }
 
@@ -236,19 +391,19 @@ class _MenuPageState extends State<MenuPage> {
             //     },
             //   ),
             // ),
-            new IconButton(
-              icon: new Icon(Icons.favorite),
-              onPressed: () => debugPrint('asd'),
-            ),
-            new IconButton(
-              icon: Icon(Icons.archive),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ViewOrder(),
-                ),
-              ),
-            ),
+            // new IconButton(
+            //   icon: new Icon(Icons.favorite),
+            //   onPressed: () => debugPrint('asd'),
+            // ),
+            // new IconButton(
+            //   icon: Icon(Icons.archive),
+            //   onPressed: () => Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => ViewOrder(),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
         body: isLoading
@@ -373,6 +528,50 @@ class _MenuPageState extends State<MenuPage> {
                                             ],
                                           );
                                         }),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 0),
+                                    child: IconButton(
+                                      icon: !isFav
+                                          ? Icon(
+                                              Icons.favorite_border,
+                                              color: Color(0xffFF7C2C),
+                                              size: 24,
+                                            )
+                                          : Icon(
+                                              Icons.favorite,
+                                              color: Color(0xffFF7C2C),
+                                              size: 24,
+                                            ),
+                                      onPressed: () async {
+                                        SharedPreferences sharedPreferences =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        setState(() {
+                                          isFav = !isFav;
+                                          if (!isFav) {
+                                            deleteFavorite();
+                                            logger.d(isFav);
+                                          } else if (isFav) {
+                                            postFavorite();
+                                            logger.d(isFav);
+                                          }
+                                          // if (isFav) {
+                                          //   sharedPreferences.setBool(
+                                          //       'isFalse', isFav);
+                                          //   sharedPreferences.remove('isTrue');
+                                          //   isFav = sharedPreferences
+                                          //       .getBool('isFalse');
+                                          // } else if (!isFav) {
+                                          //   sharedPreferences.setBool(
+                                          //       'isTrue', isFav);
+                                          //   sharedPreferences.remove('isFalse');
+                                          //   isFav = sharedPreferences
+                                          //       .getBool('isTrue');
+                                          // }
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),

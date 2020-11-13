@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   bool isLoggedIn = false;
   final logger = Logger();
+  String token;
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   ApiProvider apiProvider = ApiProvider();
@@ -31,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void onLoginStatusChanged(bool isLoggedIn) {
     setState(() {
+      logger.d(token);
       this.isLoggedIn = isLoggedIn;
     });
   }

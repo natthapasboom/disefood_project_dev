@@ -24,10 +24,26 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
   bool isLoading = false;
   bool isFilter = false;
   Future<Feedbacks> _feedbacks;
+  Future<Feedbacks> _feedbacks1;
+  Future<Feedbacks> _feedbacks2;
+  Future<Feedbacks> _feedbacks3;
+  Future<Feedbacks> _feedbacks4;
+  Future<Feedbacks> _feedbacks5;
+  List<Feedbacks> _feedbackLists = new List<Feedbacks>();
+  var star1;
+
+  var star2;
+  var star3;
+  var star4;
+  var star5;
   @override
   void initState() {
     isFilter = false;
-
+    // _feedbacks1 = getValue1();
+    // _feedbacks2 = getValue2();
+    // _feedbacks3 = getValue3();
+    // _feedbacks4 = getValue4();
+    // _feedbacks5 = getValue5();
     _feedbacks = getFeedback();
     isLoading = false;
     // TODO: implement initState
@@ -51,6 +67,156 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
     return feedbacks;
   }
 
+  // Future<Feedbacks> getValue1() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback1(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     List values = [];
+  //     values = json.decode(response.body)['data'];
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+
+  //       for (int i = 0; i < values.length; i++) {
+  //         if (values[i] != null) {
+  //           Map map = values[i];
+  //           _feedbackLists.add(Feedbacks.fromJson(map));
+  //           debugPrint('Id-------${map.length}');
+  //           setState(() {
+  //             star1 = values.length.toDouble();
+  //             logger.d(star1);
+  //           });
+  //         }
+  //       }
+  //       // feedbacks = Feedbacks.fromJson(jsonMap);
+  //       // return FutureBuilder<Feedbacks>(
+  //       //   future: _feedbacks1,
+  //       //   builder: (context, snapshot) {
+  //       //     if (snapshot.hasData) {
+  //       //       setState(() {
+  //       //         star1 = snapshot.data.data.length.round();
+  //       //         // logger.d('star1 : $star1');
+  //       //       });
+  //       //     }
+  //       //   },
+  //       // );
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue2() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback2(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+  //       feedbacks = Feedbacks.fromJson(jsonMap);
+  //       return FutureBuilder<Feedbacks>(
+  //         future: _feedbacks2,
+  //         builder: (context, snapshot) {
+  //           if (snapshot.hasData) {
+  //             setState(() {
+  //               star2 = snapshot.data.data.length.toDouble();
+  //             });
+  //           }
+  //         },
+  //       );
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue3() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback3(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+  //       feedbacks = Feedbacks.fromJson(jsonMap);
+  //       return FutureBuilder<Feedbacks>(
+  //         future: _feedbacks3,
+  //         builder: (context, snapshot) {
+  //           if (snapshot.hasData) {
+  //             setState(() {
+  //               star3 = snapshot.data.data.length.toDouble();
+  //             });
+  //           }
+  //         },
+  //       );
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue4() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback4(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+  //       feedbacks = Feedbacks.fromJson(jsonMap);
+  //       return FutureBuilder<Feedbacks>(
+  //         future: _feedbacks4,
+  //         builder: (context, snapshot) {
+  //           if (snapshot.hasData) {
+  //             setState(() {
+  //               star4 = snapshot.data.data.length.toDouble();
+  //             });
+  //           }
+  //         },
+  //       );
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue5() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback5(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+  //       feedbacks = Feedbacks.fromJson(jsonMap);
+  //       return FutureBuilder<Feedbacks>(
+  //         future: _feedbacks5,
+  //         builder: (context, snapshot) {
+  //           if (snapshot.hasData) {
+  //             setState(() {
+  //               star5 = snapshot.data.data.length.toDouble();
+  //             });
+  //           }
+  //         },
+  //       );
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +224,13 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
       shrinkWrap: true,
       children: [
         Container(
-          child: PieChartSample2(),
+          child: PieChartSample2(
+            // star1: star1,
+            star2: star2,
+            star3: star3,
+            star4: star4,
+            star5: star5,
+          ),
         ),
         Container(
           margin: EdgeInsets.only(top: 20),

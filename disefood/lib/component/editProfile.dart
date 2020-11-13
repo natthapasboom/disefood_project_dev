@@ -6,6 +6,7 @@ import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -594,7 +595,7 @@ class _EditProfileState extends State<EditProfile> {
                                           margin:
                                               EdgeInsets.fromLTRB(40, 0, 30, 0),
                                           child: new TextFormField(
-                                            keyboardType: TextInputType.number,
+                                            keyboardType: TextInputType.text,
                                             controller: _passwordController,
                                             decoration: InputDecoration(
                                               contentPadding:
@@ -684,69 +685,140 @@ class _EditProfileState extends State<EditProfile> {
                                           height: 40,
                                           child: RaisedButton(
                                             onPressed: () async {
+                                              Dio().options.contentType = Headers
+                                                  .formUrlEncodedContentType;
                                               if (_formKey.currentState
                                                   .validate()) {
-                                                String url =
-                                                    'http://54.151.194.224:8000/api/auth/profile';
-                                                String fileImage = _isEdit
-                                                    ? _image.path
-                                                        .split('/')
-                                                        .last
-                                                    : null;
-                                                SharedPreferences
-                                                    sharedPreferences =
-                                                    await SharedPreferences
-                                                        .getInstance();
-                                                String token = sharedPreferences
-                                                    .getString('token');
-                                                String email = _emailController
-                                                    .text
-                                                    .trim();
-                                                String firstName =
-                                                    _firstNameController.text
-                                                        .trim();
-                                                String lastName =
-                                                    _lastNameController.text
-                                                        .trim();
-                                                String tel =
-                                                    _telController.text.trim();
-                                                String password =
-                                                    _passwordController.text
-                                                        .trim();
-                                                logger.d(
-                                                    'data : $password  $userName  $token');
-                                                FormData formData =
-                                                    FormData.fromMap({
-                                                  'username': userName != null
-                                                      ? userName.toString()
-                                                      : null,
-                                                  'email': email != null
-                                                      ? email
-                                                      : null,
-                                                  'first_name':
-                                                      firstName != null
-                                                          ? email
-                                                          : null,
-                                                  'last_name': lastName != null
-                                                      ? lastName
-                                                      : null,
-                                                  'tel':
-                                                      tel != null ? tel : null,
-                                                  'profile_img': _isEdit
-                                                      ? await MultipartFile
-                                                          .fromFile(_image.path,
-                                                              filename:
-                                                                  fileImage)
-                                                      : null,
-                                                  'confirm_password': password,
-                                                  '_method': 'PUT',
-                                                });
-                                                // logger.d('${formData.fields}');
-                                                // logger.d(
-                                                //     '${formData.files.toString()}');
                                                 try {
-                                                  var response =
-                                                      await Dio().post(
+                                                  String url =
+                                                      'http://54.151.194.224:8000/api/auth/profile';
+                                                  String fileImage = _isEdit
+                                                      ? _image.path
+                                                          .split('/')
+                                                          .last
+                                                      : null;
+                                                  SharedPreferences
+                                                      sharedPreferences =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                  String token =
+                                                      sharedPreferences
+                                                          .getString('token');
+                                                  String email =
+                                                      _emailController.text
+                                                          .trim();
+                                                  String firstName =
+                                                      _firstNameController.text
+                                                          .trim();
+                                                  String lastName =
+                                                      _lastNameController.text
+                                                          .trim();
+                                                  String tel = _telController
+                                                      .text
+                                                      .trim();
+                                                  String password =
+                                                      _passwordController.text
+                                                          .trim();
+                                                  // var profileImg =
+                                                  //     await MultipartFile
+                                                  //         .fromFile(_image.path,
+                                                  //             filename:
+                                                  //                 fileImage);
+                                                  logger.d(
+                                                      'data : $password  $userName  $token');
+                                                  // String body =
+                                                  //     '{"username": "$userName", "email": "$email", "first_name": "$firstName", "last_name": "$lastName", "tel": "$tel", "profile_img": "$profileImg", "confirm_password": "$password", "_method": "_PUT"}';
+                                                  var formData =
+                                                      FormData.fromMap({
+                                                    'username': userName != null
+                                                        ? '${userName.toString()}'
+                                                        : null,
+                                                    'email': email != null
+                                                        ? email
+                                                        : null,
+                                                    'first_name':
+                                                        firstName != null
+                                                            ? firstName
+                                                            : null,
+                                                    'last_name':
+                                                        lastName != null
+                                                            ? lastName
+                                                            : null,
+                                                    'tel': tel != null
+                                                        ? tel
+                                                        : null,
+                                                    'profile_img': _isEdit
+                                                        ? await MultipartFile
+                                                            .fromFile(
+                                                                _image.path,
+                                                                filename:
+                                                                    fileImage)
+                                                        : null,
+                                                    'confirm_password':
+                                                        password,
+                                                    '_method': 'PUT',
+                                                  });
+                                                  // Map<String, String> headers = {
+                                                  //   "Content-type":
+                                                  //       "application/json",
+                                                  //   "Authorization":
+                                                  //       "Bearer $token"
+                                                  // };
+                                                  // String paramName =
+                                                  //     'param'; // give the post param a name
+                                                  // String formBody = paramName +
+                                                  //     '=' +
+                                                  //     Uri.encodeQueryComponent(
+                                                  //         body);
+                                                  // List<int> bodyBytes =
+                                                  //     utf8.encode(
+                                                  //         formBody); // utf8 encode
+                                                  // try {
+                                                  //   http.Response response =
+                                                  //       await http.post(
+                                                  //     url,
+                                                  //     headers: headers,
+                                                  //     body: body,
+                                                  //   );
+
+                                                  //   logger.d(
+                                                  //       'status : ${response.statusCode}');
+                                                  //   logger.d(
+                                                  //       'status : ${response.request}');
+                                                  //   if (response.statusCode ==
+                                                  //       200) {
+                                                  //     logger.d('success');
+                                                  //     Navigator.of(context)
+                                                  //         .pop(true);
+                                                  //   }
+                                                  // } on Exception catch (e) {
+                                                  //   logger.e(e);
+                                                  // }
+                                                  // http.Response response =
+                                                  //     await http.post(
+                                                  //   url,
+                                                  //   headers: headers,
+                                                  //   body: body,
+                                                  // );
+
+                                                  // logger.d(
+                                                  //     'status : ${response.statusCode}');
+                                                  // logger.d(
+                                                  //     'status : ${response.request}');
+                                                  // if (response.statusCode ==
+                                                  //     200) {
+                                                  //   logger.d('success');
+                                                  //   Navigator.of(context)
+                                                  //       .pop(true);
+                                                  // }
+
+                                                  logger
+                                                      .d('${formData.fields}');
+                                                  logger.d(
+                                                      '${formData.files.toString()}');
+                                                  Dio dio = Dio();
+                                                  Response response =
+                                                      await dio.post(
                                                     url,
                                                     data: formData,
                                                     options: Options(
@@ -762,20 +834,18 @@ class _EditProfileState extends State<EditProfile> {
                                                   );
 
                                                   logger.d(response.statusCode);
-                                                  if (response.statusCode ==
-                                                      200) {
-                                                    logger.d('success');
-                                                    Navigator.of(context)
-                                                        .pop(true);
-                                                  } else {
-                                                    logger.e(
-                                                        response.statusMessage);
-                                                  }
+                                                  // if (response.statusCode ==
+                                                  //     200) {
+                                                  //   logger.d('success');
+                                                  //   Navigator.of(context)
+                                                  //       .pop(true);
+                                                  // }
                                                 } catch (error) {
                                                   if (error.response
                                                           .statusCode ==
                                                       302) {
-                                                    logger.e(error);
+                                                    // do your stuff here
+                                                    logger.e('error: $error');
                                                   }
                                                 }
                                               }
