@@ -18,6 +18,7 @@ class History extends StatefulWidget {
 
 class _HistoryState extends State<History> {
   int userId;
+  Map jsonMap;
   Logger logger = Logger();
   bool isLoading = false;
   String token = '';
@@ -56,7 +57,7 @@ class _HistoryState extends State<History> {
         if (response.statusCode == 200) {
           setState(() {
             var jsonString = response.body;
-            Map jsonMap = json.decode(jsonString);
+            jsonMap = json.decode(jsonString);
             logger.d('json map: $jsonMap');
             orderLists = OrderList.fromJson(jsonMap);
 
@@ -291,87 +292,106 @@ class _HistoryState extends State<History> {
                 future: _orderLists,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: snapshot.data.data.length,
-                        itemBuilder: (context, index) {
-                          var data = snapshot.data.data[index];
+                    return snapshot.data.data.length != 0
+                        ? ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data.data.length,
+                            itemBuilder: (context, index) {
+                              var data = snapshot.data.data[index];
 
-                          // getNameShop(data.shopId);
-                          return Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Center(
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        top: 10.0,
-                                        bottom: 0.0),
-                                    // height: 100,
-                                    // width: 350,
-                                    child: InkWell(
-                                      onTap: () {
-                                        print(data.orderDetails.length);
-                                        alertDialog(
-                                          context,
-                                          data.status,
-                                          data.orderDetails,
-                                        );
-                                      },
-                                      child: Card(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        margin: EdgeInsets.all(12),
-                                        elevation: 10,
-                                        color: Colors.white,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0, horizontal: 16),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Container(
-                                                padding: EdgeInsets.all(10),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: <Widget>[
-                                                    Text("ร้าน TEST",
-                                                        style:
-                                                            GoogleFonts.roboto(
+                              return Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    Center(
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            left: 20,
+                                            right: 20,
+                                            top: 10.0,
+                                            bottom: 0.0),
+                                        // height: 100,
+                                        // width: 350,
+                                        child: InkWell(
+                                          onTap: () {
+                                            print(data.orderDetails.length);
+                                            alertDialog(
+                                              context,
+                                              data.status,
+                                              data.orderDetails,
+                                            );
+                                          },
+                                          child: Card(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                            ),
+                                            margin: EdgeInsets.all(12),
+                                            elevation: 10,
+                                            color: Colors.white,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8.0,
+                                                      horizontal: 16),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Container(
+                                                    padding: EdgeInsets.all(10),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: <Widget>[
+                                                        Text("ร้าน TEST",
+                                                            style: GoogleFonts.roboto(
                                                                 fontSize: 20,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold)),
-                                                    // getShopName(data.shopId),
-                                                    SizedBox(height: 4),
-                                                    getDate(data.timePickup),
-                                                    getTime(data.timePickup),
-                                                  ],
-                                                ),
+                                                        // getShopName(data.shopId),
+                                                        SizedBox(height: 4),
+                                                        getDate(
+                                                            data.timePickup),
+                                                        getTime(
+                                                            data.timePickup),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Spacer(),
+                                                  Container(
+                                                      padding:
+                                                          EdgeInsets.all(10),
+                                                      child: checkStatus(
+                                                          data.status)),
+                                                ],
                                               ),
-                                              Spacer(),
-                                              Container(
-                                                  padding: EdgeInsets.all(10),
-                                                  child:
-                                                      checkStatus(data.status)),
-                                            ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                )
-                              ],
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+                            // getNameShop(data.shopId);
+                            )
+                        : Center(
+                            child: Container(
+                              margin: EdgeInsets.only(top: 170),
+                              child: Text(
+                                "ยังไม่มีประวัติการซื้อในขณะนี้",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black38,
+                                    fontSize: 20),
+                              ),
                             ),
                           );
-                        });
                   } else {
                     return Container(
                       margin: EdgeInsets.only(top: 150),

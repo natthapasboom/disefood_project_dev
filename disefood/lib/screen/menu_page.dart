@@ -63,7 +63,12 @@ class _MenuPageState extends State<MenuPage> {
       shopSlot = widget.shopSlot;
       shopId = widget.shopId;
     });
-    Future.microtask(() {
+    Future.microtask(() async {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      isTrue = sharedPreferences.getBool('isTrue');
+      isFalse = sharedPreferences.getBool('isFalse');
+      logger.d('isTrue or False : $isTrue , $isFalse');
       getFavoriteByMe();
       findMenu();
       // findUser();
@@ -532,7 +537,7 @@ class _MenuPageState extends State<MenuPage> {
                                   Container(
                                     margin: EdgeInsets.only(left: 0),
                                     child: IconButton(
-                                      icon: !isFav
+                                      icon: !isFav && isTrue == null
                                           ? Icon(
                                               Icons.favorite_border,
                                               color: Color(0xffFF7C2C),
@@ -552,9 +557,16 @@ class _MenuPageState extends State<MenuPage> {
                                           if (!isFav) {
                                             deleteFavorite();
                                             logger.d(isFav);
+                                            sharedPreferences.setBool(
+                                                'isFalse', isFav);
+                                            sharedPreferences.remove('isTrue');
                                           } else if (isFav) {
                                             postFavorite();
                                             logger.d(isFav);
+
+                                            sharedPreferences.setBool(
+                                                'isTrue', isFav);
+                                            sharedPreferences.remove('isFalse');
                                           }
                                           // if (isFav) {
                                           //   sharedPreferences.setBool(
