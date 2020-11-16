@@ -549,39 +549,27 @@ class _MenuPageState extends State<MenuPage> {
                                               size: 24,
                                             ),
                                       onPressed: () async {
-                                        SharedPreferences sharedPreferences =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        setState(() {
-                                          isFav = !isFav;
-                                          if (!isFav) {
-                                            deleteFavorite();
-                                            logger.d(isFav);
-                                            sharedPreferences.setBool(
-                                                'isFalse', isFav);
-                                            sharedPreferences.remove('isTrue');
-                                          } else if (isFav) {
-                                            postFavorite();
-                                            logger.d(isFav);
+                                        // SharedPreferences sharedPreferences =
+                                        //     await SharedPreferences
+                                        //         .getInstance();
+                                        // setState(() {
+                                        //   isFav = !isFav;
+                                        //   if (!isFav) {
+                                        //     deleteFavorite();
+                                        //     logger.d(isFav);
+                                        //     sharedPreferences.setBool(
+                                        //         'isFalse', isFav);
+                                        //     sharedPreferences.remove('isTrue');
+                                        //   } else if (isFav) {
+                                        //     postFavorite();
+                                        //     logger.d(isFav);
 
-                                            sharedPreferences.setBool(
-                                                'isTrue', isFav);
-                                            sharedPreferences.remove('isFalse');
-                                          }
-                                          // if (isFav) {
-                                          //   sharedPreferences.setBool(
-                                          //       'isFalse', isFav);
-                                          //   sharedPreferences.remove('isTrue');
-                                          //   isFav = sharedPreferences
-                                          //       .getBool('isFalse');
-                                          // } else if (!isFav) {
-                                          //   sharedPreferences.setBool(
-                                          //       'isTrue', isFav);
-                                          //   sharedPreferences.remove('isFalse');
-                                          //   isFav = sharedPreferences
-                                          //       .getBool('isTrue');
-                                          // }
-                                        });
+                                        //     sharedPreferences.setBool(
+                                        //         'isTrue', isFav);
+                                        //     sharedPreferences.remove('isFalse');
+                                        //   }
+
+                                        // });
                                       },
                                     ),
                                   ),

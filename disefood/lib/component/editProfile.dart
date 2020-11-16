@@ -296,6 +296,9 @@ class _EditProfileState extends State<EditProfile> {
                                             margin: EdgeInsets.fromLTRB(
                                                 30, 0, 30, 0),
                                             child: new TextFormField(
+                                              onChanged: (val) {
+                                                _isEdit = true;
+                                              },
                                               controller: _firstNameController,
                                               decoration: InputDecoration(
                                                 contentPadding:
@@ -377,6 +380,9 @@ class _EditProfileState extends State<EditProfile> {
                                           margin:
                                               EdgeInsets.fromLTRB(35, 0, 30, 0),
                                           child: new TextFormField(
+                                            onChanged: (val) {
+                                              _isEdit = true;
+                                            },
                                             controller: _lastNameController,
                                             decoration: InputDecoration(
                                               contentPadding:
@@ -448,6 +454,9 @@ class _EditProfileState extends State<EditProfile> {
                                           margin:
                                               EdgeInsets.fromLTRB(75, 0, 30, 0),
                                           child: new TextFormField(
+                                            onChanged: (val) {
+                                              _isEdit = true;
+                                            },
                                             validator: _validateEmail,
                                             keyboardType:
                                                 TextInputType.emailAddress,
@@ -522,6 +531,9 @@ class _EditProfileState extends State<EditProfile> {
                                           margin:
                                               EdgeInsets.fromLTRB(90, 0, 30, 0),
                                           child: new TextFormField(
+                                            onChanged: (val) {
+                                              _isEdit = true;
+                                            },
                                             keyboardType: TextInputType.number,
                                             controller: _telController,
                                             decoration: InputDecoration(
@@ -578,7 +590,7 @@ class _EditProfileState extends State<EditProfile> {
                                         margin:
                                             EdgeInsets.fromLTRB(30, 20, 0, 30),
                                         child: Text(
-                                          'Password',
+                                          'ยืนยันรหัสผ่าน',
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w900,
@@ -595,6 +607,9 @@ class _EditProfileState extends State<EditProfile> {
                                           margin:
                                               EdgeInsets.fromLTRB(40, 0, 30, 0),
                                           child: new TextFormField(
+                                            onChanged: (val) {
+                                              _isEdit = true;
+                                            },
                                             keyboardType: TextInputType.text,
                                             controller: _passwordController,
                                             decoration: InputDecoration(
@@ -713,6 +728,7 @@ class _EditProfileState extends State<EditProfile> {
                                                   String lastName =
                                                       _lastNameController.text
                                                           .trim();
+
                                                   String tel = _telController
                                                       .text
                                                       .trim();
@@ -728,118 +744,141 @@ class _EditProfileState extends State<EditProfile> {
                                                       'data : $password  $userName  $token');
                                                   // String body =
                                                   //     '{"username": "$userName", "email": "$email", "first_name": "$firstName", "last_name": "$lastName", "tel": "$tel", "profile_img": "$profileImg", "confirm_password": "$password", "_method": "_PUT"}';
-                                                  var formData =
-                                                      FormData.fromMap({
-                                                    'username': userName != null
-                                                        ? '${userName.toString()}'
-                                                        : null,
-                                                    'email': email != null
-                                                        ? email
-                                                        : null,
-                                                    'first_name':
-                                                        firstName != null
-                                                            ? firstName
-                                                            : null,
-                                                    'last_name':
-                                                        lastName != null
-                                                            ? lastName
-                                                            : null,
-                                                    'tel': tel != null
-                                                        ? tel
-                                                        : null,
-                                                    'profile_img': _isEdit
-                                                        ? await MultipartFile
-                                                            .fromFile(
-                                                                _image.path,
-                                                                filename:
-                                                                    fileImage)
-                                                        : null,
-                                                    'confirm_password':
-                                                        password,
-                                                    '_method': 'PUT',
-                                                  });
-                                                  // Map<String, String> headers = {
-                                                  //   "Content-type":
-                                                  //       "application/json",
-                                                  //   "Authorization":
-                                                  //       "Bearer $token"
+                                                  // var formData = {
+                                                  //   'email': email,
+                                                  //   'first_name': firstName,
+                                                  //   'last_name': lastName,
+                                                  //   'tel': tel,
+                                                  //   //     _isEdit ? 'profile_img': _isEdit
+                                                  //   // //     ? await MultipartFile
+                                                  //   // //         .fromFile(
+                                                  //   // //             _image.path,
+                                                  //   // //             filename:
+                                                  //   // //                 fileImage)
+                                                  //   // //     : null,
+                                                  //   // // 'profile_img': _isEdit
+                                                  //   // //     ? await MultipartFile
+                                                  //   // //         .fromFile(
+                                                  //   // //             _image.path,
+                                                  //   // //             filename:
+                                                  //   // //                 fileImage)
+                                                  //   // //     : null,
+                                                  //   'confirm_password':
+                                                  //       password.toString(),
+                                                  //   '_method': 'PUT',
                                                   // };
-                                                  // String paramName =
-                                                  //     'param'; // give the post param a name
-                                                  // String formBody = paramName +
-                                                  //     '=' +
-                                                  //     Uri.encodeQueryComponent(
-                                                  //         body);
-                                                  // List<int> bodyBytes =
-                                                  //     utf8.encode(
-                                                  //         formBody); // utf8 encode
-                                                  // try {
-                                                  //   http.Response response =
-                                                  //       await http.post(
-                                                  //     url,
-                                                  //     headers: headers,
-                                                  //     body: body,
-                                                  //   );
 
-                                                  //   logger.d(
-                                                  //       'status : ${response.statusCode}');
-                                                  //   logger.d(
-                                                  //       'status : ${response.request}');
-                                                  //   if (response.statusCode ==
-                                                  //       200) {
-                                                  //     logger.d('success');
-                                                  //     Navigator.of(context)
-                                                  //         .pop(true);
-                                                  //   }
-                                                  // } on Exception catch (e) {
-                                                  //   logger.e(e);
-                                                  // }
-                                                  // http.Response response =
-                                                  //     await http.post(
-                                                  //   url,
-                                                  //   headers: headers,
-                                                  //   body: body,
-                                                  // );
-
-                                                  // logger.d(
-                                                  //     'status : ${response.statusCode}');
-                                                  // logger.d(
-                                                  //     'status : ${response.request}');
-                                                  // if (response.statusCode ==
-                                                  //     200) {
-                                                  //   logger.d('success');
-                                                  //   Navigator.of(context)
-                                                  //       .pop(true);
-                                                  // }
-
-                                                  logger
-                                                      .d('${formData.fields}');
-                                                  logger.d(
-                                                      '${formData.files.toString()}');
+                                                  // FormData formData =
+                                                  //     FormData.fromMap({
+                                                  //   'image_profile':
+                                                  //       await MultipartFile
+                                                  //           .fromFile(
+                                                  //               _image.path,
+                                                  //               filename:
+                                                  //                   fileImage)
+                                                  // });
+                                                  var imageProfile =
+                                                      await MultipartFile
+                                                          .fromFile(_image.path,
+                                                              filename:
+                                                                  fileImage);
                                                   Dio dio = Dio();
-                                                  Response response =
-                                                      await dio.post(
+                                                  var response =
+                                                      await http.post(
                                                     url,
-                                                    data: formData,
-                                                    options: Options(
-                                                        headers: {
-                                                          "Authorization":
-                                                              "Bearer $token",
-                                                        },
-                                                        followRedirects: false,
-                                                        validateStatus:
-                                                            (status) {
-                                                          return status < 500;
-                                                        }),
+                                                    body: {
+                                                      _isEdit == true
+                                                          ? 'email'
+                                                          : email: email,
+                                                      _isEdit == true
+                                                              ? 'first_name'
+                                                              : firstName:
+                                                          firstName,
+                                                      _isEdit == true
+                                                          ? 'last_name'
+                                                          : lastName: lastName,
+                                                      _isEdit == true
+                                                          ? 'tel'
+                                                          : tel: tel,
+                                                      // _isEdit == true
+                                                      //         ? 'image_profile'
+                                                      //         : imageProfile:
+                                                      //     imageProfile,
+                                                      '_method': 'PUT',
+                                                      _isEdit == true
+                                                          ? 'confirm_password'
+                                                          : password: password,
+                                                    },
+                                                    headers: {
+                                                      'Authorization':
+                                                          'Bearer $token',
+                                                    },
                                                   );
 
                                                   logger.d(response.statusCode);
-                                                  // if (response.statusCode ==
-                                                  //     200) {
-                                                  //   logger.d('success');
-                                                  //   Navigator.of(context)
-                                                  //       .pop(true);
-                                                  // }
+                                                  if (response.statusCode ==
+                                                      200) {
+                                                    logger.d('success');
+                                                    showDialog(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              Future.delayed(
+                                                                  Duration(
+                                                                      seconds:
+                                                                          3),
+                                                                  () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(true);
+                                                              });
+                                                              return Dialog(
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0)),
+                                                                  child: Container(
+                                                                      height: 250.0,
+                                                                      width: 300.0,
+                                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
+                                                                      child: Column(
+                                                                        children: <
+                                                                            Widget>[
+                                                                          Stack(
+                                                                            children: <Widget>[
+                                                                              Center(
+                                                                                child: Container(
+                                                                                  margin: EdgeInsets.only(top: 40),
+                                                                                  height: 90.0,
+                                                                                  width: 90.0,
+                                                                                  decoration: BoxDecoration(
+                                                                                      borderRadius: BorderRadius.circular(50.0),
+                                                                                      image: DecorationImage(
+                                                                                        image: AssetImage('assets/images/success.png'),
+                                                                                        fit: BoxFit.cover,
+                                                                                      )),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Container(
+                                                                              margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 0),
+                                                                              child: Center(
+                                                                                child: Text(
+                                                                                  'แก้ไขโปรไฟล์สำเร็จ',
+                                                                                  style: TextStyle(
+                                                                                    fontFamily: 'Aleo-Bold',
+                                                                                    fontSize: 24.0,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                  ),
+                                                                                ),
+                                                                              )),
+                                                                        ],
+                                                                      )));
+                                                            })
+                                                        .then((value) =>
+                                                            Navigator.pop(
+                                                                context));
+                                                  }
                                                 } catch (error) {
                                                   if (error.response
                                                           .statusCode ==

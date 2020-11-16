@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
+import 'package:disefood/model/bankAccount.dart';
 import 'package:disefood/model/userById.dart';
+import 'package:disefood/screen_seller/addBank.dart';
 import 'package:disefood/screen_seller/create_shop.dart';
+import 'package:disefood/screen_seller/editBank.dart';
 import 'package:disefood/screen_seller/edit_shop.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:disefood/model/shop_id.dart';
@@ -19,6 +23,7 @@ class HomeSeller extends StatefulWidget {
 }
 
 class _HomeSellerState extends State<HomeSeller> {
+  var account;
   String shopImg;
   String nameUser;
   String lastNameUser;
@@ -33,6 +38,9 @@ class _HomeSellerState extends State<HomeSeller> {
   String email;
   int approve;
   String token;
+  String bankNum;
+  int bankId;
+  String bankName;
   final logger = Logger();
   ApiProvider apiProvider = ApiProvider();
   @override
@@ -85,16 +93,39 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopImg = msg.data.coverImg;
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
-        approve = msg.data.approved;
+        // account = msg.data.accountNumbers;
         logger.d(msg.data.approved);
+        // logger.d('account number: $account');
+        logger.d('shop detail : ${msg.data.toJson()}');
         preference.setInt('shop_id', msg.data.id);
         preference.setInt('approved', approve);
+        getBankAccount();
       });
     } else {
       setState(() {
         _isLoading = true;
         logger.d('shop not found');
         logger.d(_shopId);
+      });
+    }
+  }
+
+  Future getBankAccount() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    token = preference.getString('token');
+    logger.d('shop id: $_shopId');
+    var response = await apiProvider.getBankAcount(_shopId, token);
+    logger.d('status bank: ${response.statusCode}');
+    if (response.statusCode == 200) {
+      Map map = json.decode(response.body);
+      BankAccount bankAccount = BankAccount.fromJson(map);
+
+      setState(() {
+        account = bankAccount.data[0];
+        bankNum = bankAccount.data[0].number;
+        bankName = bankAccount.data[0].channel;
+        bankId = bankAccount.data[0].id;
+        logger.d('account number: ${bankAccount.data[0].channel}');
       });
     }
   }
@@ -113,13 +144,13 @@ class _HomeSellerState extends State<HomeSeller> {
           : _shopId != null
               ? approve == 0
                   ? Center(
-                      child: Text('รอแอดมินอนุมัติร้านค้า'
-                      ,
-                       style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black38,
-                              fontSize: 20),),
-                      
+                      child: Text(
+                        'รอแอดมินอนุมัติร้านค้า',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black38,
+                            fontSize: 20),
+                      ),
                     )
                   : ListView(
                       children: <Widget>[
@@ -221,47 +252,146 @@ class _HomeSellerState extends State<HomeSeller> {
                           //           onPressed: () {},
                           //         ),
                           //       )
-                          child: Column(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(
-                                    bottom: 20, right: 30, top: 75),
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.store,
-                                    color: Colors.amber[800],
-                                    size: 64,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => EditShop(
-                                                  shopId: _shopId,
-                                                  shopImg: _shopImg,
-                                                  shopName: _shopName,
-                                                  shopSlot: _shopSlot,
-                                                ))).then((value) {
-                                      setState(() {
-                                        fetchShopFromStorage();
-
-                                        print('Set state work');
-                                      });
-                                    });
-                                  },
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: Center(
-                                  child: Text(
-                                    'แก้ไขร้านอาหาร',
-                                    style: TextStyle(
-                                      fontSize: 18,
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        bottom: 20, right: 30, top: 75),
+                                    child: IconButton(
+                                      icon: Icon(
+                                        Icons.store,
+                                        color: Colors.amber[800],
+                                        size: 64,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => EditShop(
+                                                      shopId: _shopId,
+                                                      shopImg: _shopImg,
+                                                      shopName: _shopName,
+                                                      shopSlot: _shopSlot,
+                                                    ))).then((value) {
+                                          setState(() {
+                                            fetchShopFromStorage();
+                                            initState();
+                                            print('Set state work');
+                                          });
+                                        });
+                                      },
                                     ),
                                   ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    child: Center(
+                                      child: Text(
+                                        'แก้ไขร้านอาหาร',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 70),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        bottom: 20,
+                                        right: 30,
+                                        top: 75,
+                                      ),
+                                      child: account == null
+                                          ? IconButton(
+                                              icon: Icon(
+                                                Icons.account_balance,
+                                                color: Colors.amber[800],
+                                                size: 64,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AddBank(
+                                                              shopId: _shopId,
+                                                              shopImg: _shopImg,
+                                                              shopName:
+                                                                  _shopName,
+                                                              shopSlot:
+                                                                  _shopSlot,
+                                                            ))).then((value) {
+                                                  setState(() {
+                                                    fetchShopFromStorage();
+
+                                                    print('Set state work');
+                                                  });
+                                                });
+                                              },
+                                            )
+                                          : IconButton(
+                                              icon: Icon(
+                                                Icons.account_balance,
+                                                color: Colors.amber[800],
+                                                size: 64,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            EditBank(
+                                                              bankId: bankId,
+                                                              shopId: _shopId,
+                                                              shopImg: _shopImg,
+                                                              shopName:
+                                                                  _shopName,
+                                                              shopSlot:
+                                                                  _shopSlot,
+                                                              bankName:
+                                                                  bankName,
+                                                              bankNumber:
+                                                                  bankNum,
+                                                            ))).then((value) {
+                                                  setState(() {
+                                                    fetchShopFromStorage();
+
+                                                    print('Set state work');
+                                                  });
+                                                });
+                                              },
+                                            ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      child: Center(
+                                        child: account == null
+                                            ? Text(
+                                                'เพิ่มเลขบัญชี',
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                ),
+                                              )
+                                            : Text(
+                                                'แก้ไขเลขบัญชี',
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -333,8 +463,8 @@ class _HomeSellerState extends State<HomeSeller> {
                 imageUrl:
                     'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
                 height: 150,
-          width: 500,
-          fit: BoxFit.fitWidth,
+                width: 500,
+                fit: BoxFit.fitWidth,
                 placeholder: (context, url) => Center(
                     child: Container(
                         margin: EdgeInsets.only(top: 50, bottom: 35),

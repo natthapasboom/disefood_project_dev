@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:disefood/model/shopList.dart';
 import 'package:flutter/foundation.dart';
@@ -273,6 +274,59 @@ class ApiProvider {
       'Authorization': 'Bearer $token',
       HttpHeaders.contentTypeHeader: 'application/json',
     });
+    return response;
+  }
+
+  Future<http.Response> getBankAcount(int _shopId, String token) async {
+    String url = 'http://54.151.194.224:8000/api/shop/$_shopId/account-number';
+    http.Response response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+      HttpHeaders.contentTypeHeader: 'application/json',
+    });
+    return response;
+  }
+
+  Future<Response> createBankAccount(
+      String token, int shopId, String accountNum, String bankName) async {
+    String url = 'http://54.151.194.224:8000/api/shop/account-number/$shopId';
+
+    FormData formData = FormData.fromMap({
+      'number': accountNum,
+      'channel': bankName,
+    });
+
+    Response response = await Dio().post(url,
+        data: formData,
+        options: Options(headers: {
+          "Authorization": "Bearer $token",
+        }));
+
+    return response;
+  }
+
+  Future<http.Response> editBankAccount(
+      String token, int shopId, String accountNum, String bankName) async {
+    String url =
+        'http://54.151.194.224:8000/api/shop/account-number/update/$shopId';
+
+    // FormData formData = FormData.fromMap({
+    //   'number': accountNum,
+    //   'channel': bankName,
+    //   '_method': 'PUT',
+    // });
+
+    http.Response response = await http.post(
+      url,
+      body: {
+        'number': accountNum,
+        'channel': bankName,
+        '_method': 'PUT',
+      },
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    // print('data : $accountNum , $bankName, $token, $shopId');
     return response;
   }
 
