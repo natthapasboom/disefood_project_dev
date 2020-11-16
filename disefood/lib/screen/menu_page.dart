@@ -6,7 +6,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/config/app_config.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/order_cart.dart';
-import 'package:disefood/screen/view_order_page.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -212,12 +211,7 @@ class _MenuPageState extends State<MenuPage> {
             ),
             new IconButton(
               icon: Icon(Icons.archive),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ViewOrder(),
-                ),
-              ),
+              onPressed: () {},
             ),
           ],
         ),

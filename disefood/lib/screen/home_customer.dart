@@ -1,11 +1,9 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:disefood/model/cart.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen/history.dart';
 import 'package:disefood/services/api_provider.dart';
-import 'package:disefood/screen/login_customer_page.dart';
 import 'package:disefood/screen/menu_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -14,9 +12,6 @@ import 'package:disefood/component/sidemenu_customer.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'customer_utilities/sqlite_helper.dart';
-import 'order_cart.dart';
 
 class Home extends StatefulWidget {
   //  final UserProfile userData;
@@ -27,6 +22,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  TextEditingController _textController = new TextEditingController();
   final logger = Logger();
   //sidebar att.
   String shopImg;
@@ -44,10 +40,8 @@ class _HomeState extends State<Home> {
   String shopName;
   int shopSlot;
   String shopCoverImg;
-  //QTY
-  // bool isCartNotEmpty = false;
-  // int totalQty;
-  // List<CartModel> cartModels = List();
+  bool isSearchActive = false;
+
   @override
   void initState() {
     // readSQLite();
@@ -58,7 +52,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<UserById> findUser() async {
+  Future<Null> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     userId = preference.getInt('user_id');
     var response = await apiProvider.getUserById(userId);
@@ -83,77 +77,21 @@ class _HomeState extends State<Home> {
     String _url = 'http://54.151.194.224:8000/api/shop';
     final response = await http.get(_url);
     var body = response.body;
-
     setState(() {
       isLoading = false;
       shops = json.decode(body)['data'];
-
-      // for(var item in shops){
-      //   for (int i = 0; i < item.length; i++) {
-      //     setState(() {
-      //     var approved = item[i]['approved'];
-      //     logger.d(approved);
-      //   });
-      //   }
-
-      // }
-      // print(shops);
     });
   }
 
-  // Future<Null> readSQLite() async {
-  //   var object = await SQLiteHelper().readAllDataFromSQLite();
-  //   totalQty = 0;
-  //   setState(() {
-  //     for (var model in object) {
-  //       cartModels = object;
-  //       totalQty = totalQty + model.foodQuantity;
-  //     }
-  //   });
-  //   checkEmptyCart();
-  // }
-
-  // void checkEmptyCart() {
-  //   if (cartModels.length == 0) {
-  //     setState(() {
-  //       isCartNotEmpty = false;
-  //     });
-  //   } else {
-  //     setState(() {
-  //       isCartNotEmpty = true;
-  //     });
-  //   }
-  // }
-
-  // Future<List<Shops>> fetchShopAndFood(int shopId) async {
-  //   String shopUrl = "http://10.0.2.2:8080/api/shops/+$shopId";
-
-  //   try {
-  //     Dio dio = Dio();
-  //     Response response = await dio.get(shopUrl);
-  //     print(response.statusCode);
-  //     if (response.statusCode == 200) {
-  //       String foodUrl = "http://10.0.2.2:8080/api/shop/foods/+$shopId";
-  //       var result = Shops.fromJson(response.data);
-  //       try {
-  //         Dio dio = Dio();
-  //         Response response = await dio.get(foodUrl);
-  //         if (response.statusCode == 200) {
-  //           var foodresultlogger = FoodsList.fromJson(response.data[0]);
-  //           // var foodresult = FoodsList.fromJson(response.data[0]);
-  //           // logger.d('${foodresult}');
-
-  //           // var jsonFood = foodresult.toJson();
-  //           _routeMenuById(MenuPage(), result, foodresultlogger);
-  //         }
-  //       } catch (e) {
-  //         print(e);
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
+  Future onSearchBoxUsed(String text) async {
+    String _url =
+        'http://54.151.194.224:8000/api/shop/search?name=$text&approved=true';
+    final response = await http.get(_url);
+    var body = response.body;
+    setState(() {
+      shops = json.decode(body)['data'];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -198,57 +136,7 @@ class _HomeState extends State<Home> {
         lastName: lastNameUser,
         coverImg: profileImg,
         email: email,
-      ), //EndAppbar
-      // floatingActionButton: Stack(
-      //   children: [
-      //     FloatingActionButton(
-      //       onPressed: () {
-      //         Navigator.push(
-      //           context,
-      //           MaterialPageRoute(
-      //             builder: (context) => OrderItemPage(
-      //               shopId: shopId,
-      //               shopName: shopName,
-      //               shopSlot: shopSlot,
-      //               shopCoverImg: shopCoverImg,
-      //             ),
-      //           ),
-      //         );
-      //       },
-      //       child: Icon(
-      //         Icons.shopping_bag,
-      //         color: Colors.white,
-      //       ),
-      //       backgroundColor: Colors.orange,
-      //     ),
-      //     Visibility(
-      //       visible: isCartNotEmpty,
-      //       child: Positioned(
-      //         right: 11,
-      //         top: 11,
-      //         child: new Container(
-      //           padding: EdgeInsets.all(2),
-      //           decoration: new BoxDecoration(
-      //             color: Colors.red,
-      //             borderRadius: BorderRadius.circular(6),
-      //           ),
-      //           constraints: BoxConstraints(
-      //             minWidth: 14,
-      //             minHeight: 14,
-      //           ),
-      //           child: Text(
-      //             '$totalQty',
-      //             style: TextStyle(
-      //               color: Colors.white,
-      //               fontSize: 8,
-      //             ),
-      //             textAlign: TextAlign.center,
-      //           ),
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
+      ),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(
@@ -256,212 +144,302 @@ class _HomeState extends State<Home> {
                 valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
               ),
             )
-          : Container(
-              child: Column(
-                children: <Widget>[
-                  headerSection,
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: shops != null ? shops.length : 0,
-                      itemBuilder: (BuildContext context, int index) {
-                        var item = shops[index];
-                        return item['approved'] == 1
-                            ? InkWell(
-                                onTap: () {
-                                  //card
-                                  shopId = item['id'];
-                                  shopName = item['name'];
-                                  shopSlot = item['shop_slot'];
-                                  shopCoverImg = item['cover_img'];
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MenuPage(
-                                        shopId: shopId,
-                                        shopName: shopName,
-                                        shopSlot: shopSlot,
-                                        shopCoverImg: shopCoverImg,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                      bottom: 5, top: 5, left: 20, right: 20),
-                                  child: Card(
-                                    semanticContainer: true,
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    elevation: 5,
-                                    color: Colors.white70,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        CachedNetworkImage(
-                                          imageUrl:
-                                              "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
-                                                  '${item['cover_img']}',
-                                          width: 380,
-                                          height: 140,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) => Center(
-                                              child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      top: 50, bottom: 35),
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    strokeWidth: 5.0,
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation(
-                                                            const Color(
-                                                                0xffF6A911)),
-                                                  ))),
-                                          errorWidget: (context, url, error) =>
-                                              Container(
-                                            height: 140,
-                                            width: 380,
-                                            color: const Color(0xff7FC9C5),
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.store,
-                                                size: 50,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          color: Colors.grey[50],
-                                          child: ListTile(
-                                            title: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      "0.${item['id']}",
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    Container(
-                                                      height: 20,
-                                                      child: VerticalDivider(
-                                                        color: Colors.black38,
-                                                        thickness: 3,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      "${item['name']}",
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                  ],
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.star,
-                                                      color: Colors.orange,
-                                                    ),
-                                                    Text("  4.2 Reviews"),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            // subtitle: Row(
-                                            //   children: <Widget>[
-                                            //     Icon(
-                                            //       Icons.star,
-                                            //       color: Colors.orange,
-                                            //     ),
-                                            //     Text("  4.2 Review(20 Review)")
-                                            //   ],
-                                            // ),
-                                          ),
-                                        ),
-                                      ],
-//          crossAxisAlignment: CrossAxisAlignment.start,
+          : GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(new FocusNode());
+                setState(() {
+                  isSearchActive = false;
+                });
+              },
+              child: Container(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+                      height: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(0),
+                            bottomRight: Radius.circular(0)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 1.0), //(x,y)
+                            blurRadius: 8.0,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            height: 40,
+                            margin: EdgeInsets.only(left: 2, right: 2),
+                            child: TextField(
+                              onTap: () {
+                                setState(() {
+                                  isSearchActive = true;
+                                });
+                              },
+                              controller: _textController,
+                              onChanged: (text) {
+                                onSearchBoxUsed(text);
+                              },
+                              style: TextStyle(
+                                  // backgroundColor: const Color(0xffC4C4C4)
+                                  ),
+                              decoration: new InputDecoration(
+                                suffixIcon: Visibility(
+                                  visible: isSearchActive,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      _textController.clear();
+                                      getShops();
+                                    },
+                                    icon: Icon(
+                                      Icons.clear,
+                                      color: Colors.grey,
                                     ),
                                   ),
                                 ),
-                              )
-                            : null;
-                      },
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: Colors.black,
+                                ),
+                                labelText: "ค้นหาร้านค้า",
+                                filled: true,
+                                fillColor: Colors.white10,
+                                border: new OutlineInputBorder(
+                                  borderRadius: new BorderRadius.circular(8.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.fromLTRB(8, 10, 0, 10),
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  "รายการร้านอาหาร",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: shops != null ? shops.length : 0,
+                        itemBuilder: (BuildContext context, int index) {
+                          var item = shops[index];
+                          return item['approved'] == 1
+                              ? Container(
+                                  margin: EdgeInsets.only(
+                                      bottom: 5, top: 10, left: 30, right: 30),
+                                  child: InkWell(
+                                    onTap: () {
+                                      //card
+                                      shopId = item['id'];
+                                      shopName = item['name'];
+                                      shopSlot = item['shop_slot'];
+                                      shopCoverImg = item['cover_img'];
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MenuPage(
+                                            shopId: shopId,
+                                            shopName: shopName,
+                                            shopSlot: shopSlot,
+                                            shopCoverImg: shopCoverImg,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Card(
+                                      semanticContainer: true,
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      elevation: 5,
+                                      color: Colors.white70,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          CachedNetworkImage(
+                                            imageUrl:
+                                                "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                                                    '${item['cover_img']}',
+                                            width: 380,
+                                            height: 140,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                Center(
+                                                    child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            top: 50,
+                                                            bottom: 35),
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          strokeWidth: 5.0,
+                                                          valueColor:
+                                                              AlwaysStoppedAnimation(
+                                                                  const Color(
+                                                                      0xffF6A911)),
+                                                        ))),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
+                                              height: 140,
+                                              width: 380,
+                                              color: const Color(0xff7FC9C5),
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.store,
+                                                  size: 50,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            color: Colors.grey[50],
+                                            child: ListTile(
+                                              title: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        "0.${item['id']}",
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      Container(
+                                                        height: 20,
+                                                        child: VerticalDivider(
+                                                          color: Colors.black38,
+                                                          thickness: 3,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "${item['name']}",
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.star,
+                                                        color: Colors.orange,
+                                                      ),
+                                                      Text("  4.2 Reviews"),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              // subtitle: Row(
+                                              //   children: <Widget>[
+                                              //     Icon(
+                                              //       Icons.star,
+                                              //       color: Colors.orange,
+                                              //     ),
+                                              //     Text("  4.2 Review(20 Review)")
+                                              //   ],
+                                              // ),
+                                            ),
+                                          ),
+                                        ],
+//          crossAxisAlignment: CrossAxisAlignment.start,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
     );
   }
 }
 
-Widget headerSection = new Material(
-  child: Container(
-    padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-    height: 120,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(0), bottomRight: Radius.circular(0)),
-      color: Colors.white,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey,
-          offset: Offset(0.0, 1.0), //(x,y)
-          blurRadius: 8.0,
-        ),
-      ],
-    ),
-    child: Column(
-      children: <Widget>[
-        Container(
-          height: 40,
-          margin: EdgeInsets.only(left: 2, right: 2),
-          child: TextFormField(
-            style: TextStyle(
-                // backgroundColor: const Color(0xffC4C4C4)
-                ),
-            decoration: new InputDecoration(
-              prefixIcon: Icon(
-                Icons.search,
-                color: Colors.black,
-              ),
-              labelText: "โปรดใส่ชื่อร้านอาหารที่ต้องการค้นหา",
-              filled: true,
-              fillColor: Colors.white10,
-              border: new OutlineInputBorder(
-                borderRadius: new BorderRadius.circular(8.0),
-              ),
-              //fillColor: Colors.green
-            ),
-          ),
-        ),
-        Row(
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.fromLTRB(8, 10, 0, 10),
-              alignment: Alignment.topLeft,
-              child: Text(
-                "รายการร้านอาหาร",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  ),
-);
+// Widget headerSection = new Material(
+//   child: Container(
+//     padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+//     height: 120,
+//     decoration: BoxDecoration(
+//       borderRadius: BorderRadius.only(
+//           bottomLeft: Radius.circular(0), bottomRight: Radius.circular(0)),
+//       color: Colors.white,
+//       boxShadow: [
+//         BoxShadow(
+//           color: Colors.grey,
+//           offset: Offset(0.0, 1.0), //(x,y)
+//           blurRadius: 8.0,
+//         ),
+//       ],
+//     ),
+//     child: Column(
+//       children: <Widget>[
+//         Container(
+//           height: 40,
+//           margin: EdgeInsets.only(left: 2, right: 2),
+//           child: TextField(
+//             style: TextStyle(
+//                 // backgroundColor: const Color(0xffC4C4C4)
+//                 ),
+//             decoration: new InputDecoration(
+//               prefixIcon: Icon(
+//                 Icons.search,
+//                 color: Colors.black,
+//               ),
+//               labelText: "ค้นหาร้านค้า",
+//               filled: true,
+//               fillColor: Colors.white10,
+//               border: new OutlineInputBorder(
+//                 borderRadius: new BorderRadius.circular(8.0),
+//               ),
+//             ),
+//           ),
+//         ),
+//         Row(
+//           children: <Widget>[
+//             Container(
+//               margin: EdgeInsets.fromLTRB(8, 10, 0, 10),
+//               alignment: Alignment.topLeft,
+//               child: Text(
+//                 "รายการร้านอาหาร",
+//                 style: TextStyle(
+//                     color: Colors.black,
+//                     fontSize: 24,
+//                     fontWeight: FontWeight.bold),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ],
+//     ),
+//   ),
+// );

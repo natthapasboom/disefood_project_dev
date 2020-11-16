@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/model/cart.dart';
 import 'package:disefood/screen/customer_dialog/reset_cart_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
-import 'package:disefood/screen/order_cart.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:toast/toast.dart';

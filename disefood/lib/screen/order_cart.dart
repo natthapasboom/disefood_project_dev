@@ -4,8 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:disefood/model/cart.dart';
 import 'package:disefood/screen/customer_dialog/edit_order_amount_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
+import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_page.dart';
-import 'package:disefood/screen/view_order_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,7 +22,7 @@ class OrderItemPage extends StatefulWidget {
       @required this.shopId,
       @required this.shopName,
       @required this.shopSlot,
-      @required this.findMenu,
+      this.findMenu,
       @required this.shopCoverImg})
       : super(key: key);
   @override
@@ -130,20 +130,9 @@ class _OrderItemPageState extends State<OrderItemPage> {
     );
     if (response.statusCode == 200) {
       print("Data : " + "${formData.fields}");
-      print(
-          "=====Send API Completed Status : " + "${response.statusCode}=====");
+      print("-----Send Order API Completed Status Code: " +
+          "${response.statusCode}-----");
       deleteAllFoodInCart();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => OrderItemPage(
-            shopId: shopId,
-            shopName: shopName,
-            shopSlot: shopSlot,
-            shopCoverImg: shopCoverImg,
-          ),
-        ),
-      );
     } else {
       showToast("มีข้อผิดพลาดเกิดขึ้น โปรดลองใหม่ภายหลัง Status : " +
           "${response.statusCode}");
@@ -237,6 +226,10 @@ class _OrderItemPageState extends State<OrderItemPage> {
                           print(
                               "Order Data is Complete => Sending Order API...");
                           sendOrderAPI();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Home()),
+                          );
                         } else {
                           showToast("โปรดเลือกเวลารับอาหาร");
                           print(
@@ -327,12 +320,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
           ),
           new IconButton(
             icon: Icon(Icons.archive),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ViewOrder(),
-              ),
-            ),
+            onPressed: () {},
           ),
         ],
       ),
