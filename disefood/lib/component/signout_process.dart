@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:disefood/screen/login_customer_page.dart';
@@ -20,7 +21,7 @@ Future<Null> signOutProcess(BuildContext context) async {
 
   try {
     String url = 'http://54.151.194.224:8000/api/auth/logout';
-
+    final facebookLogin = FacebookLogin();
     String token = preferences.getString('token');
 
     print(token);
@@ -42,7 +43,7 @@ Future<Null> signOutProcess(BuildContext context) async {
     logger.d(response.data);
     if (response.statusCode == 200) {
       // exit(0);
-
+      facebookLogin.logOut();
       await preferences.remove('star1');
       await preferences.remove('star2');
       await preferences.remove('star3');

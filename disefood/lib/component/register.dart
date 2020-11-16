@@ -269,12 +269,8 @@ class _RegisState extends State<Regis> {
                   return 'โปรดกรอกรหัสผ่าน';
                 }
               },
-              // onChanged: (value) =>
-              //   _passwordController.text = value.trim()
-              // ,
               cursorColor: Colors.white,
               maxLength: 50,
-
               controller: _passwordController,
               decoration: InputDecoration(
                 suffixIcon: IconButton(

@@ -244,8 +244,8 @@ class ApiProvider {
     return response;
   }
 
-  Future<Response> deleteFavorite(int shopId, String token) async {
-    String url = 'http://54.151.194.224:8000/api/favorite/me/$shopId';
+  Future<Response> deleteFavorite(int favId, String token) async {
+    String url = 'http://54.151.194.224:8000/api/favorite/me/$favId';
     Response response = await Dio().delete(
       url,
       options: Options(

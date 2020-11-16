@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:disefood/model/favorite.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/config/app_config.dart';
@@ -49,9 +50,11 @@ class _MenuPageState extends State<MenuPage> {
   bool isLoading = true;
   List foods = [];
   List fav = [];
+  var favId;
   double rating;
   int userId;
   bool isFav = false;
+  var favList;
   @override
   void initState() {
     super.initState();
@@ -64,11 +67,6 @@ class _MenuPageState extends State<MenuPage> {
       shopId = widget.shopId;
     });
     Future.microtask(() async {
-      SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-      isTrue = sharedPreferences.getBool('isTrue');
-      isFalse = sharedPreferences.getBool('isFalse');
-      logger.d('isTrue or False : $isTrue , $isFalse');
       getFavoriteByMe();
       findMenu();
       // findUser();
@@ -124,10 +122,27 @@ class _MenuPageState extends State<MenuPage> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String token = sharedPreferences.getString('token');
     var response = await apiProvider.getFavoriteByMe(token);
+
     if (response.statusCode == 200) {
       setState(() {
+        Map jsonMap = json.decode(response.body);
+        Favorite favList = Favorite.fromJson(jsonMap);
+
+        for (var e in favList.data) {
+          if (shopId == e.shopId) {
+            logger.d(
+                'fav list customer ${e.userId} : shop id ${shopId} : favorite id = ${e.id} ');
+            logger.e('success');
+            setState(() {
+              favId = e.id;
+              isFav = true;
+              logger.e('fav id $favId & shop id $isFav ');
+            });
+          }
+        }
         fav = json.decode(response.body)['data'];
-        logger.d('fav response : ${fav.toList()}');
+        // logger.d('fav response : ${fav.toList()}');
+        logger.e('check fav id = $favId');
       });
     } else {
       logger.e('status : ${response.statusCode}');
@@ -140,6 +155,7 @@ class _MenuPageState extends State<MenuPage> {
     var response = await apiProvider.postFavorite(shopId, token);
     if (response.statusCode == 200) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             Future.delayed(Duration(seconds: 3), () {
@@ -205,9 +221,11 @@ class _MenuPageState extends State<MenuPage> {
   Future deleteFavorite() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String token = sharedPreferences.getString('token');
-    var response = await apiProvider.deleteFavorite(shopId, token);
+    logger.e('before delete: $token $shopId');
+    var response = await apiProvider.deleteFavorite(favId, token);
     if (response.statusCode == 200) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) {
             Future.delayed(Duration(seconds: 3), () {
@@ -509,7 +527,7 @@ class _MenuPageState extends State<MenuPage> {
                                     child: RaisedButton(
                                         child: Center(
                                           child: Text(
-                                            'review',
+                                            'รีวิว',
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontFamily: 'Aleo',
@@ -537,7 +555,7 @@ class _MenuPageState extends State<MenuPage> {
                                   Container(
                                     margin: EdgeInsets.only(left: 0),
                                     child: IconButton(
-                                      icon: !isFav && isTrue == null
+                                      icon: favId == null
                                           ? Icon(
                                               Icons.favorite_border,
                                               color: Color(0xffFF7C2C),
@@ -549,27 +567,18 @@ class _MenuPageState extends State<MenuPage> {
                                               size: 24,
                                             ),
                                       onPressed: () async {
-                                        // SharedPreferences sharedPreferences =
-                                        //     await SharedPreferences
-                                        //         .getInstance();
-                                        // setState(() {
-                                        //   isFav = !isFav;
-                                        //   if (!isFav) {
-                                        //     deleteFavorite();
-                                        //     logger.d(isFav);
-                                        //     sharedPreferences.setBool(
-                                        //         'isFalse', isFav);
-                                        //     sharedPreferences.remove('isTrue');
-                                        //   } else if (isFav) {
-                                        //     postFavorite();
-                                        //     logger.d(isFav);
-
-                                        //     sharedPreferences.setBool(
-                                        //         'isTrue', isFav);
-                                        //     sharedPreferences.remove('isFalse');
-                                        //   }
-
-                                        // });
+                                        SharedPreferences sharedPreferences =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        setState(() {
+                                          if (favId != null) {
+                                            deleteFavorite();
+                                            logger.d(isFav);
+                                          } else if (favId == null) {
+                                            postFavorite();
+                                            logger.d(isFav);
+                                          }
+                                        });
                                       },
                                     ),
                                   ),
@@ -749,10 +758,10 @@ class _MenuPageState extends State<MenuPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
-                                  margin: EdgeInsets.only(left: 120),
+                                  margin: EdgeInsets.only(left: 100),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "Review",
+                                    "รีวิวร้านค้า",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: 'Aleo',
@@ -763,7 +772,7 @@ class _MenuPageState extends State<MenuPage> {
                                 ),
                                 Container(
                                   alignment: Alignment.centerLeft,
-                                  margin: EdgeInsets.only(left: 60),
+                                  margin: EdgeInsets.only(left: 40),
                                   child: IconButton(
                                       icon: Icon(
                                         Icons.clear,
@@ -882,7 +891,7 @@ class _MenuPageState extends State<MenuPage> {
                                       controller: reviewController,
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.zero,
-                                        hintText: "Add Review",
+                                        hintText: "เพิ่มรีวิว...",
                                         border: InputBorder.none,
                                       ),
                                       maxLines: 4,
@@ -1024,7 +1033,7 @@ class _MenuPageState extends State<MenuPage> {
                                     },
                                     child: Center(
                                       child: Text(
-                                        'Submit',
+                                        'ตกลง',
                                         style: TextStyle(
                                             fontFamily: 'Roboto',
                                             fontSize: 18,

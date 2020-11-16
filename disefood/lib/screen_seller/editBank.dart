@@ -36,6 +36,8 @@ class _EditBankState extends State<EditBank> {
   String _dropDownValue;
   int shopId;
   int bankId;
+  bool _isBankNameEdit = false;
+  bool _isBankNumEdit = false;
   bool _isEdit = false;
   @override
   void initState() {
@@ -131,7 +133,7 @@ class _EditBankState extends State<EditBank> {
                             child: TextFormField(
                               onChanged: (val) {
                                 setState(() {
-                                  _isEdit = true;
+                                  _isBankNumEdit = true;
                                 });
                               },
                               key: _formKey,
@@ -252,7 +254,7 @@ class _EditBankState extends State<EditBank> {
                             onChanged: (val) {
                               setState(
                                 () {
-                                  _isEdit = true;
+                                  _isBankNameEdit = true;
                                   _dropDownValue = val;
                                   print('bank name : $_dropDownValue');
                                 },
@@ -300,9 +302,11 @@ class _EditBankState extends State<EditBank> {
                                 var response = await http.post(
                                   url,
                                   body: {
-                                    _isEdit == true ? 'number' : accountNum:
-                                        accountNum,
-                                    _isEdit == true ? 'channel' : bank: bank,
+                                    _isBankNumEdit == true
+                                        ? 'number'
+                                        : accountNum: accountNum,
+                                    _isBankNameEdit == true ? 'channel' : bank:
+                                        bank,
                                     '_method': 'PUT',
                                   },
                                   headers: {
@@ -320,6 +324,7 @@ class _EditBankState extends State<EditBank> {
 
                                 if (response.statusCode == 200) {
                                   showDialog(
+                                          barrierDismissible: false,
                                           context: context,
                                           builder: (context) {
                                             Future.delayed(Duration(seconds: 3),
@@ -370,13 +375,13 @@ class _EditBankState extends State<EditBank> {
                                                         Container(
                                                             margin:
                                                                 EdgeInsets.only(
-                                                                    top: 20,
+                                                                    top: 30,
                                                                     left: 10,
                                                                     right: 10,
                                                                     bottom: 0),
                                                             child: Center(
                                                               child: Text(
-                                                                'แก้ไขบัญชีธนาคารสำเร็จ',
+                                                                'แก้ไขบัญชี\nธนาคารสำเร็จ',
                                                                 style:
                                                                     TextStyle(
                                                                   fontFamily:
@@ -393,6 +398,117 @@ class _EditBankState extends State<EditBank> {
                                                     )));
                                           })
                                       .then((value) => Navigator.pop(context));
+                                } else if (response.statusCode != 200) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        10.0)),
+                                            child: Container(
+                                                height: 324.0,
+                                                width: 300.0,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0)),
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Stack(
+                                                      children: <Widget>[
+                                                        Center(
+                                                          child: Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    top: 40),
+                                                            height: 90.0,
+                                                            width: 90.0,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            50.0),
+                                                                    image:
+                                                                        DecorationImage(
+                                                                      image: AssetImage(
+                                                                          'assets/images/red-cross.png'),
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    )),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Container(
+                                                        margin: EdgeInsets.only(
+                                                            top: 20,
+                                                            left: 10,
+                                                            right: 10,
+                                                            bottom: 0),
+                                                        child: Center(
+                                                          child: Text(
+                                                            'กรุณาแก้ไขฟอร์ม\nอย่างใดอย่างหนึ่ง',
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Aleo-Bold',
+                                                              fontSize: 24.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        )),
+                                                    Container(
+                                                      height: 60,
+                                                      padding: EdgeInsets.only(
+                                                          top: 5, bottom: 5),
+                                                      margin: EdgeInsets.only(
+                                                          left: 80,
+                                                          right: 80,
+                                                          top: 20,
+                                                          bottom: 20),
+                                                      child: RaisedButton(
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10.0),
+                                                              side: BorderSide(
+                                                                  color: Color(
+                                                                      0xffFF7C2C))),
+                                                          color:
+                                                              Color(0xffFF7C2C),
+                                                          child: Center(
+                                                            child: Container(
+                                                              margin: EdgeInsets
+                                                                  .only(
+                                                                      top: 5,
+                                                                      bottom:
+                                                                          5),
+                                                              child: Text(
+                                                                'ตกลง',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        18),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          }),
+                                                    )
+                                                  ],
+                                                )));
+                                      });
                                 }
                               }),
                         ),

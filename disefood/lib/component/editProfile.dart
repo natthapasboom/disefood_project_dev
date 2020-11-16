@@ -21,6 +21,10 @@ class _EditProfileState extends State<EditProfile> {
   String name;
   String _shopImg;
   bool _isEdit = false;
+  bool _isFirstNameEdit = false;
+  bool _isLastNameEdit = false;
+  bool _isEmailEdit = false;
+  bool _isTelEdit = false;
   File _image;
   String coverImg;
   String firstName;
@@ -96,7 +100,7 @@ class _EditProfileState extends State<EditProfile> {
     userId = preference.getInt('user_id');
     password = preference.getString('password');
     var response = await apiProvider.getUserById(userId);
-    print(response.statusCode);
+    // print(response.statusCode);
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       UserById msg = UserById.fromJson(map);
@@ -278,7 +282,7 @@ class _EditProfileState extends State<EditProfile> {
                                           margin:
                                               EdgeInsets.fromLTRB(30, 0, 0, 0),
                                           child: Text(
-                                            'First Name',
+                                            'ชื่อ',
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w900,
@@ -294,10 +298,10 @@ class _EditProfileState extends State<EditProfile> {
                                                       15.0),
                                             ),
                                             margin: EdgeInsets.fromLTRB(
-                                                30, 0, 30, 0),
+                                                95, 0, 30, 0),
                                             child: new TextFormField(
                                               onChanged: (val) {
-                                                _isEdit = true;
+                                                _isFirstNameEdit = true;
                                               },
                                               controller: _firstNameController,
                                               decoration: InputDecoration(
@@ -338,7 +342,7 @@ class _EditProfileState extends State<EditProfile> {
                                                 hintText:
                                                     _firstNameController != null
                                                         ? '$firstName'
-                                                        : 'กรอกชื่อชริง',
+                                                        : 'กรอกชื่อ',
                                               ),
                                             ),
                                           ),
@@ -363,7 +367,7 @@ class _EditProfileState extends State<EditProfile> {
                                         margin:
                                             EdgeInsets.fromLTRB(30, 30, 0, 30),
                                         child: Text(
-                                          'Last Name',
+                                          'นามสกุล',
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w900,
@@ -378,10 +382,10 @@ class _EditProfileState extends State<EditProfile> {
                                                 new BorderRadius.circular(15.0),
                                           ),
                                           margin:
-                                              EdgeInsets.fromLTRB(35, 0, 30, 0),
+                                              EdgeInsets.fromLTRB(55, 0, 30, 0),
                                           child: new TextFormField(
                                             onChanged: (val) {
-                                              _isEdit = true;
+                                              _isLastNameEdit = true;
                                             },
                                             controller: _lastNameController,
                                             decoration: InputDecoration(
@@ -437,7 +441,7 @@ class _EditProfileState extends State<EditProfile> {
                                         margin:
                                             EdgeInsets.fromLTRB(30, 30, 0, 30),
                                         child: Text(
-                                          'Email',
+                                          'อีเมลล์',
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w900,
@@ -455,7 +459,7 @@ class _EditProfileState extends State<EditProfile> {
                                               EdgeInsets.fromLTRB(75, 0, 30, 0),
                                           child: new TextFormField(
                                             onChanged: (val) {
-                                              _isEdit = true;
+                                              _isEmailEdit = true;
                                             },
                                             validator: _validateEmail,
                                             keyboardType:
@@ -514,7 +518,7 @@ class _EditProfileState extends State<EditProfile> {
                                         margin:
                                             EdgeInsets.fromLTRB(30, 30, 0, 30),
                                         child: Text(
-                                          'Tel.',
+                                          'เบอร์โทรศัพท์',
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w900,
@@ -529,10 +533,11 @@ class _EditProfileState extends State<EditProfile> {
                                                 new BorderRadius.circular(15.0),
                                           ),
                                           margin:
-                                              EdgeInsets.fromLTRB(90, 0, 30, 0),
+                                              EdgeInsets.fromLTRB(20, 0, 30, 0),
                                           child: new TextFormField(
+                                            maxLength: 10,
                                             onChanged: (val) {
-                                              _isEdit = true;
+                                              _isTelEdit = true;
                                             },
                                             keyboardType: TextInputType.number,
                                             controller: _telController,
@@ -605,7 +610,7 @@ class _EditProfileState extends State<EditProfile> {
                                                 new BorderRadius.circular(15.0),
                                           ),
                                           margin:
-                                              EdgeInsets.fromLTRB(40, 0, 30, 0),
+                                              EdgeInsets.fromLTRB(20, 0, 30, 0),
                                           child: new TextFormField(
                                             onChanged: (val) {
                                               _isEdit = true;
@@ -782,32 +787,30 @@ class _EditProfileState extends State<EditProfile> {
                                                           .fromFile(_image.path,
                                                               filename:
                                                                   fileImage);
-                                                  Dio dio = Dio();
+
                                                   var response =
                                                       await http.post(
                                                     url,
                                                     body: {
-                                                      _isEdit == true
+                                                      _isEmailEdit == true
                                                           ? 'email'
                                                           : email: email,
-                                                      _isEdit == true
+                                                      _isFirstNameEdit == true
                                                               ? 'first_name'
                                                               : firstName:
                                                           firstName,
-                                                      _isEdit == true
+                                                      _isLastNameEdit == true
                                                           ? 'last_name'
                                                           : lastName: lastName,
-                                                      _isEdit == true
+                                                      _isTelEdit == true
                                                           ? 'tel'
                                                           : tel: tel,
                                                       // _isEdit == true
-                                                      //         ? 'image_profile'
-                                                      //         : imageProfile:
-                                                      //     imageProfile,
+                                                      //     ? 'image_profile'
+                                                      //     : imageProfile: null,
                                                       '_method': 'PUT',
-                                                      _isEdit == true
-                                                          ? 'confirm_password'
-                                                          : password: password,
+                                                      'confirm_password':
+                                                          password,
                                                     },
                                                     headers: {
                                                       'Authorization':
