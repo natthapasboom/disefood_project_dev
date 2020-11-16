@@ -93,4 +93,13 @@ class SQLiteHelper {
       print('e delete ===> ${e.toString()}');
     }
   }
+
+  Future<Null> deleteAllData() async {
+    Database database = await connectedDatabase();
+    try {
+      await database.delete(tableDatabase);
+    } catch (e) {
+      print('e delete ===> ${e.toString()}');
+    }
+  }
 }

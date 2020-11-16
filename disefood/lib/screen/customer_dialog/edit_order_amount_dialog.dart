@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/model/cart.dart';
-import 'package:disefood/screen/customer_dialog/order_failed_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
 import 'package:disefood/screen/order_cart.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ class EditOrderAmountDialog extends StatefulWidget {
   final int shopId;
   final int foodId;
   final String foodName;
+  final String foodDescription;
   final String foodImg;
   final int foodPrice;
   final int foodQuantity;
@@ -22,6 +22,7 @@ class EditOrderAmountDialog extends StatefulWidget {
   const EditOrderAmountDialog({
     Key key,
     @required this.foodName,
+    @required this.foodDescription,
     @required this.foodImg,
     @required this.foodId,
     @required this.shopId,
@@ -75,7 +76,7 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 8,
       backgroundColor: Colors.transparent,
       child: SingleChildScrollView(
@@ -321,29 +322,36 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
     print('Food Data :  ${orderMap.toString()} ');
     CartModel cartModel = CartModel.fromJson(orderMap);
 
-    var object = await SQLiteHelper().readAllDataFromSQLite();
-
-    if (object.length == 0) {
-      await SQLiteHelper().insertDataToSQLite(cartModel).then(
-        (value) {
-          showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
-          readSQLite();
-        },
-      );
-    } else {
-      String idShopSQLite = object[0].shopId;
-      if (shopId == idShopSQLite) {
-        await SQLiteHelper().insertDataToSQLite(cartModel).then(
-          (value) {
-            showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
-            readSQLite();
-          },
-        );
-      } else {
-        showDialog(context: context, builder: (context) => OrderFailed());
-      }
-    }
+    // var object = await SQLiteHelper().readAllDataFromSQLite();
+    await SQLiteHelper().insertDataToSQLite(cartModel).then(
+      (value) {
+        showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
+        readSQLite();
+      },
+    );
   }
+  // if (object.length == 0) {
+  //   await SQLiteHelper().insertDataToSQLite(cartModel).then(
+  //     (value) {
+  //       print("case1");
+
+  //       showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
+  //       readSQLite();
+  //     },
+  //   );
+  // } else {
+  //   String idShopSQLite = object[0].shopId;
+  //   if (shopId == idShopSQLite) {
+  //     await SQLiteHelper().insertDataToSQLite(cartModel).then(
+  //       (value) {
+  //         print("case2");
+
+  //         showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
+  //         readSQLite();
+  //       },
+  //     );
+  //   }
+  // }
 
   Future<Null> deleteFoodInCart() async {
     int id = foodId;

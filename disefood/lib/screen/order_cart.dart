@@ -1,23 +1,28 @@
 import 'dart:async';
-import 'package:provider/provider.dart';
+import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
+import 'package:dio/dio.dart';
 import 'package:disefood/model/cart.dart';
 import 'package:disefood/screen/customer_dialog/edit_order_amount_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
 import 'package:disefood/screen/menu_page.dart';
 import 'package:disefood/screen/view_order_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class OrderItemPage extends StatefulWidget {
   final int shopId;
   final String shopName;
   final int shopSlot;
   final String shopCoverImg;
+  final VoidCallback findMenu;
   const OrderItemPage(
       {Key key,
       @required this.shopId,
       @required this.shopName,
       @required this.shopSlot,
+      @required this.findMenu,
       @required this.shopCoverImg})
       : super(key: key);
   @override
@@ -25,20 +30,31 @@ class OrderItemPage extends StatefulWidget {
 }
 
 class _OrderItemPageState extends State<OrderItemPage> {
+  VoidCallback findMenu;
   int shopId;
   String shopName;
   int shopSlot;
   String shopCoverImg;
-  String _time = "  ยังไม่ได้เลือกเวลา";
   List<CartModel> cartModels = List();
   int totalPrice;
   bool isCartNotEmpty = false;
+  TimeOfDay _time =
+      TimeOfDay.fromDateTime(DateTime.now().add(Duration(minutes: 5)));
+  String timeShow = "ยังไม่ได้เลือกเวลา";
+  DateTime timeValue;
+
+  void onTimeChanged(TimeOfDay newTime) {
+    setState(() {
+      _time = newTime;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     readSQLite();
     setState(() {
+      findMenu = widget.findMenu;
       shopId = widget.shopId;
       shopName = widget.shopName;
       shopSlot = widget.shopSlot;
@@ -68,6 +84,82 @@ class _OrderItemPageState extends State<OrderItemPage> {
       });
     }
     checkEmptyCart();
+  }
+
+  dynamic myTimeEncode(dynamic item) {
+    if (item is DateTime) {
+      return item.toIso8601String();
+    }
+    return item;
+  }
+
+  Future<Null> sendOrderAPI() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    print("All Items in Cart : " + "${cartModels.length}");
+    String url = 'http://54.151.194.224:8000/api/order/shop/$shopId';
+    String token = preferences.getString('token');
+
+    List<Map<String, dynamic>> formOrder = List<Map<String, dynamic>>();
+
+    for (var i = 0; i < cartModels.length; i++) {
+      Map<String, dynamic> newOrder = {
+        "foodId": cartModels[i].foodId,
+        "quantity": cartModels[i].foodQuantity,
+        "description": cartModels[i].foodDescription,
+      };
+      formOrder.add(newOrder);
+    }
+
+    FormData formData = FormData.fromMap({
+      "newOrder": formOrder,
+      "time_pickup": timeValue,
+    });
+
+    var response = await Dio().post(
+      url,
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+        followRedirects: false,
+        validateStatus: (status) {
+          return status < 500;
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      print("Data : " + "${formData.fields}");
+      print(
+          "=====Send API Completed Status : " + "${response.statusCode}=====");
+      deleteAllFoodInCart();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OrderItemPage(
+            shopId: shopId,
+            shopName: shopName,
+            shopSlot: shopSlot,
+            shopCoverImg: shopCoverImg,
+          ),
+        ),
+      );
+    } else {
+      showToast("มีข้อผิดพลาดเกิดขึ้น โปรดลองใหม่ภายหลัง Status : " +
+          "${response.statusCode}");
+    }
+  }
+
+  Future<Null> deleteAllFoodInCart() async {
+    await SQLiteHelper().deleteAllData();
+  }
+
+  void showToast(String msg) {
+    Toast.show(
+      msg,
+      context,
+      textColor: Colors.white,
+    );
   }
 
   @override
@@ -140,7 +232,17 @@ class _OrderItemPageState extends State<OrderItemPage> {
                           ),
                         ],
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (timeValue != null) {
+                          print(
+                              "Order Data is Complete => Sending Order API...");
+                          sendOrderAPI();
+                        } else {
+                          showToast("โปรดเลือกเวลารับอาหาร");
+                          print(
+                              "Order Data is not Complete => Time is not Selected.");
+                        }
+                      },
                     ),
                   ),
                 ],
@@ -156,42 +258,72 @@ class _OrderItemPageState extends State<OrderItemPage> {
             child: new IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (BuildContext context,
-                        Animation<double> animation,
-                        Animation<double> secondaryAnimation) {
-                      return MenuPage(
-                        shopId: shopId,
-                        shopName: shopName,
-                        shopSlot: shopSlot,
-                        shopCoverImg: shopCoverImg,
-                      );
-                    },
-                    transitionsBuilder: (BuildContext context,
-                        Animation<double> animation,
-                        Animation<double> secondaryAnimation,
-                        Widget child) {
-                      return FadeTransition(
-                        opacity: Tween<double>(
-                          begin: 0,
-                          end: 1,
-                        ).animate(animation),
-                        child: child,
-                      );
-                    },
-                    transitionDuration: Duration(milliseconds: 400),
-                  ),
-                );
+                if (shopId != int.parse(cartModels[0].shopId)) {
+                  findMenu();
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation) {
+                        return MenuPage(
+                          shopId: shopId,
+                          shopName: shopName,
+                          shopSlot: shopSlot,
+                          shopCoverImg: shopCoverImg,
+                        );
+                      },
+                      transitionsBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation,
+                          Widget child) {
+                        return FadeTransition(
+                          opacity: Tween<double>(
+                            begin: 0,
+                            end: 1,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
+                      transitionDuration: Duration(milliseconds: 400),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation) {
+                        return MenuPage(
+                          shopId: shopId,
+                          shopName: shopName,
+                          shopSlot: shopSlot,
+                          shopCoverImg: shopCoverImg,
+                        );
+                      },
+                      transitionsBuilder: (BuildContext context,
+                          Animation<double> animation,
+                          Animation<double> secondaryAnimation,
+                          Widget child) {
+                        return FadeTransition(
+                          opacity: Tween<double>(
+                            begin: 0,
+                            end: 1,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
+                      transitionDuration: Duration(milliseconds: 400),
+                    ),
+                  );
+                }
               },
             ),
           ),
           new IconButton(
             icon: new Icon(Icons.favorite),
-            onPressed: () {
-              readSQLite();
-            },
+            onPressed: () {},
           ),
           new IconButton(
             icon: Icon(Icons.archive),
@@ -296,7 +428,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            width: 200,
+                            width: 190,
                             child: Text(
                               "ชื่ออาหาร",
                               style: TextStyle(
@@ -316,8 +448,8 @@ class _OrderItemPageState extends State<OrderItemPage> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(right: 5),
-                            width: 40,
+                            margin: EdgeInsets.only(right: 0),
+                            width: 45,
                             child: Text(
                               "ราคา",
                               style: TextStyle(
@@ -328,7 +460,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                           ),
                           Container(
                             margin: EdgeInsets.only(right: 5),
-                            width: 50,
+                            width: 45,
                             child: Text(
                               "แก้ไข",
                               style: TextStyle(
@@ -372,7 +504,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                       ),
                                       Container(
                                         alignment: Alignment.center,
-                                        width: 30,
+                                        width: 25,
                                         child: Text(
                                           "${items.foodQuantity}",
                                           style: TextStyle(
@@ -385,7 +517,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                       ),
                                       Container(
                                         alignment: Alignment.center,
-                                        width: 30,
+                                        width: 35,
                                         child: Text(
                                           "${items.foodSumPrice}",
                                           style: TextStyle(
@@ -405,6 +537,8 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                               shopId: int.parse(items.shopId),
                                               foodId: items.foodId,
                                               foodName: items.foodName,
+                                              foodDescription:
+                                                  items.foodDescription,
                                               foodImg: items.foodImg,
                                               foodPrice: items.foodPrice,
                                               shopName: shopName,
@@ -441,11 +575,10 @@ class _OrderItemPageState extends State<OrderItemPage> {
                             ),
                           );
                         }),
-
                     Column(
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                          padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
                           width: double.maxFinite,
                           color: Colors.grey[400],
                           child: Text(
@@ -461,10 +594,45 @@ class _OrderItemPageState extends State<OrderItemPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(
-                              "คำแนะนำ : โปรดระบุเวลาอย่างน้อย 5 นาที เพื่อให้แม่ค้าสามารถ"),
-                          Text(
-                              "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tจัดเตรียมอาหารได้ทันตามกำหนดเวลา"),
+                          Row(
+                            children: [
+                              Container(
+                                width: 90,
+                                child: Text(
+                                  "คำแนะนำ",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Text(
+                                ": โปรดระบุเวลาอย่างน้อย 5 นาที เพื่อให้แม่ค้า",
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 97,
+                              ),
+                              Container(
+                                child: Text(
+                                    "สามารถจัดเตรียมอาหารได้ทันตามกำหนดเวลา"),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                width: 90,
+                                child: Text(
+                                  "เวลา เปิด-ปิด",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Text(
+                                ": 9:00 น. - 15.59 น.",
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -475,84 +643,48 @@ class _OrderItemPageState extends State<OrderItemPage> {
                             borderRadius: BorderRadius.circular(5.0)),
                         elevation: 4.0,
                         onPressed: () {
-                          DatePicker.showTimePicker(context,
-                              theme: DatePickerTheme(
-                                containerHeight: 210.0,
-                              ),
-                              showTitleActions: true, onConfirm: (time) {
-                            if (time.hour >= 8 && time.hour <= 24) {
-                              if (time.hour > DateTime.now().hour) {
-                                if (time.hour != 24) {
-                                  _time =
-                                      '  ${time.hour} : ${time.minute} : ${time.second}';
-                                  setState(() {});
-                                } else {
-                                  if (time.minute > 30) {
-                                    _time =
-                                        "  เวลาที่ระบุไม่ถูกต้อง"; //เกิน 15.30 min
-                                    setState(() {});
-                                  } else if (time.minute == 30) {
-                                    if (time.second > 0) {
-                                      _time =
-                                          "  เวลาที่ระบุไม่ถูกต้อง"; //เกิน 15.30 sec
-                                      setState(() {});
-                                    } else {
-                                      _time =
-                                          '  ${time.hour} : ${time.minute} : ${time.second}';
-                                      setState(() {});
-                                    }
+                          Navigator.of(context).push(
+                            showPicker(
+                              is24HrFormat: true,
+                              context: context, okText: "ตกลง",
+                              cancelText: "ยกเลิก",
+                              accentColor: Colors.orange,
+                              value: _time,
+                              onChange: onTimeChanged,
+                              // Optional onChange to receive value as DateTime
+                              onChangeDateTime: (DateTime timeSelected) {
+                                //เวลาเปิดปิด
+                                if (timeSelected.hour > 8 &&
+                                    timeSelected.hour < 16) {
+                                  if (timeSelected.minute == 0) {
+                                    timeShow = timeSelected.hour.toString() +
+                                        ":" +
+                                        timeSelected.minute.toString() +
+                                        "0 น.";
+                                    timeValue = timeSelected;
+                                    print("Time Selected :" + "$timeSelected");
+                                  } else if (timeSelected.minute > 0 &&
+                                      timeSelected.minute < 10) {
+                                    timeShow = timeSelected.hour.toString() +
+                                        ":0" +
+                                        timeSelected.minute.toString() +
+                                        " น.";
+                                    timeValue = timeSelected;
+                                    print("Time Selected :" + "$timeSelected");
                                   } else {
-                                    _time =
-                                        '  ${time.hour} : ${time.minute} : ${time.second}';
-                                    setState(() {});
-                                  }
-                                }
-                              } else if (time.hour == DateTime.now().hour) {
-                                if (time.minute >= DateTime.now().minute + 5) {
-                                  if (time.hour != 15) {
-                                    _time =
-                                        '  ${time.hour} : ${time.minute} : ${time.second}';
-                                    setState(() {});
-                                  } else {
-                                    if (time.minute > 30) {
-                                      _time =
-                                          "  เวลาที่ระบุไม่ถูกต้อง"; // เกิน 15.30 min
-                                      setState(() {});
-                                    } else if (time.minute == 30) {
-                                      if (time.second > 0) {
-                                        _time =
-                                            "  เวลาที่ระบุไม่ถูกต้อง"; //เกิน 15.30 sec
-                                        setState(() {});
-                                      } else {
-                                        _time =
-                                            '  ${time.hour} : ${time.minute} : ${time.second}';
-                                        setState(() {});
-                                      }
-                                    } else {
-                                      _time =
-                                          '  ${time.hour} : ${time.minute} : ${time.second}';
-                                      setState(() {});
-                                    }
+                                    timeShow = timeSelected.hour.toString() +
+                                        ":" +
+                                        timeSelected.minute.toString() +
+                                        " น.";
+                                    timeValue = timeSelected;
+                                    print("Time Selected :" + "$timeSelected");
                                   }
                                 } else {
-                                  _time =
-                                      "  เวลาที่ระบุไม่ถูกต้อง"; //เวลานาทีน้อยกว่าปัจจุบัน 5 min
-                                  setState(() {});
+                                  timeShow = "เวลาไม่ถูกต้อง";
                                 }
-                              } else {
-                                _time =
-                                    "  เวลาที่ระบุไม่ถูกต้อง"; //น้อยกว่า now
-                                setState(() {});
-                              }
-                            } else {
-                              _time =
-                                  "  เวลาที่ระบุไม่ถูกต้อง"; //เกินเวลาเปิดปิด1
-                              setState(() {});
-                            }
-                          },
-                              currentTime:
-                                  DateTime.now().add(Duration(minutes: 5)),
-                              locale: LocaleType.en);
+                              },
+                            ),
+                          );
                         },
                         child: Container(
                           alignment: Alignment.center,
@@ -569,17 +701,20 @@ class _OrderItemPageState extends State<OrderItemPage> {
                                       color: Colors.black,
                                     ),
                                   ),
-                                  Text(
-                                    " $_time",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 10),
+                                    child: Text(
+                                      "$timeShow",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0),
+                                    ),
                                   ),
                                 ],
                               ),
                               Text(
-                                "  เปลี่ยนเวลา",
+                                "เปลี่ยนเวลา",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
@@ -591,118 +726,6 @@ class _OrderItemPageState extends State<OrderItemPage> {
                         color: Colors.white,
                       ),
                     ),
-                    // Column(
-                    //   children: <Widget>[
-                    //     Container(
-                    //       padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                    //       width: double.maxFinite,
-                    //       color: Colors.grey[400],
-                    //       child: Text(
-                    //         "โปรดเลือกวิธีการชำระเงิน",
-                    //         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    //       ),
-                    //     ),
-                    //     Row(
-                    //       children: <Widget>[
-                    //         Container(
-                    //           height: 50,
-                    //           width: 205,
-                    //           child: RaisedButton(
-                    //             elevation: 5,
-                    //             shape: RoundedRectangleBorder(
-                    //               borderRadius: BorderRadius.circular(0),
-                    //               side: BorderSide(
-                    //                 color: ispromptpaybuttonselected
-                    //                     ? Colors.orange
-                    //                     : Colors.grey,
-                    //                 width: ispromptpaybuttonselected ? 3 : 1,
-                    //               ),
-                    //             ),
-                    //             child: Row(
-                    //               mainAxisAlignment: MainAxisAlignment.center,
-                    //               children: <Widget>[
-                    //                 Container(
-                    //                   margin: EdgeInsets.fromLTRB(5, 0, 0, 2),
-                    //                   child: Row(
-                    //                     children: <Widget>[
-                    //                       Text(
-                    //                         "พร้อมเพย์  ",
-                    //                         style: TextStyle(
-                    //                           fontSize: 16,
-                    //                         ),
-                    //                       ),
-                    //                     ],
-                    //                   ),
-                    //                 ),
-                    //                 Container(
-                    //                   child: Image.network(
-                    //                       "https://toppng.com/uploads/thumbnail//promptpay-logo-11551057371ufyvbrttny.png"),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //             onPressed: () {
-                    //               Navigator.push(
-                    //                 context,
-                    //                 MaterialPageRoute(
-                    //                   builder: (context) => PromptpayPage(),
-                    //                 ),
-                    //               );
-                    //             },
-                    //             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    //           ),
-                    //         ),
-                    //         Container(
-                    //           height: 50,
-                    //           width: 206,
-                    //           child: RaisedButton(
-                    //             elevation: 5,
-                    //             shape: RoundedRectangleBorder(
-                    //               borderRadius: BorderRadius.circular(0),
-                    //               side: BorderSide(
-                    //                 color: istruewalletbuttonselected
-                    //                     ? Colors.orange
-                    //                     : Colors.grey,
-                    //                 width: istruewalletbuttonselected ? 3 : 1,
-                    //               ),
-                    //             ),
-                    //             child: Row(
-                    //               mainAxisAlignment: MainAxisAlignment.center,
-                    //               children: <Widget>[
-                    //                 Container(
-                    //                   margin: EdgeInsets.fromLTRB(5, 0, 0, 2),
-                    //                   child: Row(
-                    //                     children: <Widget>[
-                    //                       Text(
-                    //                         "ทรูวอลเล็ท  ",
-                    //                         style: TextStyle(
-                    //                           fontSize: 16,
-                    //                         ),
-                    //                       ),
-                    //                     ],
-                    //                   ),
-                    //                 ),
-                    //                 Container(
-                    //                   height: 30,
-                    //                   child: Image.network(
-                    //                       "https://seeklogo.com/images/T/truemoney-wallet-logo-9CCDDD6CB0-seeklogo.com.png"),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //             onPressed: () {
-                    //               Navigator.push(
-                    //                 context,
-                    //                 MaterialPageRoute(
-                    //                   builder: (context) => TruewalletPage(),
-                    //                 ),
-                    //               );
-                    //             },
-                    //             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ],
-                    // ),
                   ],
                 ),
               ),

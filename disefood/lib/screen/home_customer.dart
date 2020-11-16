@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
     SharedPreferences preference = await SharedPreferences.getInstance();
     userId = preference.getInt('user_id');
     var response = await apiProvider.getUserById(userId);
-    print(response.statusCode);
+    print("Connection Status Code: " + "${response.statusCode}");
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       UserById msg = UserById.fromJson(map);

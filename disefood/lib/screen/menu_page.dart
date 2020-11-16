@@ -1,23 +1,15 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:disefood/component/goToCartButton.dart';
 import 'package:disefood/model/cart.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/config/app_config.dart';
-import 'package:disefood/model/foodByShopId.dart';
-import 'package:disefood/model/foods_list.dart';
-import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen/home_customer.dart';
-import 'package:disefood/screen/menu_amount_select.dart';
 import 'package:disefood/screen/order_cart.dart';
 import 'package:disefood/screen/view_order_page.dart';
-import 'package:disefood/screen_seller/editmenu.dart';
 import 'package:disefood/services/api_provider.dart';
-import 'package:disefood/services/getfoodmenupageservice.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'customer_dialog/order_amount_dialog.dart';
@@ -54,6 +46,7 @@ class _MenuPageState extends State<MenuPage> {
   double rating;
   int userId;
   bool isCartNotEmpty = false;
+  // bool isShopHasItemInCart = false;
   int totalQty;
   @override
   void initState() {
@@ -81,8 +74,43 @@ class _MenuPageState extends State<MenuPage> {
         totalQty = totalQty + model.foodQuantity;
       }
     });
-    checkEmptyCart();
+    if (totalQty == 0) {
+      setState(() {
+        isCartNotEmpty = false;
+      });
+    } else {
+      setState(() {
+        isCartNotEmpty = true;
+      });
+    }
   }
+
+  // void checkEmptyCart() {
+  //   if (cartModels.length == 0) {
+  //     setState(() {
+  //       isCartNotEmpty = false;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isCartNotEmpty = true;
+  //     });
+  //   }
+  //   print(isCartNotEmpty);
+  //   // checkCorrectCart();
+  // }
+
+  // void checkCorrectCart() {
+  //   int idShopSQLite = int.parse(cartModels[0].shopId);
+  //   if (shopId == idShopSQLite) {
+  //     setState(() {
+  //       isShopHasItemInCart = true;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isShopHasItemInCart = false;
+  //     });
+  //   }
+  // }
 
   _ackAlert(BuildContext context) {
     return showDialog(
@@ -108,24 +136,12 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  void checkEmptyCart() {
-    if (cartModels.length == 0) {
-      setState(() {
-        isCartNotEmpty = false;
-      });
-    } else {
-      setState(() {
-        isCartNotEmpty = true;
-      });
-    }
-  }
-
   void checkQuantity(int index, int quantity) {
     setState(() {
       if (quantity == 0) {
         foods[index]['quantity'] = " ";
       } else {
-        foods[index]['quantity'] = "+$quantity";
+        foods[index]['quantity'] = "+" + "$quantity";
       }
     });
   }
@@ -150,7 +166,7 @@ class _MenuPageState extends State<MenuPage> {
         for (var i = 0; i < cartModels.length; i++) {
           foods.forEach((food) {
             if (cartModels[i].foodId == food['id']) {
-              food['quantity'] = "+${cartModels[i].foodQuantity}";
+              food['quantity'] = "+" + "${cartModels[i].foodQuantity}";
             }
           });
         }
@@ -205,55 +221,72 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ],
         ),
-        floatingActionButton: Stack(
-          children: [
-            FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OrderItemPage(
-                      shopId: shopId,
-                      shopName: shopName,
-                      shopSlot: shopSlot,
-                      shopCoverImg: shopCoverImg,
+        floatingActionButton: Visibility(
+          visible: totalQty != 0,
+          child: Stack(
+            children: [
+              FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => OrderItemPage(
+                        shopId: shopId,
+                        shopName: shopName,
+                        shopSlot: shopSlot,
+                        shopCoverImg: shopCoverImg,
+                        findMenu: findMenu,
+                      ),
                     ),
-                  ),
-                );
-              },
-              child: Icon(
-                Icons.shopping_bag,
-                color: Colors.white,
+                  );
+                },
+                child: Icon(
+                  Icons.shopping_bag,
+                  color: Colors.white,
+                ),
+                backgroundColor: Colors.orange,
               ),
-              backgroundColor: Colors.orange,
-            ),
-            Visibility(
-              visible: isCartNotEmpty,
-              child: Positioned(
+              Positioned(
                 right: 11,
                 top: 11,
                 child: new Container(
                   padding: EdgeInsets.all(2),
                   decoration: new BoxDecoration(
                     color: Colors.red,
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   constraints: BoxConstraints(
                     minWidth: 14,
                     minHeight: 14,
                   ),
-                  child: Text(
-                    '$totalQty',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OrderItemPage(
+                            shopId: shopId,
+                            shopName: shopName,
+                            shopSlot: shopSlot,
+                            shopCoverImg: shopCoverImg,
+                            findMenu: findMenu,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      '$totalQty',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         body: isLoading
             ? Center(
@@ -427,7 +460,6 @@ class _MenuPageState extends State<MenuPage> {
                                 itemCount: foods != null ? foods.length : 0,
                                 itemBuilder: (BuildContext context, int index) {
                                   var item = foods[index];
-
                                   return Column(
                                     children: <Widget>[
                                       Row(
@@ -443,8 +475,9 @@ class _MenuPageState extends State<MenuPage> {
                                             child: Text(
                                               "${item['quantity']}",
                                               style: TextStyle(
-                                                  color: Colors.orange,
-                                                  fontWeight: FontWeight.bold),
+                                                color: Colors.orange,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                           SizedBox(

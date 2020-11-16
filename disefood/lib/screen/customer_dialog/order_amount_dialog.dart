@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/model/cart.dart';
-import 'package:disefood/screen/customer_dialog/order_failed_dialog.dart';
+import 'package:disefood/screen/customer_dialog/reset_cart_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
 import 'package:disefood/screen/order_cart.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +46,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
   String foodName;
   String foodImg;
   String foodQuantity;
+  String foodDescription;
   int foodIndex;
   int foodPrice;
   String shopName;
@@ -53,6 +54,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
   int qty;
   String shopCoverImg;
   final myController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -66,6 +68,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
       } else {
         qty = int.parse(widget.foodQuantity);
       }
+
       foodImg = widget.foodImg;
       foodId = widget.foodId;
       shopId = widget.shopId.toString();
@@ -290,7 +293,12 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
     orderMap['foodId'] = foodId;
     orderMap['foodName'] = foodName;
     orderMap['foodQuantity'] = qty;
-    orderMap['foodDescription'] = myController.text;
+    if (myController.text == "") {
+      foodDescription = "-";
+    } else {
+      foodDescription = myController.text;
+    }
+    orderMap['foodDescription'] = foodDescription;
     orderMap['foodPrice'] = foodPrice;
     orderMap['foodSumPrice'] = foodPrice * qty;
     orderMap['foodImg'] = foodImg;
@@ -318,7 +326,22 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
           },
         );
       } else {
-        showDialog(context: context, builder: (context) => OrderFailed());
+        showDialog(
+          context: context,
+          builder: (context) => ResetCart(
+            shopId: shopId,
+            shopName: shopName,
+            foodId: foodId,
+            foodName: foodName,
+            qty: qty,
+            foodDescription: foodDescription,
+            foodPrice: foodPrice,
+            foodImg: foodImg,
+            foodIndex: foodIndex,
+            readSQLite: readSQLite,
+            checkQuantity: checkQuantity,
+          ),
+        );
       }
     }
   }
@@ -330,8 +353,9 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
     if (object.length == 0) {
       try {
         await SQLiteHelper().deleteDataWhereId(foodId).then((value) {
-          print("FoodID : $id  has been deleted.");
-          showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
+          print("FoodID : $id is not in cart.");
+          // showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
+          //ไม่ต้องแสดง
           readSQLite();
           checkQuantity(foodIndex, qty);
         });
@@ -343,7 +367,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
       if (shopId == idShopSQLite) {
         try {
           await SQLiteHelper().deleteDataWhereId(foodId).then((value) {
-            print("FoodID : $id  has been deleted.");
+            print("FoodID : $id has been deleted.");
             showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
             readSQLite();
             checkQuantity(foodIndex, qty);
@@ -352,7 +376,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
           print(e);
         }
       } else {
-        showDialog(context: context, builder: (context) => OrderFailed());
+        print("Case: Human error => No action.");
       }
     }
   }
