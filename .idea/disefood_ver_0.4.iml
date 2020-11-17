@@ -41,6 +41,7 @@
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/laminas/laminas-zendframework-bridge" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/laravel/framework" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/laravel/passport" />
+      <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/laravel/socialite" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/laravel/tinker" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/laravel/ui" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/lcobucci/jwt" />
@@ -49,6 +50,7 @@
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/league/flysystem" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/league/flysystem-aws-s3-v3" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/league/mime-type-detection" />
+      <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/league/oauth1-client" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/league/oauth2-server" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/mockery/mockery" />
       <excludeFolder url="file://$MODULE_DIR$/disefood-api/vendor/monolog/monolog" />

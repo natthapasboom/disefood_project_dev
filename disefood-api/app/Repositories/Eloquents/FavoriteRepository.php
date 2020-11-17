@@ -31,7 +31,7 @@ class FavoriteRepository implements FavoriteRepositoryInterface
         foreach ($favorites as $favorite) {
             $fId = $favorite->id;
             $favorite->find($fId)->get();
-            $favorite->shop->makeHidden('user_id', 'cover_img', 'approved', 'created_at', 'updated_at', 'deleted_at');
+            $favorite->shop->makeHidden('user_id', 'approved', 'created_at', 'updated_at', 'deleted_at');
         }
         return $favorites;
     }

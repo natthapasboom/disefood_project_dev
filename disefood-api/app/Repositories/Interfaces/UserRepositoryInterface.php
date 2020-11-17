@@ -10,5 +10,6 @@ interface UserRepositoryInterface
     public function getUserById($userId);
     public function create($newUser);
     public function findByUserName($username);
+    public function findByEmail($email);
     public function updateById($user, $userId);
 }
