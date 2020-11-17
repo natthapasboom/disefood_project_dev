@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:disefood/model/orderList.dart';
-import 'package:disefood/screen_seller/orderdetail.dart';
+import 'package:disefood/model/orderbyshopid.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+
+import 'orderdetail.dart';
 
 class OrderSellerPage extends StatefulWidget {
   static final route = "/order_seller";
@@ -19,42 +19,35 @@ class OrderSellerPage extends StatefulWidget {
 
 class _OrderSellerPageState extends State<OrderSellerPage> {
   bool isLoading = true;
-  List orderSeller = [];
-
-  String _name;
-  int _userId;
   Logger logger = Logger();
   int userId;
-  String timePickup;
-  int totalPrice;
-  String allFoodName = "";
-  List orderDetail = [];
-  String userFName;
-  String userLName;
-  String userTel;
-  int tempColor = 0;
-  String tempStatus = "";
-  List<OrderList> list = List();
+  String name;
+  var orderList;
+  Future<SellerOrderData> _orderList;
+  List<DateTime> timePickup = [];
   @override
   void initState() {
+    _orderList = getOrderByShopId();
     Future.microtask(() async {
       fetchNameFromStorage();
-      getOrderByShopId();
     });
     super.initState();
   }
 
+  void convertStrToDateTime(datetime, index) {
+    timePickup.add(DateTime.parse(datetime));
+  }
+
   Future fetchNameFromStorage() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    final name = _prefs.getString('first_name');
-    final userId = _prefs.getInt('user_id');
+
     setState(() {
-      _name = name;
-      _userId = userId;
+      name = _prefs.getString('first_name');
+      userId = _prefs.getInt('user_id');
     });
   }
 
-  Future<List<OrderList>> getOrderByShopId() async {
+  Future<SellerOrderData> getOrderByShopId() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     int shopId = _prefs.getInt("shop_id");
     String token = _prefs.getString("token");
@@ -63,556 +56,296 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
       _url,
       headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
     );
-    logger.d('${response.statusCode}');
     print('${response.statusCode}');
     if (response.statusCode == 200) {
-      list = (json.decode(response.body) as List)
-          .map((data) => new OrderList.fromJson(data))
-          .toList();
       setState(() {
         isLoading = false;
+        var jsonString = response.body;
+        Map jsonMap = json.decode(jsonString);
+        orderList = SellerOrderData.fromJson(jsonMap);
       });
-      var body = json.decode(response.body);
-      var orderDetail = json.decode(response.body)['order_details'];
-      print('order_detail : $orderDetail');
-      for (Map<String, dynamic> m in body['order_details']) {
-        var order = list.add(OrderList.fromJson(m));
-      }
-      //Replace above line with your model implemtation
-      //  }
-      // logger.d(response.body);
-      //   setState(() {
-
-      //   // return OrderLIst.fromJson(jsonDecode(body));
-      //   // print('orderSeller : ${orderList.data}');
-      //   // isLoading = false;
-      //   // orderSeller = jsonDecode(body)['data'];
-      //   // print('order seller: $orderSeller');
-      // });
-    } else if (response.statusCode != 200) {
-      var body = json.decode(response.body);
-      List data = body['data'];
-      return data.map((m) => OrderList.fromJson(m)).toList();
-    }
-    // logger.d(body);
-  }
-
-  String _foodName(dynamic item) {
-    return item['order_details']['food']['name'];
-  }
-
-  colorCheck(item) {
-    if (item["status"] == "not confirmed") {
-      tempColor = 0;
-      tempStatus = "ยังไม่ยืนยัน";
-    } else if (item["status"] == "in process") {
-      tempColor = 1;
-      tempStatus = "กำลังทำ";
-    } else if (item["status"] == "success") {
-      tempColor = 2;
-      tempStatus = "เสร็จสิ้น";
-    }
-  }
-
-  Text checkStatus(var item) {
-    if (item["status"] == "not confirmed") {
-      tempColor = 0;
-      tempStatus = "ยังไม่ยืนยัน";
-    } else if (item["status"] == "in process") {
-      tempColor = 1;
-      tempStatus = "กำลังทำ";
-    } else if (item["status"] == "success") {
-      tempColor = 2;
-      tempStatus = "เสร็จสิ้น";
-    }
-  }
-
-  Color getColor(var status) {
-    if (status == 'not confirmed') {
-      return Colors.redAccent;
-    } else if (status == 'in process') {
-      return Colors.yellow[600];
-    } else if (status == 'success') {
-      return Colors.lightGreen;
     } else {
-      return Colors.redAccent;
+      print(response.statusCode);
     }
-  }
-
-  ListView _order(data) {
-    return ListView.builder(
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: EdgeInsets.all(20),
-            child: InkWell(
-              child: Card(
-                elevation: 8,
-                color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Stack(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl:
-                              "https://disefood.s3-ap-southeast-1.amazonaws.com/${data['cover_img']}",
-                          fit: BoxFit.cover,
-                          height: 100,
-                          width: 380,
-                          placeholder: (context, url) => Center(
-                              child: Container(
-                                  margin: EdgeInsets.only(top: 50, bottom: 0),
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 5.0,
-                                    valueColor: AlwaysStoppedAnimation(
-                                        const Color(0xffF6A911)),
-                                  ))),
-                          errorWidget: (context, url, error) => Container(
-                            height: 100,
-                            width: 380,
-                            // color: const Color(0xff7FC9C5),
-                            color: getColor(data[index]),
-                            child: Center(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.fastfood,
-                                    size: 30,
-                                    color: Colors.white,
-                                  ),
-                                  Transform.translate(
-                                    offset: Offset(0, 0),
-                                    child: Container(
-                                      margin: EdgeInsets.only(top: 5),
-                                      padding: EdgeInsets.fromLTRB(5, 4, 5, 5),
-                                      decoration: BoxDecoration(
-                                          // color: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: Text(
-                                        data['status'],
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          child: Transform.translate(
-                            offset: Offset(10, 10),
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(5, 4, 5, 5),
-                              decoration: BoxDecoration(
-                                color: Colors.black54,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text(
-                                "คิวที่ ${index + 1}",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(left: 15, top: 5),
-                      child: Text(
-                        "รายละเอียด",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 15, top: 5),
-                      child: Text(
-                        '${data['order_details']['food']['name']}',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 15),
-                      child: Row(
-                        children: [
-                          Text(
-                            "ราคา  ",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Container(
-                            child: Text(
-                              "${data["total_price"]} บาท",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 15),
-                      child: Row(
-                        children: [
-                          Text(
-                            "เวลาที่จะมารับ  ",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 5),
-                            child: Text(
-                              "${data["time_pickup"]}",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(right: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          ButtonBar(
-                            children: <Widget>[
-                              RaisedButton(
-                                onPressed: () {
-                                  userId = data["user_id"];
-                                  timePickup = data["time_pickup"];
-                                  totalPrice = data["total_price"];
-                                  orderDetail = data["order_details"];
-                                  userFName = data["user"]["first_name"];
-                                  userLName = data["user"]["last_name"];
-                                  userTel = data["user"]["tel"];
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => OrderDetailSeller(
-                                        userId: userId,
-                                        timePickup: timePickup,
-                                        totalPrice: totalPrice,
-                                        orderDetail: orderDetail,
-                                        userFName: userFName,
-                                        userLName: userLName,
-                                        userTel: userTel,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                padding: EdgeInsets.only(left: 20, right: 20),
-                                color: Colors.white,
-                                child: Text(
-                                  "แก้ไข",
-                                  style: TextStyle(
-                                      color: Colors.orangeAccent,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              RaisedButton(
-                                onPressed: () {
-                                  logger.d(orderSeller);
-                                },
-                                padding: EdgeInsets.only(left: 20, right: 20),
-                                color: Colors.orange,
-                                child: Text(
-                                  "ยอมรับ",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
-
-  dispose() {
-    super.dispose();
+    return orderList;
   }
 
   @override
   Widget build(BuildContext context) {
-    // print('$_userId $_name');
-
     return Scaffold(
-      body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 5.0,
-                valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
-              ),
-            )
-          : orderSeller.length != 0
-              ? new ListView.builder(
-                  itemCount: orderSeller != null ? orderSeller.length : 0,
-                  itemBuilder: (BuildContext context, int index) {
-                    var item = orderSeller[index];
-                    print('${orderSeller.length}');
-                    colorCheck(item);
-                    logger.d(tempColor);
-                    // Todo: Improve coding next time, Boom.
-                    var i;
-                    if (allFoodName == "") {
-                      for (i = 0; i < orderSeller.length; i++) {
-                        allFoodName +=
-                            item["order_details"][i]["food"]["name"] + " ";
-                        // allFoodName +=
-                        //     item["order_details"][i];
-                        print(
-                            'order_details: ${item["order_details"][i]["food"]} ');
-                      }
-                    }
-                    return Container(
-                      margin: EdgeInsets.all(20),
-                      child: InkWell(
-                        child: Card(
-                          elevation: 8,
-                          color: Colors.white,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Stack(
-                                children: [
-                                  CachedNetworkImage(
-                                    imageUrl:
-                                        "https://disefood.s3-ap-southeast-1.amazonaws.com/${item['cover_img']}",
-                                    fit: BoxFit.cover,
-                                    height: 100,
-                                    width: 380,
-                                    placeholder: (context, url) => Center(
-                                        child: Container(
-                                            margin: EdgeInsets.only(
-                                                top: 50, bottom: 0),
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 5.0,
-                                              valueColor:
-                                                  AlwaysStoppedAnimation(
-                                                      const Color(0xffF6A911)),
-                                            ))),
-                                    errorWidget: (context, url, error) =>
-                                        Container(
-                                      height: 100,
+        body: ListView(
+      children: [
+        Container(
+          child: FutureBuilder<SellerOrderData>(
+            future: _orderList,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: snapshot.data.data.length,
+                  itemBuilder: (context, index) {
+                    var data = snapshot.data.data[index];
+                    convertStrToDateTime(data.timePickup, index);
+                    return Stack(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(
+                              right: 20, left: 20, top: 10, bottom: 5),
+                          height: 210,
+                          child: Card(
+                            elevation: 5,
+                            child: Column(
+                              children: [
+                                Stack(
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl:
+                                          "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                                              '${data.orderDetails[0].food.coverImg}',
                                       width: 380,
-                                      // color: const Color(0xff7FC9C5),
-                                      color: getColor(item['status']),
-                                      child: Center(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.fastfood,
-                                              size: 30,
-                                              color: Colors.white,
-                                            ),
-                                            Transform.translate(
-                                              offset: Offset(0, 0),
-                                              child: Container(
-                                                margin: EdgeInsets.only(top: 5),
-                                                padding: EdgeInsets.fromLTRB(
-                                                    5, 4, 5, 5),
-                                                decoration: BoxDecoration(
-                                                    // color: Colors.red,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5)),
-                                                child: Text(
-                                                  item['status'],
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    child: Transform.translate(
-                                      offset: Offset(10, 10),
-                                      child: Container(
-                                        padding:
-                                            EdgeInsets.fromLTRB(5, 4, 5, 5),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black54,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Text(
-                                          "คิวที่ ${index + 1}",
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(left: 15, top: 5),
-                                child: Text(
-                                  "รายละเอียด",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 15, top: 5),
-                                child: Text(
-                                  '${allFoodName}',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 15),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "ราคา  ",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    Container(
-                                      child: Text(
-                                        "${item["total_price"]} บาท",
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 15),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "เวลาที่จะมารับ  ",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(top: 5),
-                                      child: Text(
-                                        "${item["time_pickup"]}",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(right: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    ButtonBar(
-                                      children: <Widget>[
-                                        RaisedButton(
-                                          onPressed: () {
-                                            userId = item["user_id"];
-                                            timePickup = item["time_pickup"];
-                                            totalPrice = item["total_price"];
-                                            orderDetail = item["order_details"];
-                                            userFName =
-                                                item["user"]["first_name"];
-                                            userLName =
-                                                item["user"]["last_name"];
-                                            userTel = item["user"]["tel"];
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    OrderDetailSeller(
-                                                  userId: userId,
-                                                  timePickup: timePickup,
-                                                  totalPrice: totalPrice,
-                                                  orderDetail: orderDetail,
-                                                  userFName: userFName,
-                                                  userLName: userLName,
-                                                  userTel: userTel,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          padding: EdgeInsets.only(
-                                              left: 20, right: 20),
-                                          color: Colors.white,
-                                          child: Text(
-                                            "แก้ไข",
-                                            style: TextStyle(
-                                                color: Colors.orangeAccent,
-                                                fontWeight: FontWeight.bold),
+                                      height: 90,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Center(
+                                          child: Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 50, bottom: 35),
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 5.0,
+                                                valueColor:
+                                                    AlwaysStoppedAnimation(
+                                                        const Color(
+                                                            0xffF6A911)),
+                                              ))),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                        height: 90,
+                                        color: const Color(0xff7FC9C5),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.fastfood,
+                                            size: 50,
+                                            color: Colors.white,
                                           ),
                                         ),
-                                        RaisedButton(
-                                          onPressed: () {
-                                            logger.d(orderSeller);
-                                          },
-                                          padding: EdgeInsets.only(
-                                              left: 20, right: 20),
-                                          color: Colors.orange,
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(5, 4, 5, 5),
+                                          margin: EdgeInsets.only(
+                                              left: 10, top: 10),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black45,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
                                           child: Text(
-                                            "ยอมรับ",
+                                            "คิวที่ ${index + 1}",
                                             style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(5, 4, 5, 5),
+                                          margin: EdgeInsets.only(
+                                              right: 10, top: 10),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                          child: Text(
+                                            "${data.status}",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
+                                Container(
+                                  margin: EdgeInsets.only(left: 16),
+                                  width: double.maxFinite,
+                                  child: Text(
+                                    "รายการอาหาร",
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(left: 18),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(top: 3),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "${data.orderDetails[0].food.name}",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.orange,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Visibility(
+                                              visible:
+                                                  data.totalQuantity - 1 != 0,
+                                              child: Container(
+                                                padding: EdgeInsets.all(2),
+                                                decoration: new BoxDecoration(
+                                                  color: Colors.orange,
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                                constraints: BoxConstraints(
+                                                  minWidth: 16,
+                                                  minHeight: 16,
+                                                ),
+                                                child: Text(
+                                                  ' + ${data.totalQuantity - 1}  ',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        width: double.maxFinite,
+                                        child: Row(
+                                          children: [
+                                            Text("ราคารวม : ",
+                                                style: TextStyle(fontSize: 16)),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 4),
+                                              child: Text(
+                                                "${data.totalPrice}",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.green,
+                                                    fontSize: 16),
+                                              ),
+                                            ),
+                                            Text(
+                                              " บาท",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.green,
+                                                  fontSize: 16),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Stack(
+                                        children: [
+                                          Container(
+                                            width: double.maxFinite,
+                                            child: Text(
+                                              "เวลาที่จะมารับ : ${timePickup[index].hour}.${timePickup[index].minute} น.",
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
+                        Transform.translate(
+                          offset: Offset(263, 165),
+                          child: Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(bottom: 20),
+                            width: 115,
+                            child: FlatButton(
+                              onPressed: () {
+                                List<OrderDetails> orderDetail =
+                                    data.orderDetails;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => OrderDetailSeller(
+                                      timePickup: timePickup[index],
+                                      totalPrice: data.totalPrice,
+                                      coverImage:
+                                          data.orderDetails[0].food.coverImg,
+                                      orderDetail: orderDetail,
+                                      userFName: data.user.firstName,
+                                      userLName: data.user.lastName,
+                                      userTel: data.user.tel,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "รายละเอียด",
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Transform.translate(
+                          offset: Offset(260, 130),
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: 120,
+                            child: FlatButton(
+                              onPressed: () {},
+                              color: Colors.orange,
+                              child: Text(
+                                "รับออเดอร์",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     );
                   },
-                )
-              : Center(
-                  child: Text(
-                    "ยังไม่มีออเดอร์ในขณะนี้",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black38,
-                        fontSize: 20),
+                );
+              } else {
+                return Container(
+                  margin: EdgeInsets.only(top: 250),
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
-                ),
-    );
+                );
+              }
+            },
+          ),
+        )
+      ],
+    ));
   }
 }

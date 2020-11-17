@@ -63,7 +63,7 @@ class _HomeSellerState extends State<HomeSeller> {
         email = msg.data.email;
       });
     } else {
-      logger.e("statuscode != 200");
+      print("statuscode != 200");
     }
   }
 
@@ -73,12 +73,12 @@ class _HomeSellerState extends State<HomeSeller> {
     token = preference.getString('token');
 
     var response = await apiProvider.getShopId(token);
-    logger.d(token);
+    // logger.d(token);
     print(response.statusCode);
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       ShopById msg = ShopById.fromJson(map);
-      logger.d(msg.data);
+      // logger.d(msg.data);
       setState(() {
         _isLoading = true;
         _shopName = msg.data.name;
@@ -86,22 +86,22 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
         approve = msg.data.approved;
-        logger.d(msg.data.approved);
+        // logger.d(msg.data.approved);
         preference.setInt('shop_id', msg.data.id);
         preference.setInt('approved', approve);
       });
     } else {
       setState(() {
         _isLoading = true;
-        logger.d('shop not found');
-        logger.d(_shopId);
+        print('shop not found');
+        // logger.d(_shopId);
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    logger.d(_shopId);
+    // logger.d(_shopId);
     return new Scaffold(
       body: _isLoading == false
           ? Center(
@@ -113,13 +113,13 @@ class _HomeSellerState extends State<HomeSeller> {
           : _shopId != null
               ? approve == 0
                   ? Center(
-                      child: Text('รอแอดมินอนุมัติร้านค้า'
-                      ,
-                       style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black38,
-                              fontSize: 20),),
-                      
+                      child: Text(
+                        'รอแอดมินอนุมัติร้านค้า',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black38,
+                            fontSize: 20),
+                      ),
                     )
                   : ListView(
                       children: <Widget>[
@@ -333,8 +333,8 @@ class _HomeSellerState extends State<HomeSeller> {
                 imageUrl:
                     'https://disefood.s3-ap-southeast-1.amazonaws.com/$_shopImg',
                 height: 150,
-          width: 500,
-          fit: BoxFit.fitWidth,
+                width: 500,
+                fit: BoxFit.fitWidth,
                 placeholder: (context, url) => Center(
                     child: Container(
                         margin: EdgeInsets.only(top: 50, bottom: 35),

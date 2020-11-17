@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:disefood/model/foods_list.dart';
-import 'package:disefood/model/menuyShopId.dart';
 import 'package:disefood/screen_seller/addmenu.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:disefood/services/foodservice.dart';
@@ -131,20 +130,20 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                       left: 30,
                                       top: 5,
                                     ),
-                                    child: '${foods['name']}'.length > 10 ?
-                                    Text(
-                                      '${foods['name']}'.substring(0,8)+'...',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        
-                                      ),
-                                    ):
-                                    Text(
-                                      '${foods['name']}',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    ),
+                                    child: '${foods['name']}'.length > 10
+                                        ? Text(
+                                            '${foods['name']}'.substring(0, 8) +
+                                                '...',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                            ),
+                                          )
+                                        : Text(
+                                            '${foods['name']}',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                            ),
+                                          ),
                                   ),
                                   trailing: Wrap(
                                     spacing: 1.0,
