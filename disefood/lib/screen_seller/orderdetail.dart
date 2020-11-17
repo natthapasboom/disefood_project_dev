@@ -1,24 +1,24 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/model/orderbyshopid.dart';
+import 'package:disefood/screen_seller/seller_dialog/addtime_orderpage_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderDetailSeller extends StatefulWidget {
   static final route = "/order_detail_seller";
-  final int userId;
-  final String timePickup;
+  final DateTime timePickup;
   final int totalPrice;
-  final List orderDetail;
+  final String coverImage;
+  final List<OrderDetails> orderDetail;
   final String userFName;
   final String userLName;
   final String userTel;
   const OrderDetailSeller({
     Key key,
-    @required this.userId,
     @required this.timePickup,
     @required this.totalPrice,
+    @required this.coverImage,
     @required this.orderDetail,
     @required this.userFName,
     @required this.userLName,
@@ -35,25 +35,28 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   String lastNameUser;
   String profileImg;
   Logger logger = Logger();
-  int userId;
-  String timePickup;
+  DateTime timePickup;
   int totalPrice;
-  List orderDetail;
+  String coverImage;
   String userFName;
   String userLName;
   String userTel;
   bool isAddTime = false;
+  List<OrderDetails> orderDetail;
   TextEditingController addTimeController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  int qty = 0;
+
   @override
   void initState() {
     // Timer.periodic(Duration(seconds: 1), (Timer t) => _getCurrentTime());
     // Future.microtask(() {});
     super.initState();
     setState(() {
-      userId = widget.userId;
       timePickup = widget.timePickup;
       totalPrice = widget.totalPrice;
+      coverImage = widget.coverImage;
       orderDetail = widget.orderDetail;
       userFName = widget.userFName;
       userLName = widget.userLName;
@@ -61,121 +64,22 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
     });
   }
 
-  addTimeCheck() {
-    setState(() {
-      if (addTimeController.text != null) {
-        isAddTime = true;
-      } else {
-        isAddTime = false;
-      }
-    });
+  void add() {
+    qty++;
+    if (qty > 0) {
+      isAddTime = true;
+    }
+    setState(() {});
   }
-  // void _getCurrentTime() {}
 
-  Future<void> _neverSatisfied() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.all(0.0),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  height: 50,
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(3),
-                      topRight: Radius.circular(3),
-                    ),
-                  ),
-                  child: Text(
-                    "เพิ่มเวลา (นาที)",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 60, right: 60, top: 20),
-                  child: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      controller: addTimeController,
-                      decoration: InputDecoration(
-                        hintText: "กรอกเวลาที่ต้องการเพิ่ม",
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(color: Colors.black38)),
-                        enabledBorder: new OutlineInputBorder(
-                          borderRadius: new BorderRadius.circular(10.0),
-                          borderSide: new BorderSide(color: Colors.black38),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "โปรดระบุเวลา";
-                        }
-                      },
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            ButtonBar(
-              children: <Widget>[
-                RaisedButton(
-                  hoverColor: Colors.orange,
-                  elevation: 5,
-                  onPressed: () => {
-                    Navigator.pop(context),
-                  },
-                  padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                  color: Colors.white,
-                  child: Text(
-                    'ย้อนกลับ',
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                RaisedButton(
-                  elevation: 5,
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      print("${addTimeController.text}");
-                    }
-                    addTimeCheck();
-                    Navigator.of(context).pop(true);
-                  },
-                  padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                  color: Colors.orange,
-                  child: Text(
-                    'เสร็จสิ้น',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
+  void remove() {
+    if (qty > 0) {
+      qty--;
+      setState(() {});
+    }
+    if (qty == 0) {
+      isAddTime = false;
+    }
   }
 
   @override
@@ -198,28 +102,13 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
           ),
           child: BottomAppBar(
             shape: CircularNotchedRectangle(),
-            child: new Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 80,
-                ),
-                Container(
-                  width: 350,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0.0, 1.0), //(x,y)
-                        blurRadius: 6.0,
-                      ),
-                    ],
-                  ),
-                  child: Container(
+            child: Container(
+              padding: EdgeInsets.only(top: 10),
+              height: 120,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
                     margin: EdgeInsets.only(left: 20, right: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,37 +116,59 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                         Text(
                           "ราคารวม",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
+                              fontWeight: FontWeight.bold, fontSize: 18),
                         ),
-                        Text(
-                          "$totalPrice บาท",
-                          style: TextStyle(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
+                        Text("$totalPrice บาท",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                                fontSize: 18)),
                       ],
                     ),
                   ),
-                ),
-              ],
+                  Divider(
+                    thickness: 5,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 15),
+                    width: 370,
+                    height: 40,
+                    child: FloatingActionButton.extended(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: Colors.orange,
+                      elevation: 4.0,
+                      label: Row(
+                        children: [
+                          Text(
+                            'รับออร์เดอร์',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
         appBar: AppBar(
           actions: <Widget>[
             Container(
-              padding: EdgeInsets.all(0),
-              margin: EdgeInsets.only(left: 0, top: 0, right: 170),
-              child: Center(
-                  child: Text(
-                "Order Detail",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18),
-              )),
-            ),
+                margin: EdgeInsets.only(right: 120, top: 15),
+                child: Text(
+                  "รายละเอียดคำสั่งซื้อ",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
+                )),
           ],
         ),
         // drawer: _sideMenuSeller(params.userData),
@@ -268,11 +179,32 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.network(
-                      'https://sifu.unileversolutions.com/image/th-TH/recipe-topvisual/2/1260-709/%E0%B8%81%E0%B9%8B%E0%B8%A7%E0%B8%A2%E0%B9%80%E0%B8%95%E0%B8%B5%E0%B9%8B%E0%B8%A2%E0%B8%A7%E0%B8%95%E0%B9%89%E0%B8%A1%E0%B8%A2%E0%B8%B3%E0%B8%AA%E0%B8%B8%E0%B9%82%E0%B8%82%E0%B8%97%E0%B8%B1%E0%B8%A2-50357483.jpg',
-                      height: 140,
-                      width: 430.0,
+                    CachedNetworkImage(
+                      imageUrl:
+                          "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                              '$coverImage',
+                      width: double.maxFinite,
+                      height: 100,
                       fit: BoxFit.cover,
+                      placeholder: (context, url) => Center(
+                          child: Container(
+                              margin: EdgeInsets.only(top: 50, bottom: 35),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 5.0,
+                                valueColor: AlwaysStoppedAnimation(
+                                    const Color(0xffF6A911)),
+                              ))),
+                      errorWidget: (context, url, error) => Container(
+                        height: 100,
+                        color: const Color(0xff7FC9C5),
+                        child: Center(
+                          child: Icon(
+                            Icons.store,
+                            size: 50,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                     Container(
                       padding: EdgeInsets.only(left: 40),
@@ -291,89 +223,35 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(left: 40, right: 40),
+                      height: 40,
+                      width: double.maxFinite,
+                      padding: EdgeInsets.only(left: 40, right: 40),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          // Row(
-                          //   children: [
-                          //     Container(
-                          //       child: SizedBox(
-                          //         width: 50.0,
-                          //         height: 50.0,
-                          //         child: const Card(
-                          //           child: Center(
-                          //             child: Text(
-                          //               '03',
-                          //               textAlign: TextAlign.center,
-                          //               style: TextStyle(
-                          //                   fontWeight: FontWeight.bold,
-                          //                   color: Colors.white),
-                          //             ),
-                          //           ),
-                          //           color: Colors.black26,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //     Container(
-                          //       child: Text(
-                          //         "นาที",
-                          //         style: TextStyle(fontSize: 14),
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                          // Container(
-                          //   padding: EdgeInsets.only(
-                          //     left: 5,
-                          //   ),
-                          //   child: Text(
-                          //     ":",
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.bold, fontSize: 14),
-                          //   ),
-                          // ),
-                          // Container(
-                          //   padding: EdgeInsets.only(
-                          //     left: 5,
-                          //   ),
-                          //   child: SizedBox(
-                          //     width: 50.0,
-                          //     height: 50.0,
-                          //     child: const Card(
-                          //       child: Center(
-                          //         child: Text(
-                          //           '03',
-                          //           textAlign: TextAlign.center,
-                          //           style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.white),
-                          //         ),
-                          //       ),
-                          //       color: Colors.black26,
-                          //     ),
-                          //   ),
-                          // ),
-
-                          // Container(
-                          //   child: RaisedButton(
-                          //     onPressed: () {
-                          //       _neverSatisfied();
-                          //     },
-                          //     padding: EdgeInsets.all(0),
-                          //     color: Colors.orange,
-                          //     child: Text(
-                          //       'เพิ่มเวลา',
-                          //       style: TextStyle(
-                          //         fontWeight: FontWeight.bold,
-                          //         fontSize: 16,
-                          //         color: Colors.white,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
+                          Container(
+                            child: Text(
+                              "เวลาที่จะมารับ : ",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 2),
+                            child: Text(
+                              '${timePickup.hour}.${timePickup.minute} น.',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
                         ],
                       ),
+                    ),
+                    Divider(
+                      color: Colors.grey[200],
+                      thickness: 2,
+                      height: 0,
                     ),
                     Visibility(
                       visible: isAddTime,
@@ -395,45 +273,14 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                                 Container(
                                   margin: EdgeInsets.only(top: 7),
                                   child: Text(
-                                    '${addTimeController.text} นาที',
+                                    '+ $qty นาที',
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.orange,
+                                        fontSize: 18,
+                                        color: Colors.green,
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
-                            ),
-                          ),
-                          Divider(
-                            color: Colors.grey[200],
-                            thickness: 2,
-                            height: 0,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      height: 40,
-                      width: double.maxFinite,
-                      padding: EdgeInsets.only(left: 40, right: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Container(
-                            child: Text(
-                              "เวลาที่จะมารับ : ",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 7),
-                            child: Text(
-                              '$timePickup',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -475,11 +322,11 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "${orderDetail[index]["food"]["name"]}",
+                                    "${orderDetail[index].food.name}",
                                     style: TextStyle(fontSize: 14),
                                   ),
                                   Text(
-                                    "${orderDetail[index]["quantity"]}",
+                                    "${orderDetail[index].quantity}",
                                     style: TextStyle(fontSize: 14),
                                   ),
                                 ],
@@ -568,24 +415,29 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                 ),
               ),
               Transform.translate(
-                offset: Offset(265, 120),
+                offset: Offset(265, 80),
                 child: Container(
-                  width: 110,
+                  width: 125,
                   height: 40,
                   child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
                     elevation: 8,
                     onPressed: () {
-                      _neverSatisfied();
+                      showDialog(
+                        context: context,
+                        builder: (context) => AddTimeOrderPage(
+                          qty: qty,
+                          add: add,
+                          remove: remove,
+                        ),
+                      );
                     },
-                    padding: EdgeInsets.all(5),
                     color: Colors.orange,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.timer,
-                          color: Colors.white,
-                        ),
                         Text(
                           'เพิ่มเวลา',
                           style: TextStyle(
@@ -594,6 +446,10 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                             color: Colors.white,
                           ),
                         ),
+                        Icon(
+                          Icons.more_time,
+                          color: Colors.white,
+                        ),
                       ],
                     ),
                   ),
@@ -601,276 +457,6 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
               ),
             ],
           ),
-        )
-
-        //     Row(
-        //       children: <Widget>[
-        //         Container(
-        //           padding: EdgeInsets.only(left: 40, top: 10),
-        //           child: SizedBox(
-        //             width: 50.0,
-        //             height: 50.0,
-        //             child: const Card(
-        //               child: Center(
-        //                 child: Text(
-        //                   '03',
-        //                   textAlign: TextAlign.center,
-        //                   style: TextStyle(
-        //                       fontWeight: FontWeight.bold, color: Colors.white),
-        //                 ),
-        //               ),
-        //               color: Colors.black26,
-        //             ),
-        //           ),
-        //         ),
-        //         Container(
-        //           padding: EdgeInsets.only(left: 5, top: 10),
-        //           child: Text(
-        //             ":",
-        //             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        //           ),
-        //         ),
-        //         Container(
-        //           padding: EdgeInsets.only(left: 5, top: 10),
-        //           child: SizedBox(
-        //             width: 50.0,
-        //             height: 50.0,
-        //             child: const Card(
-        //               child: Center(
-        //                 child: Text(
-        //                   '03',
-        //                   textAlign: TextAlign.center,
-        //                   style: TextStyle(
-        //                       fontWeight: FontWeight.bold, color: Colors.white),
-        //                 ),
-        //               ),
-        //               color: Colors.black26,
-        //             ),
-        //           ),
-        //         ),
-        //         Container(
-        //           padding: EdgeInsets.only(left: 5, top: 10),
-        //           child: Text(
-        //             "นาที",
-        //             style: TextStyle(fontSize: 14),
-        //           ),
-        //         ),
-        //         Container(
-        //           padding: EdgeInsets.only(left: 100, top: 10),
-        //           child: ButtonBar(
-        //             children: <Widget>[
-        //               RaisedButton(
-        //                 onPressed: () {
-        //                   _neverSatisfied();
-        //                 },
-        //                 padding: EdgeInsets.all(10),
-        //                 color: Colors.orange,
-        //                 child: Text(
-        //                   'เพิ่มเวลา',
-        //                   style: TextStyle(
-        //                     fontWeight: FontWeight.bold,
-        //                     fontSize: 18,
-        //                     color: Colors.white,
-        //                   ),
-        //                 ),
-        //               ),
-        //             ],
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-
-        //     textdetailCustomer,
-        //     Container(
-        //       child: Divider(
-        //         indent: 40,
-        //         color: Colors.black,
-        //         endIndent: 40,
-        //       ),
-        //     ),
-        //     //หมวดข้อมูลผู้สั่ง Order
-        //     Container(
-        //       child: Row(
-        //         children: <Widget>[
-        //           Container(
-        //             padding: EdgeInsets.only(left: 40, top: 5, bottom: 10),
-        //             child: Column(
-        //               children: <Widget>[
-        //                 Text(
-        //                   "ชื่อ",
-        //                   style: TextStyle(fontSize: 14, color: Colors.black),
-        //                 ),
-        //               ],
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //     Container(
-        //       child: Row(
-        //         children: <Widget>[
-        //           Container(
-        //             padding: EdgeInsets.only(
-        //               left: 40,
-        //               top: 10,
-        //             ),
-        //             child: Column(
-        //               children: <Widget>[
-        //                 Text(
-        //                   "0863882908",
-        //                   style: TextStyle(fontSize: 14, color: Colors.black),
-        //                 ),
-        //               ],
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-
-        //     Row(
-        //       children: <Widget>[
-        //         Container(
-        //           padding: EdgeInsets.only(left: 40, top: 10),
-        //           child: Text(
-        //             "เวลาที่จะมารับ",
-        //             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        //           ),
-        //         ),
-        //         Container(
-        //           //หมวดเวลา
-        //           padding: EdgeInsets.only(left: 130, top: 10),
-        //           child: Text(
-        //             '${timePickup}',
-        //             style: TextStyle(fontSize: 14, color: Colors.black),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //     Container(
-        //       child: Divider(
-        //         indent: 40,
-        //         color: Colors.black,
-        //         endIndent: 40,
-        //       ),
-        //     ),
-        //     textOrder,
-        //     Container(
-        //       child: Divider(
-        //         indent: 40,
-        //         color: Colors.black,
-        //         endIndent: 40,
-        //       ),
-        //     ),
-        //     Row(
-        //       children: <Widget>[
-        //         Container(
-        //           padding: EdgeInsets.only(left: 40, top: 10),
-        //           child: Text(
-        //             "รายการอาหาร",
-        //             style: TextStyle(fontSize: 14),
-        //           ),
-        //         ),
-        //         Container(
-        //           padding: EdgeInsets.only(left: 0, top: 10),
-        //           child: Text(
-        //             ' / รายละเอียด',
-        //             style: TextStyle(fontSize: 14, color: Colors.black),
-        //           ),
-        //         ),
-        //         Container(
-        //           padding: EdgeInsets.only(left: 120, top: 10),
-        //           child: Text(
-        //             'จำนวน',
-        //             style: TextStyle(fontSize: 14),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //     Container(
-        //       padding: EdgeInsets.only(top: 10),
-        //       child: Divider(
-        //         indent: 40,
-        //         color: Colors.black,
-        //         endIndent: 40,
-        //       ),
-        //     ),
-        //     Row(
-        //       children: <Widget>[
-        //         Container(
-        //           padding: EdgeInsets.only(left: 40, top: 10),
-        //           child: Text(
-        //             "ราคารวม",
-        //             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        //           ),
-        //         ),
-        //         Container(
-        //           padding: EdgeInsets.only(left: 120, top: 10),
-        //           child: Text(
-        //             '${totalPrice}',
-        //             style: TextStyle(fontSize: 14),
-        //           ),
-        //         ),
-        //         Container(
-        //             padding: EdgeInsets.only(left: 120, top: 10),
-        //             child: Icon(
-        //               Icons.attach_money,
-        //               color: Colors.green,
-        //               size: 30,
-        //             )),
-        //       ],
-        //     ),
-        //     Container(
-        //       padding: EdgeInsets.only(top: 10),
-        //       child: Divider(
-        //         indent: 40,
-        //         color: Colors.black,
-        //         endIndent: 40,
-        //       ),
-        //     ),
-        //   ],
-        // ),
-        );
+        ));
   }
-
-  Widget textdetailCustomer = new Row(
-    children: <Widget>[
-      Container(
-        padding: EdgeInsets.only(left: 40, top: 10),
-        child: Text(
-          "รายละเอียดผู้สั่ง",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-      ),
-    ],
-  );
-
-  Widget textOrder = new Row(
-    children: <Widget>[
-      Container(
-        padding: EdgeInsets.only(left: 40, top: 10),
-        child: Text(
-          "รายการอาหาร",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-      ),
-    ],
-  );
-
-  Widget texTimeProcess = new Row(
-    children: <Widget>[
-      Container(
-        padding: EdgeInsets.only(left: 40, top: 20),
-        child: Text(
-          "เวลาทำอาหาร",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-      ),
-    ],
-  );
-  Widget headerImage = new Image.network(
-    'https://sifu.unileversolutions.com/image/th-TH/recipe-topvisual/2/1260-709/%E0%B8%81%E0%B9%8B%E0%B8%A7%E0%B8%A2%E0%B9%80%E0%B8%95%E0%B8%B5%E0%B9%8B%E0%B8%A2%E0%B8%A7%E0%B8%95%E0%B9%89%E0%B8%A1%E0%B8%A2%E0%B8%B3%E0%B8%AA%E0%B8%B8%E0%B9%82%E0%B8%82%E0%B8%97%E0%B8%B1%E0%B8%A2-50357483.jpg',
-    height: 160.0,
-    width: 430.0,
-    fit: BoxFit.cover,
-  );
 }
