@@ -342,9 +342,9 @@ class ShopController extends Controller
         $user = Auth::user();
         $userId = $user['id'];
 
-//        if (!$this->isOwner($userId, $shopId)) {
-//            return response()->json(['msg' => 'No Permission'], 401);
-//        }
+        if (!$this->isOwner($userId, $shopId)) {
+            return response()->json(['msg' => 'No Permission'], 401);
+        }
 
         $shop = $this->shopRepo->findById($shopId);
         $foods = $shop->foods;

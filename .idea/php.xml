@@ -129,6 +129,8 @@
       <path value="$PROJECT_DIR$/disefood-api/vendor/grpc/grpc" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/psr/cache" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/scrivo/highlight.php" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/symfony/polyfill-php70" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.2" />
