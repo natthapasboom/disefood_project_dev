@@ -131,6 +131,8 @@
       <path value="$PROJECT_DIR$/disefood-api/vendor/symfony/http-client-contracts" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/scrivo/highlight.php" />
       <path value="$PROJECT_DIR$/disefood-api/vendor/symfony/polyfill-php70" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/laravel/socialite" />
+      <path value="$PROJECT_DIR$/disefood-api/vendor/league/oauth1-client" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.2" />
