@@ -12,5 +12,5 @@ interface FeedbackRepositoryInterface
     public function getByUserId($userId);
     public function create($newFeedback);
     public function deleteById($id);
-    public function filterByRating($rating);
+    public function shopFilterByRating($rating, $shopId);
 }

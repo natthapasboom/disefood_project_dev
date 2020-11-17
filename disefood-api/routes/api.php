@@ -25,6 +25,15 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => 'login'
+], function () {
+   Route::get('/{provider}', 'AuthController@redirectToProvider')->name('login.provider');
+   Route::get('/{provider}/callback', 'AuthController@handleProviderCallback')->name('login.provider.callback');
+
+   Route::post('/facebook-login', 'AuthController@getProfileFacebook');
+});
+
+Route::group([
     'prefix' => 'auth'
 ], function () {
     Route::post('/register', 'AuthController@register');

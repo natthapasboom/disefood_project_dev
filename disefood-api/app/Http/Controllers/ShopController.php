@@ -342,9 +342,9 @@ class ShopController extends Controller
         $user = Auth::user();
         $userId = $user['id'];
 
-//        if (!$this->isOwner($userId, $shopId)) {
-//            return response()->json(['msg' => 'No Permission'], 401);
-//        }
+        if (!$this->isOwner($userId, $shopId)) {
+            return response()->json(['msg' => 'No Permission'], 401);
+        }
 
         $shop = $this->shopRepo->findById($shopId);
         $foods = $shop->foods;
@@ -354,10 +354,13 @@ class ShopController extends Controller
             $orderDetails = $food->orderDetails;
             $foods->makeHidden('orderDetails');
             foreach ($orderDetails as $orderDetail) {
-                $food['totalQuantity'] += $orderDetail->quantity;
-                $food['totalAmount'] += $orderDetail->price;
-                $shop['totalAmountShop'] += $orderDetail->price;
-                $shop['totalQuantityShop'] += $orderDetail->quantity;
+                $order = $orderDetail->order;
+                if($order->status === 'success') {
+                    $food['totalQuantity'] += $orderDetail->quantity;
+                    $food['totalAmount'] += $orderDetail->price;
+                    $shop['totalAmountShop'] += $orderDetail->price;
+                    $shop['totalQuantityShop'] += $orderDetail->quantity;
+                }
             }
         }
 
