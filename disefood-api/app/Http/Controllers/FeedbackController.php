@@ -49,7 +49,7 @@ class FeedbackController extends Controller
 
             if (isset($_GET["rating"])) {
                 $rating = $_GET["rating"];
-                $feedbacks = $this->feedbackRepo->filterByRating($rating);
+                $feedbacks = $this->feedbackRepo->shopFilterByRating($rating, $shopId);
 
                 foreach ($feedbacks as $feedback) {
                     $feedback->user;
