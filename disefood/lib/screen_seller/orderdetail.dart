@@ -79,13 +79,6 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
       builder: (BuildContext context) {
         return AlertDialog(
           contentPadding: EdgeInsets.all(0.0),
-          // title: Container(
-          //   color: Colors.red,
-          //   child: Text(
-          //     'เพิ่มเวลา',
-          //     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          //   ),
-          // ),
           content: SingleChildScrollView(
             child: Column(
               children: [
