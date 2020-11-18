@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:disefood/model/shop_id.dart';
+import 'package:disefood/screen/payment_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:disefood/model/orderList.dart';
@@ -416,7 +417,7 @@ class _HistoryState extends State<History> {
                           topRight: Radius.circular(25.0)),
                     ),
                     child: Text(
-                      "Wait Order",
+                      "กำลังรอคำสั่งซื้อ",
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'Aleo',
@@ -483,6 +484,17 @@ class _HistoryState extends State<History> {
                         );
                       },
                       // itemCount: ,
+                    ),
+                  ),
+                  Container(
+                    child: FlatButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PaymentPage()));
+                      },
+                      child: Text("ไปยังหน้าจ่ายเงิน"),
                     ),
                   ),
                   InkWell(
