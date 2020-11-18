@@ -656,6 +656,7 @@ class _MenuPageState extends State<MenuPage> {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     print('alert');
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) {
           return ListView(

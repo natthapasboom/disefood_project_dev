@@ -11,13 +11,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class EditProfile extends StatefulWidget {
+class EditProfileFacebook extends StatefulWidget {
   static const routeName = '/edit_profile';
   @override
-  _EditProfileState createState() => _EditProfileState();
+  _EditProfileFacebookState createState() => _EditProfileFacebookState();
 }
 
-class _EditProfileState extends State<EditProfile> {
+class _EditProfileFacebookState extends State<EditProfileFacebook> {
   String name;
   String _shopImg;
   bool _isEdit = false;
@@ -62,9 +62,7 @@ class _EditProfileState extends State<EditProfile> {
   void initState() {
     _isLoading = false;
     super.initState();
-    Future.microtask(() {
-      findUser();
-    });
+    Future.microtask(() {});
   }
 
   String _validateEmail(String value) {
@@ -91,41 +89,37 @@ class _EditProfileState extends State<EditProfile> {
     return 'กรุณากรอกอีเมลล์ใหม่';
   }
 
-  Future<UserById> findUser() async {
-    SharedPreferences preference = await SharedPreferences.getInstance();
-    userId = preference.getInt('user_id');
-    password = preference.getString('password');
-    var response = await apiProvider.getUserById(userId);
-    // print(response.statusCode);
-    if (response.statusCode == 200) {
-      Map map = json.decode(response.body);
-      UserById msg = UserById.fromJson(map);
+  // Future<UserById> findUser() async {
+  //   SharedPreferences preference = await SharedPreferences.getInstance();
+  //   userId = preference.getInt('user_id');
+  //   password = preference.getString('password');
+  //   var response = await apiProvider.getUserById(userId);
+  //   // print(response.statusCode);
+  //   if (response.statusCode == 200) {
+  //     Map map = json.decode(response.body);
+  //     UserById msg = UserById.fromJson(map);
 
-      setState(() {
-        _isLoading = true;
-        userId = preference.getInt('user_id');
-        userName = msg.data.username;
-        firstName = msg.data.firstName;
-        lastName = msg.data.lastName;
-        lastNameUser = msg.data.lastName;
-        profileImg = msg.data.profileImg;
-        email = msg.data.email;
-        tel = msg.data.tel;
-        logger.d(profileImg);
-        // _passwordController.text = '$password';
-        _firstNameController.text = '${msg.data.firstName}';
-        _lastNameController.text = '${msg.data.lastName}';
-        _emailController.text = '${msg.data.email}';
-        _telController.text = '${msg.data.tel}';
-      });
-    } else {
-      setState(() {
-        _isLoading = true;
-      });
-
-      logger.e("statuscode != 200");
-    }
-  }
+  //     setState(() {
+  //       _isLoading = true;
+  //       userId = preference.getInt('user_id');
+  //       userName = msg.data.username;
+  //       firstName = msg.data.firstName;
+  //       lastName = msg.data.lastName;
+  //       lastNameUser = msg.data.lastName;
+  //       profileImg = msg.data.profileImg;
+  //       email = msg.data.email;
+  //       tel = msg.data.tel;
+  //       logger.d(profileImg);
+  //       // _passwordController.text = '$password';
+  //       _firstNameController.text = '${msg.data.firstName}';
+  //       _lastNameController.text = '${msg.data.lastName}';
+  //       _emailController.text = '${msg.data.email}';
+  //       _telController.text = '${msg.data.tel}';
+  //     });
+  //   } else {
+  //     logger.e("statuscode != 200");
+  //   }
+  // }
 
   Widget _checkImage() {
     if (_isEdit) {
@@ -460,7 +454,7 @@ class _EditProfileState extends State<EditProfile> {
                                             decoration: InputDecoration(
                                               contentPadding:
                                                   EdgeInsets.fromLTRB(
-                                                      10, 0, 0, 0),
+                                                      30, 0, 0, 0),
                                               hintStyle:
                                                   TextStyle(fontSize: 14),
                                               fillColor: Colors.grey,

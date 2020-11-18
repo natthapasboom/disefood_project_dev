@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:disefood/component/editProfile.dart';
+import 'package:disefood/model/facebookUser.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:disefood/component/dialogcomponents/alert_dialog.dart';
 import 'package:disefood/component/register.dart';
@@ -45,13 +48,13 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = true;
       });
       print('after validate ==> ');
-      String url = "http://10.0.2.2:8080/api/login";
+
       try {
         print('after try ==> ');
         var username = _usernameController.text.trim();
         var password = _passwordController.text.trim();
         var response = await apiProvider.doLogin(username, password);
-        var message = response.isRedirect.toString();
+
         print(response.statusCode);
         if (response.statusCode == 200) {
           SharedPreferences sharedPreferences =
@@ -60,7 +63,6 @@ class _LoginPageState extends State<LoginPage> {
           Map map = json.decode(response.body);
           UserProfile msg = UserProfile.fromJson(map);
 
-          var data = msg.data.toJson();
           String role = msg.data.role;
           // logger.d(data);
           if (role == "admin") {
@@ -121,6 +123,29 @@ class _LoginPageState extends State<LoginPage> {
         logger.d("token facebook  : ${facebookLoginResult.status}");
         print("LoggedIn");
         onLoginStatusChanged(true);
+
+        var response = await apiProvider
+            .getFaceProfile(facebookLoginResult.accessToken.token);
+        logger.d('response facebook api login: ${response.statusCode}');
+        logger.d('response facebook api login: ${response.body}');
+        if (response.statusCode == 200) {
+          SharedPreferences preference = await SharedPreferences.getInstance();
+          Map jsonString = json.decode(response.body);
+          FacebookUser jsonMap = FacebookUser.fromJson(jsonString);
+          await preference.setInt('user_id', jsonMap.data.id);
+          await preference.setString('token', jsonMap.accessToken);
+          if (jsonMap.missingProfile == true) {
+            Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => EditProfile()))
+                .then((value) {
+              print('object');
+            });
+          } else if (jsonMap.missingProfile == false) {
+            Map map = json.decode(response.body);
+            UserProfile msg = UserProfile.fromJson(map);
+            routeToService(Home(), msg);
+          }
+        }
         break;
     }
   }

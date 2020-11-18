@@ -351,6 +351,15 @@ class ApiProvider {
     return response;
   }
 
+  Future<http.Response> getFaceProfile(String token) async {
+    String url = 'http://54.151.194.224:8000/api/login/facebook-login';
+
+    http.Response response = await http.post(url, body: {
+      'token': token,
+    });
+    return response;
+  }
+
   Future<http.Response> getFoodByShopId(int shopId) async {
     String _url = 'http://54.151.194.224:8000/api/shop/menu/$shopId';
     http.Response response = await http.get(_url);

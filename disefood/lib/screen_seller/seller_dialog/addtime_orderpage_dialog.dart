@@ -66,7 +66,7 @@ class _AddTimeOrderPageState extends State<AddTimeOrderPage> {
                     child: Column(
                       children: [
                         Icon(
-                          Icons.more_time,
+                          Icons.timer,
                           size: 50,
                           color: Colors.white,
                         ),
