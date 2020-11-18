@@ -25,6 +25,7 @@ class _RegisState extends State<Regis> {
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  bool _obscureText = true;
   final logger = Logger();
   File _image;
   ApiProvider apiProvider = ApiProvider();
@@ -40,6 +41,12 @@ class _RegisState extends State<Regis> {
         _image = image;
       });
     } catch (e) {}
+  }
+
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
   }
 
   String _validateEmail(String value) {
@@ -256,19 +263,23 @@ class _RegisState extends State<Regis> {
           Container(
             padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
             child: TextFormField(
+              obscureText: _obscureText,
               validator: (value) {
                 if (value.isEmpty) {
                   return 'โปรดกรอกรหัสผ่าน';
                 }
               },
-              // onChanged: (value) =>
-              //   _passwordController.text = value.trim()
-              // ,
               cursorColor: Colors.white,
               maxLength: 50,
-
               controller: _passwordController,
               decoration: InputDecoration(
+                suffixIcon: IconButton(
+                    icon: _obscureText
+                        ? Icon(Icons.visibility_off)
+                        : Icon(Icons.visibility),
+                    onPressed: () {
+                      _toggle();
+                    }),
                 contentPadding: const EdgeInsets.only(left: 20),
                 hintText: 'กรอกรหัสผ่าน',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 18),
@@ -594,7 +605,7 @@ class _RegisState extends State<Regis> {
   Future<void> dialogSucces(BuildContext context) async {
     return showDialog(
         context: context,
-        barrierDismissible: true,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           Future.delayed(Duration(seconds: 3), () {
             Navigator.push(

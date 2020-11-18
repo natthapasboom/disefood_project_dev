@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:disefood/model/feedback.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/screen_seller/addmenu.dart';
 import 'package:disefood/services/api_provider.dart';
@@ -27,6 +28,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   int approve;
   ApiProvider apiProvider = ApiProvider();
   Logger logger = Logger();
+  List<Feedbacks> _feedbackLists = new List<Feedbacks>();
   @override
   void initState() {
     Future.microtask(() async {

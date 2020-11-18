@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/model/userById.dart';
+import 'package:disefood/screen/favorite.dart';
 import 'package:disefood/screen/history.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:disefood/screen/menu_page.dart';
@@ -112,12 +113,15 @@ class _HomeState extends State<Home> {
         automaticallyImplyLeading: false,
         actions: <Widget>[
           new IconButton(
-            icon: new Icon(
-              Icons.favorite,
-              size: 30,
-            ),
-            onPressed: () => debugPrint('favorites'),
-          ),
+              icon: new Icon(
+                Icons.favorite,
+                size: 30,
+              ),
+              onPressed: () {
+                debugPrint('favorites');
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => FavoritePage()));
+              }),
           new IconButton(
             icon: Icon(
               Icons.history,

@@ -66,7 +66,7 @@ class SideMenuSeller extends StatelessWidget {
           //ส่วนที่เป็น Title ใน side  bar
           ListTile(
             leading: Icon(Icons.home),
-            title: Text('Home'),
+            title: Text('หน้าหลัก'),
             onTap: () {
               Navigator.pushNamed(context, Homepage.routeName);
             },
@@ -77,7 +77,7 @@ class SideMenuSeller extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.edit),
-            title: Text('Edit Profile'),
+            title: Text('แก้ไขโปรไฟล์'),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => EditProfile()));
@@ -89,7 +89,7 @@ class SideMenuSeller extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
+            title: Text('ออกจากระบบ'),
             onTap: () {
               signOutProcess(context);
             },

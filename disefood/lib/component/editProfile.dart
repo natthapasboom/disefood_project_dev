@@ -6,6 +6,7 @@ import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,10 @@ class _EditProfileState extends State<EditProfile> {
   String name;
   String _shopImg;
   bool _isEdit = false;
+  bool _isFirstNameEdit = false;
+  bool _isLastNameEdit = false;
+  bool _isEmailEdit = false;
+  bool _isTelEdit = false;
   File _image;
   String coverImg;
   String firstName;
@@ -32,6 +37,7 @@ class _EditProfileState extends State<EditProfile> {
   String password;
   String tel;
   String email;
+  var imageUrl;
   bool _isLoading = false;
   final logger = Logger();
   bool isLoading = true;
@@ -42,7 +48,9 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _telController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
@@ -86,8 +94,9 @@ class _EditProfileState extends State<EditProfile> {
   Future<UserById> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     userId = preference.getInt('user_id');
+    password = preference.getString('password');
     var response = await apiProvider.getUserById(userId);
-    print(response.statusCode);
+    // print(response.statusCode);
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       UserById msg = UserById.fromJson(map);
@@ -104,6 +113,7 @@ class _EditProfileState extends State<EditProfile> {
         email = msg.data.email;
         tel = msg.data.tel;
         logger.d(profileImg);
+        // _passwordController.text = '$password';
         _firstNameController.text = '${msg.data.firstName}';
         _lastNameController.text = '${msg.data.lastName}';
         _emailController.text = '${msg.data.email}';
@@ -121,12 +131,11 @@ class _EditProfileState extends State<EditProfile> {
           _image,
           fit: BoxFit.cover,
           height: 300,
-          width: 300,
         );
       } else {
         return CircleAvatar(
           backgroundColor: Colors.orangeAccent,
-          radius: 70,
+          radius: 75,
           child: Icon(
             Icons.image,
             size: 80,
@@ -135,12 +144,28 @@ class _EditProfileState extends State<EditProfile> {
         );
       }
     } else {
+      setState(() {
+        imageUrl = '${AppConfig.image}$profileImg';
+      });
+
       return CachedNetworkImage(
-        imageUrl: '${AppConfig.image}$profileImg',
-        height: 200,
-        width: 500,
-        fit: BoxFit.cover,
-      );
+          imageUrl: '${AppConfig.image}$profileImg',
+          height: 300,
+          width: 500,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Center(
+                  child: Center(
+                child: Container(
+                    child: CircularProgressIndicator(
+                  strokeWidth: 5.0,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                )),
+              )),
+          errorWidget: (context, url, error) => Icon(
+                Icons.error,
+                color: Colors.white,
+                size: 48,
+              ));
     }
   }
 
@@ -185,11 +210,23 @@ class _EditProfileState extends State<EditProfile> {
                                   ? CircleAvatar(
                                       backgroundColor: Colors.white,
                                       radius: 70,
-                                      child: Icon(
-                                        Icons.photo,
-                                        size: 50,
-                                        color: Colors.orange,
-                                      ),
+                                      child: _image == null
+                                          ? Icon(
+                                              Icons.photo,
+                                              size: 50,
+                                              color: Colors.orange,
+                                            )
+                                          : CircleAvatar(
+                                              radius: 70,
+                                              child: ClipOval(
+                                                child: Image.file(
+                                                  _image,
+                                                  fit: BoxFit.cover,
+                                                  height: 150,
+                                                  width: 500,
+                                                ),
+                                              ),
+                                            ),
                                     )
                                   : CircleAvatar(
                                       radius: 70,
@@ -234,7 +271,7 @@ class _EditProfileState extends State<EditProfile> {
                                           margin:
                                               EdgeInsets.fromLTRB(30, 0, 0, 0),
                                           child: Text(
-                                            'First Name',
+                                            'ชื่อ',
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w900,
@@ -250,8 +287,11 @@ class _EditProfileState extends State<EditProfile> {
                                                       15.0),
                                             ),
                                             margin: EdgeInsets.fromLTRB(
-                                                30, 0, 30, 0),
+                                                95, 0, 30, 0),
                                             child: new TextFormField(
+                                              onChanged: (val) {
+                                                _isFirstNameEdit = true;
+                                              },
                                               controller: _firstNameController,
                                               decoration: InputDecoration(
                                                 contentPadding:
@@ -291,7 +331,7 @@ class _EditProfileState extends State<EditProfile> {
                                                 hintText:
                                                     _firstNameController != null
                                                         ? '$firstName'
-                                                        : 'กรอกชื่อชริง',
+                                                        : 'กรอกชื่อ',
                                               ),
                                             ),
                                           ),
@@ -316,7 +356,7 @@ class _EditProfileState extends State<EditProfile> {
                                         margin:
                                             EdgeInsets.fromLTRB(30, 30, 0, 30),
                                         child: Text(
-                                          'Last Name',
+                                          'นามสกุล',
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w900,
@@ -331,8 +371,11 @@ class _EditProfileState extends State<EditProfile> {
                                                 new BorderRadius.circular(15.0),
                                           ),
                                           margin:
-                                              EdgeInsets.fromLTRB(35, 0, 30, 0),
+                                              EdgeInsets.fromLTRB(55, 0, 30, 0),
                                           child: new TextFormField(
+                                            onChanged: (val) {
+                                              _isLastNameEdit = true;
+                                            },
                                             controller: _lastNameController,
                                             decoration: InputDecoration(
                                               contentPadding:
@@ -387,7 +430,7 @@ class _EditProfileState extends State<EditProfile> {
                                         margin:
                                             EdgeInsets.fromLTRB(30, 30, 0, 30),
                                         child: Text(
-                                          'Email',
+                                          'อีเมลล์',
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w900,
@@ -404,6 +447,9 @@ class _EditProfileState extends State<EditProfile> {
                                           margin:
                                               EdgeInsets.fromLTRB(75, 0, 30, 0),
                                           child: new TextFormField(
+                                            onChanged: (val) {
+                                              _isEmailEdit = true;
+                                            },
                                             validator: _validateEmail,
                                             keyboardType:
                                                 TextInputType.emailAddress,
@@ -461,7 +507,93 @@ class _EditProfileState extends State<EditProfile> {
                                         margin:
                                             EdgeInsets.fromLTRB(30, 30, 0, 30),
                                         child: Text(
-                                          'Tel.',
+                                          'เบอร์โทรศัพท์',
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w900,
+                                              fontFamily: 'Roboto'),
+                                        ),
+                                      ),
+                                      Flexible(
+                                        child: Container(
+                                          // decoration: BoxDecoration(
+                                          //   color: Colors.grey[350],
+                                          //   borderRadius:
+                                          //       new BorderRadius.circular(15.0),
+                                          // ),
+                                          margin: EdgeInsets.fromLTRB(
+                                              20, 20, 30, 0),
+                                          child: new TextFormField(
+                                            validator: (value) {
+                                              if (value.length != 10) {
+                                                return 'โปรดกรอกให้ครบ10หลัก';
+                                              }
+                                              if (value.isEmpty) {
+                                                return 'โปรดกรอกเบอร์โทร';
+                                              }
+                                            },
+                                            maxLength: 10,
+                                            onChanged: (val) {
+                                              _isTelEdit = true;
+                                            },
+                                            keyboardType: TextInputType.number,
+                                            controller: _telController,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              contentPadding:
+                                                  const EdgeInsets.only(
+                                                      left: 20),
+                                              hintStyle:
+                                                  TextStyle(fontSize: 14),
+                                              fillColor: Colors.grey[350],
+                                              border: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey[350])),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey[350])),
+                                              enabledBorder:
+                                                  new OutlineInputBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        15.0),
+                                                borderSide: new BorderSide(
+                                                    color: Colors.grey[350]),
+                                              ),
+                                              errorBorder:
+                                                  new OutlineInputBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        15.0),
+                                                borderSide: new BorderSide(
+                                                    color: Colors.red),
+                                              ),
+                                              hintText: 'กรอกเบอร์โทร',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(top: 10, bottom: 20),
+                                    child: Divider(
+                                      indent: 30,
+                                      color: Colors.black,
+                                      endIndent: 30,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Container(
+                                        margin:
+                                            EdgeInsets.fromLTRB(30, 20, 0, 30),
+                                        child: Text(
+                                          'ยืนยันรหัสผ่าน',
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w900,
@@ -476,10 +608,13 @@ class _EditProfileState extends State<EditProfile> {
                                                 new BorderRadius.circular(15.0),
                                           ),
                                           margin:
-                                              EdgeInsets.fromLTRB(90, 0, 30, 0),
+                                              EdgeInsets.fromLTRB(20, 0, 30, 0),
                                           child: new TextFormField(
-                                            keyboardType: TextInputType.number,
-                                            controller: _telController,
+                                            onChanged: (val) {
+                                              _isEdit = true;
+                                            },
+                                            keyboardType: TextInputType.text,
+                                            controller: _passwordController,
                                             decoration: InputDecoration(
                                               contentPadding:
                                                   EdgeInsets.fromLTRB(
@@ -512,7 +647,7 @@ class _EditProfileState extends State<EditProfile> {
                                                 borderSide: new BorderSide(
                                                     color: Colors.red),
                                               ),
-                                              hintText: 'กรอกเบอร์โทร',
+                                              hintText: 'กรอกรหัสผ่าน',
                                             ),
                                           ),
                                         ),
@@ -567,7 +702,161 @@ class _EditProfileState extends State<EditProfile> {
                                           width: 132,
                                           height: 40,
                                           child: RaisedButton(
-                                            onPressed: () {},
+                                            onPressed: () async {
+                                              Dio().options.contentType = Headers
+                                                  .formUrlEncodedContentType;
+                                              if (_formKey.currentState
+                                                  .validate()) {
+                                                try {
+                                                  String url =
+                                                      'http://54.151.194.224:8000/api/auth/profile';
+                                                  // String fileImage = _isEdit
+                                                  //     ? _image.path
+                                                  //         .split('/')
+                                                  //         .last
+                                                  //     : null;
+                                                  SharedPreferences
+                                                      sharedPreferences =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                  String token =
+                                                      sharedPreferences
+                                                          .getString('token');
+                                                  String email =
+                                                      _emailController.text
+                                                          .trim();
+                                                  String firstName =
+                                                      _firstNameController.text
+                                                          .trim();
+                                                  String lastName =
+                                                      _lastNameController.text
+                                                          .trim();
+
+                                                  String tel = _telController
+                                                      .text
+                                                      .trim();
+                                                  String password =
+                                                      _passwordController.text
+                                                          .trim();
+
+                                                  var formData = {
+                                                    _isEmailEdit == true
+                                                        ? 'email'
+                                                        : email: email,
+                                                    _isFirstNameEdit == true
+                                                        ? 'first_name'
+                                                        : firstName: firstName,
+                                                    _isLastNameEdit == true
+                                                        ? 'last_name'
+                                                        : lastName: lastName,
+                                                    _isTelEdit == true
+                                                        ? 'tel'
+                                                        : tel: tel,
+                                                    // !_isEdit
+                                                    //         ? 'image_profile'
+                                                    //         : await MultipartFile
+                                                    //             .fromFile(
+                                                    //                 _image.path,
+                                                    //                 filename:
+                                                    //                     fileImage):
+                                                    //     null,
+                                                    'confirm_password':
+                                                        password,
+                                                    '_method': 'PUT',
+                                                  };
+
+                                                  var response =
+                                                      await Dio().post(
+                                                    url,
+                                                    data: formData,
+                                                    options: Options(
+                                                      headers: {
+                                                        // "ContentType":
+                                                        //     ContentType.parse(
+                                                        //         "application/x-www-form-urlencoded"),
+                                                        "Authorization":
+                                                            "Bearer $token",
+                                                      },
+                                                    ),
+                                                  );
+
+                                                  logger.d(response.statusCode);
+                                                  if (response.statusCode ==
+                                                      200) {
+                                                    logger.d('success');
+                                                    showDialog(
+                                                            barrierDismissible:
+                                                                false,
+                                                            context: context,
+                                                            builder: (context) {
+                                                              Future.delayed(
+                                                                  Duration(
+                                                                      seconds:
+                                                                          3),
+                                                                  () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(true);
+                                                              });
+                                                              return Dialog(
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0)),
+                                                                  child: Container(
+                                                                      height: 250.0,
+                                                                      width: 300.0,
+                                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
+                                                                      child: Column(
+                                                                        children: <
+                                                                            Widget>[
+                                                                          Stack(
+                                                                            children: <Widget>[
+                                                                              Center(
+                                                                                child: Container(
+                                                                                  margin: EdgeInsets.only(top: 40),
+                                                                                  height: 90.0,
+                                                                                  width: 90.0,
+                                                                                  decoration: BoxDecoration(
+                                                                                      borderRadius: BorderRadius.circular(50.0),
+                                                                                      image: DecorationImage(
+                                                                                        image: AssetImage('assets/images/success.png'),
+                                                                                        fit: BoxFit.cover,
+                                                                                      )),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Container(
+                                                                              margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 0),
+                                                                              child: Center(
+                                                                                child: Text(
+                                                                                  'แก้ไขโปรไฟล์สำเร็จ',
+                                                                                  style: TextStyle(
+                                                                                    fontFamily: 'Aleo-Bold',
+                                                                                    fontSize: 24.0,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                  ),
+                                                                                ),
+                                                                              )),
+                                                                        ],
+                                                                      )));
+                                                            })
+                                                        .then((value) =>
+                                                            Navigator.pop(
+                                                                context));
+                                                  }
+                                                } on DioError catch (error) {
+                                                  if (error.response
+                                                          .statusCode ==
+                                                      302) {
+                                                    // do your stuff here
+                                                    logger.e(
+                                                        'error: ${error.response.statusMessage}');
+                                                  }
+                                                }
+                                              }
+                                            },
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(5),
@@ -937,9 +1226,86 @@ class _EditProfileState extends State<EditProfile> {
                                           width: 132,
                                           height: 40,
                                           child: RaisedButton(
-                                            onPressed: () {
-                                              // String url =
-                                              //     'http://127.0.0.1:8000/api/user/$userId';
+                                            onPressed: () async {
+                                              if (_formKey.currentState
+                                                  .validate()) {
+                                                String url =
+                                                    'http://54.151.194.224:8000/api/auth/profile';
+                                                String fileImage = _isEdit
+                                                    ? _image.path
+                                                        .split('/')
+                                                        .last
+                                                    : null;
+                                                SharedPreferences
+                                                    sharedPreferences =
+                                                    await SharedPreferences
+                                                        .getInstance();
+                                                String token = sharedPreferences
+                                                    .getString('token');
+
+                                                logger.d(
+                                                    'data : $password  $userName  $token');
+                                                FormData formData =
+                                                    FormData.fromMap({
+                                                  'username': userName,
+                                                  'email': _emailController.text
+                                                      .trim(),
+                                                  'first_name':
+                                                      _firstNameController.text
+                                                          .trim(),
+                                                  'last_name':
+                                                      _lastNameController.text
+                                                          .trim(),
+                                                  'tel': _telController.text
+                                                      .trim(),
+                                                  'profile_img': _isEdit
+                                                      ? await MultipartFile
+                                                          .fromFile(_image.path,
+                                                              filename:
+                                                                  fileImage)
+                                                      : null,
+                                                  'confirm_password':
+                                                      _passwordController.text,
+                                                  '_method': 'PUT',
+                                                });
+                                                // logger.d('${formData.fields}');
+                                                // logger.d(
+                                                //     '${formData.files.toString()}');
+                                                try {
+                                                  var response =
+                                                      await Dio().post(
+                                                    url,
+                                                    data: formData,
+                                                    options: Options(
+                                                        headers: {
+                                                          "Authorization":
+                                                              "Bearer $token",
+                                                        },
+                                                        followRedirects: false,
+                                                        validateStatus:
+                                                            (status) {
+                                                          return status < 500;
+                                                        }),
+                                                  );
+
+                                                  logger.d(response.statusCode);
+                                                  if (response.statusCode ==
+                                                      200) {
+                                                    logger.d('success');
+                                                    Navigator.of(context)
+                                                        .pop(true);
+                                                  } else {
+                                                    logger.e(
+                                                        response.statusMessage);
+                                                  }
+                                                } catch (error) {
+                                                  if (error.response
+                                                          .statusCode ==
+                                                      302) {
+                                                    logger.e(error);
+                                                  }
+                                                }
+                                              }
                                             },
                                             shape: RoundedRectangleBorder(
                                               borderRadius:

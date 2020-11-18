@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:disefood/model/shopList.dart';
 import 'package:flutter/foundation.dart';
@@ -179,6 +180,154 @@ class ApiProvider {
     String url = 'http://54.151.194.224:8000/api/feedback/shop/$shopId';
     http.Response response =
         await http.get(url, headers: {'Authorization': 'Bearer $token'});
+    return response;
+  }
+
+  Future<http.Response> getFeedback1(String token, int shopId) async {
+    String url =
+        'http://54.151.194.224:8000/api/feedback/shop/$shopId?rating=1';
+
+    http.Response response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+    );
+    return response;
+  }
+
+  Future<http.Response> getFeedback2(String token, int shopId) async {
+    print('before api getstar3 : $shopId');
+    String url =
+        'http://54.151.194.224:8000/api/feedback/shop/$shopId?rating=2';
+    http.Response response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+      HttpHeaders.contentTypeHeader: 'application/json',
+    });
+    return response;
+  }
+
+  Future<http.Response> getFeedback3(String token, int shopId) async {
+    String url =
+        'http://54.151.194.224:8000/api/feedback/shop/$shopId?rating=3';
+    http.Response response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+      HttpHeaders.contentTypeHeader: 'application/json',
+    });
+    return response;
+  }
+
+  Future<http.Response> getFavoriteByMe(String token) async {
+    String url = 'http://54.151.194.224:8000/api/favorite/me';
+    http.Response response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+    });
+    return response;
+  }
+
+  Future<Response> postFavorite(int shopId, String token) async {
+    String url = 'http://54.151.194.224:8000/api/favorite/me';
+    FormData formData = FormData.fromMap({
+      'shopId': shopId,
+    });
+    Response response = await Dio().post(url,
+        data: formData,
+        options: Options(
+            headers: {
+              "Authorization": "Bearer $token",
+            },
+            followRedirects: false,
+            validateStatus: (status) {
+              return status < 500;
+            }));
+
+    return response;
+  }
+
+  Future<Response> deleteFavorite(int favId, String token) async {
+    String url = 'http://54.151.194.224:8000/api/favorite/me/$favId';
+    Response response = await Dio().delete(
+      url,
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+    return response;
+  }
+
+  Future<http.Response> getFeedback4(String token, int shopId) async {
+    String url =
+        'http://54.151.194.224:8000/api/feedback/shop/$shopId?rating=4';
+    http.Response response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+      HttpHeaders.contentTypeHeader: 'application/json',
+    });
+    return response;
+  }
+
+  Future<http.Response> getFeedback5(String token, int shopId) async {
+    String url =
+        'http://54.151.194.224:8000/api/feedback/shop/$shopId?rating=5';
+    http.Response response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+      HttpHeaders.contentTypeHeader: 'application/json',
+    });
+    return response;
+  }
+
+  Future<http.Response> getBankAcount(int _shopId, String token) async {
+    String url = 'http://54.151.194.224:8000/api/shop/$_shopId/account-number';
+    http.Response response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+      HttpHeaders.contentTypeHeader: 'application/json',
+    });
+    return response;
+  }
+
+  Future<Response> createBankAccount(
+      String token, int shopId, String accountNum, String bankName) async {
+    String url = 'http://54.151.194.224:8000/api/shop/account-number/$shopId';
+
+    FormData formData = FormData.fromMap({
+      'number': accountNum,
+      'channel': bankName,
+    });
+
+    Response response = await Dio().post(url,
+        data: formData,
+        options: Options(headers: {
+          "Authorization": "Bearer $token",
+        }));
+
+    return response;
+  }
+
+  Future<http.Response> editBankAccount(
+      String token, int shopId, String accountNum, String bankName) async {
+    String url =
+        'http://54.151.194.224:8000/api/shop/account-number/update/$shopId';
+
+    // FormData formData = FormData.fromMap({
+    //   'number': accountNum,
+    //   'channel': bankName,
+    //   '_method': 'PUT',
+    // });
+
+    http.Response response = await http.post(
+      url,
+      body: {
+        'number': accountNum,
+        'channel': bankName,
+        '_method': 'PUT',
+      },
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    // print('data : $accountNum , $bankName, $token, $shopId');
     return response;
   }
 

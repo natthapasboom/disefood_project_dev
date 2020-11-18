@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:disefood/model/cart.dart';
+import 'package:disefood/model/favorite.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/config/app_config.dart';
@@ -38,12 +39,19 @@ class _MenuPageState extends State<MenuPage> {
   String shopCoverImg;
   TextEditingController reviewController = TextEditingController();
   ApiProvider apiProvider = ApiProvider();
-  List<CartModel> cartModels = List();
+  bool isTrue;
+  bool isFalse;
   bool isLoading = true;
   List foods = [];
-  List quantities;
+  List fav = [];
+  var favId;
   double rating;
   int userId;
+  bool isFav = false;
+  var favList;
+  List quantities;
+  List<CartModel> cartModels = List();
+
   bool isCartNotEmpty = false;
   // bool isShopHasItemInCart = false;
   int totalQty;
@@ -58,7 +66,8 @@ class _MenuPageState extends State<MenuPage> {
       shopSlot = widget.shopSlot;
       shopId = widget.shopId;
     });
-    Future.microtask(() {
+    Future.microtask(() async {
+      getFavoriteByMe();
       findMenu();
       // findUser();
     });
@@ -150,7 +159,6 @@ class _MenuPageState extends State<MenuPage> {
   // }
 
   Future findMenu() async {
-    // SharedPreferences preference = await SharedPreferences.getInstance();
     var response = await apiProvider.getFoodByShopId(shopId);
     print("Connection Status Code: " + "${response.statusCode}");
     var body = response.body;
@@ -172,6 +180,156 @@ class _MenuPageState extends State<MenuPage> {
       });
     } else {
       logger.e("statuscode != 200");
+    }
+  }
+
+  Future getFavoriteByMe() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token');
+    var response = await apiProvider.getFavoriteByMe(token);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        Map jsonMap = json.decode(response.body);
+        Favorite favList = Favorite.fromJson(jsonMap);
+
+        for (var e in favList.data) {
+          if (shopId == e.shopId) {
+            logger.d(
+                'fav list customer ${e.userId} : shop id ${shopId} : favorite id = ${e.id} ');
+            logger.e('success');
+            setState(() {
+              favId = e.id;
+              isFav = true;
+              logger.e('fav id $favId & shop id $isFav ');
+            });
+          }
+        }
+        fav = json.decode(response.body)['data'];
+        // logger.d('fav response : ${fav.toList()}');
+        logger.e('check fav id = $favId');
+      });
+    } else {
+      logger.e('status : ${response.statusCode}');
+    }
+  }
+
+  Future postFavorite() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token');
+    var response = await apiProvider.postFavorite(shopId, token);
+    if (response.statusCode == 200) {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            Future.delayed(Duration(seconds: 3), () {
+              Navigator.of(context).pop(true);
+            });
+            return Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: Container(
+                    height: 250.0,
+                    width: 300.0,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    child: Column(
+                      children: <Widget>[
+                        Stack(
+                          children: <Widget>[
+                            Center(
+                              child: Container(
+                                margin: EdgeInsets.only(top: 40),
+                                height: 90.0,
+                                width: 90.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/success.png'),
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: 20, left: 10, right: 10, bottom: 0),
+                            child: Center(
+                              child: Text(
+                                'เพิ่มรายการโปรดสำเร็จ',
+                                style: TextStyle(
+                                  fontFamily: 'Aleo-Bold',
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )),
+                      ],
+                    )));
+          }).then((value) => Navigator.pop(context));
+    }
+  }
+
+  Future deleteFavorite() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token');
+    logger.e('before delete: $token $shopId');
+    var response = await apiProvider.deleteFavorite(favId, token);
+    if (response.statusCode == 200) {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            Future.delayed(Duration(seconds: 3), () {
+              Navigator.of(context).pop(true);
+            });
+            return Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: Container(
+                    height: 250.0,
+                    width: 300.0,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    child: Column(
+                      children: <Widget>[
+                        Stack(
+                          children: <Widget>[
+                            Center(
+                              child: Container(
+                                margin: EdgeInsets.only(top: 40),
+                                height: 90.0,
+                                width: 90.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/red-cross.png'),
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: 20, left: 10, right: 10, bottom: 0),
+                            child: Center(
+                              child: Text(
+                                'ลบรายการโปรดสำเร็จ',
+                                style: TextStyle(
+                                  fontFamily: 'Aleo-Bold',
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )),
+                      ],
+                    )));
+          }).then((value) => Navigator.pop(context));
     }
   }
 
@@ -380,7 +538,7 @@ class _MenuPageState extends State<MenuPage> {
                                     child: RaisedButton(
                                         child: Center(
                                           child: Text(
-                                            'review',
+                                            'รีวิว',
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontFamily: 'Aleo',
@@ -404,6 +562,33 @@ class _MenuPageState extends State<MenuPage> {
                                             ],
                                           );
                                         }),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 0),
+                                    child: IconButton(
+                                      icon: favId == null
+                                          ? Icon(
+                                              Icons.favorite_border,
+                                              color: Color(0xffFF7C2C),
+                                              size: 24,
+                                            )
+                                          : Icon(
+                                              Icons.favorite,
+                                              color: Color(0xffFF7C2C),
+                                              size: 24,
+                                            ),
+                                      onPressed: () async {
+                                        setState(() {
+                                          if (favId != null) {
+                                            deleteFavorite();
+                                            logger.d(isFav);
+                                          } else if (favId == null) {
+                                            postFavorite();
+                                            logger.d(isFav);
+                                          }
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -595,10 +780,10 @@ class _MenuPageState extends State<MenuPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
-                                  margin: EdgeInsets.only(left: 120),
+                                  margin: EdgeInsets.only(left: 100),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "Review",
+                                    "รีวิวร้านค้า",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: 'Aleo',
@@ -609,7 +794,7 @@ class _MenuPageState extends State<MenuPage> {
                                 ),
                                 Container(
                                   alignment: Alignment.centerLeft,
-                                  margin: EdgeInsets.only(left: 60),
+                                  margin: EdgeInsets.only(left: 40),
                                   child: IconButton(
                                       icon: Icon(
                                         Icons.clear,
@@ -728,7 +913,7 @@ class _MenuPageState extends State<MenuPage> {
                                       controller: reviewController,
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.zero,
-                                        hintText: "Add Review",
+                                        hintText: "เพิ่มรีวิว...",
                                         border: InputBorder.none,
                                       ),
                                       maxLines: 4,
@@ -870,7 +1055,7 @@ class _MenuPageState extends State<MenuPage> {
                                     },
                                     child: Center(
                                       child: Text(
-                                        'Submit',
+                                        'ตกลง',
                                         style: TextStyle(
                                             fontFamily: 'Roboto',
                                             fontSize: 18,

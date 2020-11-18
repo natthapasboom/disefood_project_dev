@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:disefood/component/star.dart';
 import 'package:disefood/model/feedback.dart';
+import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen_seller//order_seller_page.dart';
 import 'package:disefood/screen_seller//organize_seller_page.dart';
 import 'package:disefood/screen_seller/donut_chart.dart';
@@ -24,10 +25,29 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
   bool isLoading = false;
   bool isFilter = false;
   Future<Feedbacks> _feedbacks;
+  Future<Feedbacks> _feedbacks1;
+  Future<Feedbacks> _feedbacks2;
+  Future<Feedbacks> _feedbacks3;
+  Future<Feedbacks> _feedbacks4;
+  Future<Feedbacks> _feedbacks5;
+  List<Feedbacks> _feedbackLists = new List<Feedbacks>();
+  var star1;
+
+  var star2;
+  var star3;
+  var star4;
+  var star5;
+  String nameUser;
+  String profileImg;
   @override
   void initState() {
     isFilter = false;
-
+    logger.d('initail rate filter : $rate');
+    // _feedbacks1 = getValue1();
+    // _feedbacks2 = getValue2();
+    // _feedbacks3 = getValue3();
+    // _feedbacks4 = getValue4();
+    // _feedbacks5 = getValue5();
     _feedbacks = getFeedback();
     isLoading = false;
     // TODO: implement initState
@@ -38,18 +58,243 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     int _shopId = sharedPreferences.getInt('shop_id');
     String token = sharedPreferences.getString('token');
-
-    var response = await apiProvider.getFeedback(token, _shopId);
-    logger.d('status feedback: ${response.statusCode}');
-    if (response.statusCode == 200) {
-      setState(() {
-        var jsonString = response.body;
-        Map jsonMap = json.decode(jsonString);
-        feedbacks = Feedbacks.fromJson(jsonMap);
-      });
+    if (rate == null) {
+      var response = await apiProvider.getFeedback(token, _shopId);
+      logger.d('status feedback: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        setState(() {
+          var jsonString = response.body;
+          Map jsonMap = json.decode(jsonString);
+          feedbacks = Feedbacks.fromJson(jsonMap);
+        });
+      }
+    } else if (rate == 1) {
+      var response = await apiProvider.getFeedback1(token, _shopId);
+      logger.d('status feedback 1: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        setState(() {
+          var jsonString = response.body;
+          Map jsonMap = json.decode(jsonString);
+          feedbacks = Feedbacks.fromJson(jsonMap);
+        });
+        return feedbacks;
+      }
+    } else if (rate == 2) {
+      var response = await apiProvider.getFeedback2(token, _shopId);
+      logger.d('status feedback 2: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        setState(() {
+          var jsonString = response.body;
+          Map jsonMap = json.decode(jsonString);
+          feedbacks = Feedbacks.fromJson(jsonMap);
+        });
+        return feedbacks;
+      }
+    } else if (rate == 3) {
+      var response = await apiProvider.getFeedback3(token, _shopId);
+      logger.d('status feedback 3: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        setState(() {
+          var jsonString = response.body;
+          Map jsonMap = json.decode(jsonString);
+          feedbacks = Feedbacks.fromJson(jsonMap);
+          logger.d('feedback 3 star: ${jsonString.toString()}');
+        });
+        return feedbacks;
+      }
+    } else if (rate == 4) {
+      var response = await apiProvider.getFeedback4(token, _shopId);
+      logger.d('status feedback 4: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        setState(() {
+          var jsonString = response.body;
+          Map jsonMap = json.decode(jsonString);
+          feedbacks = Feedbacks.fromJson(jsonMap);
+        });
+        return feedbacks;
+      }
+    } else if (rate == 5) {
+      var response = await apiProvider.getFeedback5(token, _shopId);
+      logger.d('status feedback 5: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        setState(() {
+          var jsonString = response.body;
+          Map jsonMap = json.decode(jsonString);
+          feedbacks = Feedbacks.fromJson(jsonMap);
+        });
+        return feedbacks;
+      }
     }
+
     return feedbacks;
   }
+
+  // Future<Feedbacks> getValue1() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback1(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     List values = [];
+  //     values = json.decode(response.body)['data'];
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+
+  //       for (int i = 0; i < values.length; i++) {
+  //         if (values[i] != null) {
+  //           Map map = values[i];
+  //           _feedbackLists.add(Feedbacks.fromJson(map));
+  //           debugPrint('Id-------${map.length}');
+  //           setState(() {
+  //             star1 = values.length.toDouble();
+  //             logger.d(star1);
+  //           });
+  //         }
+  //       }
+  //       // feedbacks = Feedbacks.fromJson(jsonMap);
+  //       // return FutureBuilder<Feedbacks>(
+  //       //   future: _feedbacks1,
+  //       //   builder: (context, snapshot) {
+  //       //     if (snapshot.hasData) {
+  //       //       setState(() {
+  //       //         star1 = snapshot.data.data.length.round();
+  //       //         // logger.d('star1 : $star1');
+  //       //       });
+  //       //     }
+  //       //   },
+  //       // );
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue2() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback2(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+  //       feedbacks = Feedbacks.fromJson(jsonMap);
+  //       return FutureBuilder<Feedbacks>(
+  //         future: _feedbacks2,
+  //         builder: (context, snapshot) {
+  //           if (snapshot.hasData) {
+  //             setState(() {
+  //               star2 = snapshot.data.data.length.toDouble();
+  //             });
+  //           }
+  //         },
+  //       );
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue3() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback3(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+  //       feedbacks = Feedbacks.fromJson(jsonMap);
+  //       return FutureBuilder<Feedbacks>(
+  //         future: _feedbacks3,
+  //         builder: (context, snapshot) {
+  //           if (snapshot.hasData) {
+  //             setState(() {
+  //               star3 = snapshot.data.data.length.toDouble();
+  //             });
+  //           }
+  //         },
+  //       );
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue4() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback4(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+  //       feedbacks = Feedbacks.fromJson(jsonMap);
+  //       return FutureBuilder<Feedbacks>(
+  //         future: _feedbacks4,
+  //         builder: (context, snapshot) {
+  //           if (snapshot.hasData) {
+  //             setState(() {
+  //               star4 = snapshot.data.data.length.toDouble();
+  //             });
+  //           }
+  //         },
+  //       );
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue5() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback5(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+  //       feedbacks = Feedbacks.fromJson(jsonMap);
+  //       return FutureBuilder<Feedbacks>(
+  //         future: _feedbacks5,
+  //         builder: (context, snapshot) {
+  //           if (snapshot.hasData) {
+  //             setState(() {
+  //               star5 = snapshot.data.data.length.toDouble();
+  //             });
+  //           }
+  //         },
+  //       );
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // getUserById(int userId) async {
+  //   var response = await apiProvider.getUserById(userId);
+  //   if (response.statusCode == 200) {
+  //     Map jsonMap = json.decode(response.body);
+  //     UserById msg = UserById.fromJson(jsonMap);
+  //     setState(() {
+  //       nameUser = '${msg.data.firstName}  ${msg.data.lastName}';
+  //       profileImg = msg.data.profileImg;
+  //       var data = {
+  //         'name': nameUser,
+  //         'profileImg': profileImg,
+  //       };
+  //       logger.e('profile user : ${data.toString()}');
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +303,13 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
       shrinkWrap: true,
       children: [
         Container(
-          child: PieChartSample2(),
+          child: PieChartSample2(
+            star1: star1,
+            star2: star2,
+            star3: star3,
+            star4: star4,
+            star5: star5,
+          ),
         ),
         Container(
           margin: EdgeInsets.only(top: 20),
@@ -71,6 +322,8 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
               _displayDialog(context).then((val) {
                 setState(() {
                   rate = val;
+                  _feedbacks = getFeedback();
+                  logger.d('rate filter = $rate');
                 });
               });
             },
@@ -104,93 +357,109 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
           future: _feedbacks,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.data.data.length,
-                  itemBuilder: (context, index) {
-                    var data = snapshot.data.data[index];
-                    int star = int.parse(data.rating);
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 35, bottom: 5),
-                          child: Text(
-                            'ความคิดเห็นที่: ${index + 1}',
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        Container(
-                            margin: EdgeInsets.only(
-                                left: 30, top: 5, bottom: 10, right: 30),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
+              return snapshot.data.data.length != 0
+                  ? ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.data.length,
+                      itemBuilder: (context, index) {
+                        var data = snapshot.data.data[index];
+
+                        int star = int.parse(data.rating);
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(left: 35, bottom: 5),
+                              child: Text(
+                                'ความคิดเห็นที่: ${index + 1}',
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.w500),
                               ),
-                              elevation: 10,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  ListTile(
-                                    leading: Container(
-                                      height: 50,
-                                      width: 50,
-                                      margin: EdgeInsets.only(top: 10),
-                                      child: CircleAvatar(
-                                        radius: 100,
-                                        child: ClipOval(
-                                          child: Image.network(
-                                            'https://scontent.fbkk12-1.fna.fbcdn.net/v/t1.0-9/122219506_1629765710526804_3970435939360635059_o.jpg?_nc_cat=106&ccb=2&_nc_sid=09cbfe&_nc_eui2=AeG-06TOd9Eumc8zZJEyOlsxA6wP6IFC7EQDrA_ogULsRGiPjcv5ml7SJViHD7ToTxUWz-jchtyTHkOX2tfX7juW&_nc_ohc=r7QeRyebQ_gAX8fBuhB&_nc_ht=scontent.fbkk12-1.fna&oh=8aae713f272479995919a5de87201a11&oe=5FCF6D86',
-                                            fit: BoxFit.fill,
-                                            width: 50,
+                            ),
+                            Container(
+                                margin: EdgeInsets.only(
+                                    left: 30, top: 5, bottom: 10, right: 30),
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  elevation: 10,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      ListTile(
+                                        leading: Container(
+                                          height: 50,
+                                          width: 50,
+                                          margin: EdgeInsets.only(top: 10),
+                                          child: CircleAvatar(
+                                            radius: 100,
+                                            child: ClipOval(
+                                              child: Image.network(
+                                                'https://scontent.fbkk12-1.fna.fbcdn.net/v/t1.0-9/122219506_1629765710526804_3970435939360635059_o.jpg?_nc_cat=106&ccb=2&_nc_sid=09cbfe&_nc_eui2=AeG-06TOd9Eumc8zZJEyOlsxA6wP6IFC7EQDrA_ogULsRGiPjcv5ml7SJViHD7ToTxUWz-jchtyTHkOX2tfX7juW&_nc_ohc=r7QeRyebQ_gAX8fBuhB&_nc_ht=scontent.fbkk12-1.fna&oh=8aae713f272479995919a5de87201a11&oe=5FCF6D86',
+                                                fit: BoxFit.fill,
+                                                width: 50,
+                                              ),
+                                            ),
                                           ),
+                                        ),
+                                        title: Container(
+                                            margin: EdgeInsets.only(top: 10),
+                                            child: Text(
+                                              '${data.user.firstName}  ${data.user.lastName}',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18),
+                                            )),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                top: 5,
+                                              ),
+                                              child: IconTheme(
+                                                data: IconThemeData(
+                                                  color: Color(0xffF7BA1C),
+                                                ),
+                                                child: StarDisplay(value: star),
+                                              ),
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 5, bottom: 10),
+                                              child: Text(
+                                                data.comment,
+                                                style: TextStyle(
+                                                    color: Color(0xff7C7C7C),
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                    title: Container(
-                                        margin: EdgeInsets.only(top: 10),
-                                        child: Text(
-                                          'Heart Shaker',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18),
-                                        )),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                            top: 5,
-                                          ),
-                                          child: IconTheme(
-                                            data: IconThemeData(
-                                              color: Color(0xffF7BA1C),
-                                            ),
-                                            child: StarDisplay(value: star),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: 5, bottom: 10),
-                                          child: Text(
-                                            data.comment,
-                                            style: TextStyle(
-                                                color: Color(0xff7C7C7C),
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ))
-                      ],
+                                ))
+                          ],
+                        );
+                      })
+                  : Center(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 100),
+                        child: Text(
+                          'ยังไม่มีรีวิวของร้านค้านี้',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black38,
+                              fontSize: 20),
+                        ),
+                      ),
                     );
-                  });
             } else {
               logger.d(snapshot.connectionState);
               return Container(
