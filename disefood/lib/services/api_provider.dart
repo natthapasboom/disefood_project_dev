@@ -209,7 +209,8 @@ class ApiProvider {
   }
 
   Future<http.Response> getFeedback3(String token, int shopId) async {
-    String url = 'http://54.151.194.224:8000/api/feedback/shop/2?rating=3';
+    String url =
+        'http://54.151.194.224:8000/api/feedback/shop/$shopId?rating=3';
     http.Response response = await http.get(url, headers: {
       'Authorization': 'Bearer $token',
       HttpHeaders.contentTypeHeader: 'application/json',

@@ -51,15 +51,11 @@ class _EditProfileState extends State<EditProfile> {
 
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> getImage(ImageSource imageSource) async {
-    try {
-      var image = await ImagePicker.pickImage(
-          source: imageSource, maxWidth: 400.0, maxHeight: 400.0);
-
-      setState(() {
-        _image = image;
-      });
-    } catch (e) {}
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = image;
+    });
   }
 
   @override
@@ -134,46 +130,39 @@ class _EditProfileState extends State<EditProfile> {
         return Image.file(
           _image,
           fit: BoxFit.cover,
-          height: 150,
-          width: 500,
+          height: 300,
         );
       } else {
-        return Center(
-          child: IconButton(
-            onPressed: () {
-              getImage(ImageSource.gallery);
-              setState(() {
-                _isEdit = true;
-                Image.file(_image);
-              });
-            },
-            iconSize: 36,
+        return CircleAvatar(
+          backgroundColor: Colors.orangeAccent,
+          radius: 75,
+          child: Icon(
+            Icons.image,
+            size: 80,
             color: Colors.white,
-            icon: Icon(Icons.add_a_photo),
           ),
         );
       }
     } else {
+      setState(() {
+        imageUrl = '${AppConfig.image}$profileImg';
+      });
+
       return CachedNetworkImage(
           imageUrl: '${AppConfig.image}$profileImg',
-          height: 150,
+          height: 300,
           width: 500,
-          fit: BoxFit.fitWidth,
-          placeholder: (context, url) => Container(
-                height: 150,
-                width: 500,
-                color: const Color(0xff7FC9C5),
-                child: Center(
-                    child: Center(
-                  child: Container(
-                      child: CircularProgressIndicator(
-                    strokeWidth: 5.0,
-                    valueColor: AlwaysStoppedAnimation(Colors.white),
-                  )),
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Center(
+                  child: Center(
+                child: Container(
+                    child: CircularProgressIndicator(
+                  strokeWidth: 5.0,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
                 )),
-              ),
+              )),
           errorWidget: (context, url, error) => Icon(
-                Icons.store,
+                Icons.error,
                 color: Colors.white,
                 size: 48,
               ));
@@ -253,7 +242,7 @@ class _EditProfileState extends State<EditProfile> {
                                     backgroundColor:
                                         const Color(000000).withOpacity(0.6),
                                     onPressed: () {
-                                      getImage(ImageSource.gallery);
+                                      getImage();
                                       setState(() {
                                         _isEdit = true;
                                         Image.file(_image);
@@ -527,14 +516,22 @@ class _EditProfileState extends State<EditProfile> {
                                       ),
                                       Flexible(
                                         child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[350],
-                                            borderRadius:
-                                                new BorderRadius.circular(15.0),
-                                          ),
-                                          margin:
-                                              EdgeInsets.fromLTRB(20, 0, 30, 0),
+                                          // decoration: BoxDecoration(
+                                          //   color: Colors.grey[350],
+                                          //   borderRadius:
+                                          //       new BorderRadius.circular(15.0),
+                                          // ),
+                                          margin: EdgeInsets.fromLTRB(
+                                              20, 20, 30, 0),
                                           child: new TextFormField(
+                                            validator: (value) {
+                                              if (value.length != 10) {
+                                                return 'โปรดกรอกให้ครบ10หลัก';
+                                              }
+                                              if (value.isEmpty) {
+                                                return 'โปรดกรอกเบอร์โทร';
+                                              }
+                                            },
                                             maxLength: 10,
                                             onChanged: (val) {
                                               _isTelEdit = true;
@@ -542,12 +539,13 @@ class _EditProfileState extends State<EditProfile> {
                                             keyboardType: TextInputType.number,
                                             controller: _telController,
                                             decoration: InputDecoration(
+                                              filled: true,
                                               contentPadding:
-                                                  EdgeInsets.fromLTRB(
-                                                      30, 0, 0, 0),
+                                                  const EdgeInsets.only(
+                                                      left: 20),
                                               hintStyle:
                                                   TextStyle(fontSize: 14),
-                                              fillColor: Colors.grey,
+                                              fillColor: Colors.grey[350],
                                               border: OutlineInputBorder(
                                                   borderSide: BorderSide(
                                                       color: Colors.grey[350])),
@@ -712,11 +710,11 @@ class _EditProfileState extends State<EditProfile> {
                                                 try {
                                                   String url =
                                                       'http://54.151.194.224:8000/api/auth/profile';
-                                                  String fileImage = _isEdit
-                                                      ? _image.path
-                                                          .split('/')
-                                                          .last
-                                                      : null;
+                                                  // String fileImage = _isEdit
+                                                  //     ? _image.path
+                                                  //         .split('/')
+                                                  //         .last
+                                                  //     : null;
                                                   SharedPreferences
                                                       sharedPreferences =
                                                       await SharedPreferences
@@ -740,82 +738,46 @@ class _EditProfileState extends State<EditProfile> {
                                                   String password =
                                                       _passwordController.text
                                                           .trim();
-                                                  // var profileImg =
-                                                  //     await MultipartFile
-                                                  //         .fromFile(_image.path,
-                                                  //             filename:
-                                                  //                 fileImage);
-                                                  logger.d(
-                                                      'data : $password  $userName  $token');
-                                                  // String body =
-                                                  //     '{"username": "$userName", "email": "$email", "first_name": "$firstName", "last_name": "$lastName", "tel": "$tel", "profile_img": "$profileImg", "confirm_password": "$password", "_method": "_PUT"}';
-                                                  // var formData = {
-                                                  //   'email': email,
-                                                  //   'first_name': firstName,
-                                                  //   'last_name': lastName,
-                                                  //   'tel': tel,
-                                                  //   //     _isEdit ? 'profile_img': _isEdit
-                                                  //   // //     ? await MultipartFile
-                                                  //   // //         .fromFile(
-                                                  //   // //             _image.path,
-                                                  //   // //             filename:
-                                                  //   // //                 fileImage)
-                                                  //   // //     : null,
-                                                  //   // // 'profile_img': _isEdit
-                                                  //   // //     ? await MultipartFile
-                                                  //   // //         .fromFile(
-                                                  //   // //             _image.path,
-                                                  //   // //             filename:
-                                                  //   // //                 fileImage)
-                                                  //   // //     : null,
-                                                  //   'confirm_password':
-                                                  //       password.toString(),
-                                                  //   '_method': 'PUT',
-                                                  // };
 
-                                                  // FormData formData =
-                                                  //     FormData.fromMap({
-                                                  //   'image_profile':
-                                                  //       await MultipartFile
-                                                  //           .fromFile(
-                                                  //               _image.path,
-                                                  //               filename:
-                                                  //                   fileImage)
-                                                  // });
-                                                  var imageProfile =
-                                                      await MultipartFile
-                                                          .fromFile(_image.path,
-                                                              filename:
-                                                                  fileImage);
+                                                  var formData = {
+                                                    _isEmailEdit == true
+                                                        ? 'email'
+                                                        : email: email,
+                                                    _isFirstNameEdit == true
+                                                        ? 'first_name'
+                                                        : firstName: firstName,
+                                                    _isLastNameEdit == true
+                                                        ? 'last_name'
+                                                        : lastName: lastName,
+                                                    _isTelEdit == true
+                                                        ? 'tel'
+                                                        : tel: tel,
+                                                    // !_isEdit
+                                                    //         ? 'image_profile'
+                                                    //         : await MultipartFile
+                                                    //             .fromFile(
+                                                    //                 _image.path,
+                                                    //                 filename:
+                                                    //                     fileImage):
+                                                    //     null,
+                                                    'confirm_password':
+                                                        password,
+                                                    '_method': 'PUT',
+                                                  };
 
                                                   var response =
-                                                      await http.post(
+                                                      await Dio().post(
                                                     url,
-                                                    body: {
-                                                      _isEmailEdit == true
-                                                          ? 'email'
-                                                          : email: email,
-                                                      _isFirstNameEdit == true
-                                                              ? 'first_name'
-                                                              : firstName:
-                                                          firstName,
-                                                      _isLastNameEdit == true
-                                                          ? 'last_name'
-                                                          : lastName: lastName,
-                                                      _isTelEdit == true
-                                                          ? 'tel'
-                                                          : tel: tel,
-                                                      // _isEdit == true
-                                                      //     ? 'image_profile'
-                                                      //     : imageProfile: null,
-                                                      '_method': 'PUT',
-                                                      'confirm_password':
-                                                          password,
-                                                    },
-                                                    headers: {
-                                                      'Authorization':
-                                                          'Bearer $token',
-                                                    },
+                                                    data: formData,
+                                                    options: Options(
+                                                      headers: {
+                                                        // "ContentType":
+                                                        //     ContentType.parse(
+                                                        //         "application/x-www-form-urlencoded"),
+                                                        "Authorization":
+                                                            "Bearer $token",
+                                                      },
+                                                    ),
                                                   );
 
                                                   logger.d(response.statusCode);
@@ -823,6 +785,8 @@ class _EditProfileState extends State<EditProfile> {
                                                       200) {
                                                     logger.d('success');
                                                     showDialog(
+                                                            barrierDismissible:
+                                                                false,
                                                             context: context,
                                                             builder: (context) {
                                                               Future.delayed(
@@ -882,12 +846,13 @@ class _EditProfileState extends State<EditProfile> {
                                                             Navigator.pop(
                                                                 context));
                                                   }
-                                                } catch (error) {
+                                                } on DioError catch (error) {
                                                   if (error.response
                                                           .statusCode ==
                                                       302) {
                                                     // do your stuff here
-                                                    logger.e('error: $error');
+                                                    logger.e(
+                                                        'error: ${error.response.statusMessage}');
                                                   }
                                                 }
                                               }
@@ -979,7 +944,7 @@ class _EditProfileState extends State<EditProfile> {
                                     backgroundColor:
                                         const Color(000000).withOpacity(0.6),
                                     onPressed: () {
-                                      getImage(ImageSource.gallery);
+                                      getImage();
                                       setState(() {
                                         _isEdit = true;
                                         Image.file(_image);

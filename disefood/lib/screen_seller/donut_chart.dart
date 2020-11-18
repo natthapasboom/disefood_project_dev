@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'indicator.dart';
 
 class PieChartSample2 extends StatefulWidget {
-  // final double star1;
+  final double star1;
   final double star2;
   final double star3;
   final double star4;
@@ -18,7 +18,7 @@ class PieChartSample2 extends StatefulWidget {
 
   const PieChartSample2(
       {Key key,
-      // @required this.star1,
+      @required this.star1,
       @required this.star2,
       @required this.star3,
       @required this.star4,
@@ -46,182 +46,354 @@ class PieChart2State extends State<PieChartSample2> {
   var star5;
   @override
   void initState() {
-    _feedbacks1 = getValue1();
-    _feedbacks2 = getValue2();
-    _feedbacks3 = getValue3();
-    _feedbacks4 = getValue4();
-    _feedbacks5 = getValue5();
+    setState(() {
+      // star1 = null;
+      // star2 = null;
+      // star3 = null;
+      // star4 = null;
+      // star5 = null;
+    });
 
+    // _feedbacks1 = getValue1();
+    // _feedbacks2 = getValue2();
+    // // _feedbacks3 = getValue3();
+    // _feedbacks4 = getValue4();
+    // _feedbacks5 = getValue5();
+    Future.microtask(() {
+      get3Star();
+      get1Star();
+      get2Star();
+      get4Star();
+      get5Star();
+    });
     // logger.d('star 1 na: ${widget.star1}');
     // TODO: implement initState
     super.initState();
   }
 
-  Future<Feedbacks> getValue1() async {
+  // Future<Feedbacks> getValue1() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+  //   logger.d('shop id update: $_shopId');
+  //   var response = await apiProvider.getFeedback1(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     List values = [];
+  //     values = json.decode(response.body)['data'];
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+
+  //       for (int i = 0; i < values.length; i++) {
+  //         if (values[i] != null) {
+  //           Map map = values[i];
+  //           _feedbackLists.add(Feedbacks.fromJson(map));
+  //           debugPrint('Id-------${map.length}');
+
+  //           sharedPreferences.setDouble('star1', values.length.toDouble());
+  //           star1 = sharedPreferences.getDouble('star1');
+  //           logger.d("star 1: $star1");
+  //         } else {
+  //           star1 = 0;
+  //           logger.d(" star 1: $star1");
+  //         }
+  //       }
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue2() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback2(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     List values = [];
+  //     values = json.decode(response.body)['data'];
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+
+  //       for (int i = 0; i < values.length; i++) {
+  //         if (values[i] != null) {
+  //           Map map = values[i];
+  //           _feedbackLists.add(Feedbacks.fromJson(map));
+  //           debugPrint('Id-------${map.length}');
+
+  //           sharedPreferences.setDouble('star2', values.length.toDouble());
+  //           star2 = sharedPreferences.getDouble('star2');
+  //           logger.d(" star 2: $star2");
+  //         } else {
+  //           star2 = 0;
+  //           logger.d(" star 2: $star2");
+  //         }
+  //       }
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue3() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+  //   logger.d('shop id 3: $_shopId');
+  //   var response = await apiProvider.getFeedback3(token, _shopId);
+  //   logger.d('shop id 3: ${response.body}');
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     List values = [];
+  //     values = json.decode(response.body)['data'];
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+
+  //       for (int i = 0; i < values.length; i++) {
+  //         if (values[i] != null) {
+  //           Map map = values[i];
+  //           _feedbackLists.add(Feedbacks.fromJson(map));
+  //           debugPrint('Id-------${map.length}');
+  //           setState(() {
+  //             star3 = values.length.toDouble();
+  //             logger.d(" star 3: $star3");
+  //           });
+  //           // sharedPreferences.setDouble('star3', values.length.toDouble());
+  //           // star3 = sharedPreferences.getDouble('star3');
+
+  //         } else {
+  //           star3 = 0;
+  //           logger.d(" star 3: $star3");
+  //         }
+  //       }
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue4() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback4(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     List values = [];
+  //     values = json.decode(response.body)['data'];
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+
+  //       for (int i = 0; i < values.length; i++) {
+  //         if (values[i] != null) {
+  //           Map map = values[i];
+  //           _feedbackLists.add(Feedbacks.fromJson(map));
+  //           debugPrint('Id-------${map.length}');
+
+  //           sharedPreferences.setDouble('star4', values.length.toDouble());
+  //           star4 = sharedPreferences.getDouble('star4');
+  //           logger.d(" star 4: $star4");
+  //         } else {
+  //           star4 = 0;
+  //           logger.d(" star 4: $star4");
+  //         }
+  //       }
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  // Future<Feedbacks> getValue5() async {
+  //   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  //   int _shopId = sharedPreferences.getInt('shop_id');
+  //   String token = sharedPreferences.getString('token');
+
+  //   var response = await apiProvider.getFeedback5(token, _shopId);
+  //   // logger.d('status feedback: ${response.statusCode}');
+  //   if (response.statusCode == 200) {
+  //     List values = [];
+  //     values = json.decode(response.body)['data'];
+  //     setState(() {
+  //       var jsonString = response.body;
+  //       Map jsonMap = json.decode(jsonString);
+
+  //       for (int i = 0; i < values.length; i++) {
+  //         if (values[i] != null) {
+  //           Map map = values[i];
+  //           _feedbackLists.add(Feedbacks.fromJson(map));
+  //           debugPrint('Id-------${map.length}');
+
+  //           sharedPreferences.setDouble('star5', values.length.toDouble());
+  //           star5 = sharedPreferences.getDouble('star5');
+  //           logger.d(" star 5: $star5");
+  //         } else {
+  //           star5 = 0;
+  //           logger.d(" star 5: $star5");
+  //         }
+  //       }
+  //     });
+  //   }
+  //   return feedbacks;
+  // }
+
+  Future<double> get3Star() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     int _shopId = sharedPreferences.getInt('shop_id');
     String token = sharedPreferences.getString('token');
-    logger.d('shop id update: $_shopId');
-    var response = await apiProvider.getFeedback1(token, _shopId);
-    // logger.d('status feedback: ${response.statusCode}');
-    if (response.statusCode == 200) {
-      List values = [];
-      values = json.decode(response.body)['data'];
-      setState(() {
-        var jsonString = response.body;
-        Map jsonMap = json.decode(jsonString);
-
-        for (int i = 0; i < values.length; i++) {
-          if (values[i] != null) {
-            Map map = values[i];
-            _feedbackLists.add(Feedbacks.fromJson(map));
-            debugPrint('Id-------${map.length}');
-
-            sharedPreferences.setDouble('star1', values.length.toDouble());
-            star1 = sharedPreferences.getDouble('star1');
-            logger.d("star 1: $star1");
-          } else {
-            star1 = 0;
-            logger.d(" star 1: $star1");
-          }
-        }
-      });
-    }
-    return feedbacks;
-  }
-
-  Future<Feedbacks> getValue2() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    int _shopId = sharedPreferences.getInt('shop_id');
-    String token = sharedPreferences.getString('token');
-
-    var response = await apiProvider.getFeedback2(token, _shopId);
-    // logger.d('status feedback: ${response.statusCode}');
-    if (response.statusCode == 200) {
-      List values = [];
-      values = json.decode(response.body)['data'];
-      setState(() {
-        var jsonString = response.body;
-        Map jsonMap = json.decode(jsonString);
-
-        for (int i = 0; i < values.length; i++) {
-          if (values[i] != null) {
-            Map map = values[i];
-            _feedbackLists.add(Feedbacks.fromJson(map));
-            debugPrint('Id-------${map.length}');
-
-            sharedPreferences.setDouble('star2', values.length.toDouble());
-            star2 = sharedPreferences.getDouble('star2');
-            logger.d(" star 2: $star2");
-          } else {
-            star2 = 0;
-            logger.d(" star 2: $star2");
-          }
-        }
-      });
-    }
-    return feedbacks;
-  }
-
-  Future<Feedbacks> getValue3() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    int _shopId = sharedPreferences.getInt('shop_id');
-    String token = sharedPreferences.getString('token');
-    logger.d('shop id 3: $_shopId');
+    logger.e('shopId now : $_shopId');
     var response = await apiProvider.getFeedback3(token, _shopId);
-    logger.d('shop id 3: ${response.body}');
-    // logger.d('status feedback: ${response.statusCode}');
+    logger.d('response 3 star: ${response.body}');
+    logger.d('response 3 star statusCode: ${response.statusCode}');
+    String star = '3';
+    int count = 0;
     if (response.statusCode == 200) {
-      List values = [];
-      values = json.decode(response.body)['data'];
-      setState(() {
-        var jsonString = response.body;
-        Map jsonMap = json.decode(jsonString);
-
-        for (int i = 0; i < values.length; i++) {
-          if (values[i] != null) {
-            Map map = values[i];
-            _feedbackLists.add(Feedbacks.fromJson(map));
-            debugPrint('Id-------${map.length}');
-
-            sharedPreferences.setDouble('star3', values.length.toDouble());
-            star3 = sharedPreferences.getDouble('star3');
-            logger.d(" star 3: $star3");
-            logger.d('shopId : $_shopId');
-          } else {
-            star3 = 0;
-            logger.d(" star 3: $star3");
-          }
+      Map jsonMap = json.decode(response.body);
+      Feedbacks feedbacks = Feedbacks.fromJson(jsonMap);
+      for (var e in feedbacks.data) {
+        var text1 = utf8.encode(star).toString();
+        var text2 = utf8.encode(e.rating).toString();
+        if (star.contains(e.rating)) {
+          setState(() {
+            star3 = count.toDouble() + 1.0;
+            logger.e('result 3 star: $star3');
+          });
+        } else {
+          star3 = null;
         }
-      });
+      }
+      // star3 = feedbacks.data.length.toDouble();
+      logger
+          .d('lenght of feedback 3 star: ${feedbacks.data.length.toDouble()}');
     }
-    return feedbacks;
+    return star3;
   }
 
-  Future<Feedbacks> getValue4() async {
+  Future<double> get1Star() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     int _shopId = sharedPreferences.getInt('shop_id');
     String token = sharedPreferences.getString('token');
-
-    var response = await apiProvider.getFeedback4(token, _shopId);
-    // logger.d('status feedback: ${response.statusCode}');
+    logger.e('shopId now : $_shopId');
+    var response = await apiProvider.getFeedback3(token, _shopId);
+    logger.d('response 1 star: ${response.body}');
+    logger.d('response 1 star statusCode: ${response.statusCode}');
+    String star = '1';
+    int count = 0;
     if (response.statusCode == 200) {
-      List values = [];
-      values = json.decode(response.body)['data'];
-      setState(() {
-        var jsonString = response.body;
-        Map jsonMap = json.decode(jsonString);
-
-        for (int i = 0; i < values.length; i++) {
-          if (values[i] != null) {
-            Map map = values[i];
-            _feedbackLists.add(Feedbacks.fromJson(map));
-            debugPrint('Id-------${map.length}');
-
-            sharedPreferences.setDouble('star4', values.length.toDouble());
-            star4 = sharedPreferences.getDouble('star4');
-            logger.d(" star 4: $star4");
-          } else {
-            star4 = 0;
-            logger.d(" star 4: $star4");
-          }
+      Map jsonMap = json.decode(response.body);
+      Feedbacks feedbacks = Feedbacks.fromJson(jsonMap);
+      for (var e in feedbacks.data) {
+        if (star.contains(e.rating)) {
+          setState(() {
+            count = count + 1;
+            star1 = count.toDouble();
+            logger.e('result 1 star: $star1');
+          });
+        } else {
+          star1 = null;
         }
-      });
+      }
+      // star3 = feedbacks.data.length.toDouble();
+      logger
+          .d('lenght of feedback 3 star: ${feedbacks.data.length.toDouble()}');
     }
-    return feedbacks;
+    return star1;
   }
 
-  Future<Feedbacks> getValue5() async {
+  Future<double> get2Star() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     int _shopId = sharedPreferences.getInt('shop_id');
     String token = sharedPreferences.getString('token');
-
-    var response = await apiProvider.getFeedback5(token, _shopId);
-    // logger.d('status feedback: ${response.statusCode}');
+    logger.e('shopId now : $_shopId');
+    var response = await apiProvider.getFeedback3(token, _shopId);
+    logger.d('response 2 star: ${response.body}');
+    logger.d('response 2 star statusCode: ${response.statusCode}');
+    String star = '2';
+    int count = 0;
     if (response.statusCode == 200) {
-      List values = [];
-      values = json.decode(response.body)['data'];
-      setState(() {
-        var jsonString = response.body;
-        Map jsonMap = json.decode(jsonString);
-
-        for (int i = 0; i < values.length; i++) {
-          if (values[i] != null) {
-            Map map = values[i];
-            _feedbackLists.add(Feedbacks.fromJson(map));
-            debugPrint('Id-------${map.length}');
-
-            sharedPreferences.setDouble('star5', values.length.toDouble());
-            star5 = sharedPreferences.getDouble('star5');
-            logger.d(" star 5: $star5");
-          } else {
-            star5 = 0;
-            logger.d(" star 5: $star5");
-          }
+      Map jsonMap = json.decode(response.body);
+      Feedbacks feedbacks = Feedbacks.fromJson(jsonMap);
+      for (var e in feedbacks.data) {
+        if (star.contains(e.rating)) {
+          setState(() {
+            count = count + 1;
+            star2 = count.toDouble();
+            logger.e('result 2 star: $star2');
+          });
+        } else {
+          star2 = null;
         }
-      });
+      }
+      // star3 = feedbacks.data.length.toDouble();
+      logger
+          .d('lenght of feedback 2 star: ${feedbacks.data.length.toDouble()}');
     }
-    return feedbacks;
+    return star2;
+  }
+
+  Future<double> get4Star() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    int _shopId = sharedPreferences.getInt('shop_id');
+    String token = sharedPreferences.getString('token');
+    logger.e('shopId now : $_shopId');
+    var response = await apiProvider.getFeedback3(token, _shopId);
+    logger.d('response 4 star: ${response.body}');
+    logger.d('response 4 star statusCode: ${response.statusCode}');
+    String star = '4';
+    int count = 0;
+    if (response.statusCode == 200) {
+      Map jsonMap = json.decode(response.body);
+      Feedbacks feedbacks = Feedbacks.fromJson(jsonMap);
+      for (var e in feedbacks.data) {
+        if (star.contains(e.rating)) {
+          setState(() {
+            count = count + 1;
+            star4 = count.toDouble();
+            logger.e('result 4 star: $star4');
+          });
+        } else {
+          star4 = null;
+        }
+      }
+      // star3 = feedbacks.data.length.toDouble();
+      logger
+          .d('lenght of feedback 4 star: ${feedbacks.data.length.toDouble()}');
+    }
+    return star4;
+  }
+
+  Future<double> get5Star() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    int _shopId = sharedPreferences.getInt('shop_id');
+    String token = sharedPreferences.getString('token');
+    logger.e('shopId now : $_shopId');
+    var response = await apiProvider.getFeedback3(token, _shopId);
+    logger.d('response 5 star: ${response.body}');
+    logger.d('response 5 star statusCode: ${response.statusCode}');
+    String star = '5';
+    int count = 0;
+    if (response.statusCode == 200) {
+      Map jsonMap = json.decode(response.body);
+      Feedbacks feedbacks = Feedbacks.fromJson(jsonMap);
+      for (var e in feedbacks.data) {
+        if (star.contains(e.rating)) {
+          setState(() {
+            count = count + 1;
+            star5 = count.toDouble();
+            logger.e('result 5 star: $star5');
+          });
+        } else {
+          star5 = null;
+        }
+      }
+      // star3 = feedbacks.data.length.toDouble();
+      logger
+          .d('lenght of feedback 5 star: ${feedbacks.data.length.toDouble()}');
+    }
+    return star5;
   }
 
   @override
@@ -333,7 +505,8 @@ class PieChart2State extends State<PieChartSample2> {
           return PieChartSectionData(
             color: const Color(0xff4C7286),
             value: star5 == null ? 0.0 : star5,
-            showTitle: false,
+            title: star5 == null ? '' : '$star5',
+            showTitle: true,
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
@@ -344,9 +517,9 @@ class PieChart2State extends State<PieChartSample2> {
           return PieChartSectionData(
             color: const Color(0xff7FC9C5),
             value: star4 == null ? 0.0 : star4,
-            title: '30%',
+            title: star4 == null ? '' : '$star4',
             radius: radius,
-            showTitle: false,
+            showTitle: true,
             titleStyle: TextStyle(
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,
@@ -355,10 +528,10 @@ class PieChart2State extends State<PieChartSample2> {
         case 2:
           return PieChartSectionData(
             color: const Color(0xff749591),
-            value: star3 == null ? 0.0 : star3,
-            title: '15%',
+            value: star3 != null ? star3 : 0.0,
+            title: star3 == null ? '' : '$star3',
             radius: radius,
-            showTitle: false,
+            showTitle: true,
             titleStyle: TextStyle(
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,
@@ -368,9 +541,9 @@ class PieChart2State extends State<PieChartSample2> {
           return PieChartSectionData(
             color: const Color(0xffE8CE00),
             value: star2 == null ? 0.0 : star2,
-            title: '15%',
+            title: star2 == null ? '' : '$star2',
             radius: radius,
-            showTitle: false,
+            showTitle: true,
             titleStyle: TextStyle(
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,
@@ -380,9 +553,9 @@ class PieChart2State extends State<PieChartSample2> {
           return PieChartSectionData(
             color: const Color(0xffDFB60B),
             value: star1 == null ? 0.0 : star1,
-            title: '5%',
+            title: star1 == null ? '' : '$star1',
             radius: radius,
-            showTitle: false,
+            showTitle: true,
             titleStyle: TextStyle(
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,

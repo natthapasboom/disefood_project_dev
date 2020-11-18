@@ -80,7 +80,10 @@ class SideMenuCustomer extends StatelessWidget {
               title: Text('แก้ไขโปรไฟล์'),
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => EditProfile()));
+                        MaterialPageRoute(builder: (context) => EditProfile()))
+                    .then((value) {
+                  print('object');
+                });
               }),
           Divider(
             height: 2,

@@ -97,13 +97,7 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  // Future<UserById> findUser() async {
-  //   SharedPreferences preference = await SharedPreferences.getInstance();
-  //   userId = preference.getInt('user_id');
-  // }
-
   Future findMenu() async {
-    // SharedPreferences preference = await SharedPreferences.getInstance();
     var response = await apiProvider.getFoodByShopId(shopId);
     print(response.statusCode);
     var body = response.body;
@@ -111,7 +105,6 @@ class _MenuPageState extends State<MenuPage> {
       setState(() {
         isLoading = false;
         foods = json.decode(body)['data'];
-        // logger.d(foods);
       });
     } else {
       logger.e("statuscode != 200");
@@ -173,16 +166,6 @@ class _MenuPageState extends State<MenuPage> {
                       children: <Widget>[
                         Stack(
                           children: <Widget>[
-                            // Container(height: 150.0),
-                            // Container(
-                            //   height: 100.0,
-                            //   decoration: BoxDecoration(
-                            //       borderRadius: BorderRadius.only(
-                            //         topLeft: Radius.circular(10.0),
-                            //         topRight: Radius.circular(10.0),
-                            //       ),
-                            //       color: Colors.red),
-                            // ),
                             Center(
                               child: Container(
                                 margin: EdgeInsets.only(top: 40),
@@ -243,16 +226,6 @@ class _MenuPageState extends State<MenuPage> {
                       children: <Widget>[
                         Stack(
                           children: <Widget>[
-                            // Container(height: 150.0),
-                            // Container(
-                            //   height: 100.0,
-                            //   decoration: BoxDecoration(
-                            //       borderRadius: BorderRadius.only(
-                            //         topLeft: Radius.circular(10.0),
-                            //         topRight: Radius.circular(10.0),
-                            //       ),
-                            //       color: Colors.red),
-                            // ),
                             Center(
                               child: Container(
                                 margin: EdgeInsets.only(top: 40),
@@ -380,54 +353,7 @@ class _MenuPageState extends State<MenuPage> {
           ),
         ),
         appBar: AppBar(
-          actions: <Widget>[
-            // Container(
-            //   margin: EdgeInsets.only(right: 265),
-            //   child: new IconButton(
-            //     icon: Icon(Icons.arrow_back),
-            //     onPressed: () {
-            //       return
-            //           // Navigator.pop(context);
-            //           Navigator.push(
-            //         context,
-            //         PageRouteBuilder(
-            //           pageBuilder: (BuildContext context,
-            //               Animation<double> animation,
-            //               Animation<double> secondaryAnimation) {
-            //             return Home();
-            //           },
-            //           transitionsBuilder: (BuildContext context,
-            //               Animation<double> animation,
-            //               Animation<double> secondaryAnimation,
-            //               Widget child) {
-            //             return FadeTransition(
-            //               opacity: Tween<double>(
-            //                 begin: 0,
-            //                 end: 1,
-            //               ).animate(animation),
-            //               child: child,
-            //             );
-            //           },
-            //           transitionDuration: Duration(milliseconds: 400),
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
-            // new IconButton(
-            //   icon: new Icon(Icons.favorite),
-            //   onPressed: () => debugPrint('asd'),
-            // ),
-            // new IconButton(
-            //   icon: Icon(Icons.archive),
-            //   onPressed: () => Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => ViewOrder(),
-            //     ),
-            //   ),
-            // ),
-          ],
+          actions: <Widget>[],
         ),
         body: isLoading
             ? Center(
@@ -567,9 +493,6 @@ class _MenuPageState extends State<MenuPage> {
                                               size: 24,
                                             ),
                                       onPressed: () async {
-                                        SharedPreferences sharedPreferences =
-                                            await SharedPreferences
-                                                .getInstance();
                                         setState(() {
                                           if (favId != null) {
                                             deleteFavorite();
