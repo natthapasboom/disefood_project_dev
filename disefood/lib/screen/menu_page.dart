@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 import 'customer_dialog/order_amount_dialog.dart';
 import 'customer_utilities/sqlite_helper.dart';
 
@@ -195,19 +196,19 @@ class _MenuPageState extends State<MenuPage> {
 
         for (var e in favList.data) {
           if (shopId == e.shopId) {
-            logger.d(
-                'fav list customer ${e.userId} : shop id ${shopId} : favorite id = ${e.id} ');
-            logger.e('success');
+            // logger.d(
+            //     'fav list customer ${e.userId} : shop id ${shopId} : favorite id = ${e.id} ');
+            // logger.e('success');
             setState(() {
               favId = e.id;
               isFav = true;
-              logger.e('fav id $favId & shop id $isFav ');
+              // logger.e('fav id $favId & shop id $isFav ');
             });
           }
         }
         fav = json.decode(response.body)['data'];
         // logger.d('fav response : ${fav.toList()}');
-        logger.e('check fav id = $favId');
+        // logger.e('check fav id = $favId');
       });
     } else {
       logger.e('status : ${response.statusCode}');
@@ -219,117 +220,27 @@ class _MenuPageState extends State<MenuPage> {
     String token = sharedPreferences.getString('token');
     var response = await apiProvider.postFavorite(shopId, token);
     if (response.statusCode == 200) {
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) {
-            Future.delayed(Duration(seconds: 3), () {
-              Navigator.of(context).pop(true);
-            });
-            return Dialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: Container(
-                    height: 250.0,
-                    width: 300.0,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0)),
-                    child: Column(
-                      children: <Widget>[
-                        Stack(
-                          children: <Widget>[
-                            Center(
-                              child: Container(
-                                margin: EdgeInsets.only(top: 40),
-                                height: 90.0,
-                                width: 90.0,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/success.png'),
-                                      fit: BoxFit.cover,
-                                    )),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                            margin: EdgeInsets.only(
-                                top: 20, left: 10, right: 10, bottom: 0),
-                            child: Center(
-                              child: Text(
-                                'เพิ่มรายการโปรดสำเร็จ',
-                                style: TextStyle(
-                                  fontFamily: 'Aleo-Bold',
-                                  fontSize: 24.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )),
-                      ],
-                    )));
-          }).then((value) => Navigator.pop(context));
+      showToast("เพิ่มรายการโปรดสำเร็จแล้ว");
+      Navigator.of(context).pop();
     }
+  }
+
+  void showToast(String msg) {
+    Toast.show(
+      msg,
+      context,
+      textColor: Colors.white,
+    );
   }
 
   Future deleteFavorite() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String token = sharedPreferences.getString('token');
-    logger.e('before delete: $token $shopId');
+    // logger.e('before delete: $token $shopId');
     var response = await apiProvider.deleteFavorite(favId, token);
     if (response.statusCode == 200) {
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) {
-            Future.delayed(Duration(seconds: 3), () {
-              Navigator.of(context).pop(true);
-            });
-            return Dialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: Container(
-                    height: 250.0,
-                    width: 300.0,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0)),
-                    child: Column(
-                      children: <Widget>[
-                        Stack(
-                          children: <Widget>[
-                            Center(
-                              child: Container(
-                                margin: EdgeInsets.only(top: 40),
-                                height: 90.0,
-                                width: 90.0,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50.0),
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/red-cross.png'),
-                                      fit: BoxFit.cover,
-                                    )),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                            margin: EdgeInsets.only(
-                                top: 20, left: 10, right: 10, bottom: 0),
-                            child: Center(
-                              child: Text(
-                                'ลบรายการโปรดสำเร็จ',
-                                style: TextStyle(
-                                  fontFamily: 'Aleo-Bold',
-                                  fontSize: 24.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )),
-                      ],
-                    )));
-          }).then((value) => Navigator.pop(context));
+      showToast("ลบรายการโปรดสำเร็จแล้ว");
+      Navigator.of(context).pop();
     }
   }
 
@@ -534,7 +445,7 @@ class _MenuPageState extends State<MenuPage> {
                                     ],
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(left: 70),
+                                    margin: EdgeInsets.only(left: 55),
                                     child: RaisedButton(
                                         child: Center(
                                           child: Text(
@@ -570,21 +481,21 @@ class _MenuPageState extends State<MenuPage> {
                                           ? Icon(
                                               Icons.favorite_border,
                                               color: Color(0xffFF7C2C),
-                                              size: 24,
+                                              size: 34,
                                             )
                                           : Icon(
                                               Icons.favorite,
                                               color: Color(0xffFF7C2C),
-                                              size: 24,
+                                              size: 34,
                                             ),
                                       onPressed: () async {
                                         setState(() {
                                           if (favId != null) {
                                             deleteFavorite();
-                                            logger.d(isFav);
+                                            // logger.d(isFav);
                                           } else if (favId == null) {
                                             postFavorite();
-                                            logger.d(isFav);
+                                            // logger.d(isFav);
                                           }
                                         });
                                       },
@@ -620,13 +531,15 @@ class _MenuPageState extends State<MenuPage> {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 40,
+                                  width: 55,
                                 ),
                                 SizedBox(
                                   child: Text(
                                     "ราคา",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -647,7 +560,10 @@ class _MenuPageState extends State<MenuPage> {
                                         children: <Widget>[
                                           SizedBox(
                                             width: 190,
-                                            child: Text('${item['name']}'),
+                                            child: Text(
+                                              '${item['name']}',
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
                                           SizedBox(
                                             width: 25,
@@ -664,6 +580,9 @@ class _MenuPageState extends State<MenuPage> {
                                             child: Text(
                                               '${item['price']}',
                                               textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           SizedBox(
@@ -698,16 +617,6 @@ class _MenuPageState extends State<MenuPage> {
                                                   ),
                                                 );
                                               },
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 30,
-                                            child: IconButton(
-                                              icon: new Icon(
-                                                Icons.favorite_border,
-                                                color: Colors.orange,
-                                              ),
-                                              onPressed: () {},
                                             ),
                                           ),
                                         ],
@@ -794,7 +703,7 @@ class _MenuPageState extends State<MenuPage> {
                                 ),
                                 Container(
                                   alignment: Alignment.centerLeft,
-                                  margin: EdgeInsets.only(left: 40),
+                                  margin: EdgeInsets.only(left: 30),
                                   child: IconButton(
                                       icon: Icon(
                                         Icons.clear,
@@ -938,7 +847,7 @@ class _MenuPageState extends State<MenuPage> {
                                       String review =
                                           reviewController.text.trim();
                                       int rating1 = this.rating.toInt();
-                                      logger.d('body : $review  $rating1 ');
+                                      // logger.d('body : $review  $rating1 ');
                                       if (_formKey.currentState.validate()) {
                                         String url =
                                             'http://54.151.194.224:8000/api/feedback/me/shop/$shopId';
@@ -958,8 +867,8 @@ class _MenuPageState extends State<MenuPage> {
                                                 validateStatus: (status) {
                                                   return status < 500;
                                                 }));
-                                        logger.d(
-                                            'review status: ${response.statusCode}');
+                                        // logger.d(
+                                        //     'review status: ${response.statusCode}');
                                         if (response.statusCode == 200) {
                                           showDialog(
                                                   context: context,

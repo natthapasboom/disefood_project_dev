@@ -190,13 +190,18 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                           margin: EdgeInsets.only(top: 3),
                                           child: Row(
                                             children: [
-                                              Text(
-                                                "${data.orderDetails[0].food.name}",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.orange,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                              SizedBox(
+                                                width: 135,
+                                                child: Text(
+                                                  "${data.orderDetails[0].food.name}",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.orange,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                               ),
                                               SizedBox(
                                                 width: 5,

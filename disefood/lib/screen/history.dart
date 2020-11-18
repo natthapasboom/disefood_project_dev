@@ -320,6 +320,7 @@ class _HistoryState extends State<History> {
                                               context,
                                               data.status,
                                               data.orderDetails,
+                                              data.shopId,
                                             );
                                           },
                                           child: Card(
@@ -411,8 +412,8 @@ class _HistoryState extends State<History> {
     );
   }
 
-  alertDialog(
-      BuildContext context, String status, List<OrderDetails> orderDetail) {
+  alertDialog(BuildContext context, String status,
+      List<OrderDetails> orderDetail, int shopId) {
     print(orderDetail.length);
     showDialog(
         context: context,
@@ -490,7 +491,7 @@ class _HistoryState extends State<History> {
                                 child: Container(
                                   margin: EdgeInsets.only(bottom: 5),
                                   child: Text(
-                                    '${orderDetail[index].food.name} ${orderDetail[index].quantity}',
+                                    '${orderDetail[index].food.name} : ${orderDetail[index].quantity}',
                                     style: TextStyle(
                                         fontFamily: 'Roboto',
                                         fontSize: 14,
@@ -507,14 +508,31 @@ class _HistoryState extends State<History> {
                     ),
                   ),
                   Container(
-                    child: FlatButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PaymentPage()));
+                    margin: EdgeInsets.only(bottom: 20),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: orderDetail.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        // final Map parsed = json.decode(orderDetail.toString());
+                        // final food = Food.fromJson(parsed);
+                        // var data = orderDetail[index];
+                        return Container(
+                          child: FlatButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PaymentPage(shopId: shopId),
+                                ),
+                              );
+                            },
+                            child: Text("ไปยังหน้าจ่ายเงิน"),
+                          ),
+                        );
                       },
-                      child: Text("ไปยังหน้าจ่ายเงิน"),
+                      // itemCount: ,
                     ),
                   ),
                   InkWell(
