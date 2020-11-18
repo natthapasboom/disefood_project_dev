@@ -44,7 +44,7 @@ class _HomeAdminState extends State<HomeAdmin> {
     });
   }
 
-  Future<UserById> findUser() async {
+  Future<Null> findUser() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     String token = preference.getString('token');
     logger.d(token);
@@ -54,7 +54,6 @@ class _HomeAdminState extends State<HomeAdmin> {
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       UserById msg = UserById.fromJson(map);
-      var data = msg.data.toJson();
       userId = preference.getInt('user_id');
       setState(() {
         nameUser = msg.data.firstName;

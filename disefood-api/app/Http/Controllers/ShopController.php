@@ -6,6 +6,7 @@ use App\Http\Requests\CreateAccountNumberRequest;
 use App\Http\Requests\UpdateAccountNumberInShopRequest;
 use App\Http\Requests\UpdateFoodInShop;
 use App\Repositories\Interfaces\AccountNumberRepositoryInterface;
+use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\ShopRepositoryInterface;
 use App\Repositories\Interfaces\FoodRepositoryInterface;
 use App\Http\Requests\CreateShopRequest;
@@ -21,17 +22,20 @@ class ShopController extends Controller
     private $shopRepo;
     private $foodRepo;
     private $accNumberRepo;
+    private $orderRepo;
 
     public function __construct
     (
         ShopRepositoryInterface $shopRepo,
         FoodRepositoryInterface $foodRepo,
-        AccountNumberRepositoryInterface $accNumber
+        AccountNumberRepositoryInterface $accNumber,
+        OrderRepositoryInterface $orderRepo
     )
     {
         $this->shopRepo = $shopRepo;
         $this->foodRepo = $foodRepo;
         $this->accNumberRepo = $accNumber;
+        $this->orderRepo = $orderRepo;
     }
 
     public function getShopsList()
@@ -331,6 +335,41 @@ class ShopController extends Controller
             return response()->json(['msg' => 'No Permission'], 401);
         }
 
+    }
+
+    public function dataSummary($shopId)
+    {
+        $user = Auth::user();
+        $userId = $user['id'];
+
+        if (!$this->isOwner($userId, $shopId)) {
+            return response()->json(['msg' => 'No Permission'], 401);
+        }
+
+        $shop = $this->shopRepo->findById($shopId);
+        $foods = $shop->foods;
+        foreach ($foods as $food) {
+            $food['totalQuantity'] = 0;
+            $food['totalAmount'] = 0;
+            $orderDetails = $food->orderDetails;
+            $foods->makeHidden('orderDetails');
+            foreach ($orderDetails as $orderDetail) {
+                $order = $orderDetail->order;
+                if($order->status === 'success') {
+                    $food['totalQuantity'] += $orderDetail->quantity;
+                    $food['totalAmount'] += $orderDetail->price;
+                    $shop['totalAmountShop'] += $orderDetail->price;
+                    $shop['totalQuantityShop'] += $orderDetail->quantity;
+                }
+            }
+        }
+
+        $sorted = $foods->sortDesc();
+        $data = $sorted->values()->all();
+        $data['totalAmountShop'] = $shop['totalAmountShop'];
+        $data['totalQuantityShop'] = $shop['totalQuantityShop'];
+
+        return response()->json(['data' => $data], 200);
     }
 
     private function isSeller()

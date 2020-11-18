@@ -71,7 +71,7 @@ class _HomeSellerState extends State<HomeSeller> {
         email = msg.data.email;
       });
     } else {
-      logger.e("statuscode != 200");
+      print("statuscode != 200");
     }
   }
 
@@ -81,12 +81,12 @@ class _HomeSellerState extends State<HomeSeller> {
     token = preference.getString('token');
 
     var response = await apiProvider.getShopId(token);
-    logger.d(token);
+    // logger.d(token);
     print(response.statusCode);
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       ShopById msg = ShopById.fromJson(map);
-      logger.d(msg.data);
+      // logger.d(msg.data);
       setState(() {
         _isLoading = true;
         _shopName = msg.data.name;
@@ -104,8 +104,8 @@ class _HomeSellerState extends State<HomeSeller> {
     } else {
       setState(() {
         _isLoading = true;
-        logger.d('shop not found');
-        logger.d(_shopId);
+        print('shop not found');
+        // logger.d(_shopId);
       });
     }
   }
@@ -132,7 +132,7 @@ class _HomeSellerState extends State<HomeSeller> {
 
   @override
   Widget build(BuildContext context) {
-    logger.d(_shopId);
+    // logger.d(_shopId);
     return new Scaffold(
       body: _isLoading == false
           ? Center(

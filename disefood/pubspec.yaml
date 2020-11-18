@@ -14,7 +14,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -36,7 +36,6 @@ dependencies:
   logger: ^0.9.4
   cached_network_image: ^2.2.0+1
   image_downloader: any
-  flutter_time_picker_spinner: ^1.0.6+1
   steps_indicator: ^1.1.0
   flutter_rating_bar: ^3.0.1+1
   google_fonts: ^1.1.1
@@ -46,6 +45,9 @@ dependencies:
   flutter_svg: ^0.18.1
   provider: ^4.3.2+2
   flutter_facebook_login: ^1.2.0
+
+  day_night_time_picker: ^0.3.0+2
+  cloud_firestore: ^0.14.3
 
 dev_dependencies:
   flutter_test:

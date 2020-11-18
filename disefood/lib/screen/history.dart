@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:disefood/model/shop_id.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart';
 import 'package:disefood/model/orderList.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';

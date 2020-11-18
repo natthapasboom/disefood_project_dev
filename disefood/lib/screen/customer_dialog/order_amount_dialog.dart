@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/model/cart.dart';
-import 'package:disefood/screen/customer_dialog/order_failed_dialog.dart';
+import 'package:disefood/screen/customer_dialog/reset_cart_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -9,40 +9,70 @@ import 'package:toast/toast.dart';
 class OrderAmountDialog extends StatefulWidget {
   final int shopId;
   final int foodId;
+  final int foodIndex;
+  final String foodQuantity;
   final String foodName;
   final String foodImg;
+  final String shopName;
   final int foodPrice;
+  final VoidCallback readSQLite;
+  final Function(int, int) checkQuantity;
+
   const OrderAmountDialog({
     Key key,
     @required this.foodName,
     @required this.foodImg,
     @required this.foodId,
     @required this.shopId,
+    @required this.shopName,
     @required this.foodPrice,
+    @required this.readSQLite,
+    @required this.checkQuantity,
+    @required this.foodIndex,
+    @required this.foodQuantity,
   }) : super(key: key);
   @override
   _OrderAmountDialogState createState() => _OrderAmountDialogState();
 }
 
 class _OrderAmountDialogState extends State<OrderAmountDialog> {
+  VoidCallback readSQLite;
+  Function(int, int) checkQuantity;
+
   Logger logger = Logger();
   int foodId;
   String shopId;
   String foodName;
   String foodImg;
-  int foodQuantity = 1;
+  String foodQuantity;
+  String foodDescription;
+  int foodIndex;
   int foodPrice;
+  String shopName;
+  int shopSlot;
+  int qty;
+  String shopCoverImg;
   final myController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-
+    readSQLite = widget.readSQLite;
+    checkQuantity = widget.checkQuantity;
     setState(() {
       foodName = widget.foodName;
+      foodIndex = widget.foodIndex;
+      if (widget.foodQuantity == " ") {
+        qty = 1;
+      } else {
+        qty = int.parse(widget.foodQuantity);
+      }
+
       foodImg = widget.foodImg;
       foodId = widget.foodId;
       shopId = widget.shopId.toString();
       foodPrice = widget.foodPrice;
+      shopName = widget.shopName;
     });
     Future.microtask(() {});
   }
@@ -145,7 +175,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
                         margin: EdgeInsets.only(
                             left: 20, right: 20, top: 10, bottom: 10),
                         child: new Text(
-                          '$foodQuantity',
+                          '$qty',
                           style: new TextStyle(fontSize: 20.0),
                         ),
                       ),
@@ -195,35 +225,12 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
                         child: RaisedButton(
                           elevation: 8,
                           onPressed: () {
-                            if (foodQuantity == 0) {
-                              Navigator.of(context).pop();
+                            if (qty == 0) {
+                              deleteFoodInCart();
+                              Navigator.of(context).pop(true);
                             } else {
                               addFoodToCart();
-                              Navigator.of(context).pop();
-                              //   Navigator.push(
-                              //     context,
-                              //     PageRouteBuilder(
-                              //       pageBuilder: (BuildContext context,
-                              //           Animation<double> animation,
-                              //           Animation<double> secondaryAnimation) {
-                              //         return OrderItemPage();
-                              //       },
-                              //       transitionsBuilder: (BuildContext context,
-                              //           Animation<double> animation,
-                              //           Animation<double> secondaryAnimation,
-                              //           Widget child) {
-                              //         return FadeTransition(
-                              //           opacity: Tween<double>(
-                              //             begin: 0,
-                              //             end: 1,
-                              //           ).animate(animation),
-                              //           child: child,
-                              //         );
-                              //       },
-                              //       transitionDuration:
-                              //           Duration(milliseconds: 400),
-                              //     ),
-                              //   );
+                              Navigator.of(context).pop(true);
                             }
                           },
                           padding: EdgeInsets.only(left: 20, right: 20),
@@ -249,21 +256,21 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
   }
 
   void add() {
-    foodQuantity++;
+    qty++;
     checkButtonRemove();
     setState(() {});
   }
 
   void remove() {
-    if (foodQuantity > 0) {
-      foodQuantity--;
+    if (qty > 0) {
+      qty--;
       checkButtonRemove();
       setState(() {});
     }
   }
 
   void checkButtonRemove() {
-    if (foodQuantity <= 0) {
+    if (qty <= 0) {
       setState(() {});
     } else {
       setState(() {});
@@ -281,14 +288,20 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
   Future<Null> addFoodToCart() async {
     Map<String, dynamic> orderMap = Map();
     orderMap['shopId'] = shopId;
+    orderMap['shopName'] = shopName;
     orderMap['foodId'] = foodId;
     orderMap['foodName'] = foodName;
-    orderMap['foodQuantity'] = foodQuantity;
-    orderMap['foodDescription'] = myController.text;
+    orderMap['foodQuantity'] = qty;
+    if (myController.text == "") {
+      foodDescription = "-";
+    } else {
+      foodDescription = myController.text;
+    }
+    orderMap['foodDescription'] = foodDescription;
     orderMap['foodPrice'] = foodPrice;
-    orderMap['foodSumPrice'] = foodPrice * foodQuantity;
+    orderMap['foodSumPrice'] = foodPrice * qty;
     orderMap['foodImg'] = foodImg;
-    print('orderMap Data :  ${orderMap.toString()} ');
+    print('Food Data :  ${orderMap.toString()} ');
     CartModel cartModel = CartModel.fromJson(orderMap);
 
     var object = await SQLiteHelper().readAllDataFromSQLite();
@@ -297,6 +310,8 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
       await SQLiteHelper().insertDataToSQLite(cartModel).then(
         (value) {
           showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
+          readSQLite();
+          checkQuantity(foodIndex, qty);
         },
       );
     } else {
@@ -305,10 +320,62 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
         await SQLiteHelper().insertDataToSQLite(cartModel).then(
           (value) {
             showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
+            readSQLite();
+            checkQuantity(foodIndex, qty);
           },
         );
       } else {
-        showDialog(context: context, builder: (context) => OrderFailed());
+        showDialog(
+          context: context,
+          builder: (context) => ResetCart(
+            shopId: shopId,
+            shopName: shopName,
+            foodId: foodId,
+            foodName: foodName,
+            qty: qty,
+            foodDescription: foodDescription,
+            foodPrice: foodPrice,
+            foodImg: foodImg,
+            foodIndex: foodIndex,
+            readSQLite: readSQLite,
+            checkQuantity: checkQuantity,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<Null> deleteFoodInCart() async {
+    int id = foodId;
+    var object = await SQLiteHelper().readAllDataFromSQLite();
+    print("Deleting FoodID : $id in cart");
+    if (object.length == 0) {
+      try {
+        await SQLiteHelper().deleteDataWhereId(foodId).then((value) {
+          print("FoodID : $id is not in cart.");
+          // showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
+          //ไม่ต้องแสดง
+          readSQLite();
+          checkQuantity(foodIndex, qty);
+        });
+      } catch (e) {
+        print(e);
+      }
+    } else {
+      String idShopSQLite = object[0].shopId;
+      if (shopId == idShopSQLite) {
+        try {
+          await SQLiteHelper().deleteDataWhereId(foodId).then((value) {
+            print("FoodID : $id has been deleted.");
+            showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");
+            readSQLite();
+            checkQuantity(foodIndex, qty);
+          });
+        } catch (e) {
+          print(e);
+        }
+      } else {
+        print("Case: Human error => No action.");
       }
     }
   }

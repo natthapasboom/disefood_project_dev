@@ -1,25 +1,19 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:disefood/model/cart.dart';
 import 'package:disefood/model/favorite.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/config/app_config.dart';
-import 'package:disefood/model/foodByShopId.dart';
-import 'package:disefood/model/foods_list.dart';
-import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen/home_customer.dart';
-import 'package:disefood/screen/menu_amount_select.dart';
 import 'package:disefood/screen/order_cart.dart';
-import 'package:disefood/screen/view_order_page.dart';
-import 'package:disefood/screen_seller/editmenu.dart';
 import 'package:disefood/services/api_provider.dart';
-import 'package:disefood/services/getfoodmenupageservice.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'customer_dialog/order_amount_dialog.dart';
+import 'customer_utilities/sqlite_helper.dart';
 
 class MenuPage extends StatefulWidget {
   final int shopId;
@@ -55,10 +49,16 @@ class _MenuPageState extends State<MenuPage> {
   int userId;
   bool isFav = false;
   var favList;
+  List quantities;
+  List<CartModel> cartModels = List();
+
+  bool isCartNotEmpty = false;
+  // bool isShopHasItemInCart = false;
+  int totalQty;
   @override
   void initState() {
     super.initState();
-
+    readSQLite();
     setState(() {
       rating = 0;
       shopName = widget.shopName;
@@ -72,6 +72,53 @@ class _MenuPageState extends State<MenuPage> {
       // findUser();
     });
   }
+
+  Future<Null> readSQLite() async {
+    var object = await SQLiteHelper().readAllDataFromSQLite();
+    totalQty = 0;
+    setState(() {
+      for (var model in object) {
+        cartModels = object;
+        totalQty = totalQty + model.foodQuantity;
+      }
+    });
+    if (totalQty == 0) {
+      setState(() {
+        isCartNotEmpty = false;
+      });
+    } else {
+      setState(() {
+        isCartNotEmpty = true;
+      });
+    }
+  }
+
+  // void checkEmptyCart() {
+  //   if (cartModels.length == 0) {
+  //     setState(() {
+  //       isCartNotEmpty = false;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isCartNotEmpty = true;
+  //     });
+  //   }
+  //   print(isCartNotEmpty);
+  //   // checkCorrectCart();
+  // }
+
+  // void checkCorrectCart() {
+  //   int idShopSQLite = int.parse(cartModels[0].shopId);
+  //   if (shopId == idShopSQLite) {
+  //     setState(() {
+  //       isShopHasItemInCart = true;
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isShopHasItemInCart = false;
+  //     });
+  //   }
+  // }
 
   _ackAlert(BuildContext context) {
     return showDialog(
@@ -97,14 +144,39 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
+  void checkQuantity(int index, int quantity) {
+    setState(() {
+      if (quantity == 0) {
+        foods[index]['quantity'] = " ";
+      } else {
+        foods[index]['quantity'] = "+" + "$quantity";
+      }
+    });
+  }
+  // Future<UserById> findUser() async {
+  //   SharedPreferences preference = await SharedPreferences.getInstance();
+  //   userId = preference.getInt('user_id');
+  // }
+
   Future findMenu() async {
     var response = await apiProvider.getFoodByShopId(shopId);
-    print(response.statusCode);
+    print("Connection Status Code: " + "${response.statusCode}");
     var body = response.body;
     if (response.statusCode == 200) {
       setState(() {
         isLoading = false;
         foods = json.decode(body)['data'];
+        // quantities = new List(foods.length);
+        foods.forEach((food) {
+          food['quantity'] = " ";
+        });
+        for (var i = 0; i < cartModels.length; i++) {
+          foods.forEach((food) {
+            if (cartModels[i].foodId == food['id']) {
+              food['quantity'] = "+" + "${cartModels[i].foodQuantity}";
+            }
+          });
+        }
       });
     } else {
       logger.e("statuscode != 200");
@@ -289,51 +361,58 @@ class _MenuPageState extends State<MenuPage> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         resizeToAvoidBottomPadding: false,
-        bottomNavigationBar: Container(
-          decoration: new BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                blurRadius: 12.0,
-                spreadRadius: 5.0,
-                offset: Offset(
-                  10.0,
-                  10.0,
-                ),
-              )
-            ],
-          ),
-          child: BottomAppBar(
-            shape: CircularNotchedRectangle(),
-            child: new Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 70,
-                ),
-                Container(
-                  width: 370,
-                  height: 40,
-                  child: FloatingActionButton.extended(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+        appBar: AppBar(
+          actions: <Widget>[
+            new IconButton(
+              icon: new Icon(Icons.favorite),
+              onPressed: () => debugPrint('asd'),
+            ),
+            new IconButton(
+              icon: Icon(Icons.archive),
+              onPressed: () {},
+            ),
+          ],
+        ),
+        floatingActionButton: Visibility(
+          visible: totalQty != 0,
+          child: Stack(
+            children: [
+              FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => OrderItemPage(
+                        shopId: shopId,
+                        shopName: shopName,
+                        shopSlot: shopSlot,
+                        shopCoverImg: shopCoverImg,
+                        findMenu: findMenu,
+                      ),
                     ),
-                    backgroundColor: Colors.orange,
-                    elevation: 4.0,
-                    label: Row(
-                      children: [
-                        Icon(Icons.shopping_basket),
-                        Text(
-                          'ไปยังตะกร้า',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
+                  );
+                },
+                child: Icon(
+                  Icons.shopping_bag,
+                  color: Colors.white,
+                ),
+                backgroundColor: Colors.orange,
+              ),
+              Positioned(
+                right: 11,
+                top: 11,
+                child: new Container(
+                  padding: EdgeInsets.all(2),
+                  decoration: new BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  constraints: BoxConstraints(
+                    minWidth: 14,
+                    minHeight: 14,
+                  ),
+                  child: InkWell(
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -342,18 +421,24 @@ class _MenuPageState extends State<MenuPage> {
                             shopName: shopName,
                             shopSlot: shopSlot,
                             shopCoverImg: shopCoverImg,
+                            findMenu: findMenu,
                           ),
                         ),
                       );
                     },
+                    child: Text(
+                      '$totalQty',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ),
-        appBar: AppBar(
-          actions: <Widget>[],
         ),
         body: isLoading
             ? Center(
@@ -518,60 +603,61 @@ class _MenuPageState extends State<MenuPage> {
                         ),
                       ),
                       Container(
-                        color: Colors.white,
-                        padding: EdgeInsets.fromLTRB(45, 10, 45, 0),
+                        margin: EdgeInsets.only(right: 40, left: 40),
+                        padding: EdgeInsets.only(top: 10),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                Text(
-                                  "รายการอาหาร",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                                SizedBox(
+                                  width: 190,
+                                  child: Text(
+                                    "รายการอาหาร",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                                SizedBox(width: 65),
-                                Text(
-                                  "ราคา",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                SizedBox(
+                                  width: 40,
+                                ),
+                                SizedBox(
+                                  child: Text(
+                                    "ราคา",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ],
                             ),
                             Container(
                               margin: EdgeInsets.only(bottom: 20),
-                              width: double.maxFinite,
                               child: ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 itemCount: foods != null ? foods.length : 0,
                                 itemBuilder: (BuildContext context, int index) {
                                   var item = foods[index];
-                                  // logger.d(foods);
                                   return Column(
                                     children: <Widget>[
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          // Visibility(
-                                          //   visible: false,
-                                          //   child: SizedBox(
-                                          //     width: 25,
-                                          //     child: Text(
-                                          //       "0",
-                                          //       style: TextStyle(
-                                          //           fontWeight: FontWeight.bold,
-                                          //           color: Colors.orange),
-                                          //     ),
-                                          //   ),
-                                          //   replacement: SizedBox(
-                                          //     width: 20,
-                                          //   ),
-                                          // ),
                                           SizedBox(
                                             width: 190,
                                             child: Text('${item['name']}'),
+                                          ),
+                                          SizedBox(
+                                            width: 25,
+                                            child: Text(
+                                              "${item['quantity']}",
+                                              style: TextStyle(
+                                                color: Colors.orange,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
                                           SizedBox(
                                             width: 30,
@@ -581,38 +667,48 @@ class _MenuPageState extends State<MenuPage> {
                                             ),
                                           ),
                                           SizedBox(
-                                            width: 5,
-                                          ),
-                                          IconButton(
-                                            icon: new Icon(
-                                              Icons.add_circle_outline,
-                                              color: Colors.orange,
+                                            width: 30,
+                                            child: IconButton(
+                                              icon: new Icon(
+                                                Icons.add_circle_outline,
+                                                color: Colors.orange,
+                                              ),
+                                              onPressed: () {
+                                                int foodId = item['id'];
+                                                String foodname = item['name'];
+                                                String foodImg =
+                                                    item['cover_img'];
+                                                int foodPrice = item["price"];
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      OrderAmountDialog(
+                                                    shopId: shopId,
+                                                    shopName: shopName,
+                                                    foodId: foodId,
+                                                    foodName: foodname,
+                                                    foodImg: foodImg,
+                                                    foodPrice: foodPrice,
+                                                    readSQLite: readSQLite,
+                                                    checkQuantity:
+                                                        checkQuantity,
+                                                    foodIndex: index,
+                                                    foodQuantity:
+                                                        item['quantity'],
+                                                  ),
+                                                );
+                                              },
                                             ),
-                                            onPressed: () {
-                                              int foodId = item['id'];
-                                              String foodname = item['name'];
-                                              String foodImg =
-                                                  item['cover_img'];
-                                              int foodPrice = item["price"];
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    OrderAmountDialog(
-                                                  shopId: shopId,
-                                                  foodId: foodId,
-                                                  foodName: foodname,
-                                                  foodImg: foodImg,
-                                                  foodPrice: foodPrice,
-                                                ),
-                                              );
-                                            },
                                           ),
-                                          IconButton(
-                                            icon: new Icon(
-                                              Icons.favorite_border,
-                                              color: Colors.orange,
+                                          SizedBox(
+                                            width: 30,
+                                            child: IconButton(
+                                              icon: new Icon(
+                                                Icons.favorite_border,
+                                                color: Colors.orange,
+                                              ),
+                                              onPressed: () {},
                                             ),
-                                            onPressed: () {},
                                           ),
                                         ],
                                       ),
@@ -628,6 +724,9 @@ class _MenuPageState extends State<MenuPage> {
                             ),
                           ],
                         ),
+                      ),
+                      SizedBox(
+                        height: 40,
                       ),
                     ],
                   ),

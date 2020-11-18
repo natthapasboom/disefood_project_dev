@@ -3,6 +3,7 @@
 
 namespace App\Models\Shop;
 
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Feedback extends Model
@@ -16,5 +17,10 @@ class Feedback extends Model
     public function shop()
     {
         return $this->belongsTo(Shop::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
