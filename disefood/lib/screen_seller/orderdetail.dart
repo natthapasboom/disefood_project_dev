@@ -447,7 +447,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                           ),
                         ),
                         Icon(
-                          Icons.more_time,
+                          Icons.timer,
                           color: Colors.white,
                         ),
                       ],

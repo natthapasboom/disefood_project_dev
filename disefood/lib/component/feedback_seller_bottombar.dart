@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/component/star.dart';
 import 'package:disefood/model/feedback.dart';
@@ -396,10 +397,26 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
                                           child: CircleAvatar(
                                             radius: 100,
                                             child: ClipOval(
-                                              child: Image.network(
-                                                'https://scontent.fbkk12-1.fna.fbcdn.net/v/t1.0-9/122219506_1629765710526804_3970435939360635059_o.jpg?_nc_cat=106&ccb=2&_nc_sid=09cbfe&_nc_eui2=AeG-06TOd9Eumc8zZJEyOlsxA6wP6IFC7EQDrA_ogULsRGiPjcv5ml7SJViHD7ToTxUWz-jchtyTHkOX2tfX7juW&_nc_ohc=r7QeRyebQ_gAX8fBuhB&_nc_ht=scontent.fbkk12-1.fna&oh=8aae713f272479995919a5de87201a11&oe=5FCF6D86',
+                                              child: CachedNetworkImage(
+                                                imageUrl:
+                                                    'https://disefood.s3-ap-southeast-1.amazonaws.com/${data.user.profileImg}',
                                                 fit: BoxFit.fill,
                                                 width: 50,
+                                                placeholder: (context, url) =>
+                                                    Center(
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 50, bottom: 35),
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      strokeWidth: 5.0,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation(
+                                                              const Color(
+                                                                  0xffF6A911)),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),

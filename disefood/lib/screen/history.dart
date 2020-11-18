@@ -315,11 +315,13 @@ class _HistoryState extends State<History> {
                                         child: InkWell(
                                           onTap: () {
                                             print(data.orderDetails.length);
-                                            alertDialog(
-                                              context,
-                                              data.status,
-                                              data.orderDetails,
-                                            );
+                                            // alertDialog(
+                                            //   context,
+                                            //   data.status,
+                                            //   data.orderDetails,
+                                            // );
+                                            alertHistory(context, data.status,
+                                                data.orderDetails);
                                           },
                                           child: Card(
                                             shape: RoundedRectangleBorder(
@@ -410,114 +412,127 @@ class _HistoryState extends State<History> {
     );
   }
 
-  alertDialog(
+  alertHistory(
       BuildContext context, String status, List<OrderDetails> orderDetail) {
-    print(orderDetail.length);
     showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(25.0))),
-            contentPadding: EdgeInsets.only(top: 0.0),
-            content: Container(
-              width: 300.0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                    decoration: BoxDecoration(
-                      color: Color(0xffFF7C2C),
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25.0),
-                          topRight: Radius.circular(25.0)),
-                    ),
-                    child: Text(
-                      "Wait Order",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Aleo',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: 20,
-                    ),
-                    child: checkTextStatus(status),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 15, bottom: 20),
-                    child: indicatorCheck(status),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: checkImageStatus(status),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 15, bottom: 20),
-                    child: Center(
-                      child: Text(
-                        'รายการอาหาร',
-                        style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: orderDetail.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        // final Map parsed = json.decode(orderDetail.toString());
-                        // final food = Food.fromJson(parsed);
-                        // var data = orderDetail[index];
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Center(
-                              child: Expanded(
-                                child: Container(
-                                  margin: EdgeInsets.only(bottom: 5),
-                                  child: Text(
-                                    '${orderDetail[index].food.name} ${orderDetail[index].quantity}',
-                                    style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: const Color(0xff838181)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                      // itemCount: ,
-                    ),
-                  ),
-                  InkWell(
-                    child: Container(
-                      height: 51,
-                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+          return Container(
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25.0))),
+              contentPadding: EdgeInsets.only(top: 0.0),
+              content: Container(
+                width: 400,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                       decoration: BoxDecoration(
                         color: Color(0xffFF7C2C),
                         borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(25.0),
-                            bottomRight: Radius.circular(25.0)),
+                            topLeft: Radius.circular(25.0),
+                            topRight: Radius.circular(25.0)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(left: 100),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "รีวิวร้านค้า",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Aleo',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24),
+                              // textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            margin: EdgeInsets.only(left: 40),
+                            child: IconButton(
+                                icon: Icon(
+                                  Icons.clear,
+                                  color: Colors.white,
+                                  size: 36,
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 20,
+                      ),
+                      child: checkTextStatus(status),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 15, bottom: 20),
+                      child: indicatorCheck(status),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: checkImageStatus(status),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 15, bottom: 20),
+                      child: Center(
+                        child: Text(
+                          'รายการอาหาร',
+                          style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: orderDetail.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Center(
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: Text(
+                                '${orderDetail[index].food.name} ${orderDetail[index].quantity}',
+                                style: TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xff838181)),
+                              ),
+                            ),
+                          );
+                        },
+                        // itemCount: ,
+                      ),
+                    ),
+                    InkWell(
+                      child: Container(
+                        height: 51,
+                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                        decoration: BoxDecoration(
+                          color: Color(0xffFF7C2C),
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(25.0),
+                              bottomRight: Radius.circular(25.0)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

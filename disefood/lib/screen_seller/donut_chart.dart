@@ -277,7 +277,7 @@ class PieChart2State extends State<PieChartSample2> {
     int _shopId = sharedPreferences.getInt('shop_id');
     String token = sharedPreferences.getString('token');
     logger.e('shopId now : $_shopId');
-    var response = await apiProvider.getFeedback3(token, _shopId);
+    var response = await apiProvider.getFeedback1(token, _shopId);
     logger.d('response 1 star: ${response.body}');
     logger.d('response 1 star statusCode: ${response.statusCode}');
     String star = '1';
@@ -308,7 +308,7 @@ class PieChart2State extends State<PieChartSample2> {
     int _shopId = sharedPreferences.getInt('shop_id');
     String token = sharedPreferences.getString('token');
     logger.e('shopId now : $_shopId');
-    var response = await apiProvider.getFeedback3(token, _shopId);
+    var response = await apiProvider.getFeedback2(token, _shopId);
     logger.d('response 2 star: ${response.body}');
     logger.d('response 2 star statusCode: ${response.statusCode}');
     String star = '2';
@@ -339,7 +339,7 @@ class PieChart2State extends State<PieChartSample2> {
     int _shopId = sharedPreferences.getInt('shop_id');
     String token = sharedPreferences.getString('token');
     logger.e('shopId now : $_shopId');
-    var response = await apiProvider.getFeedback3(token, _shopId);
+    var response = await apiProvider.getFeedback4(token, _shopId);
     logger.d('response 4 star: ${response.body}');
     logger.d('response 4 star statusCode: ${response.statusCode}');
     String star = '4';
@@ -370,7 +370,7 @@ class PieChart2State extends State<PieChartSample2> {
     int _shopId = sharedPreferences.getInt('shop_id');
     String token = sharedPreferences.getString('token');
     logger.e('shopId now : $_shopId');
-    var response = await apiProvider.getFeedback3(token, _shopId);
+    var response = await apiProvider.getFeedback5(token, _shopId);
     logger.d('response 5 star: ${response.body}');
     logger.d('response 5 star statusCode: ${response.statusCode}');
     String star = '5';
@@ -504,7 +504,7 @@ class PieChart2State extends State<PieChartSample2> {
         case 0:
           return PieChartSectionData(
             color: const Color(0xff4C7286),
-            value: star5 == null ? 0.0 : star5,
+            value: star5,
             title: star5 == null ? '' : '$star5',
             showTitle: true,
             radius: radius,

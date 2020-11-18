@@ -62,7 +62,6 @@ class _HomeSellerState extends State<HomeSeller> {
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       UserById msg = UserById.fromJson(map);
-      var data = msg.data.toJson();
       userId = preference.getInt('user_id');
       setState(() {
         nameUser = msg.data.firstName;
