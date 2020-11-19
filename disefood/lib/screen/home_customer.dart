@@ -72,13 +72,14 @@ class _HomeState extends State<Home> {
         profileImg = facebookImg == null ? msg.data.profileImg : facebookImg;
         logger.e('image: $profileImg ');
         email = msg.data.email;
-        if (facebookImg != null || profileImg != null) {
+        if (profileImg.contains('.jpeg')) {
           setState(() {
-            _isFacebookAccount = true;
+            _isFacebookAccount = false;
+
             logger.e('is face account : $_isFacebookAccount');
           });
         } else {
-          _isFacebookAccount = false;
+          _isFacebookAccount = true;
           logger.e('is face account : $_isFacebookAccount');
         }
       });
