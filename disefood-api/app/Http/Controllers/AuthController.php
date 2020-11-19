@@ -146,6 +146,7 @@ class AuthController extends Controller
         if (!!$duplicateUser) {
             $user = $duplicateUser;
         } else {
+            $newUser['password'] = bcrypt(0);
             $user = $this->userRepo->create($newUser);
         }
 
