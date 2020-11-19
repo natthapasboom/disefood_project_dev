@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:disefood/model/shop_id.dart';
+import 'package:disefood/screen/payment_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:disefood/model/orderList.dart';
@@ -322,7 +323,7 @@ class _HistoryState extends State<History> {
                                             //   data.orderDetails,
                                             // );
                                             alertHistory(context, data.status,
-                                                data.orderDetails);
+                                                data.orderDetails, data.shopId);
                                           },
                                           child: Card(
                                             shape: RoundedRectangleBorder(
@@ -414,8 +415,8 @@ class _HistoryState extends State<History> {
     );
   }
 
-  alertHistory(
-      BuildContext context, String status, List<OrderDetails> orderDetail) {
+  alertHistory(BuildContext context, String status,
+      List<OrderDetails> orderDetail, int shopId) {
     showDialog(
         context: context,
         builder: (context) {
