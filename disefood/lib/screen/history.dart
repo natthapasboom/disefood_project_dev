@@ -108,6 +108,7 @@ class _HistoryState extends State<History> {
   Widget getDate(String timePickup) {
     DateTime convertDate = DateTime.parse(timePickup);
     final DateFormat formatter = DateFormat('dd/MM/yyyy');
+
     String formattedDate = formatter.format(convertDate);
     print(formattedDate);
     return Text('$formattedDate',
@@ -347,7 +348,8 @@ class _HistoryState extends State<History> {
                                                       mainAxisSize:
                                                           MainAxisSize.min,
                                                       children: <Widget>[
-                                                        Text("ร้าน TEST",
+                                                        Text(
+                                                            "ร้าน ${data.shop.name}",
                                                             style: GoogleFonts.roboto(
                                                                 fontSize: 20,
                                                                 fontWeight:

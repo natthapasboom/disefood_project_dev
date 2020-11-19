@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:disefood/component/editProfile.dart';
+import 'package:disefood/component/editProfileFacebook.dart';
 import 'package:disefood/model/facebookUser.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:disefood/component/dialogcomponents/alert_dialog.dart';
@@ -134,10 +135,14 @@ class _LoginPageState extends State<LoginPage> {
           FacebookUser jsonMap = FacebookUser.fromJson(jsonString);
           await preference.setInt('user_id', jsonMap.data.id);
           await preference.setString('token', jsonMap.accessToken);
+          await preference.setBool('missing_profile', jsonMap.missingProfile);
+
           if (jsonMap.missingProfile == true) {
-            Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => EditProfile()))
-                .then((value) {
+            await preference.setString('facebook_img', jsonMap.data.profileImg);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EditProfileFacebook())).then((value) {
               print('object');
             });
           } else if (jsonMap.missingProfile == false) {
@@ -154,6 +159,7 @@ class _LoginPageState extends State<LoginPage> {
     SharedPreferences preference = await SharedPreferences.getInstance();
     await preference.setInt('user_id', userprofile.data.id);
     await preference.setString('token', userprofile.accessToken);
+    await preference.setString('facebook_img', userprofile.data.profileImg);
     MaterialPageRoute route = MaterialPageRoute(builder: (context) => myWidget);
     Navigator.pushAndRemoveUntil(context, route, (route) => false);
   }

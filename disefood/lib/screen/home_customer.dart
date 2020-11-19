@@ -30,6 +30,7 @@ class _HomeState extends State<Home> {
   String nameUser;
   String lastNameUser;
   String profileImg;
+  bool _isFacebookAccount = false;
   //fetch ข้อมูล
   int userId;
   ApiProvider apiProvider = ApiProvider();
@@ -42,7 +43,7 @@ class _HomeState extends State<Home> {
   int shopSlot;
   String shopCoverImg;
   bool isSearchActive = false;
-
+  String facebookImg;
   @override
   void initState() {
     // readSQLite();
@@ -64,10 +65,22 @@ class _HomeState extends State<Home> {
       // var data = msg.data.toJson();
       userId = preference.getInt('user_id');
       setState(() {
+        facebookImg = preference.getString('facebook_img');
+        logger.e('facebook : $facebookImg ');
         nameUser = msg.data.firstName;
         lastNameUser = msg.data.lastName;
-        profileImg = msg.data.profileImg;
+        profileImg = facebookImg == null ? msg.data.profileImg : facebookImg;
+        logger.e('image: $profileImg ');
         email = msg.data.email;
+        if (facebookImg != null || profileImg != null) {
+          setState(() {
+            _isFacebookAccount = true;
+            logger.e('is face account : $_isFacebookAccount');
+          });
+        } else {
+          _isFacebookAccount = false;
+          logger.e('is face account : $_isFacebookAccount');
+        }
       });
     } else {
       logger.e("statuscode != 200");
@@ -140,6 +153,7 @@ class _HomeState extends State<Home> {
         lastName: lastNameUser,
         coverImg: profileImg,
         email: email,
+        isFacebook: _isFacebookAccount,
       ),
       body: isLoading
           ? Center(
