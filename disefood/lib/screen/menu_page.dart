@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:disefood/model/cart.dart';
+import 'package:disefood/model/favorite.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/config/app_config.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 import 'customer_dialog/order_amount_dialog.dart';
 import 'customer_utilities/sqlite_helper.dart';
 
@@ -38,12 +40,19 @@ class _MenuPageState extends State<MenuPage> {
   String shopCoverImg;
   TextEditingController reviewController = TextEditingController();
   ApiProvider apiProvider = ApiProvider();
-  List<CartModel> cartModels = List();
+  bool isTrue;
+  bool isFalse;
   bool isLoading = true;
   List foods = [];
-  List quantities;
+  List fav = [];
+  var favId;
   double rating;
   int userId;
+  bool isFav = false;
+  var favList;
+  List quantities;
+  List<CartModel> cartModels = List();
+
   bool isCartNotEmpty = false;
   // bool isShopHasItemInCart = false;
   int totalQty;
@@ -58,7 +67,8 @@ class _MenuPageState extends State<MenuPage> {
       shopSlot = widget.shopSlot;
       shopId = widget.shopId;
     });
-    Future.microtask(() {
+    Future.microtask(() async {
+      getFavoriteByMe();
       findMenu();
       // findUser();
     });
@@ -150,7 +160,6 @@ class _MenuPageState extends State<MenuPage> {
   // }
 
   Future findMenu() async {
-    // SharedPreferences preference = await SharedPreferences.getInstance();
     var response = await apiProvider.getFoodByShopId(shopId);
     print("Connection Status Code: " + "${response.statusCode}");
     var body = response.body;
@@ -172,6 +181,66 @@ class _MenuPageState extends State<MenuPage> {
       });
     } else {
       logger.e("statuscode != 200");
+    }
+  }
+
+  Future getFavoriteByMe() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token');
+    var response = await apiProvider.getFavoriteByMe(token);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        Map jsonMap = json.decode(response.body);
+        Favorite favList = Favorite.fromJson(jsonMap);
+
+        for (var e in favList.data) {
+          if (shopId == e.shopId) {
+            // logger.d(
+            //     'fav list customer ${e.userId} : shop id ${shopId} : favorite id = ${e.id} ');
+            // logger.e('success');
+            setState(() {
+              favId = e.id;
+              isFav = true;
+              // logger.e('fav id $favId & shop id $isFav ');
+            });
+          }
+        }
+        fav = json.decode(response.body)['data'];
+        // logger.d('fav response : ${fav.toList()}');
+        // logger.e('check fav id = $favId');
+      });
+    } else {
+      logger.e('status : ${response.statusCode}');
+    }
+  }
+
+  Future postFavorite() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token');
+    var response = await apiProvider.postFavorite(shopId, token);
+    if (response.statusCode == 200) {
+      showToast("เพิ่มรายการโปรดสำเร็จแล้ว");
+      Navigator.of(context).pop();
+    }
+  }
+
+  void showToast(String msg) {
+    Toast.show(
+      msg,
+      context,
+      textColor: Colors.white,
+    );
+  }
+
+  Future deleteFavorite() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token');
+    // logger.e('before delete: $token $shopId');
+    var response = await apiProvider.deleteFavorite(favId, token);
+    if (response.statusCode == 200) {
+      showToast("ลบรายการโปรดสำเร็จแล้ว");
+      Navigator.of(context).pop();
     }
   }
 
@@ -376,11 +445,11 @@ class _MenuPageState extends State<MenuPage> {
                                     ],
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(left: 70),
+                                    margin: EdgeInsets.only(left: 55),
                                     child: RaisedButton(
                                         child: Center(
                                           child: Text(
-                                            'review',
+                                            'รีวิว',
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontFamily: 'Aleo',
@@ -404,6 +473,33 @@ class _MenuPageState extends State<MenuPage> {
                                             ],
                                           );
                                         }),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(left: 0),
+                                    child: IconButton(
+                                      icon: favId == null
+                                          ? Icon(
+                                              Icons.favorite_border,
+                                              color: Color(0xffFF7C2C),
+                                              size: 34,
+                                            )
+                                          : Icon(
+                                              Icons.favorite,
+                                              color: Color(0xffFF7C2C),
+                                              size: 34,
+                                            ),
+                                      onPressed: () async {
+                                        setState(() {
+                                          if (favId != null) {
+                                            deleteFavorite();
+                                            // logger.d(isFav);
+                                          } else if (favId == null) {
+                                            postFavorite();
+                                            // logger.d(isFav);
+                                          }
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -435,13 +531,15 @@ class _MenuPageState extends State<MenuPage> {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 40,
+                                  width: 55,
                                 ),
                                 SizedBox(
                                   child: Text(
                                     "ราคา",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -462,7 +560,10 @@ class _MenuPageState extends State<MenuPage> {
                                         children: <Widget>[
                                           SizedBox(
                                             width: 190,
-                                            child: Text('${item['name']}'),
+                                            child: Text(
+                                              '${item['name']}',
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
                                           SizedBox(
                                             width: 25,
@@ -479,6 +580,9 @@ class _MenuPageState extends State<MenuPage> {
                                             child: Text(
                                               '${item['price']}',
                                               textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           SizedBox(
@@ -513,16 +617,6 @@ class _MenuPageState extends State<MenuPage> {
                                                   ),
                                                 );
                                               },
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 30,
-                                            child: IconButton(
-                                              icon: new Icon(
-                                                Icons.favorite_border,
-                                                color: Colors.orange,
-                                              ),
-                                              onPressed: () {},
                                             ),
                                           ),
                                         ],
@@ -562,6 +656,7 @@ class _MenuPageState extends State<MenuPage> {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     print('alert');
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (context) {
           return ListView(
@@ -595,10 +690,10 @@ class _MenuPageState extends State<MenuPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
-                                  margin: EdgeInsets.only(left: 120),
+                                  margin: EdgeInsets.only(left: 100),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "Review",
+                                    "รีวิวร้านค้า",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: 'Aleo',
@@ -609,7 +704,7 @@ class _MenuPageState extends State<MenuPage> {
                                 ),
                                 Container(
                                   alignment: Alignment.centerLeft,
-                                  margin: EdgeInsets.only(left: 60),
+                                  margin: EdgeInsets.only(left: 30),
                                   child: IconButton(
                                       icon: Icon(
                                         Icons.clear,
@@ -728,7 +823,7 @@ class _MenuPageState extends State<MenuPage> {
                                       controller: reviewController,
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.zero,
-                                        hintText: "Add Review",
+                                        hintText: "เพิ่มรีวิว...",
                                         border: InputBorder.none,
                                       ),
                                       maxLines: 4,
@@ -753,7 +848,7 @@ class _MenuPageState extends State<MenuPage> {
                                       String review =
                                           reviewController.text.trim();
                                       int rating1 = this.rating.toInt();
-                                      logger.d('body : $review  $rating1 ');
+                                      // logger.d('body : $review  $rating1 ');
                                       if (_formKey.currentState.validate()) {
                                         String url =
                                             'http://54.151.194.224:8000/api/feedback/me/shop/$shopId';
@@ -773,8 +868,8 @@ class _MenuPageState extends State<MenuPage> {
                                                 validateStatus: (status) {
                                                   return status < 500;
                                                 }));
-                                        logger.d(
-                                            'review status: ${response.statusCode}');
+                                        // logger.d(
+                                        //     'review status: ${response.statusCode}');
                                         if (response.statusCode == 200) {
                                           showDialog(
                                                   context: context,
@@ -870,7 +965,7 @@ class _MenuPageState extends State<MenuPage> {
                                     },
                                     child: Center(
                                       child: Text(
-                                        'Submit',
+                                        'ตกลง',
                                         style: TextStyle(
                                             fontFamily: 'Roboto',
                                             fontSize: 18,

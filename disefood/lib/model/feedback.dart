@@ -29,6 +29,7 @@ class Data {
   String rating;
   String createdAt;
   String updatedAt;
+  User user;
 
   Data(
       {this.id,
@@ -37,7 +38,8 @@ class Data {
       this.comment,
       this.rating,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.user});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -47,6 +49,7 @@ class Data {
     rating = json['rating'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    user = json['user'] != null ? new User.fromJson(json['user']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +59,62 @@ class Data {
     data['shop_id'] = this.shopId;
     data['comment'] = this.comment;
     data['rating'] = this.rating;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    if (this.user != null) {
+      data['user'] = this.user.toJson();
+    }
+    return data;
+  }
+}
+
+class User {
+  int id;
+  String username;
+  String email;
+  String firstName;
+  String lastName;
+  String tel;
+  String profileImg;
+  String role;
+  String createdAt;
+  String updatedAt;
+
+  User(
+      {this.id,
+      this.username,
+      this.email,
+      this.firstName,
+      this.lastName,
+      this.tel,
+      this.profileImg,
+      this.role,
+      this.createdAt,
+      this.updatedAt});
+
+  User.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    username = json['username'];
+    email = json['email'];
+    firstName = json['first_name'];
+    lastName = json['last_name'];
+    tel = json['tel'];
+    profileImg = json['profile_img'];
+    role = json['role'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['username'] = this.username;
+    data['email'] = this.email;
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
+    data['tel'] = this.tel;
+    data['profile_img'] = this.profileImg;
+    data['role'] = this.role;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     return data;

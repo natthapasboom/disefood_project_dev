@@ -55,6 +55,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: TextTheme(
           bodyText1: GoogleFonts.roboto(),
+          bodyText2: GoogleFonts.roboto(),
         ),
         primaryColor: const Color(0xffFF7C2C),
         appBarTheme: AppBarTheme(
