@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:disefood/component/editProfileFacebook.dart';
 import 'package:disefood/component/signout_process.dart';
 import 'package:disefood/model/user_profile.dart';
 import 'package:flutter/material.dart';
@@ -11,13 +13,15 @@ class SideMenuCustomer extends StatelessWidget {
   final String lastName;
   final String coverImg;
   final String email;
+  final bool isFacebook;
   const SideMenuCustomer(
       {Key key,
       @required this.firstName,
       @required this.userId,
       @required this.lastName,
       @required this.coverImg,
-      @required this.email})
+      @required this.email,
+      @required this.isFacebook})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -56,8 +60,12 @@ class SideMenuCustomer extends StatelessWidget {
                         color: const Color(0xffFF7C2C), size: 64),
                   )
                 : CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        "https://disefood.s3-ap-southeast-1.amazonaws.com/$coverImg"),
+                    backgroundImage: isFacebook == false
+                        ? NetworkImage(
+                            "https://disefood.s3-ap-southeast-1.amazonaws.com/$coverImg")
+                        : NetworkImage(
+                            '$coverImg',
+                          ),
                     backgroundColor: coverImg == null
                         ? const Color(0xffFF7C2C)
                         : Colors.white,
@@ -79,11 +87,24 @@ class SideMenuCustomer extends StatelessWidget {
               leading: Icon(Icons.edit),
               title: Text('แก้ไขโปรไฟล์'),
               onTap: () {
-                Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => EditProfile()))
-                    .then((value) {
-                  print('object');
-                });
+                if (isFacebook == false) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditProfile())).then((value) {
+                    Home();
+                    print('object');
+                  });
+                } else {
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditProfileFacebook()))
+                      .then((value) {
+                    Home();
+                    print('object');
+                  });
+                }
               }),
           Divider(
             height: 2,

@@ -4,12 +4,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/userById.dart';
+import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart';
+import 'package:async/async.dart';
 
 class EditProfile extends StatefulWidget {
   static const routeName = '/edit_profile';
@@ -60,6 +63,7 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void initState() {
+    _isEdit = false;
     _isLoading = false;
     super.initState();
     Future.microtask(() {
@@ -614,7 +618,7 @@ class _EditProfileState extends State<EditProfile> {
                                               EdgeInsets.fromLTRB(20, 0, 30, 0),
                                           child: new TextFormField(
                                             onChanged: (val) {
-                                              _isEdit = true;
+                                              // _isEdit = true;
                                             },
                                             keyboardType: TextInputType.text,
                                             controller: _passwordController,
@@ -681,7 +685,7 @@ class _EditProfileState extends State<EditProfile> {
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                             ),
-                                            onPressed: () {
+                                            onPressed: () async {
                                               Navigator.pop(context);
                                             },
                                             color: Colors.white,
@@ -706,8 +710,9 @@ class _EditProfileState extends State<EditProfile> {
                                           height: 40,
                                           child: RaisedButton(
                                             onPressed: () async {
-                                              Dio().options.contentType = Headers
-                                                  .formUrlEncodedContentType;
+                                              logger.e('is Edit ? : $_isEdit');
+                                              // Dio().options.contentType = Headers
+                                              //     .formUrlEncodedContentType;
                                               if (_formKey.currentState
                                                   .validate()) {
                                                 try {
@@ -768,86 +773,158 @@ class _EditProfileState extends State<EditProfile> {
                                                     '_method': 'PUT',
                                                   };
 
+                                                  // var response =
+                                                  //     await Dio().post(
+                                                  //   url,
+                                                  //   data: formData,
+                                                  //   options: Options(
+                                                  //     headers: {
+                                                  //       // "ContentType":
+                                                  //       //     ContentType.parse(
+                                                  //       //         "application/x-www-form-urlencoded"),
+                                                  //       "Authorization":
+                                                  //           "Bearer $token",
+                                                  //     },
+                                                  //   ),
+                                                  // );
+                                                  Map<String, String> headers =
+                                                      {
+                                                    "Accept":
+                                                        "application/json",
+                                                    "Authorization":
+                                                        "Bearer $token"
+                                                  };
+                                                  var request = await http
+                                                      .MultipartRequest("POST",
+                                                          Uri.parse(url));
+                                                  if (_isFirstNameEdit ==
+                                                      true) {
+                                                    request.fields[
+                                                            'first_name'] =
+                                                        _firstNameController
+                                                            .text
+                                                            .trim();
+                                                  }
+                                                  if (_isLastNameEdit == true) {
+                                                    request.fields[
+                                                            'last_name'] =
+                                                        _lastNameController.text
+                                                            .trim();
+                                                  }
+                                                  if (_isEmailEdit == true) {
+                                                    request.fields['email'] =
+                                                        _emailController.text
+                                                            .trim();
+                                                  }
+                                                  if (_isTelEdit == true) {
+                                                    request.fields['tel'] =
+                                                        _telController.text
+                                                            .trim();
+                                                  }
+                                                  if (_isEdit == true) {
+                                                    var stream = http.ByteStream(
+                                                        DelegatingStream(
+                                                            _image.openRead()));
+                                                    var length =
+                                                        await _image.length();
+                                                    var multipartFileSign =
+                                                        new http.MultipartFile(
+                                                            'profile_img',
+                                                            stream,
+                                                            length,
+                                                            filename: basename(
+                                                                _image.path));
+                                                    request.files
+                                                        .add(multipartFileSign);
+                                                  } else if (_isEdit ==
+                                                      false) {}
+                                                  if (password != null) {
+                                                    request.fields[
+                                                            'confirm_password'] =
+                                                        password;
+                                                  }
+                                                  request.fields['_method'] =
+                                                      'PUT';
+                                                  request.headers
+                                                      .addAll(headers);
                                                   var response =
-                                                      await Dio().post(
-                                                    url,
-                                                    data: formData,
-                                                    options: Options(
-                                                      headers: {
-                                                        // "ContentType":
-                                                        //     ContentType.parse(
-                                                        //         "application/x-www-form-urlencoded"),
-                                                        "Authorization":
-                                                            "Bearer $token",
-                                                      },
-                                                    ),
-                                                  );
+                                                      await request.send();
 
                                                   logger.d(response.statusCode);
                                                   if (response.statusCode ==
                                                       200) {
                                                     logger.d('success');
                                                     showDialog(
-                                                            barrierDismissible:
-                                                                false,
-                                                            context: context,
-                                                            builder: (context) {
-                                                              Future.delayed(
-                                                                  Duration(
-                                                                      seconds:
-                                                                          3),
-                                                                  () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(true);
-                                                              });
-                                                              return Dialog(
-                                                                  shape: RoundedRectangleBorder(
+                                                        barrierDismissible:
+                                                            false,
+                                                        context: context,
+                                                        builder: (context) {
+                                                          Future.delayed(
+                                                              Duration(
+                                                                  seconds: 3),
+                                                              () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            Home()));
+                                                          });
+                                                          return Dialog(
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10.0)),
+                                                              child: Container(
+                                                                  height: 250.0,
+                                                                  width: 300.0,
+                                                                  decoration: BoxDecoration(
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              10.0)),
-                                                                  child: Container(
-                                                                      height: 250.0,
-                                                                      width: 300.0,
-                                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
-                                                                      child: Column(
+                                                                              20.0)),
+                                                                  child: Column(
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Stack(
                                                                         children: <
                                                                             Widget>[
-                                                                          Stack(
-                                                                            children: <Widget>[
-                                                                              Center(
-                                                                                child: Container(
-                                                                                  margin: EdgeInsets.only(top: 40),
-                                                                                  height: 90.0,
-                                                                                  width: 90.0,
-                                                                                  decoration: BoxDecoration(
-                                                                                      borderRadius: BorderRadius.circular(50.0),
-                                                                                      image: DecorationImage(
-                                                                                        image: AssetImage('assets/images/success.png'),
-                                                                                        fit: BoxFit.cover,
-                                                                                      )),
-                                                                                ),
-                                                                              ),
-                                                                            ],
+                                                                          Center(
+                                                                            child:
+                                                                                Container(
+                                                                              margin: EdgeInsets.only(top: 40),
+                                                                              height: 90.0,
+                                                                              width: 90.0,
+                                                                              decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(50.0),
+                                                                                  image: DecorationImage(
+                                                                                    image: AssetImage('assets/images/success.png'),
+                                                                                    fit: BoxFit.cover,
+                                                                                  )),
+                                                                            ),
                                                                           ),
-                                                                          Container(
-                                                                              margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 0),
-                                                                              child: Center(
-                                                                                child: Text(
-                                                                                  'แก้ไขโปรไฟล์สำเร็จ',
-                                                                                  style: TextStyle(
-                                                                                    fontFamily: 'Aleo-Bold',
-                                                                                    fontSize: 24.0,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                  ),
-                                                                                ),
-                                                                              )),
                                                                         ],
-                                                                      )));
-                                                            })
-                                                        .then((value) =>
-                                                            Navigator.pop(
-                                                                context));
+                                                                      ),
+                                                                      Container(
+                                                                          margin: EdgeInsets.only(
+                                                                              top: 20,
+                                                                              left: 10,
+                                                                              right: 10,
+                                                                              bottom: 0),
+                                                                          child: Center(
+                                                                            child:
+                                                                                Text(
+                                                                              'แก้ไขโปรไฟล์สำเร็จ',
+                                                                              style: TextStyle(
+                                                                                fontFamily: 'Aleo-Bold',
+                                                                                fontSize: 24.0,
+                                                                                fontWeight: FontWeight.bold,
+                                                                              ),
+                                                                            ),
+                                                                          )),
+                                                                    ],
+                                                                  )));
+                                                        });
                                                   }
                                                 } on DioError catch (error) {
                                                   if (error.response

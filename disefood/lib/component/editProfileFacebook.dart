@@ -4,12 +4,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/userById.dart';
+import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart';
+import 'package:async/async.dart';
 
 class EditProfileFacebook extends StatefulWidget {
   static const routeName = '/edit_profile';
@@ -60,9 +63,12 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
 
   @override
   void initState() {
+    _isEdit = false;
     _isLoading = false;
     super.initState();
-    Future.microtask(() {});
+    Future.microtask(() {
+      findUser();
+    });
   }
 
   String _validateEmail(String value) {
@@ -89,37 +95,38 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
     return 'กรุณากรอกอีเมลล์ใหม่';
   }
 
-  // Future<UserById> findUser() async {
-  //   SharedPreferences preference = await SharedPreferences.getInstance();
-  //   userId = preference.getInt('user_id');
-  //   password = preference.getString('password');
-  //   var response = await apiProvider.getUserById(userId);
-  //   // print(response.statusCode);
-  //   if (response.statusCode == 200) {
-  //     Map map = json.decode(response.body);
-  //     UserById msg = UserById.fromJson(map);
+  Future<UserById> findUser() async {
+    SharedPreferences preference = await SharedPreferences.getInstance();
+    userId = preference.getInt('user_id');
+    password = preference.getString('password');
+    var response = await apiProvider.getUserById(userId);
+    // print(response.statusCode);
+    if (response.statusCode == 200) {
+      Map map = json.decode(response.body);
+      UserById msg = UserById.fromJson(map);
 
-  //     setState(() {
-  //       _isLoading = true;
-  //       userId = preference.getInt('user_id');
-  //       userName = msg.data.username;
-  //       firstName = msg.data.firstName;
-  //       lastName = msg.data.lastName;
-  //       lastNameUser = msg.data.lastName;
-  //       profileImg = msg.data.profileImg;
-  //       email = msg.data.email;
-  //       tel = msg.data.tel;
-  //       logger.d(profileImg);
-  //       // _passwordController.text = '$password';
-  //       _firstNameController.text = '${msg.data.firstName}';
-  //       _lastNameController.text = '${msg.data.lastName}';
-  //       _emailController.text = '${msg.data.email}';
-  //       _telController.text = '${msg.data.tel}';
-  //     });
-  //   } else {
-  //     logger.e("statuscode != 200");
-  //   }
-  // }
+      setState(() {
+        _isLoading = true;
+        userId = preference.getInt('user_id');
+        userName = msg.data.username;
+        firstName = msg.data.firstName;
+        lastName = msg.data.lastName;
+        lastNameUser = msg.data.lastName;
+        profileImg = msg.data.profileImg;
+        email = msg.data.email;
+        tel = msg.data.tel;
+        logger.d("profile facebook: $profileImg");
+        preference.setString('facebook_img', profileImg);
+        // _passwordController.text = '$password';
+        _firstNameController.text = '${msg.data.firstName}';
+        _lastNameController.text = '${msg.data.lastName}';
+        _emailController.text = '${msg.data.email}';
+        _telController.text = '${msg.data.tel}';
+      });
+    } else {
+      logger.e("statuscode != 200");
+    }
+  }
 
   Widget _checkImage() {
     if (_isEdit) {
@@ -142,13 +149,13 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
       }
     } else {
       setState(() {
-        imageUrl = '${AppConfig.image}$profileImg';
+        imageUrl = '$profileImg';
       });
 
       return CachedNetworkImage(
-          imageUrl: '${AppConfig.image}$profileImg',
-          height: 300,
-          width: 500,
+          imageUrl: '$profileImg',
+          height: 1000,
+          width: 1000,
           fit: BoxFit.cover,
           placeholder: (context, url) => Center(
                   child: Center(
@@ -325,10 +332,11 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
                                                   borderSide: new BorderSide(
                                                       color: Colors.red),
                                                 ),
-                                                hintText:
-                                                    _firstNameController != null
-                                                        ? '$firstName'
-                                                        : 'กรอกชื่อ',
+                                                hintText: _firstNameController
+                                                        .text
+                                                        .contains("null")
+                                                    ? '$firstName'
+                                                    : 'กรอกชื่อ',
                                               ),
                                             ),
                                           ),
@@ -454,7 +462,7 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
                                             decoration: InputDecoration(
                                               contentPadding:
                                                   EdgeInsets.fromLTRB(
-                                                      30, 0, 0, 0),
+                                                      10, 0, 0, 0),
                                               hintStyle:
                                                   TextStyle(fontSize: 14),
                                               fillColor: Colors.grey,
@@ -584,82 +592,6 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
                                       endIndent: 30,
                                     ),
                                   ),
-                                  Row(
-                                    children: <Widget>[
-                                      Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(30, 20, 0, 30),
-                                        child: Text(
-                                          'ยืนยันรหัสผ่าน',
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w900,
-                                              fontFamily: 'Roboto'),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[350],
-                                            borderRadius:
-                                                new BorderRadius.circular(15.0),
-                                          ),
-                                          margin:
-                                              EdgeInsets.fromLTRB(20, 0, 30, 0),
-                                          child: new TextFormField(
-                                            onChanged: (val) {
-                                              _isEdit = true;
-                                            },
-                                            keyboardType: TextInputType.text,
-                                            controller: _passwordController,
-                                            decoration: InputDecoration(
-                                              contentPadding:
-                                                  EdgeInsets.fromLTRB(
-                                                      30, 0, 0, 0),
-                                              hintStyle:
-                                                  TextStyle(fontSize: 14),
-                                              fillColor: Colors.grey,
-                                              border: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Colors.grey[350])),
-                                              focusedBorder: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15.0),
-                                                  borderSide: BorderSide(
-                                                      color: Colors.grey[350])),
-                                              enabledBorder:
-                                                  new OutlineInputBorder(
-                                                borderRadius:
-                                                    new BorderRadius.circular(
-                                                        15.0),
-                                                borderSide: new BorderSide(
-                                                    color: Colors.grey[350]),
-                                              ),
-                                              errorBorder:
-                                                  new OutlineInputBorder(
-                                                borderRadius:
-                                                    new BorderRadius.circular(
-                                                        15.0),
-                                                borderSide: new BorderSide(
-                                                    color: Colors.red),
-                                              ),
-                                              hintText: 'กรอกรหัสผ่าน',
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(top: 10, bottom: 30),
-                                    child: Divider(
-                                      indent: 30,
-                                      color: Colors.black,
-                                      endIndent: 30,
-                                    ),
-                                  ),
                                   Container(
                                     margin: EdgeInsets.only(bottom: 30),
                                     child: Row(
@@ -676,7 +608,11 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
                                                   BorderRadius.circular(5),
                                             ),
                                             onPressed: () {
-                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Home()));
                                             },
                                             color: Colors.white,
                                             elevation: 5,
@@ -761,21 +697,68 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
                                                         password,
                                                     '_method': 'PUT',
                                                   };
+                                                  Map<String, String> headers =
+                                                      {
+                                                    "Accept":
+                                                        "application/json",
+                                                    "Authorization":
+                                                        "Bearer $token"
+                                                  };
+                                                  var request = await http
+                                                      .MultipartRequest("POST",
+                                                          Uri.parse(url));
+                                                  if (_isFirstNameEdit ==
+                                                      true) {
+                                                    request.fields[
+                                                            'first_name'] =
+                                                        _firstNameController
+                                                            .text
+                                                            .trim();
+                                                  }
+                                                  if (_isLastNameEdit == true) {
+                                                    request.fields[
+                                                            'last_name'] =
+                                                        _lastNameController.text
+                                                            .trim();
+                                                  }
+                                                  if (_isEmailEdit == true) {
+                                                    request.fields['email'] =
+                                                        _emailController.text
+                                                            .trim();
+                                                  }
+                                                  if (_isTelEdit == true) {
+                                                    request.fields['tel'] =
+                                                        _telController.text
+                                                            .trim();
+                                                  }
+                                                  if (_isEdit == true) {
+                                                    var stream = new http
+                                                            .ByteStream(
+                                                        DelegatingStream.typed(
+                                                            _image.openRead()));
+                                                    var length =
+                                                        await _image.length();
+                                                    var multipartFileSign =
+                                                        new http.MultipartFile(
+                                                            'profile_img',
+                                                            stream,
+                                                            length,
+                                                            filename: basename(
+                                                                _image.path));
+                                                    request.files
+                                                        .add(multipartFileSign);
+                                                  } else if (_isEdit ==
+                                                      false) {}
 
+                                                  request.fields[
+                                                      'confirm_password'] = '0';
+
+                                                  request.fields['_method'] =
+                                                      'PUT';
+                                                  request.headers
+                                                      .addAll(headers);
                                                   var response =
-                                                      await Dio().post(
-                                                    url,
-                                                    data: formData,
-                                                    options: Options(
-                                                      headers: {
-                                                        // "ContentType":
-                                                        //     ContentType.parse(
-                                                        //         "application/x-www-form-urlencoded"),
-                                                        "Authorization":
-                                                            "Bearer $token",
-                                                      },
-                                                    ),
-                                                  );
+                                                      await request.send();
 
                                                   logger.d(response.statusCode);
                                                   if (response.statusCode ==
