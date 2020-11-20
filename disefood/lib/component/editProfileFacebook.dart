@@ -776,9 +776,12 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
                                                                       seconds:
                                                                           3),
                                                                   () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(true);
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                Home()));
                                                               });
                                                               return Dialog(
                                                                   shape: RoundedRectangleBorder(
