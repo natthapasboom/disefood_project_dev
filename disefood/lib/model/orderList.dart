@@ -29,9 +29,11 @@ class Data {
   int totalQuantity;
   String timePickup;
   String status;
-  String deletedAt;
+  int confirmedByCustomer;
+  Null deletedAt;
   String createdAt;
   String updatedAt;
+  Shop shop;
   List<OrderDetails> orderDetails;
 
   Data(
@@ -42,9 +44,11 @@ class Data {
       this.totalQuantity,
       this.timePickup,
       this.status,
+      this.confirmedByCustomer,
       this.deletedAt,
       this.createdAt,
       this.updatedAt,
+      this.shop,
       this.orderDetails});
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -55,9 +59,11 @@ class Data {
     totalQuantity = json['total_quantity'];
     timePickup = json['time_pickup'];
     status = json['status'];
+    confirmedByCustomer = json['confirmed_by_customer'];
     deletedAt = json['deleted_at'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    shop = json['shop'] != null ? new Shop.fromJson(json['shop']) : null;
     if (json['order_details'] != null) {
       orderDetails = new List<OrderDetails>();
       json['order_details'].forEach((v) {
@@ -75,12 +81,38 @@ class Data {
     data['total_quantity'] = this.totalQuantity;
     data['time_pickup'] = this.timePickup;
     data['status'] = this.status;
+    data['confirmed_by_customer'] = this.confirmedByCustomer;
     data['deleted_at'] = this.deletedAt;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    if (this.shop != null) {
+      data['shop'] = this.shop.toJson();
+    }
     if (this.orderDetails != null) {
       data['order_details'] = this.orderDetails.map((v) => v.toJson()).toList();
     }
+    return data;
+  }
+}
+
+class Shop {
+  int id;
+  String name;
+  String coverImg;
+
+  Shop({this.id, this.name, this.coverImg});
+
+  Shop.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    coverImg = json['cover_img'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['cover_img'] = this.coverImg;
     return data;
   }
 }

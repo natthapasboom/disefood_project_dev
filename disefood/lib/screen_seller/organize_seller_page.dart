@@ -128,25 +128,18 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                               children: <Widget>[
                                 ListTile(
                                   leading: Container(
-                                    margin: EdgeInsets.only(
-                                      left: 30,
-                                      top: 5,
-                                    ),
-                                    child: '${foods['name']}'.length > 10
-                                        ? Text(
-                                            '${foods['name']}'.substring(0, 8) +
-                                                '...',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                            ),
-                                          )
-                                        : Text(
-                                            '${foods['name']}',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                  ),
+                                      width: 180,
+                                      margin: EdgeInsets.only(
+                                        left: 30,
+                                        top: 5,
+                                      ),
+                                      child: Text(
+                                        '${foods['name']}'.toUpperCase(),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      )),
                                   trailing: Wrap(
                                     spacing: 1.0,
                                     // space between two icons

@@ -304,7 +304,7 @@ class _MenuPageState extends State<MenuPage> {
                   );
                 },
                 child: Icon(
-                  Icons.shopping_bag,
+                  Icons.shopping_basket,
                   color: Colors.white,
                 ),
                 backgroundColor: Colors.orange,
