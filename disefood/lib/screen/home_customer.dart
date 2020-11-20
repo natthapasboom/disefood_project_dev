@@ -44,6 +44,7 @@ class _HomeState extends State<Home> {
   String shopCoverImg;
   bool isSearchActive = false;
   String facebookImg;
+  bool checkMissingProfile;
   @override
   void initState() {
     // readSQLite();
@@ -65,6 +66,8 @@ class _HomeState extends State<Home> {
       // var data = msg.data.toJson();
       userId = preference.getInt('user_id');
       setState(() {
+        checkMissingProfile = preference.getBool('missing_profile');
+        logger.e('missing profile: $checkMissingProfile');
         facebookImg = preference.getString('facebook_img');
         logger.e('facebook : $facebookImg ');
         nameUser = msg.data.firstName;
@@ -72,7 +75,7 @@ class _HomeState extends State<Home> {
         profileImg = facebookImg == null ? msg.data.profileImg : facebookImg;
         logger.e('image: $profileImg ');
         email = msg.data.email;
-        if (profileImg.contains('.jpeg')) {
+        if (checkMissingProfile == null) {
           setState(() {
             _isFacebookAccount = false;
 

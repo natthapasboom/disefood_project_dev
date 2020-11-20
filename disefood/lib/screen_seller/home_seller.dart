@@ -299,7 +299,7 @@ class _HomeSellerState extends State<HomeSeller> {
                                 ],
                               ),
                               Container(
-                                margin: EdgeInsets.only(left: 70),
+                                // margin: EdgeInsets.only(left: 70),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
