@@ -287,7 +287,6 @@ class PaymentController extends Controller
                         if (strpos($word, "โอนเงินสำเร็จ") !== false)                { $language = "THAI"; }
 
                         $wordNotHaveSpace = str_replace(' ','', $wordForSCBBank);
-
                         if ($language == "ENGLISH") {
 
                             $transactionId = $this->get_string_between($wordNotHaveSpace, "RefID:", "FROM");
@@ -299,10 +298,16 @@ class PaymentController extends Controller
                             preg_match("([0-9,]+.[0-9]{2})", $amount, $matches);
                             $newAmount = $matches[0];
                         } elseif ($language == "THAI") {
-                            $transactionId = $this->get_string_between($wordNotHaveSpace, "รหัสอ้างอิง:", "@");
-                            if (strpos($transactionId, "\n") !== false) {
-                                $newTransactionId = str_replace("\n", "", $transactionId);
+                            $transactionId = $this->get_string_between($wordNotHaveSpace, "รหัสอ้างอิง:", "จาก");
+
+                            preg_match("([0-9a-zA-Z]{25})", $transactionId, $transactionIDMatches);
+                            $regexTransactionID = $transactionIDMatches[0];
+                            if (strpos($regexTransactionID, "\n") !== false) {
+                                $newTransactionId = str_replace("\n", "", $regexTransactionID);
+                            } else {
+                                $newTransactionId = $regexTransactionID;
                             }
+
                             $amount = $this->get_string_between($wordNotHaveSpace, "จำนวนเงิน", "ผู้รับเงิน");
                             preg_match("([0-9,]+.[0-9]{2})", $amount, $matches);
                             $newAmount = $matches[0];
