@@ -110,7 +110,7 @@ class _HistoryState extends State<History> {
     DateTime convertDate = DateTime.parse(timePickup);
     final DateFormat formatter = DateFormat('dd/MM/yyyy');
     String formattedDate = formatter.format(convertDate);
-    print(formattedDate);
+    // print(formattedDate);
     return Text('$formattedDate',
         style: TextStyle(
           fontFamily: 'Aleo',
@@ -156,7 +156,7 @@ class _HistoryState extends State<History> {
   Widget getTime(String timePickup) {
     DateTime convertDate = DateTime.parse(timePickup);
     String formattedTime = DateFormat.Hm().format(convertDate);
-    print(formattedTime);
+    // print(formattedTime);
     return Text('$formattedTime',
         style: TextStyle(
           fontFamily: 'Aleo',
@@ -311,16 +311,8 @@ class _HistoryState extends State<History> {
                                             right: 20,
                                             top: 10.0,
                                             bottom: 0.0),
-                                        // height: 100,
-                                        // width: 350,
                                         child: InkWell(
                                           onTap: () {
-                                            print(data.orderDetails.length);
-                                            // alertDialog(
-                                            //   context,
-                                            //   data.status,
-                                            //   data.orderDetails,
-                                            // );
                                             alertHistory(context, data.status,
                                                 data.orderDetails, data.shopId);
                                           },
@@ -354,7 +346,6 @@ class _HistoryState extends State<History> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold)),
-                                                        // getShopName(data.shopId),
                                                         SizedBox(height: 4),
                                                         getDate(
                                                             data.timePickup),
@@ -520,16 +511,29 @@ class _HistoryState extends State<History> {
                         // itemCount: ,
                       ),
                     ),
-                    InkWell(
-                      child: Container(
-                        height: 51,
-                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                        decoration: BoxDecoration(
-                          color: Color(0xffFF7C2C),
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(25.0),
-                              bottomRight: Radius.circular(25.0)),
-                        ),
+                    Container(
+                      child: FlatButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PaymentPage(
+                                shopId: shopId,
+                              ),
+                            ),
+                          ).then((value) => {Navigator.of(context).pop()});
+                        },
+                        child: Text("ชำระเงิน"),
+                      ),
+                    ),
+                    Container(
+                      height: 51,
+                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                      decoration: BoxDecoration(
+                        color: Color(0xffFF7C2C),
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(25.0),
+                            bottomRight: Radius.circular(25.0)),
                       ),
                     ),
                   ],
