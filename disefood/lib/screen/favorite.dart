@@ -95,7 +95,8 @@ class _FavoritePageState extends State<FavoritePage> {
                                   children: <Widget>[
                                     CachedNetworkImage(
                                       imageUrl:
-                                          "https://cdn.cnn.com/cnnnext/dam/assets/190710135245-12-waterfront-restaurants.jpg",
+                                          "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                                              "${data.shop.coverImg}",
                                       width: 380,
                                       height: 140,
                                       fit: BoxFit.cover,

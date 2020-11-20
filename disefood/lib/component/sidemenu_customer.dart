@@ -60,13 +60,14 @@ class SideMenuCustomer extends StatelessWidget {
                         color: const Color(0xffFF7C2C), size: 64),
                   )
                 : CircleAvatar(
-                    backgroundImage: isFacebook == false
+                    backgroundImage: coverImg
+                            .contains('images/user/profile_img')
                         ? NetworkImage(
                             "https://disefood.s3-ap-southeast-1.amazonaws.com/$coverImg")
                         : NetworkImage(
                             '$coverImg',
                           ),
-                    backgroundColor: coverImg == null
+                    backgroundColor: isFacebook == null
                         ? const Color(0xffFF7C2C)
                         : Colors.white,
                   ),
@@ -92,7 +93,6 @@ class SideMenuCustomer extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => EditProfile())).then((value) {
-                    Home();
                     print('object');
                   });
                 } else {

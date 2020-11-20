@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:disefood/config/app_config.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen/home_customer.dart';
+import 'package:disefood/screen_admin/home.dart';
+import 'package:disefood/screen_seller/home_seller_tab.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -21,6 +23,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  String role;
   String name;
   String _shopImg;
   bool _isEdit = false;
@@ -41,6 +44,7 @@ class _EditProfileState extends State<EditProfile> {
   String tel;
   String email;
   var imageUrl;
+  bool _obscureText = true;
   bool _isLoading = false;
   final logger = Logger();
   bool isLoading = true;
@@ -115,6 +119,7 @@ class _EditProfileState extends State<EditProfile> {
         profileImg = msg.data.profileImg;
         email = msg.data.email;
         tel = msg.data.tel;
+        role = msg.data.role;
         logger.d(profileImg);
         // _passwordController.text = '$password';
         _firstNameController.text = '${msg.data.firstName}';
@@ -617,6 +622,7 @@ class _EditProfileState extends State<EditProfile> {
                                           margin:
                                               EdgeInsets.fromLTRB(20, 0, 30, 0),
                                           child: new TextFormField(
+                                            obscureText: _obscureText,
                                             onChanged: (val) {
                                               // _isEdit = true;
                                             },
@@ -863,12 +869,31 @@ class _EditProfileState extends State<EditProfile> {
                                                               Duration(
                                                                   seconds: 3),
                                                               () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            Home()));
+                                                            if (role ==
+                                                                "customer") {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              Home()));
+                                                            } else if (role ==
+                                                                "seller") {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              Homepage()));
+                                                            } else if (role ==
+                                                                "admin") {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              HomeAdmin()));
+                                                            }
                                                           });
                                                           return Dialog(
                                                               shape: RoundedRectangleBorder(
