@@ -273,17 +273,17 @@ class _MenuPageState extends State<MenuPage> {
         resizeToAvoidBottomInset: true,
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
-          actions: <Widget>[
-            new IconButton(
-              icon: new Icon(Icons.favorite),
-              onPressed: () => debugPrint('asd'),
+            // actions: <Widget>[
+            //   new IconButton(
+            //     icon: new Icon(Icons.favorite),
+            //     onPressed: () => debugPrint('asd'),
+            //   ),
+            //   new IconButton(
+            //     icon: Icon(Icons.archive),
+            //     onPressed: () {},
+            //   ),
+            // ],
             ),
-            new IconButton(
-              icon: Icon(Icons.archive),
-              onPressed: () {},
-            ),
-          ],
-        ),
         floatingActionButton: Visibility(
           visible: totalQty != 0,
           child: Stack(

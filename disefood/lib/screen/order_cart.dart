@@ -86,13 +86,6 @@ class _OrderItemPageState extends State<OrderItemPage> {
     checkEmptyCart();
   }
 
-  dynamic myTimeEncode(dynamic item) {
-    if (item is DateTime) {
-      return item.toIso8601String();
-    }
-    return item;
-  }
-
   Future<Null> sendOrderAPI() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     print("All Items in Cart : " + "${cartModels.length}");
@@ -245,82 +238,84 @@ class _OrderItemPageState extends State<OrderItemPage> {
         ),
       ),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         actions: <Widget>[
           Container(
-            margin: EdgeInsets.only(right: 265),
+            margin: EdgeInsets.only(right: 360),
             child: new IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                if (shopId != int.parse(cartModels[0].shopId)) {
-                  findMenu();
+                if (cartModels.length == 0) {
                   Navigator.push(
                     context,
-                    PageRouteBuilder(
-                      pageBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation) {
-                        return MenuPage(
-                          shopId: shopId,
-                          shopName: shopName,
-                          shopSlot: shopSlot,
-                          shopCoverImg: shopCoverImg,
-                        );
-                      },
-                      transitionsBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation,
-                          Widget child) {
-                        return FadeTransition(
-                          opacity: Tween<double>(
-                            begin: 0,
-                            end: 1,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      transitionDuration: Duration(milliseconds: 400),
+                    MaterialPageRoute(
+                      builder: (context) => Home(),
                     ),
                   );
                 } else {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation) {
-                        return MenuPage(
-                          shopId: shopId,
-                          shopName: shopName,
-                          shopSlot: shopSlot,
-                          shopCoverImg: shopCoverImg,
-                        );
-                      },
-                      transitionsBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation,
-                          Widget child) {
-                        return FadeTransition(
-                          opacity: Tween<double>(
-                            begin: 0,
-                            end: 1,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      transitionDuration: Duration(milliseconds: 400),
-                    ),
-                  );
+                  if (shopId != int.parse(cartModels[0].shopId)) {
+                    findMenu();
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (BuildContext context,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation) {
+                          return MenuPage(
+                            shopId: shopId,
+                            shopName: shopName,
+                            shopSlot: shopSlot,
+                            shopCoverImg: shopCoverImg,
+                          );
+                        },
+                        transitionsBuilder: (BuildContext context,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation,
+                            Widget child) {
+                          return FadeTransition(
+                            opacity: Tween<double>(
+                              begin: 0,
+                              end: 1,
+                            ).animate(animation),
+                            child: child,
+                          );
+                        },
+                        transitionDuration: Duration(milliseconds: 400),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (BuildContext context,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation) {
+                          return MenuPage(
+                            shopId: shopId,
+                            shopName: shopName,
+                            shopSlot: shopSlot,
+                            shopCoverImg: shopCoverImg,
+                          );
+                        },
+                        transitionsBuilder: (BuildContext context,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation,
+                            Widget child) {
+                          return FadeTransition(
+                            opacity: Tween<double>(
+                              begin: 0,
+                              end: 1,
+                            ).animate(animation),
+                            child: child,
+                          );
+                        },
+                        transitionDuration: Duration(milliseconds: 400),
+                      ),
+                    );
+                  }
                 }
               },
             ),
-          ),
-          new IconButton(
-            icon: new Icon(Icons.favorite),
-            onPressed: () {},
-          ),
-          new IconButton(
-            icon: Icon(Icons.archive),
-            onPressed: () {},
           ),
         ],
       ),

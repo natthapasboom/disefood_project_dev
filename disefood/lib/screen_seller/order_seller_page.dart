@@ -1,11 +1,13 @@
-import 'dart:convert';
+import 'dart:convert' show jsonDecode;
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:disefood/model/orderbyshopid.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:toast/toast.dart';
 import 'orderdetail.dart';
 
 class OrderSellerPage extends StatefulWidget {
@@ -23,6 +25,8 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
   Future<SellerOrderData> _orderList;
   List<DateTime> timePickup = [];
   var refreshKey = GlobalKey<RefreshIndicatorState>();
+
+  Color color;
   @override
   void initState() {
     _orderList = getOrderByShopId();
@@ -46,6 +50,22 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
     });
   }
 
+  getStatusText(String status) {
+    String result;
+
+    if (status == "in process") {
+      color = Color(0xffF9DE1B);
+      result = "กำลังดำเนินการ";
+    } else if (status == "not confirmed") {
+      result = "ยังไม่ยืนยัน";
+      color = Colors.red;
+    } else {
+      result = "เสร็จสิ้น";
+      color = Colors.green;
+    }
+    return result;
+  }
+
   Future<SellerOrderData> getOrderByShopId() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     int shopId = _prefs.getInt("shop_id");
@@ -58,15 +78,53 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
     print('${response.statusCode}');
     if (response.statusCode == 200) {
       setState(() {
-        isLoading = false;
         var jsonString = response.body;
-        Map jsonMap = json.decode(jsonString);
+        Map jsonMap = jsonDecode(jsonString);
         orderList = SellerOrderData.fromJson(jsonMap);
       });
     } else {
       print(response.statusCode);
     }
     return orderList;
+  }
+
+  Future<Null> updateOrder(int orderId, String timepickup) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String url = 'http://54.151.194.224:8000/api/order/shop/$orderId';
+    String token = preferences.getString('token');
+    DateTime datetimepickup = DateTime.parse(timepickup);
+    String status = "success";
+    String _method = "PUT";
+    FormData formData = FormData.fromMap({
+      "status": status,
+      "time_pickup": datetimepickup,
+      "_method": _method,
+    });
+    var response = await Dio().post(
+      url,
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+        followRedirects: false,
+        validateStatus: (status) {
+          if (status == 200) {
+            showToast("อัพเดทออร์เดอร์เรียบร้อยแล้ว");
+          } else {
+            showToast("มีข้อผิดพลาดเกิดขึ้น โปรดลองใหม่ภายหลัง Status : " +
+                "$status");
+          }
+          return status < 500;
+        },
+      ),
+    );
+    print(response.statusCode);
+  }
+
+  void showToast(String msg) {
+    Toast.show(msg, context,
+        textColor: Colors.white, duration: Toast.LENGTH_LONG);
   }
 
   Future<Null> refreshList() async {
@@ -117,17 +175,13 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                           height: 90,
                                           fit: BoxFit.cover,
                                           placeholder: (context, url) => Center(
-                                              child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      top: 50, bottom: 35),
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    strokeWidth: 5.0,
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation(
-                                                            const Color(
-                                                                0xffF6A911)),
-                                                  ))),
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 5.0,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                      const Color(0xffF6A911)),
+                                            ),
+                                          ),
                                           errorWidget: (context, url, error) =>
                                               Container(
                                             height: 90,
@@ -164,21 +218,21 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                               ),
                                             ),
                                             Container(
+                                              child: Text(
+                                                "${getStatusText(data.status)}",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.white),
+                                              ),
                                               padding: EdgeInsets.fromLTRB(
                                                   5, 4, 5, 5),
                                               margin: EdgeInsets.only(
                                                   right: 10, top: 10),
                                               decoration: BoxDecoration(
-                                                color: Colors.red,
+                                                color: color,
                                                 borderRadius:
                                                     BorderRadius.circular(5),
-                                              ),
-                                              child: Text(
-                                                "${data.status}",
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.white),
                                               ),
                                             ),
                                           ],
@@ -237,7 +291,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                                       minHeight: 16,
                                                     ),
                                                     child: Text(
-                                                      ' + ${data.totalQuantity - 1}  ',
+                                                      '+ ${data.totalQuantity - 1}  ',
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 12,
@@ -323,6 +377,8 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                           userFName: data.user.firstName,
                                           userLName: data.user.lastName,
                                           userTel: data.user.tel,
+                                          slipImg: data.payment.paymentImg,
+                                          orderId: data.id,
                                         ),
                                       ),
                                     );
@@ -345,10 +401,15 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                 alignment: Alignment.center,
                                 width: 120,
                                 child: FlatButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    updateOrder(data.id, data.timePickup)
+                                        .then((value) {
+                                      refreshList();
+                                    });
+                                  },
                                   color: Colors.orange,
                                   child: Text(
-                                    "รับออเดอร์",
+                                    "เสร็จสิ้น",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -365,7 +426,11 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                     return Container(
                       margin: EdgeInsets.only(top: 250),
                       child: Center(
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 5.0,
+                          valueColor:
+                              AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                        ),
                       ),
                     );
                   }
