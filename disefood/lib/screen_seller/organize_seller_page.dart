@@ -27,7 +27,6 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
   String token;
   int approve;
   ApiProvider apiProvider = ApiProvider();
-  Logger logger = Logger();
   List<Feedbacks> _feedbackLists = new List<Feedbacks>();
   @override
   void initState() {
@@ -37,7 +36,6 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       token = preferences.getString('token');
       approve = preferences.getInt('approved');
-      logger.d(token);
     });
     super.initState();
   }
@@ -51,8 +49,6 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
     setState(() {
       _isLoading = true;
       foodList = json.decode(body)['data'];
-      Logger logger = Logger();
-      logger.d(foodList);
     });
   }
 
@@ -309,12 +305,10 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                               var response = await apiProvider.deleteMenuById(
                                   foodId, token);
                               if (response.statusCode == 200) {
-                                logger.d('success');
                                 Navigator.of(context).pop(true);
                                 initState();
                               } else {
-                                logger
-                                    .e('status code = ${response.statusCode}');
+                                print('status code = ${response.statusCode}');
                               }
                             },
                             child: Text(

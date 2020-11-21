@@ -140,6 +140,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
         followRedirects: false,
         validateStatus: (status) {
           if (status == 200) {
+            assignValue();
             showToast("อัพเดทออร์เดอร์เรียบร้อยแล้ว");
           } else {
             showToast("มีข้อผิดพลาดเกิดขึ้น โปรดลองใหม่ภายหลัง Status : " +
@@ -532,7 +533,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                         onPressed: () {
                                           updateOrder(data.id, data.timePickup)
                                               .then((value) {
-                                            refreshList();
+                                            setState(() {});
                                           });
                                         },
                                         color: Colors.orange,

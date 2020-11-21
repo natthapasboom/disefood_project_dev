@@ -1,10 +1,19 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:disefood/model/confirmlesspayment.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../history.dart';
 
 class LessOrMoreDialog extends StatefulWidget {
   final String msg;
+  final int orderId;
+
   const LessOrMoreDialog({
     @required this.msg,
+    @required this.orderId,
     Key key,
   }) : super(key: key);
   @override
@@ -13,13 +22,38 @@ class LessOrMoreDialog extends StatefulWidget {
 
 class _LessOrMoreDialogState extends State<LessOrMoreDialog> {
   String msg;
+  int orderId;
+  var paymentList;
+  Future<ConfirmLessPayment> paymentData;
+  Map jsonMap;
 
   @override
   void initState() {
     setState(() {
       msg = widget.msg;
+      orderId = widget.orderId;
     });
     super.initState();
+  }
+
+  Future<Null> getConfirmPayment() async {
+    print("start");
+    String _url =
+        'http://54.151.194.224:8000/api/payment/confirmation/order/$orderId';
+    final response = await http.get(
+      _url,
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        var jsonString = response.body;
+        jsonMap = json.decode(jsonString);
+        print(jsonMap);
+        paymentList = ConfirmLessPayment.fromJson(jsonMap);
+      });
+    } else {
+      print('${response.statusCode}');
+    }
+    print(response.statusCode);
   }
 
   @override
@@ -102,7 +136,12 @@ class _LessOrMoreDialogState extends State<LessOrMoreDialog> {
                             child: RaisedButton(
                               elevation: 8,
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => History(),
+                                  ),
+                                );
                               },
                               padding: EdgeInsets.only(left: 20, right: 20),
                               color: Colors.orange,
@@ -184,7 +223,14 @@ class _LessOrMoreDialogState extends State<LessOrMoreDialog> {
                             child: RaisedButton(
                               elevation: 8,
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                getConfirmPayment().then((value) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => History(),
+                                    ),
+                                  );
+                                });
                               },
                               padding: EdgeInsets.only(left: 20, right: 20),
                               color: Colors.orange,

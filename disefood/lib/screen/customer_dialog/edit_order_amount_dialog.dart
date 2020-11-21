@@ -49,6 +49,7 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
   String shopName;
   int shopSlot;
   String shopCoverImg;
+  String foodDescription;
   // List<CartModel> cartModels = List();
   final myController = TextEditingController();
   @override
@@ -312,17 +313,26 @@ class _EditOrderAmountDialogState extends State<EditOrderAmountDialog> {
   Future<Null> addFoodToCart() async {
     Map<String, dynamic> orderMap = Map();
     orderMap['shopId'] = shopId;
+    orderMap['shopName'] = shopName;
     orderMap['foodId'] = foodId;
     orderMap['foodName'] = foodName;
     orderMap['foodQuantity'] = foodQuantity;
-    orderMap['foodDescription'] = myController.text;
+    print(myController.text);
+    if (myController.text == "") {
+      foodDescription = "-";
+      print("case2");
+    } else {
+      foodDescription = myController.text;
+      print("case2");
+    }
+    print(foodDescription);
+    orderMap['foodDescription'] = foodDescription;
     orderMap['foodPrice'] = foodPrice;
     orderMap['foodSumPrice'] = foodPrice * foodQuantity;
     orderMap['foodImg'] = foodImg;
     print('Food Data :  ${orderMap.toString()} ');
     CartModel cartModel = CartModel.fromJson(orderMap);
 
-    // var object = await SQLiteHelper().readAllDataFromSQLite();
     await SQLiteHelper().insertDataToSQLite(cartModel).then(
       (value) {
         showToast("แก้ไขตะกร้าเรียบร้อยแล้ว");

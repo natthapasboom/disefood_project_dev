@@ -53,7 +53,7 @@ class SQLiteHelper {
       print("Case 2 [Exist Item Updating Data to SQLite.....]");
       try {
         database.rawUpdate(
-          "UPDATE $tableDatabase SET $foodQuantity = ${cartModel.foodQuantity} , $foodSumPrice = ${cartModel.foodSumPrice} WHERE $foodId = ${cartModel.foodId}",
+          "UPDATE $tableDatabase SET $foodQuantity = ${cartModel.foodQuantity} , $foodDescription = \'${cartModel.foodDescription}'\ , $foodSumPrice = ${cartModel.foodSumPrice} WHERE $foodId = ${cartModel.foodId}",
         );
         print("Insert Complete");
       } catch (e) {

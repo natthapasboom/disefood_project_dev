@@ -58,7 +58,7 @@ class _FavoritePageState extends State<FavoritePage> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.only(top: 5),
                 child: Divider(
                   thickness: 1,
                   indent: 40,
@@ -67,7 +67,6 @@ class _FavoritePageState extends State<FavoritePage> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 10),
                 child: FutureBuilder<Favorite>(
                   future: _favorites,
                   builder: (context, snapshot) {
@@ -135,37 +134,39 @@ class _FavoritePageState extends State<FavoritePage> {
                                             Row(
                                               children: [
                                                 Text(
-                                                  "0.${data.shopId}",
+                                                  "${data.shopId}",
                                                   style: TextStyle(
-                                                      fontSize: 16,
+                                                      fontSize: 18,
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
                                                 Container(
-                                                  height: 20,
+                                                  height: 30,
                                                   child: VerticalDivider(
-                                                    color: Colors.black38,
+                                                    color: Colors.orange,
                                                     thickness: 3,
                                                   ),
                                                 ),
                                                 Text(
-                                                  "${data.shop.name}",
+                                                  " ${data.shop.name}",
                                                   style: TextStyle(
-                                                      fontSize: 16,
+                                                      fontSize: 18,
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                                Container(
-                                                  height: 20,
-                                                  child: VerticalDivider(
-                                                    color: Colors.black38,
-                                                    thickness: 3,
-                                                  ),
-                                                ),
                                               ],
                                             ),
+                                            // Text(
+                                            //   "รายการอาหาร",
+                                            //   style: TextStyle(
+                                            //       fontSize: 16,
+                                            //       color: Colors.orange,
+                                            //       fontWeight: FontWeight.bold,
+                                            //       decoration:
+                                            //           TextDecoration.underline),
+                                            // ),
                                           ],
                                         ),
                                         // subtitle: Row(
