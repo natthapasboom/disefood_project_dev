@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:disefood/model/cart.dart';
 import 'package:disefood/screen/customer_dialog/edit_order_amount_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
+import 'package:disefood/screen/history.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -126,6 +127,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
       print("-----Send Order API Completed Status Code: " +
           "${response.statusCode}-----");
       deleteAllFoodInCart();
+      showToast("สั่งอาหารเรียบร้อยแล้ว");
     } else {
       showToast("มีข้อผิดพลาดเกิดขึ้น โปรดลองใหม่ภายหลัง Status : " +
           "${response.statusCode}");
@@ -206,7 +208,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                       label: Row(
                         children: [
                           Text(
-                            'ยืนยัน',
+                            'ยืนยันคำสั่งซื้อ',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -218,11 +220,13 @@ class _OrderItemPageState extends State<OrderItemPage> {
                         if (timeValue != null) {
                           print(
                               "Order Data is Complete => Sending Order API...");
-                          sendOrderAPI();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => Home()),
-                          );
+                          sendOrderAPI().then((value) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => History()),
+                            );
+                          });
                         } else {
                           showToast("โปรดเลือกเวลารับอาหาร");
                           print(

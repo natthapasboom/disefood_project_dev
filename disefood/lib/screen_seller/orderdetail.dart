@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/model/orderbyshopid.dart';
-import 'package:disefood/screen_seller/order_seller_page.dart';
 import 'package:disefood/screen_seller/seller_dialog/addtime_orderpage_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -19,6 +18,9 @@ class OrderDetailSeller extends StatefulWidget {
   final String userTel;
   final String slipImg;
   final int orderId;
+  final Function(int) addQty;
+  final Function(int) resetQty;
+  final int index;
 
   const OrderDetailSeller({
     Key key,
@@ -31,12 +33,18 @@ class OrderDetailSeller extends StatefulWidget {
     @required this.userTel,
     @required this.slipImg,
     @required this.orderId,
+    @required this.addQty,
+    @required this.resetQty,
+    @required this.index,
   }) : super(key: key);
   @override
   _OrderDetailSellerState createState() => _OrderDetailSellerState();
 }
 
 class _OrderDetailSellerState extends State<OrderDetailSeller> {
+  Function(int) addQty;
+  Function(int) resetQty;
+  int index;
   bool isLoading = true;
   bool isthisbuttonselected = true;
   String nameUser;
@@ -53,6 +61,8 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   int orderId;
   bool isAddTime = false;
   List<OrderDetails> orderDetail;
+  String timeMinute;
+
   TextEditingController addTimeController = TextEditingController();
 
   int qty = 0;
@@ -72,7 +82,11 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
       userTel = widget.userTel;
       slipImg = widget.slipImg;
       orderId = widget.orderId;
+      addQty = widget.addQty;
+      resetQty = widget.resetQty;
+      index = widget.index;
     });
+    timeTextCheck();
   }
 
   Future<Null> updateOrder(int qty) async {
@@ -129,6 +143,17 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
     }
     if (qty == 0) {
       isAddTime = false;
+    }
+  }
+
+  void timeTextCheck() {
+    int minuteCheck = timePickup.minute;
+    if (minuteCheck == 0) {
+      timeMinute = "${timePickup.minute}0";
+    } else if (minuteCheck < 10) {
+      timeMinute = "0${timePickup.minute}";
+    } else {
+      timeMinute = "${timePickup.minute}";
     }
   }
 
@@ -202,19 +227,17 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                       ),
                       onPressed: () {
                         if (qty == 0) {
+                          resetQty(index);
                           showToast(
                               "ท่านยังไม่ได้ระบุจำนวนเวลาที่ต้องการเพิ่ม");
                         } else {
-                          updateOrder(qty).then(
-                            (value) => {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => OrderSellerPage(),
-                                ),
-                              )
-                            },
-                          );
+                          resetQty(index);
+                          for (var i = 0; i < qty; i++) {
+                            addQty(index);
+                          }
+                          updateOrder(qty).then((value) {
+                            Navigator.of(context).pop();
+                          });
                         }
                       },
                     ),
@@ -306,7 +329,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                           Container(
                             margin: EdgeInsets.only(top: 2),
                             child: Text(
-                              '${timePickup.hour}.${timePickup.minute} น.',
+                              '${timePickup.hour}.$timeMinute น.',
                               style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.orange,
