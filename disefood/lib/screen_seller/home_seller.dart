@@ -82,7 +82,8 @@ class _HomeSellerState extends State<HomeSeller> {
     var response = await apiProvider.getShopId(token);
     // logger.d(token);
     print(response.statusCode);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 500) {
+    } else if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       ShopById msg = ShopById.fromJson(map);
       // logger.d(msg.data);

@@ -496,74 +496,80 @@ class PieChart2State extends State<PieChartSample2> {
   }
 
   List<PieChartSectionData> showingSections() {
-    return List.generate(5, (i) {
-      final isTouched = i == touchedIndex;
-      final double fontSize = isTouched ? 25 : 16;
-      final double radius = isTouched ? 80 : 60;
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: const Color(0xff4C7286),
-            value: star5,
-            title: star5 == null ? '' : '$star5',
-            showTitle: true,
-            radius: radius,
-            titleStyle: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xffffffff)),
-          );
-        case 1:
-          return PieChartSectionData(
-            color: const Color(0xff7FC9C5),
-            value: star4 == null ? 0.0 : star4,
-            title: star4 == null ? '' : '$star4',
-            radius: radius,
-            showTitle: true,
-            titleStyle: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xffffffff)),
-          );
-        case 2:
-          return PieChartSectionData(
-            color: const Color(0xff749591),
-            value: star3 != null ? star3 : 0.0,
-            title: star3 == null ? '' : '$star3',
-            radius: radius,
-            showTitle: true,
-            titleStyle: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xffffffff)),
-          );
-        case 3:
-          return PieChartSectionData(
-            color: const Color(0xffE8CE00),
-            value: star2 == null ? 0.0 : star2,
-            title: star2 == null ? '' : '$star2',
-            radius: radius,
-            showTitle: true,
-            titleStyle: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xffffffff)),
-          );
-        case 4:
-          return PieChartSectionData(
-            color: const Color(0xffDFB60B),
-            value: star1 == null ? 0.0 : star1,
-            title: star1 == null ? '' : '$star1',
-            radius: radius,
-            showTitle: true,
-            titleStyle: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xffffffff)),
-          );
-        default:
-          return null;
-      }
-    });
+    return star1 != null ||
+            star2 != null ||
+            star3 != null ||
+            star4 != null ||
+            star5 != null
+        ? List.generate(5, (i) {
+            final isTouched = i == touchedIndex;
+            final double fontSize = isTouched ? 25 : 16;
+            final double radius = isTouched ? 80 : 60;
+            switch (i) {
+              case 0:
+                return PieChartSectionData(
+                  color: const Color(0xff4C7286),
+                  value: star5 == null ? 0.0 : star5,
+                  title: star5 == null ? '' : '$star5',
+                  showTitle: true,
+                  radius: radius,
+                  titleStyle: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xffffffff)),
+                );
+              case 1:
+                return PieChartSectionData(
+                  color: const Color(0xff7FC9C5),
+                  value: star4 == null ? 0.0 : star4,
+                  title: star4 == null ? '' : '$star4',
+                  radius: radius,
+                  showTitle: true,
+                  titleStyle: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xffffffff)),
+                );
+              case 2:
+                return PieChartSectionData(
+                  color: const Color(0xff749591),
+                  value: star3 != null ? star3 : 0.0,
+                  title: star3 == null ? '' : '$star3',
+                  radius: radius,
+                  showTitle: true,
+                  titleStyle: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xffffffff)),
+                );
+              case 3:
+                return PieChartSectionData(
+                  color: const Color(0xffE8CE00),
+                  value: star2 == null ? 0.0 : star2,
+                  title: star2 == null ? '' : '$star2',
+                  radius: radius,
+                  showTitle: true,
+                  titleStyle: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xffffffff)),
+                );
+              case 4:
+                return PieChartSectionData(
+                  color: const Color(0xffDFB60B),
+                  value: star1 == null ? 0.0 : star1,
+                  title: star1 == null ? '' : '$star1',
+                  radius: radius,
+                  showTitle: true,
+                  titleStyle: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xffffffff)),
+                );
+              default:
+                return null;
+            }
+          })
+        : List.generate(0, (index) => null);
   }
 }

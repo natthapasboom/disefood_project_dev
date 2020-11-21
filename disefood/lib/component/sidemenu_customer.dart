@@ -63,7 +63,8 @@ class SideMenuCustomer extends StatelessWidget {
                     backgroundImage: coverImg
                             .contains('images/user/profile_img')
                         ? NetworkImage(
-                            "https://disefood.s3-ap-southeast-1.amazonaws.com/$coverImg")
+                            "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                                "$coverImg")
                         : NetworkImage(
                             '$coverImg',
                           ),

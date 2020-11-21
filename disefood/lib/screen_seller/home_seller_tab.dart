@@ -108,6 +108,19 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 0),
+          child: Builder(
+            builder: (context) => IconButton(
+              icon: Icon(
+                Icons.account_circle,
+                size: 30,
+              ),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          ),
+        ),
+        automaticallyImplyLeading: false,
         title: _titlePage(),
         actions: <Widget>[],
       ),
@@ -154,6 +167,7 @@ class _HomepageState extends State<Homepage> {
         onTap: (index) {
           setState(() {
             _currentIndex = index;
+            logger.e('current index: $_currentIndex');
           });
         },
       ),
