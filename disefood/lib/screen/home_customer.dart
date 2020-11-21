@@ -69,21 +69,21 @@ class _HomeState extends State<Home> {
         checkMissingProfile = preference.getBool('missing_profile');
         logger.e('missing profile: $checkMissingProfile');
         facebookImg = preference.getString('facebook_img');
-        logger.e('facebook : $facebookImg ');
+        // logger.e('facebook : $facebookImg ');
         nameUser = msg.data.firstName;
         lastNameUser = msg.data.lastName;
         profileImg = facebookImg == null ? msg.data.profileImg : facebookImg;
-        logger.e('image: $profileImg ');
+        // logger.e('image: $profileImg ');
         email = msg.data.email;
         if (checkMissingProfile == null) {
           setState(() {
             _isFacebookAccount = false;
 
-            logger.e('is face account : $_isFacebookAccount');
+            // logger.e('is face account : $_isFacebookAccount');
           });
         } else {
           _isFacebookAccount = true;
-          logger.e('is face account : $_isFacebookAccount');
+          // logger.e('is face account : $_isFacebookAccount');
         }
       });
     } else {
@@ -177,7 +177,11 @@ class _HomeState extends State<Home> {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+                      padding: EdgeInsets.only(
+                        left: 20,
+                        right: 20,
+                        top: 20,
+                      ),
                       height: 120,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
@@ -263,7 +267,7 @@ class _HomeState extends State<Home> {
                           return item['approved'] == 1
                               ? Container(
                                   margin: EdgeInsets.only(
-                                      bottom: 5, top: 10, left: 30, right: 30),
+                                      bottom: 10, top: 10, left: 30, right: 30),
                                   child: InkWell(
                                     onTap: () {
                                       //card

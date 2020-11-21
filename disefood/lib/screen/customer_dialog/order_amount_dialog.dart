@@ -99,13 +99,15 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
                       width: double.maxFinite,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Center(
-                          child: Container(
-                              margin: EdgeInsets.only(top: 50, bottom: 35),
-                              child: CircularProgressIndicator(
-                                strokeWidth: 5.0,
-                                valueColor: AlwaysStoppedAnimation(
-                                    const Color(0xffF6A911)),
-                              ))),
+                        child: Container(
+                          margin: EdgeInsets.only(top: 50, bottom: 35),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 5.0,
+                            valueColor:
+                                AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                          ),
+                        ),
+                      ),
                       errorWidget: (context, url, error) => Container(
                         height: 120,
                         width: double.maxFinite,

@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:disefood/component/feedback_seller_bottombar.dart';
 
-class OrderSeller extends StatefulWidget {
-  OrderSeller({Key key}) : super(key : key);
+class OrderSellerBottomBar extends StatefulWidget {
+  OrderSellerBottomBar({Key key}) : super(key: key);
   @override
-  _OrderSellerState createState() => _OrderSellerState();
+  _OrderSellerBottomBarState createState() => _OrderSellerBottomBarState();
 }
 
-class _OrderSellerState extends State<OrderSeller> {
+class _OrderSellerBottomBarState extends State<OrderSellerBottomBar> {
   int selectIndex = 0;
   final widgetOptions = [
     OrderSellerPage(),
@@ -27,28 +27,54 @@ class _OrderSellerState extends State<OrderSeller> {
       body: Center(
         child: widgetOptions.elementAt(selectIndex),
       ),
-      bottomNavigationBar:  BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.orange,
         selectedFontSize: 14,
         unselectedFontSize: 14,
         iconSize: 28,
-        items: <BottomNavigationBarItem> [
-          BottomNavigationBarItem(icon: Icon(Icons.fastfood,color: Colors.white,),title: Text('Order',style: TextStyle(color: Colors.white),),),
-          BottomNavigationBarItem(icon: Icon(Icons.settings,color: Colors.white,),title: Text('Organize',style: TextStyle(color: Colors.white)),),
-          BottomNavigationBarItem(icon: Icon(Icons.rate_review,color: Colors.white,),title: Text('Feedback',style: TextStyle(color: Colors.white)),),
-          BottomNavigationBarItem(icon: Icon(Icons.equalizer,color: Colors.white,),title: Text('Summary',style: TextStyle(color: Colors.white)),),
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.fastfood,
+              color: Colors.white,
+            ),
+            title: Text(
+              'Order',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
+            title: Text('Organize', style: TextStyle(color: Colors.white)),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.rate_review,
+              color: Colors.white,
+            ),
+            title: Text('Feedback', style: TextStyle(color: Colors.white)),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.equalizer,
+              color: Colors.white,
+            ),
+            title: Text('Summary', style: TextStyle(color: Colors.white)),
+          ),
         ],
         currentIndex: selectIndex,
         onTap: onItemTapped,
       ),
     );
   }
-  void onItemTapped(int index){
-    setState((){
+
+  void onItemTapped(int index) {
+    setState(() {
       selectIndex = index;
-    }
-    );
+    });
   }
 }
-
