@@ -240,31 +240,56 @@ class _HomeSellerState extends State<HomeSeller> {
                           height: 13.0,
                           color: const Color(0xffC4C4C4),
                         ),
-                        Container(
-                          // child: _shopId == null
-                          //     ? Center(
-                          //         child: IconButton(
-                          //           icon: Icon(
-                          //             Icons.add_circle,
-                          //             color: Colors.amber[900],
-                          //           ),
-                          //           onPressed: () {},
-                          //         ),
-                          //       )
+                        // Column(
+                        //   // mainAxisAlignment: MainAxisAlignment.center,
+                        //   // crossAxisAlignment: CrossAxisAlignment.center,
+                        //   children: [
+                        //     Container(
+                        //       height: 64,
+                        //       alignment: Alignment.center,
+                        //       child: IconButton(
+                        //         iconSize: 64,
+                        //         icon: Icon(
+                        //           Icons.store,
+                        //           color: Colors.amber[800],
+                        //         ),
+                        //         onPressed: () {
+                        //           Navigator.push(
+                        //               context,
+                        //               MaterialPageRoute(
+                        //                   builder: (context) => EditShop(
+                        //                         shopId: _shopId,
+                        //                         shopImg: _shopImg,
+                        //                         shopName: _shopName,
+                        //                         shopSlot: _shopSlot,
+                        //                       ))).then((value) {
+                        //             setState(() {
+                        //               fetchShopFromStorage();
+                        //               initState();
+                        //               print('Set state work');
+                        //             });
+                        //           });
+                        //         },
+                        //       ),
+                        //     ),
+                        //   ],
+                        // )
+                        Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
+                                    alignment: Alignment.center,
                                     margin: EdgeInsets.only(
-                                        bottom: 20, right: 30, top: 75),
+                                        bottom: 0, right: 0, top: 75),
                                     child: IconButton(
+                                      iconSize: 64,
                                       icon: Icon(
                                         Icons.store,
                                         color: Colors.amber[800],
-                                        size: 64,
                                       ),
                                       onPressed: () {
                                         Navigator.push(
@@ -286,7 +311,7 @@ class _HomeSellerState extends State<HomeSeller> {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(top: 10),
+                                    margin: EdgeInsets.only(top: 0),
                                     child: Center(
                                       child: Text(
                                         'แก้ไขร้านอาหาร',
@@ -299,22 +324,22 @@ class _HomeSellerState extends State<HomeSeller> {
                                 ],
                               ),
                               Container(
-                                // margin: EdgeInsets.only(left: 70),
+                                margin: EdgeInsets.only(left: 70),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Container(
                                       margin: EdgeInsets.only(
-                                        bottom: 20,
-                                        right: 30,
+                                        // bottom: 20,
+                                        // right: 30,
                                         top: 75,
                                       ),
                                       child: account == null
                                           ? IconButton(
+                                              iconSize: 64,
                                               icon: Icon(
                                                 Icons.account_balance,
                                                 color: Colors.amber[800],
-                                                size: 64,
                                               ),
                                               onPressed: () {
                                                 Navigator.push(
@@ -338,10 +363,10 @@ class _HomeSellerState extends State<HomeSeller> {
                                               },
                                             )
                                           : IconButton(
+                                              iconSize: 64,
                                               icon: Icon(
                                                 Icons.account_balance,
                                                 color: Colors.amber[800],
-                                                size: 64,
                                               ),
                                               onPressed: () {
                                                 Navigator.push(
@@ -371,7 +396,7 @@ class _HomeSellerState extends State<HomeSeller> {
                                             ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.only(top: 10),
+                                      margin: EdgeInsets.only(top: 0),
                                       child: Center(
                                         child: account == null
                                             ? Text(
