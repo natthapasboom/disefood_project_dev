@@ -640,6 +640,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                               onChange: onTimeChanged,
                               // Optional onChange to receive value as DateTime
                               onChangeDateTime: (DateTime timeSelected) {
+                                print(_time);
                                 //เวลาเปิดปิด
                                 if (timeSelected.hour > 8 &&
                                     timeSelected.hour < 16) {

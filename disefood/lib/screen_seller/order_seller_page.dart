@@ -77,7 +77,6 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
 
   void addQty(index) {
     qty[index]++;
-    print(qty[index]);
 
     setState(() {});
   }
@@ -102,6 +101,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
         var jsonString = response.body;
         Map jsonMap = jsonDecode(jsonString);
         assignQtyValue(jsonMap);
+
         orderList = SellerOrderData.fromJson(jsonMap);
       });
     } else {
@@ -115,7 +115,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
   }
 
   void assignQtyValue(Map jsonMap) {
-    qty = List<int>(jsonMap.length + 1);
+    qty = List<int>(jsonMap["data"].length);
   }
 
   Future<Null> updateOrder(int orderId, String timepickup) async {
@@ -169,6 +169,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: RefreshIndicator(
+        color: Colors.orange,
         onRefresh: refreshList,
         key: refreshKey,
         child: ListView(

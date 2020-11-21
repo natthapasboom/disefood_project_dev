@@ -5,6 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/model/accountdata.dart';
 import 'package:disefood/model/getPayment.dart';
+import 'package:disefood/model/payment_less_or_more.dart';
+import 'package:disefood/screen/customer_dialog/less_or_more_dialog.dart';
 import 'package:disefood/screen/history.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -34,7 +36,10 @@ class _PaymentPageState extends State<PaymentPage> {
   int orderId;
   Map jsonAccMap;
   Map jsonPaymentMap;
+  Map jsonLessOrMoreMap;
   var accList;
+  var lessOrMoreList;
+  Future<PaymentLessOrMore> lessOrMoreData;
   Future<AccountData> dataList;
   bool isUploaded = false;
   bool isSlipVerified = false;
@@ -50,8 +55,10 @@ class _PaymentPageState extends State<PaymentPage> {
       shopId = widget.shopId;
       orderId = widget.orderId;
     });
+
     dataList = getAccountNumber();
     paymentData = getSlipImg();
+
     super.initState();
   }
 
@@ -99,6 +106,24 @@ class _PaymentPageState extends State<PaymentPage> {
       print('${response.statusCode}');
     }
     return accList;
+  }
+
+  Future<PaymentLessOrMore> getMsgLessOrMore() async {
+    String _url = 'http://54.151.194.224:8000/api/payment/check/order/$orderId';
+    final response = await http.get(
+      _url,
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        var jsonString = response.body;
+        jsonLessOrMoreMap = json.decode(jsonString);
+        lessOrMoreList = PaymentLessOrMore.fromJson(jsonLessOrMoreMap);
+        print(jsonLessOrMoreMap["data"]["msg"]);
+      });
+    } else {
+      print('${response.statusCode}');
+    }
+    return lessOrMoreList;
   }
 
   void showToast(String msg) {
@@ -485,11 +510,69 @@ class _PaymentPageState extends State<PaymentPage> {
                                                 sendPayment(
                                                   _image,
                                                 ).then((value) {
-                                                  setState(() {
-                                                    if (showBottomNavigate) {
-                                                      isSlipVerified = true;
+                                                  lessOrMoreData =
+                                                      getMsgLessOrMore()
+                                                          .then((value) {
+                                                    print(jsonLessOrMoreMap[
+                                                        "data"]["msg"]);
+                                                    if (jsonLessOrMoreMap[
+                                                            "data"]["msg"] ==
+                                                        "Payment's amount is less than Order's price") {
+                                                      print("Less Case");
+                                                      String msg = "less";
+                                                      showDialog(
+                                                        barrierDismissible:
+                                                            false,
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            LessOrMoreDialog(
+                                                          msg: msg,
+                                                        ),
+                                                      ).then((value) {
+                                                        setState(() {
+                                                          if (showBottomNavigate) {
+                                                            isSlipVerified =
+                                                                true;
+                                                          } else {
+                                                            isSlipVerified =
+                                                                false;
+                                                          }
+                                                        });
+                                                      });
+                                                    } else if (jsonLessOrMoreMap[
+                                                            "data"]["msg"] ==
+                                                        "Payment's amount is more than Order's price") {
+                                                      print("More Case");
+                                                      String msg = "more";
+                                                      showDialog(
+                                                        barrierDismissible:
+                                                            false,
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            LessOrMoreDialog(
+                                                          msg: msg,
+                                                        ),
+                                                      ).then((value) {
+                                                        setState(() {
+                                                          if (showBottomNavigate) {
+                                                            isSlipVerified =
+                                                                true;
+                                                          } else {
+                                                            isSlipVerified =
+                                                                false;
+                                                          }
+                                                        });
+                                                      });
                                                     } else {
-                                                      isSlipVerified = false;
+                                                      print("Correct Case");
+                                                      setState(() {
+                                                        if (showBottomNavigate) {
+                                                          isSlipVerified = true;
+                                                        } else {
+                                                          isSlipVerified =
+                                                              false;
+                                                        }
+                                                      });
                                                     }
                                                   });
                                                 });

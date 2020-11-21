@@ -345,7 +345,7 @@ class _HomeState extends State<Home> {
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        "0.${item['id']}",
+                                                        "${item['id']}",
                                                         style: TextStyle(
                                                             fontSize: 16,
                                                             color: Colors.black,
