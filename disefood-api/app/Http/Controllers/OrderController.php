@@ -53,7 +53,6 @@ class OrderController extends Controller
     //Seller
     public function updateStatus(UpdateOrder $request, $orderId)
     {
-        //TODO: check payment before change status
         $user = Auth::user();
         $order = $this->orderRepo->getById($orderId);
         $request = $request->validated();
