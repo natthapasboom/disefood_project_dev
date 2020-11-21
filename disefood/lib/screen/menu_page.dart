@@ -794,7 +794,6 @@ class _MenuPageState extends State<MenuPage> {
                                 ),
                                 onRatingUpdate: (rating) {
                                   this.rating = rating;
-
                                   print(rating);
                                 },
                               ),

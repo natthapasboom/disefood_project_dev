@@ -529,10 +529,10 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                                       width: 120,
                                       child: FlatButton(
                                         onPressed: () {
-                                          // updateOrder(data.id, data.timePickup)
-                                          //     .then((value) {
-                                          //   refreshList();
-                                          // });
+                                          updateOrder(data.id, data.timePickup)
+                                              .then((value) {
+                                            refreshList();
+                                          });
                                         },
                                         color: Colors.orange,
                                         child: Text(
