@@ -153,7 +153,9 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
       });
 
       return CachedNetworkImage(
-          imageUrl: '$profileImg',
+          imageUrl: profileImg.contains('images/user/profile_img')
+              ? '${AppConfig.image}$profileImg'
+              : '$profileImg',
           height: 1000,
           width: 1000,
           fit: BoxFit.cover,
@@ -774,9 +776,12 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
                                                                       seconds:
                                                                           3),
                                                                   () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(true);
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder:
+                                                                            (context) =>
+                                                                                Home()));
                                                               });
                                                               return Dialog(
                                                                   shape: RoundedRectangleBorder(

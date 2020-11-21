@@ -52,7 +52,7 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function getByShopId($shopId)
     {
-        $orders = $this->order->where('shop_id', $shopId)->orderBy('created_at','asc')->get();
+        $orders = $this->order->where('shop_id', $shopId)->where('status', 'in process')->orderBy('time_pickup','asc')->get();
         foreach ( $orders as $order) {
             $id = $order['id'];
             $order->find($id)->get();

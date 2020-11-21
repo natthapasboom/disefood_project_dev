@@ -353,9 +353,10 @@ class ShopController extends Controller
             $food['totalAmount'] = 0;
             $orderDetails = $food->orderDetails;
             $foods->makeHidden('orderDetails');
+
             foreach ($orderDetails as $orderDetail) {
                 $order = $orderDetail->order;
-                if($order->status === 'success') {
+                if($order->status === 'success' || $order->status === 'in process') {
                     $food['totalQuantity'] += $orderDetail->quantity;
                     $food['totalAmount'] += $orderDetail->price;
                     $shop['totalAmountShop'] += $orderDetail->price;
@@ -364,7 +365,7 @@ class ShopController extends Controller
             }
         }
 
-        $sorted = $foods->sortDesc();
+        $sorted = $foods->sortByDesc('totalAmount')->take(10);
         $data = $sorted->values()->all();
         $data['totalAmountShop'] = $shop['totalAmountShop'];
         $data['totalQuantityShop'] = $shop['totalQuantityShop'];

@@ -64,13 +64,15 @@ class Shop {
   int id;
   int shopSlot;
   String name;
+  String coverImg;
 
-  Shop({this.id, this.shopSlot, this.name});
+  Shop({this.id, this.shopSlot, this.name, this.coverImg});
 
   Shop.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     shopSlot = json['shop_slot'];
     name = json['name'];
+    coverImg = json['cover_img'];
   }
 
   Map<String, dynamic> toJson() {
@@ -78,6 +80,7 @@ class Shop {
     data['id'] = this.id;
     data['shop_slot'] = this.shopSlot;
     data['name'] = this.name;
+    data['cover_img'] = this.coverImg;
     return data;
   }
 }

@@ -139,6 +139,7 @@ class _LoginPageState extends State<LoginPage> {
 
           if (jsonMap.missingProfile == true) {
             await preference.setString('facebook_img', jsonMap.data.profileImg);
+            await preference.setBool('missing_profile', jsonMap.missingProfile);
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -146,6 +147,7 @@ class _LoginPageState extends State<LoginPage> {
               print('object');
             });
           } else if (jsonMap.missingProfile == false) {
+            await preference.setBool('missing_profile', jsonMap.missingProfile);
             Map map = json.decode(response.body);
             UserProfile msg = UserProfile.fromJson(map);
             routeToService(Home(), msg);
