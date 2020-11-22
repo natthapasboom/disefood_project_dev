@@ -21,12 +21,14 @@ class MenuPage extends StatefulWidget {
   final String shopName;
   final int shopSlot;
   final String shopCoverImg;
+  final double rating;
   const MenuPage(
       {Key key,
       @required this.shopId,
       @required this.shopName,
       @required this.shopSlot,
-      @required this.shopCoverImg})
+      @required this.shopCoverImg,
+      @required this.rating})
       : super(key: key);
   @override
   _MenuPageState createState() => _MenuPageState();
@@ -435,6 +437,23 @@ class _MenuPageState extends State<MenuPage> {
                                                 fontSize: 24,
                                                 fontWeight: FontWeight.bold),
                                           ),
+                                          Container(
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  child: Icon(
+                                                    Icons.star,
+                                                    color: Color(0xffF6A911),
+                                                    size: 18,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  child:
+                                                      Text('${widget.rating}'),
+                                                )
+                                              ],
+                                            ),
+                                          )
                                         ],
                                       ),
                                     ],

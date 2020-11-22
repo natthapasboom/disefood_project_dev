@@ -180,7 +180,6 @@ class _LoginPageState extends State<LoginPage> {
               children: <Widget>[
                 Center(
                   child: SingleChildScrollView(
-            
                     padding: EdgeInsets.all(30.0),
                     child: Form(
                       key: _formKey,
@@ -198,9 +197,6 @@ class _LoginPageState extends State<LoginPage> {
                                       color: Colors.amber[900],
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Container(
-                                  child: Icon(Icons.),
-                                )
                               ],
                             ),
                           ),
