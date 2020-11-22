@@ -96,6 +96,7 @@ class PaymentController extends Controller
     public function orderPaymentConfirmation($orderId)
     {
         $newOrder['confirmed_by_customer'] = true;
+        $newOrder['status'] = 'in process';
         $this->order->updateById($orderId, $newOrder);
         $order = $this->order->getById($orderId);
         return response()->json(['data' => $order, 'msg' => 'Confirm Order success'], 200);

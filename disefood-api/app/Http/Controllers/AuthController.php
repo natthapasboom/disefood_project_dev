@@ -139,7 +139,7 @@ class AuthController extends Controller
         $newUser['username'] = $facebookUser->getName();
         $newUser['email'] = $facebookUser->getEmail();
         $newUser['profile_img'] = $facebookUser->getAvatar();
-
+        return response()->json(['data' => $facebookUser]);
         $duplicateUser = $this->userRepo->findByEmail($facebookUser->getEmail());
 
 

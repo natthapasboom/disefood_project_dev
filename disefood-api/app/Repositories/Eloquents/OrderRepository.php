@@ -76,7 +76,6 @@ class OrderRepository implements OrderRepositoryInterface
     {
         $timePickUp = $newOrders['time_pickup'];
         $inputNewOrders = $newOrders['newOrder'];
-//        $inputNewOrder = $newOrders->input($newOrders['newOrder']);
         $order = $this->order;
         $shop = $this->shop->find($shopId);
         if(!$shop) return response()->json(['msg' => 'Shop not found'], 404);

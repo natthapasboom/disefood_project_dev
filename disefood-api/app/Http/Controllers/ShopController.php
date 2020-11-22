@@ -365,12 +365,11 @@ class ShopController extends Controller
             }
         }
 
-        $sorted = $foods->sortByDesc('totalAmount')->take(10);
-        $data = $sorted->values()->all();
-        $data['totalAmountShop'] = $shop['totalAmountShop'];
-        $data['totalQuantityShop'] = $shop['totalQuantityShop'];
+        $data = $foods->sortByDesc('totalAmount')->take(10)->values()->all();
+        $totalQuantityShop = $shop['totalQuantityShop'];
+        $totalAmountShop = $shop['totalAmountShop'];
 
-        return response()->json(['data' => $data], 200);
+        return response()->json(['data' => $data, 'totalQuantityShop' => $totalQuantityShop, 'totalAmountShop' => $totalAmountShop], 200);
     }
 
     private function isSeller()
