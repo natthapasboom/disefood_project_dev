@@ -180,6 +180,7 @@ class _LoginPageState extends State<LoginPage> {
               children: <Widget>[
                 Center(
                   child: SingleChildScrollView(
+            
                     padding: EdgeInsets.all(30.0),
                     child: Form(
                       key: _formKey,
@@ -187,12 +188,20 @@ class _LoginPageState extends State<LoginPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           Center(
-                            child: Text(
-                              'Cafeteria',
-                              style: TextStyle(
-                                  fontSize: 36,
-                                  color: Colors.amber[900],
-                                  fontWeight: FontWeight.bold),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Cafeteria',
+                                  style: TextStyle(
+                                      fontSize: 36,
+                                      color: Colors.amber[900],
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Container(
+                                  child: Icon(Icons.),
+                                )
+                              ],
                             ),
                           ),
                           Center(
@@ -378,6 +387,20 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ],
                           ),
+                          Row(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 10, left: 200),
+                                child: Text(
+                                  '* สำหรับผู้ซื้อเท่านั้น',
+                                  style: TextStyle(
+                                      color: Color(0xfff44336),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            ],
+                          )
                         ],
                       ),
                     ),

@@ -377,7 +377,8 @@ class _HomeState extends State<Home> {
                                                         Icons.star,
                                                         color: Colors.orange,
                                                       ),
-                                                      Text("  4.2 Reviews"),
+                                                      Text(
+                                                          "  ${item['averageRating']} Reviews"),
                                                     ],
                                                   ),
                                                 ],

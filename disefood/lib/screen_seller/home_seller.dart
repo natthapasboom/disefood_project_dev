@@ -189,41 +189,15 @@ class _HomeSellerState extends State<HomeSeller> {
                                             children: <Widget>[
                                               Container(
                                                 padding: EdgeInsets.only(
-                                                  bottom: 5,
+                                                  bottom: 0,
                                                 ),
                                                 child: Text(
                                                   "$_shopName",
                                                   style: TextStyle(
-                                                      fontSize: 18,
+                                                      fontSize: 24,
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                              ),
-                                              Container(
-                                                  padding: EdgeInsets.only(
-                                                    bottom: 5,
-                                                  ),
-                                                  child: Text(
-                                                    "ShopTypeValue",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Colors.grey[500]),
-                                                  )),
-                                              Row(
-                                                children: <Widget>[
-                                                  Container(
-                                                    padding: EdgeInsets.only(
-                                                      right: 5,
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.star,
-                                                      color:
-                                                          Colors.orangeAccent,
-                                                      size: 20,
-                                                    ),
-                                                  ),
-                                                  Text("RateStarsValue"),
-                                                ],
                                               ),
                                             ],
                                           )

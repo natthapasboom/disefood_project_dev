@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TopSellerPage extends StatefulWidget {
@@ -12,46 +13,89 @@ class TopSellerPage extends StatefulWidget {
 }
 
 class _TopSellerPageState extends State<TopSellerPage> {
+  bool _isLoading = false;
+  var result;
+  Map map;
+  List<dynamic> list;
+  var jsonMap;
   int userId;
   ApiProvider apiProvider = ApiProvider();
   String email;
   bool isLoading = true;
+  Logger logger = Logger();
+  Future datasum;
+  int count = 0;
   @override
   void initState() {
+    _isLoading = false;
+    getDataSum();
     super.initState();
     Future.microtask(() {});
   }
 
+  Future getDataSum() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString('token');
+    int shopId = sharedPreferences.getInt('shop_id');
+    logger.e('shop_id: $shopId');
+    String url = 'http://54.151.194.224:8000/api/shop/owner/$shopId/dataSum';
+    var response =
+        await http.get(url, headers: {'Authorization': 'Bearer $token'});
+    logger.d('status datasum : ${response.statusCode}');
+    if (response.statusCode == 200) {
+      setState(() {
+        _isLoading = true;
+        map = json.decode(response.body)['data'];
+        for (int i = 0; i < 10; i++) {
+          String parseToString = i.toString();
+
+          var forData = map[parseToString];
+          if (forData != null) {
+            setState(() {
+              count = count + 1;
+              result = map[parseToString];
+              logger.d('json decode $i : ${result.toString()}');
+            });
+          } else {
+            setState(() {
+              result = null;
+              logger.d('json decode $i : ${result.toString()}');
+            });
+          }
+        }
+        logger.d('count item : $count');
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (BuildContext context, Animation<double> animation,
-              Animation<double> secondaryAnimation) {
-            return Home();
-          },
-          transitionsBuilder: (BuildContext context,
-              Animation<double> animation,
-              Animation<double> secondaryAnimation,
-              Widget child) {
-            return FadeTransition(
-              opacity: Tween<double>(
-                begin: 0,
-                end: 1,
-              ).animate(animation),
-              child: child,
-            );
-          },
-          transitionDuration: Duration(milliseconds: 400),
-        ),
-      ),
-      child: Scaffold(
-        resizeToAvoidBottomPadding: false,
-        body: ListView(
-          children: [],
-        ),
+    return Scaffold(
+      body: ListView(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        children: [
+          Container(
+            child: _isLoading == true
+                ? ListView.builder(
+                    padding: EdgeInsets.all(8),
+                    itemCount: result,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Center(
+                        child: Container(
+                          child: Text('$index'),
+                          height: 50,
+                          color: Colors.red,
+                        ),
+                      );
+                    })
+                : Center(
+                    child: Container(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator()),
+                  ),
+          )
+        ],
       ),
     );
   }
