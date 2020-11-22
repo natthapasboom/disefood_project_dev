@@ -424,7 +424,7 @@ class _MenuPageState extends State<MenuPage> {
                                         height: 40,
                                         child: VerticalDivider(
                                           color: Colors.orange,
-                                          thickness: 3,
+                                          thickness: 5,
                                         ),
                                       ),
                                       Column(
@@ -447,9 +447,16 @@ class _MenuPageState extends State<MenuPage> {
                                                     size: 18,
                                                   ),
                                                 ),
-                                                Container(
-                                                  child:
-                                                      Text('${widget.rating}'),
+                                                Visibility(
+                                                  visible: widget.rating == 0.0,
+                                                  child: Container(
+                                                    child:
+                                                        Text('ยังไม่มีรีวิว'),
+                                                  ),
+                                                  replacement: Container(
+                                                    child: Text(
+                                                        '${widget.rating}'),
+                                                  ),
                                                 )
                                               ],
                                             ),
