@@ -6,21 +6,43 @@ import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'menu_page.dart';
 
 class FavoritePage extends StatefulWidget {
+  final double rating;
+  const FavoritePage({
+    Key key,
+    @required this.rating,
+  }) : super(key: key);
   @override
   _FavoritePageState createState() => _FavoritePageState();
 }
 
 class _FavoritePageState extends State<FavoritePage> {
+  double rating;
+  List shops = [];
   ApiProvider apiProvider = ApiProvider();
   Logger logger = Logger();
   Future<Favorite> _favorites;
   var favorites;
   @override
   void initState() {
+    getShops();
+    setState(() {
+      rating = widget.rating;
+    });
     super.initState();
     _favorites = getFavoriteByMe();
+  }
+
+  Future getShops() async {
+    String _url = 'http://54.151.194.224:8000/api/shop';
+    final response = await http.get(_url);
+    var body = response.body;
+    setState(() {
+      shops = json.decode(body)['data'];
+    });
   }
 
   Future<Favorite> getFavoriteByMe() async {
@@ -48,7 +70,7 @@ class _FavoritePageState extends State<FavoritePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: EdgeInsets.only(left: 40, top: 30),
+                padding: EdgeInsets.only(left: 40, top: 20),
                 child: Text(
                   "รายการโปรด",
                   style: TextStyle(
@@ -58,7 +80,6 @@ class _FavoritePageState extends State<FavoritePage> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 5),
                 child: Divider(
                   thickness: 1,
                   indent: 40,
@@ -79,9 +100,23 @@ class _FavoritePageState extends State<FavoritePage> {
                             var data = snapshot.data.data[index];
                             return Container(
                               margin: EdgeInsets.only(
-                                  bottom: 0, top: 20, left: 40, right: 40),
+                                  bottom: 10, top: 5, left: 40, right: 40),
                               child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MenuPage(
+                                        shopId: data.shop.id,
+                                        shopName: data.shop.name,
+                                        shopSlot: data.shop.shopSlot,
+                                        shopCoverImg: data.shop.coverImg,
+                                        rating: shops[index]["averageRating"]
+                                            .toDouble(),
+                                      ),
+                                    ),
+                                  );
+                                },
                                 child: Card(
                                   semanticContainer: true,
                                   clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -103,17 +138,17 @@ class _FavoritePageState extends State<FavoritePage> {
                                         height: 140,
                                         fit: BoxFit.cover,
                                         placeholder: (context, url) => Center(
-                                            child: Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 50, bottom: 35),
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  strokeWidth: 5.0,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation(
-                                                          const Color(
-                                                              0xffF6A911)),
-                                                ))),
+                                          child: Container(
+                                            margin: EdgeInsets.only(
+                                                top: 50, bottom: 35),
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 5.0,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                      const Color(0xffF6A911)),
+                                            ),
+                                          ),
+                                        ),
                                         errorWidget: (context, url, error) =>
                                             Container(
                                           height: 140,
@@ -138,48 +173,36 @@ class _FavoritePageState extends State<FavoritePage> {
                                               Row(
                                                 children: [
                                                   Text(
-                                                    "0.${data.shopId}",
+                                                    "${data.shopId} ",
                                                     style: TextStyle(
-                                                        fontSize: 16,
+                                                        fontSize: 18,
                                                         color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
                                                   Container(
-                                                    height: 20,
+                                                    height: 40,
                                                     child: VerticalDivider(
-                                                      color: Colors.black38,
+                                                      color: Colors.orange,
                                                       thickness: 3,
                                                     ),
                                                   ),
                                                   Text(
-                                                    "${data.shop.name}",
+                                                    "  ${data.shop.name}",
                                                     style: TextStyle(
-                                                        fontSize: 16,
+                                                        fontSize: 18,
                                                         color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
-                                                  Container(
-                                                    height: 20,
-                                                    child: VerticalDivider(
-                                                      color: Colors.black38,
-                                                      thickness: 3,
-                                                    ),
-                                                  ),
                                                 ],
+                                              ),
+                                              Icon(
+                                                Icons.favorite,
+                                                color: Colors.red,
                                               ),
                                             ],
                                           ),
-                                          // subtitle: Row(
-                                          //   children: <Widget>[
-                                          //     Icon(
-                                          //       Icons.star,
-                                          //       color: Colors.orange,
-                                          //     ),
-                                          //     Text("  4.2 Review(20 Review)")
-                                          //   ],
-                                          // ),
                                         ),
                                       ),
                                     ],

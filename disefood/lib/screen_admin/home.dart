@@ -120,186 +120,217 @@ class _HomeAdminState extends State<HomeAdmin> {
                           var item = shops[index];
                           return Padding(
                             padding: const EdgeInsets.only(
-                                left: 10, right: 10, bottom: 4.0),
+                              left: 10,
+                              right: 10,
+                            ),
                             child: Container(
-                              margin: EdgeInsets.all(20),
-                              height: 260,
+                              margin: EdgeInsets.only(
+                                  right: 20, left: 20, bottom: 15),
                               child: InkWell(
-                                child: Card(
-                                  elevation: 8,
-                                  color: Colors.white,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      CachedNetworkImage(
-                                        imageUrl:
-                                            "https://disefood.s3-ap-southeast-1.amazonaws.com/${item['cover_img']}",
-                                        fit: BoxFit.cover,
-                                        height: 121,
-                                        width: 380,
-                                        placeholder: (context, url) => Center(
-                                            child: Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 50, bottom: 35),
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  backgroundColor:
-                                                      Colors.amber[900],
-                                                ))),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                          height: 121,
-                                          width: 380,
-                                          color: const Color(0xff7FC9C5),
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.store,
-                                              size: 50,
-                                              color: Colors.white,
+                                child: Stack(
+                                  children: [
+                                    Card(
+                                      elevation: 8,
+                                      color: Colors.white,
+                                      child: Column(
+                                        children: <Widget>[
+                                          CachedNetworkImage(
+                                            imageUrl:
+                                                "https://disefood.s3-ap-southeast-1.amazonaws.com/${item['cover_img']}",
+                                            fit: BoxFit.cover,
+                                            height: 121,
+                                            width: 380,
+                                            placeholder: (context, url) =>
+                                                Center(
+                                                    child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            top: 50,
+                                                            bottom: 35),
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          backgroundColor:
+                                                              Colors.amber[900],
+                                                        ))),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
+                                              height: 121,
+                                              width: 380,
+                                              color: const Color(0xff7FC9C5),
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.store,
+                                                  size: 50,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Transform.translate(
-                                        offset: Offset(10, 0),
-                                        child: Container(
-                                          margin:
-                                              EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Text(
-                                                "ร้านที่ ${index + 1} : ${item['name']}",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
-                                                    fontFamily: 'Roboto'),
+                                          Transform.translate(
+                                            offset: Offset(10, 0),
+                                            child: Container(
+                                              margin: EdgeInsets.fromLTRB(
+                                                  10, 10, 0, 10),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Text(
+                                                    "ร้านที่ ${index + 1} : ${item['name']}",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        fontFamily: 'Roboto'),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                        child: item['approved'] == 0
-                                            ? Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    "สถานะ :",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 14,
-                                                        fontFamily: 'Roboto'),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 5),
-                                                    child: Text(
-                                                      "ยังไม่ยืนยัน",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                          color: const Color(
-                                                              0xffEC0A25),
-                                                          fontFamily: 'Roboto'),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            : Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    "สถานะ :",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 14,
-                                                        fontFamily: 'Roboto'),
-                                                  ),
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 5),
-                                                    child: Text(
-                                                      "ยืนยัน",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                          color: const Color(
-                                                              0xff81CF66),
-                                                          fontFamily: 'Roboto'),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                      ),
-                                      Transform.translate(
-                                        offset: Offset(2, 0),
-                                        child: Container(
-                                          child: Row(
-                                            children: <Widget>[
-                                              ButtonBar(
-                                                children: <Widget>[
-                                                  RaisedButton(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5)),
-                                                    onPressed: () {
-                                                      name = item['name'];
-                                                      shopId = item['id'];
-                                                      shopSlot =
-                                                          item['shop_slot'];
-                                                      coverImg =
-                                                          item['cover_img'];
-                                                      if (item['approved'] ==
-                                                          0) {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) =>
-                                                                      ShopDetail(
-                                                                        name:
-                                                                            name,
-                                                                        shopId:
-                                                                            shopId,
-                                                                        shopSlot:
-                                                                            shopSlot,
-                                                                        coverImg:
-                                                                            coverImg,
-                                                                      )),
-                                                        );
-                                                      } else if (item[
-                                                              'approved'] ==
-                                                          1) {
-                                                        print('delete');
-                                                        alertDialog(
-                                                            context,
-                                                            'ลบร้านค้า ?',
-                                                            shopId);
-                                                      }
-                                                    },
+                                          Container(
+                                            margin: EdgeInsets.fromLTRB(
+                                                20, 0, 0, 0),
+                                            child: item['approved'] == 0
+                                                ? Container(
                                                     padding: EdgeInsets.only(
-                                                        left: 30, right: 30),
-                                                    color:
-                                                        const Color(0xffF6A911),
-                                                    child: item['approved'] == 0
-                                                        ? Text(
-                                                            "ดูรายละเอียด",
+                                                        bottom: 15),
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          "สถานะ :",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 14,
+                                                              fontFamily:
+                                                                  'Roboto'),
+                                                        ),
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 5),
+                                                          child: Text(
+                                                            "ยังไม่ยืนยัน",
                                                             style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .bold),
-                                                          )
-                                                        : Text(
+                                                                        .bold,
+                                                                fontSize: 14,
+                                                                color: const Color(
+                                                                    0xffEC0A25),
+                                                                fontFamily:
+                                                                    'Roboto'),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 15),
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          "สถานะ :",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 14,
+                                                              fontFamily:
+                                                                  'Roboto'),
+                                                        ),
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                            left: 5,
+                                                          ),
+                                                          child: Text(
+                                                            "ยืนยัน",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 14,
+                                                                color: const Color(
+                                                                    0xff81CF66),
+                                                                fontFamily:
+                                                                    'Roboto'),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Transform.translate(
+                                      offset: Offset(180, 130),
+                                      child: Container(
+                                        child: Row(
+                                          children: <Widget>[
+                                            ButtonBar(
+                                              children: <Widget>[
+                                                RaisedButton(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5)),
+                                                  onPressed: () {
+                                                    name = item['name'];
+                                                    shopId = item['id'];
+                                                    shopSlot =
+                                                        item['shop_slot'];
+                                                    coverImg =
+                                                        item['cover_img'];
+                                                    if (item['approved'] == 0) {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    ShopDetail(
+                                                                      name:
+                                                                          name,
+                                                                      shopId:
+                                                                          shopId,
+                                                                      shopSlot:
+                                                                          shopSlot,
+                                                                      coverImg:
+                                                                          coverImg,
+                                                                    )),
+                                                      );
+                                                    } else if (item[
+                                                            'approved'] ==
+                                                        1) {
+                                                      print('delete');
+                                                      alertDialog(
+                                                          context,
+                                                          'ลบร้านค้า ?',
+                                                          shopId);
+                                                    }
+                                                  },
+                                                  padding: EdgeInsets.only(
+                                                      left: 30, right: 30),
+                                                  color:
+                                                      const Color(0xffF6A911),
+                                                  child: item['approved'] == 0
+                                                      ? Text(
+                                                          "ดูรายละเอียด",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        )
+                                                      : Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  right: 20,
+                                                                  left: 20),
+                                                          child: Text(
                                                             "ยกเลิก",
                                                             style: TextStyle(
                                                                 color: Colors
@@ -308,15 +339,15 @@ class _HomeAdminState extends State<HomeAdmin> {
                                                                     FontWeight
                                                                         .bold),
                                                           ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                                        ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),

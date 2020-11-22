@@ -137,8 +137,12 @@ class _HomeState extends State<Home> {
               ),
               onPressed: () {
                 debugPrint('favorites');
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FavoritePage()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FavoritePage(rating: shopRating),
+                  ),
+                );
               }),
           new IconButton(
             icon: Icon(
@@ -276,7 +280,8 @@ class _HomeState extends State<Home> {
                                       shopName = item['name'];
                                       shopSlot = item['shop_slot'];
                                       shopCoverImg = item['cover_img'];
-                                      shopRating = item['averageRating'];
+                                      shopRating =
+                                          item['averageRating'].toDouble();
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -374,27 +379,16 @@ class _HomeState extends State<Home> {
                                                       ),
                                                     ],
                                                   ),
-                                                  Text(
-                                                    "รายการอาหาร",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.star,
                                                         color: Colors.orange,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline),
+                                                      ),
+                                                      Text(
+                                                          "  ${item['averageRating']} Review")
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
-                                              subtitle: Row(
-                                                children: <Widget>[
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.orange,
-                                                  ),
-                                                  Text(
-                                                      "  ${item['averageRating']} Review")
                                                 ],
                                               ),
                                             ),

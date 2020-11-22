@@ -30,7 +30,7 @@ class EditShop extends StatefulWidget {
 
 class _EditShopState extends State<EditShop> {
   bool _isEdit = false;
-    
+
   String _shopName;
   int _shopId;
   String _shopImg;
@@ -252,9 +252,9 @@ class _EditShopState extends State<EditShop> {
         Container(
           margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
           child: TextFormField(
+            textAlign: TextAlign.center,
             controller: _shopNameController,
             decoration: InputDecoration(
-              labelText: '$_shopName',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(color: Colors.orange),
@@ -269,9 +269,9 @@ class _EditShopState extends State<EditShop> {
         Container(
           margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
           child: TextFormField(
+            textAlign: TextAlign.center,
             controller: _shopSlotController,
             decoration: InputDecoration(
-              labelText: '$_shopSlot',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(color: Colors.orange),
@@ -293,7 +293,7 @@ class _EditShopState extends State<EditShop> {
           ),
           child: Container(
             padding:
-                EdgeInsets.only(top: 12, bottom: 12, left: 120, right: 120),
+                EdgeInsets.only(top: 12, bottom: 12, left: 130, right: 130),
             child: Text(
               'ยืนยัน',
               style: TextStyle(
