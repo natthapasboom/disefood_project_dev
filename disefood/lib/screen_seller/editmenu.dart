@@ -269,7 +269,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                     Navigator.pop(context);
                                   },
                                   child: Text(
-                                    'Cancel',
+                                    'ยกเลิก',
                                     style: TextStyle(
                                         fontSize: 18, color: Colors.white),
                                   ),
@@ -361,7 +361,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                       }
                                     },
                                     child: Text(
-                                      'Save',
+                                      'บันทึก',
                                       style: TextStyle(
                                           fontSize: 18, color: Colors.white),
                                     ),

@@ -82,8 +82,7 @@ class _HomeSellerState extends State<HomeSeller> {
     var response = await apiProvider.getShopId(token);
     // logger.d(token);
     print(response.statusCode);
-    if (response.statusCode == 500) {
-    } else if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       ShopById msg = ShopById.fromJson(map);
       // logger.d(msg.data);
@@ -190,31 +189,55 @@ class _HomeSellerState extends State<HomeSeller> {
                                           ),
                                           Container(
                                             padding: EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            height: 65,
-                                            child: VerticalDivider(
-                                              color: Colors.orange,
-                                              thickness: 3,
+                                                top: 5,
+                                                bottom: 5,
+                                                right: 0,
+                                                left: 20),
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(50),
+                                                  topLeft: Radius.circular(50),
+                                                ),
+                                                color: Colors.orange),
+                                            child: Row(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 20),
+                                                  child: Text(
+                                                    "ชื่อร้านอาหาร : ",
+                                                    style: TextStyle(
+                                                        fontSize: 28,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 4),
+                                                  child: Text(
+                                                    "$_shopName ",
+                                                    style: TextStyle(
+                                                        fontSize: 28,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 20),
+                                                  child: Icon(
+                                                    Icons.restaurant,
+                                                    size: 30,
+                                                    color: Colors.white,
+                                                  ),
+                                                )
+                                              ],
                                             ),
                                           ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Container(
-                                                padding: EdgeInsets.only(
-                                                  bottom: 0,
-                                                ),
-                                                child: Text(
-                                                  "$_shopName",
-                                                  style: TextStyle(
-                                                      fontSize: 24,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-                                            ],
-                                          )
                                         ],
                                       ),
                                     ),
