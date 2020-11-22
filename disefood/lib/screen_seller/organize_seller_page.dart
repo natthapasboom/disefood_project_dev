@@ -4,11 +4,9 @@ import 'package:disefood/model/feedback.dart';
 import 'package:disefood/model/foods_list.dart';
 import 'package:disefood/screen_seller/addmenu.dart';
 import 'package:disefood/services/api_provider.dart';
-import 'package:disefood/services/foodservice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'editmenu.dart';
 
@@ -49,6 +47,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
     setState(() {
       _isLoading = true;
       foodList = json.decode(body)['data'];
+      print('approve: $approve');
     });
   }
 
@@ -57,6 +56,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
     // final OrganizeSellerPage params = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: ListView(
+        shrinkWrap: true,
         children: [
           Row(
             children: <Widget>[
@@ -115,6 +115,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                   )
                 : Container(
                     child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: foodList != null ? foodList.length : 0,
                         itemBuilder: (BuildContext context, int index) {
@@ -218,8 +219,9 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                 child: Text(
                                   'เพิ่มรายการอาหาร',
                                   style: TextStyle(
-                                    fontSize: 18,
-                                  ),
+                                      fontSize: 22,
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                               trailing: IconButton(

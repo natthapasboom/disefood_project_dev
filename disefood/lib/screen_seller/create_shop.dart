@@ -2,15 +2,11 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/config/app_config.dart';
-import 'package:disefood/model/shop_id.dart';
-import 'package:disefood/screen_seller/home_seller.dart';
-import 'package:disefood/screen_seller/home_seller_tab.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
 
 class CreateShop extends StatefulWidget {
   static const routeName = '/create_seller';

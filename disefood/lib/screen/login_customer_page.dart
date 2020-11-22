@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
-import 'package:disefood/component/editProfile.dart';
 import 'package:disefood/component/editProfileFacebook.dart';
 import 'package:disefood/model/facebookUser.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -176,214 +174,245 @@ class _LoginPageState extends State<LoginPage> {
                 valueColor: AlwaysStoppedAnimation(const Color(0xffF6A911)),
               ),
             )
-          : Stack(
-              children: <Widget>[
-                Center(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(30.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Center(
-                            child: Text(
-                              'Cafeteria',
-                              style: TextStyle(
-                                  fontSize: 36,
-                                  color: Colors.amber[900],
-                                  fontWeight: FontWeight.bold),
+          : Container(
+              color: Color(0xffFFE9C1),
+              child: Stack(
+                children: <Widget>[
+                  Center(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(30.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Cafeteria',
+                                    style: TextStyle(
+                                        fontSize: 36,
+                                        color: Colors.amber[900],
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Center(
-                            child: Text(
-                              'Management System',
-                              style: TextStyle(
-                                  fontSize: 28,
-                                  color: Colors.amber[700],
-                                  fontWeight: FontWeight.bold),
+                            Center(
+                              child: Text(
+                                'Management System',
+                                style: TextStyle(
+                                    fontSize: 28,
+                                    color: Colors.amber[700],
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 40.0,
-                          ),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            child: TextFormField(
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'โปรดกรอกไอดี';
-                                }
-                              },
-                              controller: _usernameController,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.account_circle),
-                                contentPadding: const EdgeInsets.only(left: 20),
-                                hintText: 'ไอดี',
-                                hintStyle: TextStyle(
-                                    color: Colors.black38, fontSize: 18),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
+                            SizedBox(
+                              height: 40.0,
+                            ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: TextFormField(
+                                cursorColor: Colors.orange,
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'โปรดกรอกไอดี';
+                                  }
+                                },
+                                controller: _usernameController,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.account_circle),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 20),
+                                  hintText: 'ไอดี',
+                                  hintStyle: TextStyle(
+                                      color: Colors.black38, fontSize: 18),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide:
+                                          BorderSide(color: Colors.black38)),
+                                  enabledBorder: new OutlineInputBorder(
+                                    borderRadius:
+                                        new BorderRadius.circular(15.0),
                                     borderSide:
-                                        BorderSide(color: Colors.black38)),
-                                enabledBorder: new OutlineInputBorder(
-                                  borderRadius: new BorderRadius.circular(15.0),
-                                  borderSide:
-                                      new BorderSide(color: Colors.black38),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            child: TextFormField(
-                              obscureText: _obscureText,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'โปรดกรอกรหัสผ่าน';
-                                }
-                              },
-                              cursorColor: Colors.white,
-                              controller: _passwordController,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.lock),
-                                contentPadding: const EdgeInsets.only(left: 20),
-                                hintText: 'รหัสผ่าน',
-                                hintStyle: TextStyle(
-                                    color: Colors.black38, fontSize: 18),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    borderSide:
-                                        BorderSide(color: Colors.black38)),
-                                enabledBorder: new OutlineInputBorder(
-                                  borderRadius: new BorderRadius.circular(15.0),
-                                  borderSide:
-                                      new BorderSide(color: Colors.black38),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 15.0,
-                          ),
-                          SizedBox(
-                            height: 15.0,
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(left: 10, right: 10),
-                            child: RaisedButton(
-                              onPressed: () {
-                                _login();
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.all(15.0),
-                                child: Text(
-                                  'ลงชื่อเข้าใช้',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                ),
-                              ),
-                              color: Colors.amber[600],
-                              textColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                          SizedBox(
-                            height: 12.0,
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 10, right: 5),
-                                  child: RaisedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Regis()),
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            'สมัครสมาชิก',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    color: Colors.amber[900],
-                                    textColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          color: Colors.amber[900],
-                                          width: 1,
-                                          style: BorderStyle.solid),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
+                                        new BorderSide(color: Colors.black38),
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 5, right: 10),
-                                  child: RaisedButton(
-                                    onPressed: () {
-                                      facebookLogin();
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.all(17.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            'FACEBOOK',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    color: Colors.blue,
-                                    textColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          color: Colors.blue,
-                                          width: 1,
-                                          style: BorderStyle.solid),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: TextFormField(
+                                obscureText: _obscureText,
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'โปรดกรอกรหัสผ่าน';
+                                  }
+                                },
+                                cursorColor: Colors.white,
+                                controller: _passwordController,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  prefixIcon: Icon(Icons.lock),
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 20),
+                                  hintText: 'รหัสผ่าน',
+                                  hintStyle: TextStyle(
+                                      color: Colors.black38, fontSize: 18),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      borderSide:
+                                          BorderSide(color: Colors.black38)),
+                                  enabledBorder: new OutlineInputBorder(
+                                    borderRadius:
+                                        new BorderRadius.circular(15.0),
+                                    borderSide:
+                                        new BorderSide(color: Colors.black38),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            SizedBox(
+                              height: 15.0,
+                            ),
+                            SizedBox(
+                              height: 15.0,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 10, right: 10),
+                              child: RaisedButton(
+                                onPressed: () {
+                                  _login();
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.all(15.0),
+                                  child: Text(
+                                    'ลงชื่อเข้าใช้',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                ),
+                                color: Colors.amber[600],
+                                textColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            SizedBox(
+                              height: 12.0,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 5),
+                                    child: RaisedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Regis()),
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.all(16.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                              'สมัครสมาชิก',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      color: Colors.amber[900],
+                                      textColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                            color: Colors.amber[900],
+                                            width: 1,
+                                            style: BorderStyle.solid),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 5, right: 10),
+                                    child: RaisedButton(
+                                      onPressed: () {
+                                        facebookLogin();
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.all(17.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Text(
+                                              'FACEBOOK',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      color: Colors.blue,
+                                      textColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                            color: Colors.blue,
+                                            width: 1,
+                                            style: BorderStyle.solid),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(top: 5, left: 197),
+                                  child: Text(
+                                    '* สำหรับลูกค้าเท่านั้น',
+                                    style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }

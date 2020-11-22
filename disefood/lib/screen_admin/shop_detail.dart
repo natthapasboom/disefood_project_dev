@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:disefood/component/dialogcomponents/alert_dialog.dart';
 import 'package:disefood/screen_admin/home.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +71,6 @@ class _ShopDetailState extends State<ShopDetail> {
                 margin: EdgeInsets.only(left: 40, top: 10, right: 40),
                 decoration: BoxDecoration(
                   color: coverImg == null ? Colors.grey[200] : Colors.white,
-                  border: Border.all(width: 1),
                 ),
                 child: CachedNetworkImage(
                   imageUrl:
@@ -103,37 +101,53 @@ class _ShopDetailState extends State<ShopDetail> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(
-                  left: 40,
-                  top: 30,
-                ),
-                child: Text(
-                  'ชื่อร้าน : $name',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      fontFamily: 'Roboto'),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                  left: 40,
-                  top: 30,
-                ),
-                child: Text(
-                  'สล็อตที่ : $shopSlot',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      fontFamily: 'Roboto'),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                  left: 40,
-                  top: 30,
-                ),
+                margin: EdgeInsets.only(left: 60, top: 60, right: 60),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'ชื่อร้าน : ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontFamily: 'Roboto'),
+                    ),
+                    Text(
+                      '$name',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontFamily: 'Roboto'),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 60, top: 30, right: 60),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'สล็อตที่ : ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontFamily: 'Roboto'),
+                    ),
+                    Text(
+                      '$shopSlot',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontFamily: 'Roboto'),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 60, top: 30, right: 60),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
                       "สถานะ :",
@@ -157,7 +171,7 @@ class _ShopDetailState extends State<ShopDetail> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left: 40, top: 20, right: 40),
+                margin: EdgeInsets.only(left: 40, top: 70, right: 40),
                 child: RaisedButton(
                     color: const Color(0xffF6A911),
                     shape: RoundedRectangleBorder(

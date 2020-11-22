@@ -1,10 +1,7 @@
 import 'package:disefood/screen_seller//order_seller_page.dart';
 import 'package:disefood/screen_seller/organize_seller_page.dart';
-import 'package:disefood/component/organize_seller_bottombar.dart';
-import 'package:disefood/component/summary_seller_bottombar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:disefood/component/feedback_seller_bottombar.dart';
 
 class OrderSellerBottomBar extends StatefulWidget {
   OrderSellerBottomBar({Key key}) : super(key: key);

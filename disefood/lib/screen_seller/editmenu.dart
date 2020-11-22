@@ -1,16 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
-import 'package:disefood/component/sidemenu_seller.dart';
 import 'package:disefood/config/app_config.dart';
-import 'package:disefood/model/foods_list.dart';
-import 'package:disefood/services/foodservice.dart';
 import 'package:flutter/material.dart';
-import 'package:disefood/screen_seller/organize_seller_page.dart';
-import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -269,7 +262,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                     Navigator.pop(context);
                                   },
                                   child: Text(
-                                    'Cancel',
+                                    'ยกเลิก',
                                     style: TextStyle(
                                         fontSize: 18, color: Colors.white),
                                   ),
@@ -361,7 +354,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                                       }
                                     },
                                     child: Text(
-                                      'Save',
+                                      'บันทึก',
                                       style: TextStyle(
                                           fontSize: 18, color: Colors.white),
                                     ),

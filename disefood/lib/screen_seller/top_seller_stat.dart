@@ -123,7 +123,7 @@ class _TopSellerPageState extends State<TopSellerPage> {
                               child: Column(
                                 children: [
                                   Icon(
-                                    Icons.warning_rounded,
+                                    Icons.warning,
                                     size: 50,
                                     color: Colors.grey,
                                   ),

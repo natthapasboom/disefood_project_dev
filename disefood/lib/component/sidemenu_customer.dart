@@ -1,7 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/component/editProfileFacebook.dart';
 import 'package:disefood/component/signout_process.dart';
-import 'package:disefood/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:disefood/screen/home_customer.dart';
 
@@ -63,7 +61,8 @@ class SideMenuCustomer extends StatelessWidget {
                     backgroundImage: coverImg
                             .contains('images/user/profile_img')
                         ? NetworkImage(
-                            "https://disefood.s3-ap-southeast-1.amazonaws.com/$coverImg")
+                            "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                                "$coverImg")
                         : NetworkImage(
                             '$coverImg',
                           ),

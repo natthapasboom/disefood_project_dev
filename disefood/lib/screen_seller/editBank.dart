@@ -57,7 +57,7 @@ class _EditBankState extends State<EditBank> {
       appBar: AppBar(
         actions: <Widget>[
           Container(
-            margin: EdgeInsets.only(left: 0, top: 0, right: 140),
+            margin: EdgeInsets.only(left: 0, top: 0, right: 120),
             child: Center(
               child: Text(
                 "แก้ไขเลขบัญชี",
@@ -123,7 +123,7 @@ class _EditBankState extends State<EditBank> {
                           child: Text(
                             'เลขบัญชี',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 24),
+                                fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ),
                         Expanded(
@@ -153,10 +153,12 @@ class _EditBankState extends State<EditBank> {
                               maxLength: 10,
                               controller: backAccount,
                               decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.only(left: 20),
+                                contentPadding: const EdgeInsets.only(left: 15),
                                 hintText: 'กรอกเลขบัญชี 10 หลัก',
                                 hintStyle: TextStyle(
-                                    color: Colors.black, fontSize: 18),
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide(
                                   color: Colors.black,
@@ -189,19 +191,20 @@ class _EditBankState extends State<EditBank> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          margin: EdgeInsets.only(top: 0, left: 10),
+                          margin: EdgeInsets.only(top: 12, left: 10),
                           child: Text(
                             'ชื่อธนาคาร',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 24,
+                              fontSize: 20,
                             ),
                           ),
                         ),
                         Expanded(
                           child: Container(
+                            height: 60,
                             margin:
-                                EdgeInsets.only(left: 20, top: 20, right: 10),
+                                EdgeInsets.only(left: 20, top: 10, right: 10),
                             child: DropdownButtonFormField(
                               decoration: const InputDecoration(
                                 enabledBorder: OutlineInputBorder(
@@ -229,9 +232,9 @@ class _EditBankState extends State<EditBank> {
                                       child: Text(
                                         _dropDownValue,
                                         style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.normal),
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                        ),
                                       ),
                                     ),
                               isExpanded: true,
@@ -273,7 +276,7 @@ class _EditBankState extends State<EditBank> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 40),
+                        margin: EdgeInsets.only(top: 210),
                         child: ButtonTheme(
                           minWidth: 380.0,
                           child: RaisedButton(

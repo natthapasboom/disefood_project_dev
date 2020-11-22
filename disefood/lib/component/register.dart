@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:disefood/screen/login_customer_page.dart';
@@ -7,10 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:logger/logger.dart';
 
 class Regis extends StatefulWidget {
   static const routeName = '/Regis';
@@ -141,13 +137,14 @@ class _RegisState extends State<Regis> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-                Colors.yellow[900],
-                Colors.orange[300],
-                Colors.orange[200]
-              ]),
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              const Color(0xffFF7C2C),
+              const Color(0xffF6A911),
+              const Color(0xffF6A911)
+            ],
+          ),
         ),
         child: ListView(
           children: <Widget>[
@@ -456,13 +453,18 @@ class _RegisState extends State<Regis> {
       margin: EdgeInsets.only(top: 20, bottom: 20),
       child: Center(
         child: RaisedButton(
-          color: Colors.green,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+                color: Color(0xff4CAF50), width: 1, style: BorderStyle.solid),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          color: Color(0xff4CAF50),
           onPressed: () {
             _register();
           },
           child: Container(
             padding:
-                EdgeInsets.only(left: 120, right: 120, top: 10, bottom: 10),
+                EdgeInsets.only(left: 120, right: 120, top: 15, bottom: 15),
             child: Text(
               'สมัคร',
               style: TextStyle(
@@ -481,13 +483,18 @@ class _RegisState extends State<Regis> {
       margin: EdgeInsets.only(top: 10, bottom: 20),
       child: Center(
         child: RaisedButton(
-          color: Colors.red,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+                color: Color(0xfff44336), width: 1, style: BorderStyle.solid),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          color: Color(0xfff44336),
           onPressed: () {
             Navigator.pop(context);
           },
           child: Container(
             padding:
-                EdgeInsets.only(left: 120, right: 120, top: 10, bottom: 10),
+                EdgeInsets.only(left: 120, right: 120, top: 15, bottom: 15),
             child: Text(
               'ยกเลิก',
               style: TextStyle(

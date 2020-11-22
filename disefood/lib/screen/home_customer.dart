@@ -26,6 +26,7 @@ class _HomeState extends State<Home> {
   TextEditingController _textController = new TextEditingController();
   final logger = Logger();
   //sidebar att.
+  double shopRating;
   String shopImg;
   String nameUser;
   String lastNameUser;
@@ -136,8 +137,12 @@ class _HomeState extends State<Home> {
               ),
               onPressed: () {
                 debugPrint('favorites');
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FavoritePage()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FavoritePage(rating: shopRating),
+                  ),
+                );
               }),
           new IconButton(
             icon: Icon(
@@ -275,6 +280,8 @@ class _HomeState extends State<Home> {
                                       shopName = item['name'];
                                       shopSlot = item['shop_slot'];
                                       shopCoverImg = item['cover_img'];
+                                      shopRating =
+                                          item['averageRating'].toDouble();
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -283,6 +290,7 @@ class _HomeState extends State<Home> {
                                             shopName: shopName,
                                             shopSlot: shopSlot,
                                             shopCoverImg: shopCoverImg,
+                                            rating: shopRating,
                                           ),
                                         ),
                                       );
@@ -371,28 +379,59 @@ class _HomeState extends State<Home> {
                                                       ),
                                                     ],
                                                   ),
-                                                  Text(
-                                                    "รายการอาหาร",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.orange,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline),
+                                                  Visibility(
+                                                    replacement: Row(
+                                                      children: <Widget>[
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 1),
+                                                          child: Icon(
+                                                            Icons.star,
+                                                            color:
+                                                                Colors.orange,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          ": ยังไม่มีรีวิว",
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.orange,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    visible:
+                                                        item['averageRating'] !=
+                                                            0,
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 1),
+                                                          child: Icon(
+                                                            Icons.star,
+                                                            color:
+                                                                Colors.orange,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          ": ${item['averageRating']} รีวิว",
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.orange,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 ],
                                               ),
-                                              // subtitle: Row(
-                                              //   children: <Widget>[
-                                              //     Icon(
-                                              //       Icons.star,
-                                              //       color: Colors.orange,
-                                              //     ),
-                                              //     Text("  4.2 Review(20 Review)")
-                                              //   ],
-                                              // ),
                                             ),
                                           ),
                                         ],

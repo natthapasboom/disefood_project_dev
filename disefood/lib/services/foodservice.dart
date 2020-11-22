@@ -6,8 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 Future<List<FoodsList>> getFoodsData(http.Client client) async {
   String foodAPI = 'http://10.0.2.2:8080/api/foods/';
   final response = await client.get(foodAPI);

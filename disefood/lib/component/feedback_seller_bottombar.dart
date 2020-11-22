@@ -1,11 +1,7 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:disefood/component/star.dart';
 import 'package:disefood/model/feedback.dart';
-import 'package:disefood/model/userById.dart';
-import 'package:disefood/screen_seller//order_seller_page.dart';
-import 'package:disefood/screen_seller//organize_seller_page.dart';
 import 'package:disefood/screen_seller/donut_chart.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';

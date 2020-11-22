@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/model/cart.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
+import 'package:http/http.dart' as http;
 
 class OrderItemPage extends StatefulWidget {
   final int shopId;
@@ -39,6 +41,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
   List<CartModel> cartModels = List();
   int totalPrice;
   bool isCartNotEmpty = false;
+  List shops = [];
   TimeOfDay _time =
       TimeOfDay.fromDateTime(DateTime.now().add(Duration(minutes: 5)));
   String timeShow = "ยังไม่ได้เลือกเวลา";
@@ -54,6 +57,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
   void initState() {
     super.initState();
     readSQLite();
+    getShops();
     setState(() {
       findMenu = widget.findMenu;
       shopId = widget.shopId;
@@ -73,6 +77,15 @@ class _OrderItemPageState extends State<OrderItemPage> {
         isCartNotEmpty = true;
       });
     }
+  }
+
+  Future getShops() async {
+    String _url = 'http://54.151.194.224:8000/api/shop';
+    final response = await http.get(_url);
+    var body = response.body;
+    setState(() {
+      shops = json.decode(body)['data'];
+    });
   }
 
   Future<Null> readSQLite() async {
@@ -270,6 +283,8 @@ class _OrderItemPageState extends State<OrderItemPage> {
                             shopName: shopName,
                             shopSlot: shopSlot,
                             shopCoverImg: shopCoverImg,
+                            rating:
+                                shops[shopId - 1]["averageRating"].toDouble(),
                           );
                         },
                         transitionsBuilder: (BuildContext context,
@@ -299,6 +314,8 @@ class _OrderItemPageState extends State<OrderItemPage> {
                             shopName: shopName,
                             shopSlot: shopSlot,
                             shopCoverImg: shopCoverImg,
+                            rating:
+                                shops[shopId - 1]["averageRating"].toDouble(),
                           );
                         },
                         transitionsBuilder: (BuildContext context,

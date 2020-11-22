@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
 
 class EditShop extends StatefulWidget {
   final String shopName;
@@ -30,7 +28,7 @@ class EditShop extends StatefulWidget {
 
 class _EditShopState extends State<EditShop> {
   bool _isEdit = false;
-    
+
   String _shopName;
   int _shopId;
   String _shopImg;
@@ -252,9 +250,9 @@ class _EditShopState extends State<EditShop> {
         Container(
           margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
           child: TextFormField(
+            textAlign: TextAlign.center,
             controller: _shopNameController,
             decoration: InputDecoration(
-              labelText: '$_shopName',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(color: Colors.orange),
@@ -269,9 +267,9 @@ class _EditShopState extends State<EditShop> {
         Container(
           margin: EdgeInsets.only(top: 10, left: 40, right: 40, bottom: 10),
           child: TextFormField(
+            textAlign: TextAlign.center,
             controller: _shopSlotController,
             decoration: InputDecoration(
-              labelText: '$_shopSlot',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(color: Colors.orange),
@@ -293,7 +291,7 @@ class _EditShopState extends State<EditShop> {
           ),
           child: Container(
             padding:
-                EdgeInsets.only(top: 12, bottom: 12, left: 120, right: 120),
+                EdgeInsets.only(top: 12, bottom: 12, left: 130, right: 130),
             child: Text(
               'ยืนยัน',
               style: TextStyle(

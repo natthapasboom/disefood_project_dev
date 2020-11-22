@@ -187,7 +187,7 @@ class _OrderSellerPageState extends State<OrderSellerPage> {
                               child: Column(
                                 children: [
                                   Icon(
-                                    Icons.no_food,
+                                    Icons.not_interested,
                                     size: 50,
                                     color: Colors.grey,
                                   ),

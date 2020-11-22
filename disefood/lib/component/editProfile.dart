@@ -308,7 +308,7 @@ class _EditProfileState extends State<EditProfile> {
                                               decoration: InputDecoration(
                                                 contentPadding:
                                                     EdgeInsets.fromLTRB(
-                                                        30, 0, 0, 0),
+                                                        25, 0, 0, 0),
                                                 hintStyle:
                                                     TextStyle(fontSize: 14),
                                                 fillColor: Colors.grey,
@@ -392,7 +392,7 @@ class _EditProfileState extends State<EditProfile> {
                                             decoration: InputDecoration(
                                               contentPadding:
                                                   EdgeInsets.fromLTRB(
-                                                      30, 0, 0, 0),
+                                                      25, 0, 0, 0),
                                               hintStyle:
                                                   TextStyle(fontSize: 14),
                                               fillColor: Colors.grey,
@@ -469,7 +469,7 @@ class _EditProfileState extends State<EditProfile> {
                                             decoration: InputDecoration(
                                               contentPadding:
                                                   EdgeInsets.fromLTRB(
-                                                      10, 0, 0, 0),
+                                                      20, 0, 0, 0),
                                               hintStyle:
                                                   TextStyle(fontSize: 14),
                                               fillColor: Colors.grey,

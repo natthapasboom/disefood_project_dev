@@ -1,22 +1,14 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:disefood/component/sidemenu_seller.dart';
-import 'package:disefood/model/foodinsert.dart';
-import 'package:disefood/model/shop_id.dart';
-import 'package:disefood/services/api_provider.dart';
 
-import 'package:disefood/services/foodservice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'organize_seller_page.dart';
 
 class AddMenu extends StatefulWidget {
   static final route = "/addMenu_seller";

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:disefood/model/bankAccount.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen_seller/addBank.dart';
@@ -92,6 +91,7 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopImg = msg.data.coverImg;
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
+        approve = msg.data.approved;
         // account = msg.data.accountNumbers;
         // logger.d(msg.data.approved);
         // logger.d('account number: $account');
@@ -163,7 +163,7 @@ class _HomeSellerState extends State<HomeSeller> {
                                   children: <Widget>[
                                     Container(
                                       margin: EdgeInsets.only(
-                                        left: 10,
+                                        left: 20,
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
