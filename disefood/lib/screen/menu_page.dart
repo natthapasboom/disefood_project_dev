@@ -404,137 +404,144 @@ class _MenuPageState extends State<MenuPage> {
                             ),
                           ],
                         ),
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.fromLTRB(40, 10, 25, 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "0" + "$shopId",
-                                        style: TextStyle(
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Container(
-                                        height: 40,
-                                        child: VerticalDivider(
-                                          color: Colors.orange,
-                                          thickness: 5,
+                        child: Container(
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.fromLTRB(40, 10, 30, 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "0" + "$shopId",
+                                          style: TextStyle(
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            " $shopName",
-                                            style: TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.bold),
+                                        Container(
+                                          height: 40,
+                                          child: VerticalDivider(
+                                            color: Colors.orange,
+                                            thickness: 5,
                                           ),
-                                          Container(
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  child: Icon(
-                                                    Icons.star,
-                                                    color: Color(0xffF6A911),
-                                                    size: 18,
-                                                  ),
-                                                ),
-                                                Visibility(
-                                                  visible: widget.rating == 0.0,
-                                                  child: Container(
-                                                    child:
-                                                        Text('ยังไม่มีรีวิว'),
-                                                  ),
-                                                  replacement: Container(
-                                                    child: Text(
-                                                        '${widget.rating}'),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.only(left: 55),
-                                        child: RaisedButton(
-                                            child: Center(
-                                              child: Text(
-                                                'รีวิว',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontFamily: 'Aleo',
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18),
-                                              ),
-                                            ),
-                                            color: const Color(0xffF6A911),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(18.0),
-                                                side: BorderSide(
-                                                    color: const Color(
-                                                        0xffF6A911))),
-                                            onPressed: () {
-                                              ListView(
-                                                reverse: true,
-                                                children: [
-                                                  alertDialog(context, shopName,
-                                                      shopCoverImg, shopId),
-                                                ],
-                                              );
-                                            }),
-                                      ),
-                                      Container(
-                                        child: IconButton(
-                                          icon: favId == null
-                                              ? Icon(
-                                                  Icons.favorite_border,
-                                                  color: Color(0xffFF7C2C),
-                                                  size: 34,
-                                                )
-                                              : Icon(
-                                                  Icons.favorite,
-                                                  color: Color(0xffFF7C2C),
-                                                  size: 34,
-                                                ),
-                                          onPressed: () async {
-                                            setState(() {
-                                              if (favId != null) {
-                                                deleteFavorite();
-                                                // logger.d(isFav);
-                                              } else if (favId == null) {
-                                                postFavorite();
-                                                // logger.d(isFav);
-                                              }
-                                            });
-                                          },
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              " $shopName",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Container(
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    child: Icon(
+                                                      Icons.star,
+                                                      color: Color(0xffF6A911),
+                                                      size: 18,
+                                                    ),
+                                                  ),
+                                                  Visibility(
+                                                    visible:
+                                                        widget.rating == 0.0,
+                                                    child: Container(
+                                                      child:
+                                                          Text('ยังไม่มีรีวิว'),
+                                                    ),
+                                                    replacement: Container(
+                                                      child: Text(
+                                                          '${widget.rating}'),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          child: RaisedButton(
+                                              child: Center(
+                                                child: Text(
+                                                  'รีวิว',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'Aleo',
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18),
+                                                ),
+                                              ),
+                                              color: const Color(0xffF6A911),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          18.0),
+                                                  side: BorderSide(
+                                                      color: const Color(
+                                                          0xffF6A911))),
+                                              onPressed: () {
+                                                ListView(
+                                                  reverse: true,
+                                                  children: [
+                                                    alertDialog(
+                                                        context,
+                                                        shopName,
+                                                        shopCoverImg,
+                                                        shopId),
+                                                  ],
+                                                );
+                                              }),
+                                        ),
+                                        Container(
+                                          child: IconButton(
+                                            icon: favId == null
+                                                ? Icon(
+                                                    Icons.favorite_border,
+                                                    color: Color(0xffFF7C2C),
+                                                    size: 34,
+                                                  )
+                                                : Icon(
+                                                    Icons.favorite,
+                                                    color: Color(0xffFF7C2C),
+                                                    size: 34,
+                                                  ),
+                                            onPressed: () async {
+                                              setState(() {
+                                                if (favId != null) {
+                                                  deleteFavorite();
+                                                  // logger.d(isFav);
+                                                } else if (favId == null) {
+                                                  postFavorite();
+                                                  // logger.d(isFav);
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Divider(
-                              thickness: 15,
-                              color: Colors.grey[300],
-                            ),
+                              Divider(
+                                thickness: 15,
+                                color: Colors.grey[300],
+                              ),
 
-                            //
-                          ],
+                              //
+                            ],
+                          ),
                         ),
                       ),
                       Container(
