@@ -19,7 +19,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Homepage extends StatefulWidget {
   static const routeName = '/home_seller_tab';
-
+  const Homepage({
+    Key key,
+  }) : super(key: key);
   @override
   _HomepageState createState() => _HomepageState();
 }

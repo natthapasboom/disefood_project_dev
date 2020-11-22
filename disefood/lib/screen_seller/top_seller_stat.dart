@@ -1,14 +1,10 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:disefood/model/foodByShopId.dart';
-import 'package:disefood/model/foods_list.dart';
-import 'package:disefood/screen/home_customer.dart';
-import 'package:disefood/services/api_provider.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:logger/logger.dart';
+import 'package:disefood/model/topseller.dart';
+import 'package:disefood/screen/home_customer.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TopSellerPage extends StatefulWidget {
@@ -17,40 +13,54 @@ class TopSellerPage extends StatefulWidget {
 }
 
 class _TopSellerPageState extends State<TopSellerPage> {
-  int userId;
-  ApiProvider apiProvider = ApiProvider();
-  String email;
-  bool isLoading = true;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   setState(() {
-  //     shopName = widget.shopName;
-  //     shopCoverImg = widget.shopCoverImg;
-  //     shopSlot = widget.shopSlot;
-  //     shopId = widget.shopId;
-  //   });
-  //   Future.microtask(() {
-  //     findMenu();
-  //   });
-  // }
+  var topSellerList;
+  Map jsonTopMap;
+  Future<TopSeller> topSellerData;
+  int totalPriceSummary = 0;
+  @override
+  void initState() {
+    topSellerData = getTopSellerData();
+    setState(() {});
+    super.initState();
+    Future.microtask(() {});
+  }
 
-  // Future<Foods> findMenu() async {
-  //   SharedPreferences preference = await SharedPreferences.getInstance();
-  //   var response = await apiProvider.getFoodByShopId(shopId);
-  //   print(response.statusCode);
-  //   if (response.statusCode == 200) {
-  //     Map map = json.decode(response.body);
-  //     FoodByShopId msg = FoodByShopId.fromJson(map);
-  //     var data = msg.data.toJson();
-  //     setState(() {
-  //       isLoading = false;
-  //       foods = msg.data.foods;
-  //     });
-  //   } else {
-  //     logger.e("statuscode != 200");
-  //   }
-  // }
+  getColorTab(int index) {
+    Color colorList;
+    if (index == 0) {
+      colorList = Color(0xffB80900);
+    } else if (index == 1) {
+      colorList = Color(0xffE01E00);
+    } else if (index == 2) {
+      colorList = Color(0xffF54100);
+    } else {
+      colorList = Color(0xffFF801F);
+    }
+    return colorList;
+  }
+
+  Future<TopSeller> getTopSellerData() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    int shopId = _prefs.getInt("shop_id");
+    String token = _prefs.getString("token");
+    String _url = 'http://54.151.194.224:8000/api/shop/owner/$shopId/dataSum';
+    final response = await http.get(
+      _url,
+      headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        var jsonString = response.body;
+        jsonTopMap = json.decode(jsonString);
+        totalPriceSummary = jsonTopMap["totalAmountShop"];
+        topSellerList = TopSeller.fromJson(jsonTopMap);
+      });
+    } else {
+      print('${response.statusCode}');
+    }
+    print(response.statusCode);
+    return topSellerList;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +89,228 @@ class _TopSellerPageState extends State<TopSellerPage> {
       ),
       child: Scaffold(
         resizeToAvoidBottomPadding: false,
+        body: ListView(
+          children: [
+            Container(
+              alignment: Alignment.centerRight,
+              margin: EdgeInsets.fromLTRB(30, 10, 20, 0),
+              child: Text(
+                "อันดับอาหารขายดี",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xffB80900)),
+              ),
+            ),
+            Divider(
+              thickness: 6,
+              endIndent: 20,
+              color: Color(0xffB80900),
+            ),
+            SizedBox(
+              height: 6,
+            ),
+            Container(
+              padding: EdgeInsets.only(bottom: 5),
+              child: FutureBuilder(
+                future: topSellerData,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data.data.length == 0
+                        ? Center(
+                            child: Container(
+                              margin: EdgeInsets.only(top: 230),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.warning_rounded,
+                                    size: 50,
+                                    color: Colors.grey,
+                                  ),
+                                  Text(
+                                    "ยังไม่มีรายการอาหารในขณะนี้",
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data.data.length,
+                            itemBuilder: (context, index) {
+                              var data = snapshot.data.data[index];
+                              return Container(
+                                margin: EdgeInsets.only(right: 20, bottom: 10),
+                                decoration: BoxDecoration(
+                                  //สีแถบ
+                                  color: getColorTab(index),
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(20),
+                                    bottomRight: Radius.circular(20),
+                                  ),
+                                ),
+                                width: double.maxFinite,
+                                height: 60,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(left: 20),
+                                      child: Text(
+                                        "${index + 1}  ",
+                                        style: TextStyle(
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 50,
+                                      height: 50,
+                                      decoration: new BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                      ),
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                                                '${data.cover_img}',
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.contain,
+                                        placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 5.0,
+                                            valueColor: AlwaysStoppedAnimation(
+                                                const Color(0xffF6A911)),
+                                          ),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                          decoration: new BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                          ),
+                                          height: 50,
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.fastfood,
+                                              size: 25,
+                                              color: Colors.orange,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 200,
+                                      margin:
+                                          EdgeInsets.only(right: 0, left: 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            child: Text(
+                                              "${data.name}",
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  "จำนวน ",
+                                                  style: TextStyle(
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white),
+                                                ),
+                                                Container(
+                                                  padding:
+                                                      EdgeInsets.only(top: 3),
+                                                  child: Text(
+                                                    "${data.totalQuantity}",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 17,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  " จาน",
+                                                  style: TextStyle(
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 80,
+                                      padding: EdgeInsets.only(right: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            "${data.totalAmount}",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: 16),
+                                          ),
+                                          Text(
+                                            " บาท",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: 16),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                  } else {
+                    return Container(
+                      margin: EdgeInsets.only(top: 250),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 5.0,
+                          valueColor:
+                              AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+            )
+          ],
+        ),
         bottomNavigationBar: Container(
           decoration: new BoxDecoration(
             boxShadow: [
@@ -100,11 +332,11 @@ class _TopSellerPageState extends State<TopSellerPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                  height: 100,
+                  height: 80,
                 ),
                 Container(
-                  width: 350,
-                  height: 70,
+                  width: 380,
+                  height: 50,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
                     color: Colors.white,
@@ -118,196 +350,45 @@ class _TopSellerPageState extends State<TopSellerPage> {
                   ),
                   child: Container(
                     margin: EdgeInsets.only(left: 20, right: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "ยอดขายรวม",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
-                        Text(
-                          "9000 บาท",
-                          style: TextStyle(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
-                      ],
-                    ),
+                    child: totalPriceSummary != null
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "ยอดขายรวมทั้งหมด :",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                              Text(
+                                "$totalPriceSummary " + "บาท",
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "ยอดขายรวมทั้งหมด :",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                              Text(
+                                "0 " + "บาท",
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                            ],
+                          ),
                   ),
                 ),
               ],
             ),
-          ),
-        ),
-        // drawer: SideMenuCustomer(
-        //   firstName: nameUser,
-        //   userId: userId,
-        //   lastName: lastNameUser,
-        //   coverImg: profileImg),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 20, 20, 20),
-                alignment: Alignment.centerRight,
-                child: Container(
-                  child: RaisedButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Mock filter",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ),
-              ),
-              //Listview Replacement //0xffE8CE00
-              Container(
-                margin: EdgeInsets.only(right: 20, bottom: 10),
-                decoration: BoxDecoration(
-                  //สีแถบ
-                  color: const Color(0xffE8CE00),
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                ),
-                width: double.maxFinite,
-                height: 60,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 20),
-                      child: Text(
-                        "1",
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                    ),
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: new BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: NetworkImage(
-                              "https://i.pinimg.com/originals/98/fe/e9/98fee9bccce67719f9f356f73124ba75.png"),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 200,
-                      padding: EdgeInsets.only(left: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: Text(
-                              "Menu Name",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
-                          ),
-                          Container(
-                            child: Text("Qty",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white)),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 80,
-                      child: Text(
-                        "900 บาท",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 20, bottom: 10),
-                decoration: BoxDecoration(
-                  //สีแถบ
-                  color: const Color(0xff7C7C7C),
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                ),
-                width: double.maxFinite,
-                height: 60,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 20),
-                      child: Text(
-                        "2",
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                    ),
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: new BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: NetworkImage(
-                              "https://i.pinimg.com/originals/98/fe/e9/98fee9bccce67719f9f356f73124ba75.png"),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 200,
-                      padding: EdgeInsets.only(left: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            child: Text(
-                              "Menu Name",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
-                            ),
-                          ),
-                          Container(
-                            child: Text("Qty",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white)),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 80,
-                      child: Text(
-                        "900 บาท",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
           ),
         ),
       ),

@@ -1,9 +1,11 @@
-import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:disefood/model/orderbyshopid.dart';
 import 'package:disefood/screen_seller/seller_dialog/addtime_orderpage_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class OrderDetailSeller extends StatefulWidget {
   static final route = "/order_detail_seller";
@@ -14,6 +16,12 @@ class OrderDetailSeller extends StatefulWidget {
   final String userFName;
   final String userLName;
   final String userTel;
+  final String slipImg;
+  final int orderId;
+  final Function(int) addQty;
+  final Function(int) resetQty;
+  final int index;
+
   const OrderDetailSeller({
     Key key,
     @required this.timePickup,
@@ -23,12 +31,20 @@ class OrderDetailSeller extends StatefulWidget {
     @required this.userFName,
     @required this.userLName,
     @required this.userTel,
+    @required this.slipImg,
+    @required this.orderId,
+    @required this.addQty,
+    @required this.resetQty,
+    @required this.index,
   }) : super(key: key);
   @override
   _OrderDetailSellerState createState() => _OrderDetailSellerState();
 }
 
 class _OrderDetailSellerState extends State<OrderDetailSeller> {
+  Function(int) addQty;
+  Function(int) resetQty;
+  int index;
   bool isLoading = true;
   bool isthisbuttonselected = true;
   String nameUser;
@@ -41,10 +57,13 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
   String userFName;
   String userLName;
   String userTel;
+  String slipImg;
+  int orderId;
   bool isAddTime = false;
   List<OrderDetails> orderDetail;
+  String timeMinute;
+
   TextEditingController addTimeController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   int qty = 0;
 
@@ -61,7 +80,52 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
       userFName = widget.userFName;
       userLName = widget.userLName;
       userTel = widget.userTel;
+      slipImg = widget.slipImg;
+      orderId = widget.orderId;
+      addQty = widget.addQty;
+      resetQty = widget.resetQty;
+      index = widget.index;
     });
+    timeTextCheck();
+  }
+
+  Future<Null> updateOrder(int qty) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String url = 'http://54.151.194.224:8000/api/order/shop/$orderId';
+    String token = preferences.getString('token');
+    DateTime newTime = timePickup.add(Duration(minutes: qty));
+    String status = "in process";
+    String _method = "PUT";
+    FormData formData = FormData.fromMap({
+      "status": status,
+      "time_pickup": newTime,
+      "_method": _method,
+    });
+    var response = await Dio().post(
+      url,
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+        followRedirects: false,
+        validateStatus: (status) {
+          if (status == 200) {
+            showToast("เพิ่มเวลาเรียบร้อยแล้ว");
+          } else {
+            showToast("มีข้อผิดพลาดเกิดขึ้น โปรดลองใหม่ภายหลัง Status : " +
+                "$status");
+          }
+          return status < 500;
+        },
+      ),
+    );
+    print(response.statusCode);
+  }
+
+  void showToast(String msg) {
+    Toast.show(msg, context,
+        textColor: Colors.white, duration: Toast.LENGTH_LONG);
   }
 
   void add() {
@@ -79,6 +143,17 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
     }
     if (qty == 0) {
       isAddTime = false;
+    }
+  }
+
+  void timeTextCheck() {
+    int minuteCheck = timePickup.minute;
+    if (minuteCheck == 0) {
+      timeMinute = "${timePickup.minute}0";
+    } else if (minuteCheck < 10) {
+      timeMinute = "0${timePickup.minute}";
+    } else {
+      timeMinute = "${timePickup.minute}";
     }
   }
 
@@ -142,7 +217,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                       label: Row(
                         children: [
                           Text(
-                            'รับออร์เดอร์',
+                            'ยืนยันการเพิ่มเวลา',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -150,7 +225,21 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                           ),
                         ],
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (qty == 0) {
+                          resetQty(index);
+                          showToast(
+                              "ท่านยังไม่ได้ระบุจำนวนเวลาที่ต้องการเพิ่ม");
+                        } else {
+                          resetQty(index);
+                          for (var i = 0; i < qty; i++) {
+                            addQty(index);
+                          }
+                          updateOrder(qty).then((value) {
+                            Navigator.of(context).pop();
+                          });
+                        }
+                      },
                     ),
                   ),
                 ],
@@ -187,13 +276,15 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                       height: 100,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Center(
-                          child: Container(
-                              margin: EdgeInsets.only(top: 50, bottom: 35),
-                              child: CircularProgressIndicator(
-                                strokeWidth: 5.0,
-                                valueColor: AlwaysStoppedAnimation(
-                                    const Color(0xffF6A911)),
-                              ))),
+                        child: Container(
+                          margin: EdgeInsets.only(top: 50, bottom: 35),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 5.0,
+                            valueColor:
+                                AlwaysStoppedAnimation(const Color(0xffF6A911)),
+                          ),
+                        ),
+                      ),
                       errorWidget: (context, url, error) => Container(
                         height: 100,
                         color: const Color(0xff7FC9C5),
@@ -238,7 +329,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                           Container(
                             margin: EdgeInsets.only(top: 2),
                             child: Text(
-                              '${timePickup.hour}.${timePickup.minute} น.',
+                              '${timePickup.hour}.$timeMinute น.',
                               style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.orange,
@@ -332,6 +423,20 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                                 ],
                               ),
                             ),
+                            Visibility(
+                              visible: orderDetail[index].description != "-",
+                              child: Container(
+                                alignment: Alignment.topLeft,
+                                height: 35,
+                                margin: EdgeInsets.only(left: 40, right: 60),
+                                child: SizedBox(
+                                  child: Text(
+                                    "คำแนะนำพิเศษ : ${orderDetail[index].description}",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                            ),
                             Divider(
                               color: Colors.grey[200],
                               thickness: 2,
@@ -348,7 +453,7 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                       height: 40,
                       decoration: BoxDecoration(color: Colors.grey[200]),
                       child: Text(
-                        "รายละเอียดผู้สั่ง",
+                        "ข้อมูลผู้สั่ง",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
@@ -409,6 +514,78 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                             height: 0,
                           ),
                         ],
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 20, bottom: 20),
+                        width: 340,
+                        height: 410,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          elevation: 10,
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(top: 10, left: 20),
+                                width: double.maxFinite,
+                                height: 45,
+                                decoration: BoxDecoration(
+                                  color: Colors.orange,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
+                                ),
+                                child: Text("สลิปการโอนเงิน",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18)),
+                              ),
+                              CachedNetworkImage(
+                                imageUrl:
+                                    "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                                        '$slipImg',
+                                width: 250,
+                                height: 347,
+                                fit: BoxFit.contain,
+                                placeholder: (context, url) => Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 5.0,
+                                    valueColor: AlwaysStoppedAnimation(
+                                        const Color(0xffF6A911)),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  padding: EdgeInsets.only(top: 70),
+                                  width: 250,
+                                  height: 250,
+                                  color: Colors.white,
+                                  child: Center(
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                          Icons.error,
+                                          size: 50,
+                                          color: Colors.red,
+                                        ),
+                                        Text(
+                                          "เกิดปัญหาในการโหลดรูปภาพ",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                              color: Colors.red),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],

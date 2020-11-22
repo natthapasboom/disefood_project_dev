@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:disefood/model/shop_id.dart';
+import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/payment_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -48,7 +50,6 @@ class _HistoryState extends State<History> {
     userId = sharedPreferences.getInt('user_id');
     token = sharedPreferences.getString('token');
 
-    print('user_id: $userId');
     try {
       if (userId != null) {
         var response = await apiProvider.getHistoryById(token);
@@ -58,10 +59,7 @@ class _HistoryState extends State<History> {
           setState(() {
             var jsonString = response.body;
             jsonMap = json.decode(jsonString);
-            logger.d('json map: $jsonMap');
             orderLists = OrderList.fromJson(jsonMap);
-
-            logger.d('Orderlist: ${orderLists.toString()}');
           });
         } else {
           print('${response.request}');
@@ -82,7 +80,10 @@ class _HistoryState extends State<History> {
         child: Text(
           'เสร็จสิ้น',
           style: TextStyle(
-              color: const Color(0xff11AB17), fontSize: 18, fontFamily: 'Aleo'),
+              color: const Color(0xff11AB17),
+              fontSize: 16,
+              fontFamily: 'Aleo',
+              fontWeight: FontWeight.bold),
         ),
       );
     } else if (status == "not confirmed") {
@@ -91,7 +92,10 @@ class _HistoryState extends State<History> {
         child: Text(
           'ยังไม่ได้รับออเดอร์',
           style: TextStyle(
-              color: const Color(0xffAB0B1F), fontSize: 18, fontFamily: 'Aleo'),
+              color: const Color(0xffAB0B1F),
+              fontSize: 16,
+              fontFamily: 'Aleo',
+              fontWeight: FontWeight.bold),
         ),
       );
     } else if (status == "in process") {
@@ -100,7 +104,10 @@ class _HistoryState extends State<History> {
         child: Text(
           'กำลังทำ',
           style: TextStyle(
-              color: const Color(0xffFF7C2C), fontSize: 18, fontFamily: 'Aleo'),
+              color: const Color(0xffFF7C2C),
+              fontSize: 16,
+              fontFamily: 'Aleo',
+              fontWeight: FontWeight.bold),
         ),
       );
     }
@@ -111,7 +118,7 @@ class _HistoryState extends State<History> {
     final DateFormat formatter = DateFormat('dd/MM/yyyy');
 
     String formattedDate = formatter.format(convertDate);
-    print(formattedDate);
+    // print(formattedDate);
     return Text('$formattedDate',
         style: TextStyle(
           fontFamily: 'Aleo',
@@ -157,7 +164,7 @@ class _HistoryState extends State<History> {
   Widget getTime(String timePickup) {
     DateTime convertDate = DateTime.parse(timePickup);
     String formattedTime = DateFormat.Hm().format(convertDate);
-    print(formattedTime);
+    // print(formattedTime);
     return Text('$formattedTime',
         style: TextStyle(
           fontFamily: 'Aleo',
@@ -260,14 +267,32 @@ class _HistoryState extends State<History> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: <Widget>[
+          Container(
+            margin: EdgeInsets.only(right: 360),
+            child: new IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Home(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
       body: ListView(
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(left: 40, top: 30),
+                padding: EdgeInsets.only(left: 40, top: 20),
                 child: Text(
                   "ประวัติการสั่งอาหาร",
                   style: TextStyle(
@@ -288,7 +313,7 @@ class _HistoryState extends State<History> {
             ],
           ),
           Container(
-            margin: EdgeInsets.only(top: 10),
+            margin: EdgeInsets.only(top: 0, bottom: 20),
             child: FutureBuilder<OrderList>(
                 future: _orderLists,
                 builder: (context, snapshot) {
@@ -310,20 +335,18 @@ class _HistoryState extends State<History> {
                                         margin: EdgeInsets.only(
                                             left: 20,
                                             right: 20,
-                                            top: 10.0,
+                                            top: 0.0,
                                             bottom: 0.0),
-                                        // height: 100,
-                                        // width: 350,
                                         child: InkWell(
                                           onTap: () {
-                                            print(data.orderDetails.length);
-                                            // alertDialog(
-                                            //   context,
-                                            //   data.status,
-                                            //   data.orderDetails,
-                                            // );
-                                            alertHistory(context, data.status,
-                                                data.orderDetails, data.shopId);
+                                            alertHistory(
+                                              context,
+                                              data.status,
+                                              data.orderDetails,
+                                              data.shopId,
+                                              data.totalPrice,
+                                              data.id,
+                                            );
                                           },
                                           child: Card(
                                             shape: RoundedRectangleBorder(
@@ -341,6 +364,7 @@ class _HistoryState extends State<History> {
                                               child: Row(
                                                 children: <Widget>[
                                                   Container(
+                                                    width: 170,
                                                     padding: EdgeInsets.all(10),
                                                     child: Column(
                                                       crossAxisAlignment:
@@ -350,13 +374,18 @@ class _HistoryState extends State<History> {
                                                           MainAxisSize.min,
                                                       children: <Widget>[
                                                         Text(
-                                                            "ร้าน ${data.shop.name}",
-                                                            style: GoogleFonts.roboto(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold)),
-                                                        // getShopName(data.shopId),
+                                                          "${data.shop.name}",
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .roboto(
+                                                                  fontSize: 20,
+                                                                  color: Colors
+                                                                      .orange,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                        ),
                                                         SizedBox(height: 4),
                                                         getDate(
                                                             data.timePickup),
@@ -367,8 +396,8 @@ class _HistoryState extends State<History> {
                                                   ),
                                                   Spacer(),
                                                   Container(
-                                                      padding:
-                                                          EdgeInsets.all(10),
+                                                      padding: EdgeInsets.only(
+                                                          right: 12),
                                                       child: checkStatus(
                                                           data.status)),
                                                 ],
@@ -416,14 +445,14 @@ class _HistoryState extends State<History> {
   }
 
   alertHistory(BuildContext context, String status,
-      List<OrderDetails> orderDetail, int shopId) {
+      List<OrderDetails> orderDetail, int shopId, int totalPrice, int orderId) {
     showDialog(
         context: context,
         builder: (context) {
           return Container(
             child: AlertDialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
               contentPadding: EdgeInsets.only(top: 0.0),
               content: Container(
                 width: 400,
@@ -433,12 +462,12 @@ class _HistoryState extends State<History> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                      padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
                       decoration: BoxDecoration(
                         color: Color(0xffFF7C2C),
                         borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(25.0),
-                            topRight: Radius.circular(25.0)),
+                            topLeft: Radius.circular(10.0),
+                            topRight: Radius.circular(10.0)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -487,7 +516,7 @@ class _HistoryState extends State<History> {
                       child: checkImageStatus(status),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 15, bottom: 20),
+                      margin: EdgeInsets.only(top: 15, bottom: 10),
                       child: Center(
                         child: Text(
                           'รายการอาหาร',
@@ -508,13 +537,27 @@ class _HistoryState extends State<History> {
                           return Center(
                             child: Container(
                               margin: EdgeInsets.only(bottom: 5),
-                              child: Text(
-                                '${orderDetail[index].food.name} ${orderDetail[index].quantity}',
-                                style: TextStyle(
-                                    fontFamily: 'Roboto',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xff838181)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '${orderDetail[index].food.name}  ',
+                                    style: TextStyle(
+                                        fontFamily: 'Roboto',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xff838181)),
+                                  ),
+                                  Text(
+                                    'x${orderDetail[index].quantity}',
+                                    style: TextStyle(
+                                      fontFamily: 'Roboto',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -522,15 +565,66 @@ class _HistoryState extends State<History> {
                         // itemCount: ,
                       ),
                     ),
-                    InkWell(
+                    Visibility(
+                      visible: status == "in process",
+                      replacement: Container(
+                        margin:
+                            EdgeInsets.only(right: 100, left: 100, bottom: 30),
+                        child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          color: Colors.orange,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PaymentPage(
+                                  shopId: shopId,
+                                  totalPrice: totalPrice,
+                                  orderId: orderId,
+                                ),
+                              ),
+                            ).then((value) => {Navigator.of(context).pop()});
+                          },
+                          child: Container(
+                            child: Text(
+                              "ชำระเงิน",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18),
+                            ),
+                          ),
+                        ),
+                      ),
                       child: Container(
-                        height: 51,
-                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                        decoration: BoxDecoration(
-                          color: Color(0xffFF7C2C),
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(25.0),
-                              bottomRight: Radius.circular(25.0)),
+                        margin:
+                            EdgeInsets.only(right: 46, left: 46, bottom: 30),
+                        child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          color: Color(0xff00D30A),
+                          onPressed: () {},
+                          child: Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.check_circle_outline,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  " ชำระเงินเรียบร้อยแล้ว",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),

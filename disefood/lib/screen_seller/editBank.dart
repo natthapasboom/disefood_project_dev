@@ -113,7 +113,7 @@ class _EditBankState extends State<EditBank> {
                     ],
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 10),
+                    margin: EdgeInsets.only(top: 10, right: 20, left: 20),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -183,87 +183,91 @@ class _EditBankState extends State<EditBank> {
                       ],
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 0, left: 10),
-                        child: Text(
-                          'ชื่อธนาคาร',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                  Container(
+                    margin: EdgeInsets.only(right: 20, left: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 0, left: 10),
+                          child: Text(
+                            'ชื่อธนาคาร',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(left: 20, top: 20, right: 10),
-                          child: DropdownButtonFormField(
-                            decoration: const InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.black,
-                                ),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15.0)),
-                              ),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.black,
-                                ),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15.0)),
-                              ),
-                            ),
-                            hint: _dropDownValue == null
-                                ? Container(
-                                    margin: EdgeInsets.only(left: 5),
-                                    child: Text('เลือกธนาคาร'),
-                                  )
-                                : Container(
-                                    margin: EdgeInsets.only(left: 5),
-                                    child: Text(
-                                      _dropDownValue,
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.normal),
-                                    ),
+                        Expanded(
+                          child: Container(
+                            margin:
+                                EdgeInsets.only(left: 20, top: 20, right: 10),
+                            child: DropdownButtonFormField(
+                              decoration: const InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.black,
                                   ),
-                            isExpanded: true,
-                            iconSize: 30.0,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                            items: [
-                              'ธนาคารกรุงเทพ',
-                              'ธนาคารกสิกร',
-                              'ธนาคารกรุงศรี',
-                              'ธนาคารกรุงไทย',
-                              'ธนาคารไทยพาณิชย์'
-                            ].map(
-                              (val) {
-                                return DropdownMenuItem<String>(
-                                  value: val,
-                                  child: Text(val),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15.0)),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.black,
+                                  ),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15.0)),
+                                ),
+                              ),
+                              hint: _dropDownValue == null
+                                  ? Container(
+                                      margin: EdgeInsets.only(left: 5),
+                                      child: Text('เลือกธนาคาร'),
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.only(left: 5),
+                                      child: Text(
+                                        _dropDownValue,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ),
+                              isExpanded: true,
+                              iconSize: 30.0,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                              items: [
+                                'ธนาคารกรุงเทพ',
+                                'ธนาคารกสิกร',
+                                'ธนาคารกรุงศรี',
+                                'ธนาคารกรุงไทย',
+                                'ธนาคารไทยพาณิชย์'
+                              ].map(
+                                (val) {
+                                  return DropdownMenuItem<String>(
+                                    value: val,
+                                    child: Text(val),
+                                  );
+                                },
+                              ).toList(),
+                              onChanged: (val) {
+                                setState(
+                                  () {
+                                    _isBankNameEdit = true;
+                                    _dropDownValue = val;
+                                    print('bank name : $_dropDownValue');
+                                  },
                                 );
                               },
-                            ).toList(),
-                            onChanged: (val) {
-                              setState(
-                                () {
-                                  _isBankNameEdit = true;
-                                  _dropDownValue = val;
-                                  print('bank name : $_dropDownValue');
-                                },
-                              );
-                            },
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

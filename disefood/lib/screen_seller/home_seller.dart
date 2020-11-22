@@ -93,9 +93,9 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
         // account = msg.data.accountNumbers;
-        logger.d(msg.data.approved);
+        // logger.d(msg.data.approved);
         // logger.d('account number: $account');
-        logger.d('shop detail : ${msg.data.toJson()}');
+        // logger.d('shop detail : ${msg.data.toJson()}');
         preference.setInt('shop_id', msg.data.id);
         preference.setInt('approved', approve);
         getBankAccount();
@@ -112,9 +112,9 @@ class _HomeSellerState extends State<HomeSeller> {
   Future getBankAccount() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     token = preference.getString('token');
-    logger.d('shop id: $_shopId');
+    // logger.d('shop id: $_shopId');
     var response = await apiProvider.getBankAcount(_shopId, token);
-    logger.d('status bank: ${response.statusCode}');
+    // logger.d('status bank: ${response.statusCode}');
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       BankAccount bankAccount = BankAccount.fromJson(map);
@@ -124,7 +124,7 @@ class _HomeSellerState extends State<HomeSeller> {
         bankNum = bankAccount.data[0].number;
         bankName = bankAccount.data[0].channel;
         bankId = bankAccount.data[0].id;
-        logger.d('account number: ${bankAccount.data[0].channel}');
+        // logger.d('account number: ${bankAccount.data[0].channel}');
       });
     }
   }
@@ -155,77 +155,89 @@ class _HomeSellerState extends State<HomeSeller> {
                       children: <Widget>[
                         headerImage(),
                         Container(
-                          padding: EdgeInsets.all(10.0),
+                          padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
                           child: Row(
                             children: <Widget>[
                               Expanded(
                                 child: Column(
                                   children: <Widget>[
                                     Container(
-                                      margin: EdgeInsets.fromLTRB(0, 0, 10, 10),
-                                      padding:
-                                          EdgeInsets.only(left: 25, right: 10),
+                                      margin: EdgeInsets.only(
+                                        left: 10,
+                                      ),
                                       child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Text(
-                                            "0" + "$_shopId",
-                                            style: TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.bold),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "$_shopId ",
+                                                style: TextStyle(
+                                                    fontSize: 28,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Container(
+                                                height: 65,
+                                                child: VerticalDivider(
+                                                  color: Colors.orange,
+                                                  thickness: 5,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           Container(
                                             padding: EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            height: 65,
-                                            child: VerticalDivider(
-                                              color: Colors.orange,
-                                              thickness: 3,
+                                                top: 5,
+                                                bottom: 5,
+                                                right: 0,
+                                                left: 20),
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(50),
+                                                  topLeft: Radius.circular(50),
+                                                ),
+                                                color: Colors.orange),
+                                            child: Row(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 20),
+                                                  child: Text(
+                                                    "ชื่อร้านอาหาร : ",
+                                                    style: TextStyle(
+                                                        fontSize: 28,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 4),
+                                                  child: Text(
+                                                    "$_shopName ",
+                                                    style: TextStyle(
+                                                        fontSize: 28,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 20),
+                                                  child: Icon(
+                                                    Icons.restaurant,
+                                                    size: 30,
+                                                    color: Colors.white,
+                                                  ),
+                                                )
+                                              ],
                                             ),
                                           ),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Container(
-                                                padding: EdgeInsets.only(
-                                                  bottom: 5,
-                                                ),
-                                                child: Text(
-                                                  "$_shopName",
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-                                              Container(
-                                                  padding: EdgeInsets.only(
-                                                    bottom: 5,
-                                                  ),
-                                                  child: Text(
-                                                    "ShopTypeValue",
-                                                    style: TextStyle(
-                                                        color:
-                                                            Colors.grey[500]),
-                                                  )),
-                                              Row(
-                                                children: <Widget>[
-                                                  Container(
-                                                    padding: EdgeInsets.only(
-                                                      right: 5,
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.star,
-                                                      color:
-                                                          Colors.orangeAccent,
-                                                      size: 20,
-                                                    ),
-                                                  ),
-                                                  Text("RateStarsValue"),
-                                                ],
-                                              ),
-                                            ],
-                                          )
                                         ],
                                       ),
                                     ),
@@ -240,31 +252,56 @@ class _HomeSellerState extends State<HomeSeller> {
                           height: 13.0,
                           color: const Color(0xffC4C4C4),
                         ),
-                        Container(
-                          // child: _shopId == null
-                          //     ? Center(
-                          //         child: IconButton(
-                          //           icon: Icon(
-                          //             Icons.add_circle,
-                          //             color: Colors.amber[900],
-                          //           ),
-                          //           onPressed: () {},
-                          //         ),
-                          //       )
+                        // Column(
+                        //   // mainAxisAlignment: MainAxisAlignment.center,
+                        //   // crossAxisAlignment: CrossAxisAlignment.center,
+                        //   children: [
+                        //     Container(
+                        //       height: 64,
+                        //       alignment: Alignment.center,
+                        //       child: IconButton(
+                        //         iconSize: 64,
+                        //         icon: Icon(
+                        //           Icons.store,
+                        //           color: Colors.amber[800],
+                        //         ),
+                        //         onPressed: () {
+                        //           Navigator.push(
+                        //               context,
+                        //               MaterialPageRoute(
+                        //                   builder: (context) => EditShop(
+                        //                         shopId: _shopId,
+                        //                         shopImg: _shopImg,
+                        //                         shopName: _shopName,
+                        //                         shopSlot: _shopSlot,
+                        //                       ))).then((value) {
+                        //             setState(() {
+                        //               fetchShopFromStorage();
+                        //               initState();
+                        //               print('Set state work');
+                        //             });
+                        //           });
+                        //         },
+                        //       ),
+                        //     ),
+                        //   ],
+                        // )
+                        Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
+                                    alignment: Alignment.center,
                                     margin: EdgeInsets.only(
-                                        bottom: 20, right: 30, top: 75),
+                                        bottom: 0, right: 0, top: 75),
                                     child: IconButton(
+                                      iconSize: 64,
                                       icon: Icon(
                                         Icons.store,
                                         color: Colors.amber[800],
-                                        size: 64,
                                       ),
                                       onPressed: () {
                                         Navigator.push(
@@ -286,7 +323,7 @@ class _HomeSellerState extends State<HomeSeller> {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(top: 10),
+                                    margin: EdgeInsets.only(top: 0),
                                     child: Center(
                                       child: Text(
                                         'แก้ไขร้านอาหาร',
@@ -299,22 +336,22 @@ class _HomeSellerState extends State<HomeSeller> {
                                 ],
                               ),
                               Container(
-                                // margin: EdgeInsets.only(left: 70),
+                                margin: EdgeInsets.only(left: 70),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Container(
                                       margin: EdgeInsets.only(
-                                        bottom: 20,
-                                        right: 30,
+                                        // bottom: 20,
+                                        // right: 30,
                                         top: 75,
                                       ),
                                       child: account == null
                                           ? IconButton(
+                                              iconSize: 64,
                                               icon: Icon(
                                                 Icons.account_balance,
                                                 color: Colors.amber[800],
-                                                size: 64,
                                               ),
                                               onPressed: () {
                                                 Navigator.push(
@@ -338,10 +375,10 @@ class _HomeSellerState extends State<HomeSeller> {
                                               },
                                             )
                                           : IconButton(
+                                              iconSize: 64,
                                               icon: Icon(
                                                 Icons.account_balance,
                                                 color: Colors.amber[800],
-                                                size: 64,
                                               ),
                                               onPressed: () {
                                                 Navigator.push(
@@ -371,7 +408,7 @@ class _HomeSellerState extends State<HomeSeller> {
                                             ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.only(top: 10),
+                                      margin: EdgeInsets.only(top: 0),
                                       child: Center(
                                         child: account == null
                                             ? Text(

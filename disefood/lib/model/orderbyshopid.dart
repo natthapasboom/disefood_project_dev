@@ -35,7 +35,7 @@ class Data {
   String updatedAt;
   User user;
   Shop shop;
-  String payment;
+  Payment payment;
   List<OrderDetails> orderDetails;
 
   Data(
@@ -69,7 +69,8 @@ class Data {
     updatedAt = json['updated_at'];
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
     shop = json['shop'] != null ? new Shop.fromJson(json['shop']) : null;
-    payment = json['payment'];
+    payment =
+        json['payment'] != null ? new Payment.fromJson(json['payment']) : null;
     if (json['order_details'] != null) {
       orderDetails = new List<OrderDetails>();
       json['order_details'].forEach((v) {
@@ -97,7 +98,9 @@ class Data {
     if (this.shop != null) {
       data['shop'] = this.shop.toJson();
     }
-    data['payment'] = this.payment;
+    if (this.payment != null) {
+      data['payment'] = this.payment.toJson();
+    }
     if (this.orderDetails != null) {
       data['order_details'] = this.orderDetails.map((v) => v.toJson()).toList();
     }
@@ -151,6 +154,51 @@ class Shop {
     data['id'] = this.id;
     data['shop_slot'] = this.shopSlot;
     data['name'] = this.name;
+    return data;
+  }
+}
+
+class Payment {
+  int id;
+  String transactionId;
+  int orderId;
+  int amount;
+  String paymentDate;
+  String paymentImg;
+  String createdAt;
+  String updatedAt;
+
+  Payment(
+      {this.id,
+      this.transactionId,
+      this.orderId,
+      this.amount,
+      this.paymentDate,
+      this.paymentImg,
+      this.createdAt,
+      this.updatedAt});
+
+  Payment.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    transactionId = json['transaction_id'];
+    orderId = json['order_id'];
+    amount = json['amount'];
+    paymentDate = json['payment_date'];
+    paymentImg = json['payment_img'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['transaction_id'] = this.transactionId;
+    data['order_id'] = this.orderId;
+    data['amount'] = this.amount;
+    data['payment_date'] = this.paymentDate;
+    data['payment_img'] = this.paymentImg;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     return data;
   }
 }

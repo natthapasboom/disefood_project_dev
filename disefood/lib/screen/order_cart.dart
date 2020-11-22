@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:disefood/model/cart.dart';
 import 'package:disefood/screen/customer_dialog/edit_order_amount_dialog.dart';
 import 'package:disefood/screen/customer_utilities/sqlite_helper.dart';
+import 'package:disefood/screen/history.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:disefood/screen/menu_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -86,13 +87,6 @@ class _OrderItemPageState extends State<OrderItemPage> {
     checkEmptyCart();
   }
 
-  dynamic myTimeEncode(dynamic item) {
-    if (item is DateTime) {
-      return item.toIso8601String();
-    }
-    return item;
-  }
-
   Future<Null> sendOrderAPI() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     print("All Items in Cart : " + "${cartModels.length}");
@@ -133,6 +127,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
       print("-----Send Order API Completed Status Code: " +
           "${response.statusCode}-----");
       deleteAllFoodInCart();
+      showToast("สั่งอาหารเรียบร้อยแล้ว");
     } else {
       showToast("มีข้อผิดพลาดเกิดขึ้น โปรดลองใหม่ภายหลัง Status : " +
           "${response.statusCode}");
@@ -213,7 +208,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                       label: Row(
                         children: [
                           Text(
-                            'ยืนยัน',
+                            'ยืนยันคำสั่งซื้อ',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -225,11 +220,13 @@ class _OrderItemPageState extends State<OrderItemPage> {
                         if (timeValue != null) {
                           print(
                               "Order Data is Complete => Sending Order API...");
-                          sendOrderAPI();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => Home()),
-                          );
+                          sendOrderAPI().then((value) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => History()),
+                            );
+                          });
                         } else {
                           showToast("โปรดเลือกเวลารับอาหาร");
                           print(
@@ -245,82 +242,84 @@ class _OrderItemPageState extends State<OrderItemPage> {
         ),
       ),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         actions: <Widget>[
           Container(
-            margin: EdgeInsets.only(right: 265),
+            margin: EdgeInsets.only(right: 360),
             child: new IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                if (shopId != int.parse(cartModels[0].shopId)) {
-                  findMenu();
+                if (cartModels.length == 0) {
                   Navigator.push(
                     context,
-                    PageRouteBuilder(
-                      pageBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation) {
-                        return MenuPage(
-                          shopId: shopId,
-                          shopName: shopName,
-                          shopSlot: shopSlot,
-                          shopCoverImg: shopCoverImg,
-                        );
-                      },
-                      transitionsBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation,
-                          Widget child) {
-                        return FadeTransition(
-                          opacity: Tween<double>(
-                            begin: 0,
-                            end: 1,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      transitionDuration: Duration(milliseconds: 400),
+                    MaterialPageRoute(
+                      builder: (context) => Home(),
                     ),
                   );
                 } else {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation) {
-                        return MenuPage(
-                          shopId: shopId,
-                          shopName: shopName,
-                          shopSlot: shopSlot,
-                          shopCoverImg: shopCoverImg,
-                        );
-                      },
-                      transitionsBuilder: (BuildContext context,
-                          Animation<double> animation,
-                          Animation<double> secondaryAnimation,
-                          Widget child) {
-                        return FadeTransition(
-                          opacity: Tween<double>(
-                            begin: 0,
-                            end: 1,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                      transitionDuration: Duration(milliseconds: 400),
-                    ),
-                  );
+                  if (shopId != int.parse(cartModels[0].shopId)) {
+                    findMenu();
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (BuildContext context,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation) {
+                          return MenuPage(
+                            shopId: shopId,
+                            shopName: shopName,
+                            shopSlot: shopSlot,
+                            shopCoverImg: shopCoverImg,
+                          );
+                        },
+                        transitionsBuilder: (BuildContext context,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation,
+                            Widget child) {
+                          return FadeTransition(
+                            opacity: Tween<double>(
+                              begin: 0,
+                              end: 1,
+                            ).animate(animation),
+                            child: child,
+                          );
+                        },
+                        transitionDuration: Duration(milliseconds: 400),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (BuildContext context,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation) {
+                          return MenuPage(
+                            shopId: shopId,
+                            shopName: shopName,
+                            shopSlot: shopSlot,
+                            shopCoverImg: shopCoverImg,
+                          );
+                        },
+                        transitionsBuilder: (BuildContext context,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation,
+                            Widget child) {
+                          return FadeTransition(
+                            opacity: Tween<double>(
+                              begin: 0,
+                              end: 1,
+                            ).animate(animation),
+                            child: child,
+                          );
+                        },
+                        transitionDuration: Duration(milliseconds: 400),
+                      ),
+                    );
+                  }
                 }
               },
             ),
-          ),
-          new IconButton(
-            icon: new Icon(Icons.favorite),
-            onPressed: () {},
-          ),
-          new IconButton(
-            icon: Icon(Icons.archive),
-            onPressed: () {},
           ),
         ],
       ),
@@ -641,6 +640,7 @@ class _OrderItemPageState extends State<OrderItemPage> {
                               onChange: onTimeChanged,
                               // Optional onChange to receive value as DateTime
                               onChangeDateTime: (DateTime timeSelected) {
+                                print(_time);
                                 //เวลาเปิดปิด
                                 if (timeSelected.hour > 8 &&
                                     timeSelected.hour < 16) {

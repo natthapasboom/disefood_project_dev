@@ -15,6 +15,7 @@ class AddTimeOrderPage extends StatefulWidget {
 }
 
 class _AddTimeOrderPageState extends State<AddTimeOrderPage> {
+  int count = 0;
   int qty;
   int timeAddQty;
   VoidCallback add;
@@ -130,47 +131,23 @@ class _AddTimeOrderPageState extends State<AddTimeOrderPage> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(left: 15, right: 15, bottom: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 140,
-                        child: RaisedButton(
-                          elevation: 8,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          color: Colors.white,
-                          child: Text(
-                            "ยกเลิก",
-                            style: TextStyle(
-                                color: Colors.orange,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                        ),
+                  margin: EdgeInsets.only(bottom: 5),
+                  child: Container(
+                    width: 300,
+                    child: RaisedButton(
+                      elevation: 8,
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      color: Colors.orange,
+                      child: Text(
+                        "ตกลง",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
                       ),
-                      Container(
-                        width: 140,
-                        child: RaisedButton(
-                          elevation: 8,
-                          onPressed: () {
-                            Navigator.of(context).pop(true);
-                          },
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          color: Colors.orange,
-                          child: Text(
-                            "ตกลง",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 )
               ],
