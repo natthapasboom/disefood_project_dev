@@ -221,8 +221,9 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                                 child: Text(
                                   'เพิ่มรายการอาหาร',
                                   style: TextStyle(
-                                    fontSize: 18,
-                                  ),
+                                      fontSize: 22,
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                               trailing: IconButton(

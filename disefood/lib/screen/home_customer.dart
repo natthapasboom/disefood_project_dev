@@ -386,7 +386,13 @@ class _HomeState extends State<Home> {
                                                         color: Colors.orange,
                                                       ),
                                                       Text(
-                                                          "  ${item['averageRating']} Review")
+                                                        "  ${item['averageRating']} รีวิว",
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.orange,
+                                                        ),
+                                                      )
                                                     ],
                                                   ),
                                                 ],
