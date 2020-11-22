@@ -80,7 +80,10 @@ class _HistoryState extends State<History> {
         child: Text(
           'เสร็จสิ้น',
           style: TextStyle(
-              color: const Color(0xff11AB17), fontSize: 18, fontFamily: 'Aleo'),
+              color: const Color(0xff11AB17),
+              fontSize: 16,
+              fontFamily: 'Aleo',
+              fontWeight: FontWeight.bold),
         ),
       );
     } else if (status == "not confirmed") {
@@ -89,7 +92,10 @@ class _HistoryState extends State<History> {
         child: Text(
           'ยังไม่ได้รับออเดอร์',
           style: TextStyle(
-              color: const Color(0xffAB0B1F), fontSize: 18, fontFamily: 'Aleo'),
+              color: const Color(0xffAB0B1F),
+              fontSize: 16,
+              fontFamily: 'Aleo',
+              fontWeight: FontWeight.bold),
         ),
       );
     } else if (status == "in process") {
@@ -98,7 +104,10 @@ class _HistoryState extends State<History> {
         child: Text(
           'กำลังทำ',
           style: TextStyle(
-              color: const Color(0xffFF7C2C), fontSize: 18, fontFamily: 'Aleo'),
+              color: const Color(0xffFF7C2C),
+              fontSize: 16,
+              fontFamily: 'Aleo',
+              fontWeight: FontWeight.bold),
         ),
       );
     }
@@ -355,6 +364,7 @@ class _HistoryState extends State<History> {
                                               child: Row(
                                                 children: <Widget>[
                                                   Container(
+                                                    width: 170,
                                                     padding: EdgeInsets.all(10),
                                                     child: Column(
                                                       crossAxisAlignment:
@@ -364,12 +374,18 @@ class _HistoryState extends State<History> {
                                                           MainAxisSize.min,
                                                       children: <Widget>[
                                                         Text(
-                                                            "ร้าน ${data.shop.name}",
-                                                            style: GoogleFonts.roboto(
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold)),
+                                                          "${data.shop.name}",
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .roboto(
+                                                                  fontSize: 20,
+                                                                  color: Colors
+                                                                      .orange,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                        ),
                                                         SizedBox(height: 4),
                                                         getDate(
                                                             data.timePickup),
@@ -380,8 +396,8 @@ class _HistoryState extends State<History> {
                                                   ),
                                                   Spacer(),
                                                   Container(
-                                                      padding:
-                                                          EdgeInsets.all(10),
+                                                      padding: EdgeInsets.only(
+                                                          right: 12),
                                                       child: checkStatus(
                                                           data.status)),
                                                 ],

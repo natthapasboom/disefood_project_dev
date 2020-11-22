@@ -58,7 +58,7 @@ class _FavoritePageState extends State<FavoritePage> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.only(top: 5),
                 child: Divider(
                   thickness: 1,
                   indent: 40,
@@ -67,7 +67,6 @@ class _FavoritePageState extends State<FavoritePage> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 10),
                 child: FutureBuilder<Favorite>(
                   future: _favorites,
                   builder: (context, snapshot) {

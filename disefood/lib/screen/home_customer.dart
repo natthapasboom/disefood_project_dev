@@ -26,6 +26,7 @@ class _HomeState extends State<Home> {
   TextEditingController _textController = new TextEditingController();
   final logger = Logger();
   //sidebar att.
+  double shopRating;
   String shopImg;
   String nameUser;
   String lastNameUser;
@@ -275,6 +276,7 @@ class _HomeState extends State<Home> {
                                       shopName = item['name'];
                                       shopSlot = item['shop_slot'];
                                       shopCoverImg = item['cover_img'];
+                                      shopRating = item['averageRating'];
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -283,6 +285,7 @@ class _HomeState extends State<Home> {
                                             shopName: shopName,
                                             shopSlot: shopSlot,
                                             shopCoverImg: shopCoverImg,
+                                            rating: shopRating,
                                           ),
                                         ),
                                       );
@@ -345,25 +348,25 @@ class _HomeState extends State<Home> {
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        "0.${item['id']}",
+                                                        "${item['id']}",
                                                         style: TextStyle(
-                                                            fontSize: 16,
+                                                            fontSize: 18,
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold),
                                                       ),
                                                       Container(
-                                                        height: 20,
+                                                        height: 30,
                                                         child: VerticalDivider(
-                                                          color: Colors.black38,
+                                                          color: Colors.orange,
                                                           thickness: 3,
                                                         ),
                                                       ),
                                                       Text(
-                                                        "${item['name']}",
+                                                        " ${item['name']}",
                                                         style: TextStyle(
-                                                            fontSize: 16,
+                                                            fontSize: 18,
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight
@@ -371,27 +374,29 @@ class _HomeState extends State<Home> {
                                                       ),
                                                     ],
                                                   ),
-                                                  Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.star,
+                                                  Text(
+                                                    "รายการอาหาร",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
                                                         color: Colors.orange,
-                                                      ),
-                                                      Text(
-                                                          "  ${item['averageRating']} Reviews"),
-                                                    ],
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline),
                                                   ),
                                                 ],
                                               ),
-                                              // subtitle: Row(
-                                              //   children: <Widget>[
-                                              //     Icon(
-                                              //       Icons.star,
-                                              //       color: Colors.orange,
-                                              //     ),
-                                              //     Text("  4.2 Review(20 Review)")
-                                              //   ],
-                                              // ),
+                                              subtitle: Row(
+                                                children: <Widget>[
+                                                  Icon(
+                                                    Icons.star,
+                                                    color: Colors.orange,
+                                                  ),
+                                                  Text(
+                                                      "  ${item['averageRating']} Review")
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],

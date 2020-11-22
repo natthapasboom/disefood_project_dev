@@ -94,9 +94,9 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
         // account = msg.data.accountNumbers;
-        logger.d(msg.data.approved);
+        // logger.d(msg.data.approved);
         // logger.d('account number: $account');
-        logger.d('shop detail : ${msg.data.toJson()}');
+        // logger.d('shop detail : ${msg.data.toJson()}');
         preference.setInt('shop_id', msg.data.id);
         preference.setInt('approved', approve);
         getBankAccount();
@@ -113,9 +113,9 @@ class _HomeSellerState extends State<HomeSeller> {
   Future getBankAccount() async {
     SharedPreferences preference = await SharedPreferences.getInstance();
     token = preference.getString('token');
-    logger.d('shop id: $_shopId');
+    // logger.d('shop id: $_shopId');
     var response = await apiProvider.getBankAcount(_shopId, token);
-    logger.d('status bank: ${response.statusCode}');
+    // logger.d('status bank: ${response.statusCode}');
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       BankAccount bankAccount = BankAccount.fromJson(map);
@@ -125,7 +125,7 @@ class _HomeSellerState extends State<HomeSeller> {
         bankNum = bankAccount.data[0].number;
         bankName = bankAccount.data[0].channel;
         bankId = bankAccount.data[0].id;
-        logger.d('account number: ${bankAccount.data[0].channel}');
+        // logger.d('account number: ${bankAccount.data[0].channel}');
       });
     }
   }
@@ -156,23 +156,37 @@ class _HomeSellerState extends State<HomeSeller> {
                       children: <Widget>[
                         headerImage(),
                         Container(
-                          padding: EdgeInsets.all(10.0),
+                          padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
                           child: Row(
                             children: <Widget>[
                               Expanded(
                                 child: Column(
                                   children: <Widget>[
                                     Container(
-                                      margin: EdgeInsets.fromLTRB(0, 0, 10, 10),
-                                      padding:
-                                          EdgeInsets.only(left: 25, right: 10),
+                                      margin: EdgeInsets.only(
+                                        left: 10,
+                                      ),
                                       child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Text(
-                                            "0" + "$_shopId",
-                                            style: TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.bold),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                "$_shopId ",
+                                                style: TextStyle(
+                                                    fontSize: 28,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Container(
+                                                height: 65,
+                                                child: VerticalDivider(
+                                                  color: Colors.orange,
+                                                  thickness: 5,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           Container(
                                             padding: EdgeInsets.only(

@@ -405,101 +405,99 @@ class _MenuPageState extends State<MenuPage> {
                         child: Column(
                           children: <Widget>[
                             Container(
-                              margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                              padding: EdgeInsets.only(left: 45),
+                              margin: EdgeInsets.fromLTRB(40, 10, 25, 10),
                               child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  Text(
-                                    "0" + "$shopId",
-                                    style: TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Container(
-                                    height: 40,
-                                    child: VerticalDivider(
-                                      color: Colors.orange,
-                                      thickness: 3,
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
+                                  Row(
+                                    children: [
                                       Text(
-                                        "$shopName",
+                                        "0" + "$shopId",
                                         style: TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 30,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Row(
+                                      Container(
+                                        height: 40,
+                                        child: VerticalDivider(
+                                          color: Colors.orange,
+                                          thickness: 3,
+                                        ),
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          Icon(
-                                            Icons.star,
-                                            color: Colors.orangeAccent,
-                                            size: 20,
+                                          Text(
+                                            " $shopName",
+                                            style: TextStyle(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                          Text("4.2 Reviews"),
                                         ],
                                       ),
                                     ],
                                   ),
-                                  Container(
-                                    margin: EdgeInsets.only(left: 55),
-                                    child: RaisedButton(
-                                        child: Center(
-                                          child: Text(
-                                            'รีวิว',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: 'Aleo',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18),
-                                          ),
-                                        ),
-                                        color: const Color(0xffF6A911),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(18.0),
-                                            side: BorderSide(
-                                                color:
-                                                    const Color(0xffF6A911))),
-                                        onPressed: () {
-                                          ListView(
-                                            reverse: true,
-                                            children: [
-                                              alertDialog(context, shopName,
-                                                  shopCoverImg, shopId),
-                                            ],
-                                          );
-                                        }),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(left: 0),
-                                    child: IconButton(
-                                      icon: favId == null
-                                          ? Icon(
-                                              Icons.favorite_border,
-                                              color: Color(0xffFF7C2C),
-                                              size: 34,
-                                            )
-                                          : Icon(
-                                              Icons.favorite,
-                                              color: Color(0xffFF7C2C),
-                                              size: 34,
+                                  Row(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(left: 55),
+                                        child: RaisedButton(
+                                            child: Center(
+                                              child: Text(
+                                                'รีวิว',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Aleo',
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18),
+                                              ),
                                             ),
-                                      onPressed: () async {
-                                        setState(() {
-                                          if (favId != null) {
-                                            deleteFavorite();
-                                            // logger.d(isFav);
-                                          } else if (favId == null) {
-                                            postFavorite();
-                                            // logger.d(isFav);
-                                          }
-                                        });
-                                      },
-                                    ),
+                                            color: const Color(0xffF6A911),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(18.0),
+                                                side: BorderSide(
+                                                    color: const Color(
+                                                        0xffF6A911))),
+                                            onPressed: () {
+                                              ListView(
+                                                reverse: true,
+                                                children: [
+                                                  alertDialog(context, shopName,
+                                                      shopCoverImg, shopId),
+                                                ],
+                                              );
+                                            }),
+                                      ),
+                                      Container(
+                                        child: IconButton(
+                                          icon: favId == null
+                                              ? Icon(
+                                                  Icons.favorite_border,
+                                                  color: Color(0xffFF7C2C),
+                                                  size: 34,
+                                                )
+                                              : Icon(
+                                                  Icons.favorite,
+                                                  color: Color(0xffFF7C2C),
+                                                  size: 34,
+                                                ),
+                                          onPressed: () async {
+                                            setState(() {
+                                              if (favId != null) {
+                                                deleteFavorite();
+                                                // logger.d(isFav);
+                                              } else if (favId == null) {
+                                                postFavorite();
+                                                // logger.d(isFav);
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),

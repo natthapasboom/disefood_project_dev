@@ -423,6 +423,20 @@ class _OrderDetailSellerState extends State<OrderDetailSeller> {
                                 ],
                               ),
                             ),
+                            Visibility(
+                              visible: orderDetail[index].description != "-",
+                              child: Container(
+                                alignment: Alignment.topLeft,
+                                height: 35,
+                                margin: EdgeInsets.only(left: 40, right: 60),
+                                child: SizedBox(
+                                  child: Text(
+                                    "คำแนะนำพิเศษ : ${orderDetail[index].description}",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                            ),
                             Divider(
                               color: Colors.grey[200],
                               thickness: 2,
