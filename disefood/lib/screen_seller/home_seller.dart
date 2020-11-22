@@ -93,6 +93,7 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopImg = msg.data.coverImg;
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
+        approve = msg.data.approved;
         // account = msg.data.accountNumbers;
         // logger.d(msg.data.approved);
         // logger.d('account number: $account');
@@ -164,7 +165,7 @@ class _HomeSellerState extends State<HomeSeller> {
                                   children: <Widget>[
                                     Container(
                                       margin: EdgeInsets.only(
-                                        left: 10,
+                                        left: 20,
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
@@ -188,21 +189,13 @@ class _HomeSellerState extends State<HomeSeller> {
                                               ),
                                             ],
                                           ),
-                                          Container(
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            height: 65,
-                                            child: VerticalDivider(
-                                              color: Colors.orange,
-                                              thickness: 3,
-                                            ),
-                                          ),
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
                                               Container(
                                                 padding: EdgeInsets.only(
+                                                  right: 290,
                                                   bottom: 0,
                                                 ),
                                                 child: Text(

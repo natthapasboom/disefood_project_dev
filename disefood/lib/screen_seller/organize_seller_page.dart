@@ -49,6 +49,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
     setState(() {
       _isLoading = true;
       foodList = json.decode(body)['data'];
+      print('approve: $approve');
     });
   }
 
@@ -57,6 +58,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
     // final OrganizeSellerPage params = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: ListView(
+        shrinkWrap: true,
         children: [
           Row(
             children: <Widget>[
@@ -115,6 +117,7 @@ class _OrganizeSellerPageState extends State<OrganizeSellerPage> {
                   )
                 : Container(
                     child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: foodList != null ? foodList.length : 0,
                         itemBuilder: (BuildContext context, int index) {
