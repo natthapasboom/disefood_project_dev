@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:disefood/screen/login_customer_page.dart';
@@ -7,10 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:logger/logger.dart';
 
 class Regis extends StatefulWidget {
   static const routeName = '/Regis';

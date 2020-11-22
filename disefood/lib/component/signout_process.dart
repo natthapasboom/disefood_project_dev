@@ -1,14 +1,9 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:disefood/screen/login_customer_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<Null> signOutProcess(BuildContext context) async {

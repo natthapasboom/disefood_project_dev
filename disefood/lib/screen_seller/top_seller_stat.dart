@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:disefood/model/topseller.dart';
 import 'package:disefood/screen/home_customer.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TopSellerPage extends StatefulWidget {

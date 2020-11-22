@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
-import 'package:disefood/component/editProfile.dart';
 import 'package:disefood/component/editProfileFacebook.dart';
 import 'package:disefood/model/facebookUser.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';

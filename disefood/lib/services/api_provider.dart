@@ -8,7 +8,6 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:logger/logger.dart';
-import 'package:uuid/uuid.dart';
 
 class ApiProvider {
   ApiProvider();

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:disefood/model/bankAccount.dart';
 import 'package:disefood/model/userById.dart';
 import 'package:disefood/screen_seller/addBank.dart';

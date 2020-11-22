@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:disefood/component/dialogcomponents/alert_dialog.dart';
 import 'package:disefood/screen_admin/home.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
