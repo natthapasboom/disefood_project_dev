@@ -387,7 +387,7 @@ class _HomeState extends State<Home> {
                                                               EdgeInsets.only(
                                                                   top: 1),
                                                           child: Icon(
-                                                            Icons.star_rounded,
+                                                            Icons.star,
                                                             color:
                                                                 Colors.orange,
                                                           ),
@@ -413,7 +413,7 @@ class _HomeState extends State<Home> {
                                                               EdgeInsets.only(
                                                                   top: 1),
                                                           child: Icon(
-                                                            Icons.star_rounded,
+                                                            Icons.star,
                                                             color:
                                                                 Colors.orange,
                                                           ),
