@@ -93,6 +93,18 @@ class ShopController extends Controller
             if($countShops == 0) {
                 return response()->json(['msg' => 'Shop Not found'], 404);
             }
+
+            foreach ($shops as $shop) {
+                $feedbacks = $shop->feedbacks;
+                $sumOfRating = 0;
+                $shop["averageRating"] = 0;
+                foreach ($feedbacks as $feedback) {
+                    $rating = $feedback->rating;
+                    $sumOfRating += $rating;
+                    $shop["averageRating"] = $sumOfRating / count($feedbacks);
+                }
+                $shop->makeHidden('feedbacks');
+            }
             return response()->json(['data' => $shops], 200);
         } catch (\Throwable $error) {
             report($error);
