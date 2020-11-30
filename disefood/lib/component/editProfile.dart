@@ -668,6 +668,16 @@ class _EditProfileState extends State<EditProfile> {
                                     ],
                                   ),
                                   Container(
+                                      padding: EdgeInsets.only(
+                                          left: 170, top: 0, bottom: 5),
+                                      child: Text(
+                                        '* กรุณาอย่าลืมกรอกรหัสผ่าน',
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      )),
+                                  Container(
                                     padding:
                                         EdgeInsets.only(top: 10, bottom: 30),
                                     child: Divider(

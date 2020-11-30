@@ -179,64 +179,36 @@ class _HomeSellerState extends State<HomeSeller> {
                                                         FontWeight.bold),
                                               ),
                                               Container(
+                                                margin: EdgeInsets.only(
+                                                    top: 10, bottom: 10),
                                                 height: 65,
                                                 child: VerticalDivider(
                                                   color: Colors.orange,
-                                                  thickness: 5,
+                                                  thickness: 2,
                                                 ),
                                               ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 4, left: 10),
+                                                child: Text(
+                                                  "$_shopName ",
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 0),
+                                                child: Icon(
+                                                  Icons.restaurant,
+                                                  size: 30,
+                                                  color: Colors.black,
+                                                ),
+                                              )
                                             ],
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(
-                                                top: 5,
-                                                bottom: 5,
-                                                right: 0,
-                                                left: 20),
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(50),
-                                                  topLeft: Radius.circular(50),
-                                                ),
-                                                color: Colors.orange),
-                                            child: Row(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 20),
-                                                  child: Text(
-                                                    "ชื่อร้านอาหาร : ",
-                                                    style: TextStyle(
-                                                        fontSize: 28,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(top: 4),
-                                                  child: Text(
-                                                    "$_shopName ",
-                                                    style: TextStyle(
-                                                        fontSize: 28,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 20),
-                                                  child: Icon(
-                                                    Icons.restaurant,
-                                                    size: 30,
-                                                    color: Colors.white,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
                                           ),
                                         ],
                                       ),

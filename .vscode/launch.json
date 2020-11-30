@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "Dart",
-      "program": "C:/Users/ROG/Desktop/dise/disefood_ver_0.4/disefood/lib/main.dart",
+      "program": "/Users/taenawapan/Desktop/disefood_ver_0.4/disefood/lib/main.dart",
       "request": "launch",
       "type": "dart"
     }

@@ -80,7 +80,21 @@ class _HomeAdminState extends State<HomeAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(),
+        appBar: AppBar(
+          leading: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 0),
+            child: Builder(
+              builder: (context) => IconButton(
+                icon: Icon(
+                  Icons.account_circle,
+                  size: 30,
+                ),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+          ),
+          automaticallyImplyLeading: false,
+        ),
         drawer: SideMenuAdmin(
           firstName: nameUser,
           userId: userId,

@@ -379,58 +379,56 @@ class _HomeState extends State<Home> {
                                                       ),
                                                     ],
                                                   ),
-                                                  Visibility(
-                                                    replacement: Row(
-                                                      children: <Widget>[
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 1),
-                                                          child: Icon(
-                                                            Icons.star,
-                                                            color:
-                                                                Colors.orange,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          ": ยังไม่มีรีวิว",
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Colors.orange,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    visible:
-                                                        item['averageRating'] !=
-                                                            0,
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 1),
-                                                          child: Icon(
-                                                            Icons.star,
-                                                            color:
-                                                                Colors.orange,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          ": ${item['averageRating']} รีวิว",
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Colors.orange,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
                                                 ],
+                                              ),
+                                              subtitle: Container(
+                                                child: Visibility(
+                                                  replacement: Row(
+                                                    children: <Widget>[
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 1),
+                                                        child: Icon(
+                                                          Icons.star,
+                                                          color: Colors.orange,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        ": ยังไม่มีรีวิว",
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  visible:
+                                                      item['averageRating'] !=
+                                                          0,
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 1),
+                                                        child: Icon(
+                                                          Icons.star,
+                                                          color: Colors.orange,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        ": ${item['averageRating']} รีวิว",
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),

@@ -1,7 +1,9 @@
 import 'dart:io';
+// import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:disefood/config/app_config.dart';
+import 'package:disefood/screen_seller/home_seller_tab.dart';
 import 'package:disefood/services/api_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,14 +27,12 @@ class _CreateShopState extends State<CreateShop> {
   int _shopId;
   String _shopImg;
   int _shopSlot;
-
+  bool checkDocImg = false;
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-    });
+    Future.microtask(() {});
   }
-
 
   Widget _checkImage() {
     if (_isEdit) {
@@ -289,6 +289,7 @@ class _CreateShopState extends State<CreateShop> {
                 onPressed: () {
                   getDocImg(ImageSource.gallery);
                   setState(() {
+                    checkDocImg = true;
                     Image.file(documentImg);
                   });
                 }),
@@ -324,9 +325,106 @@ class _CreateShopState extends State<CreateShop> {
             ),
           ),
           color: Colors.green,
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState.validate()) {
-              logger.d(userId);
+              //   String _url = 'http://54.151.194.224:8000/api/shop/owner';
+              //   SharedPreferences preference =
+              //       await SharedPreferences.getInstance();
+              //   String token = preference.getString('token');
+              //   int _slot = int.parse(_shopSlotController.text.trim());
+              //   Map<String, String> headers = {
+              //     "Accept": "application/json",
+              //     "Authorization": "Bearer $token"
+              //   };
+              //   logger.d(userId);
+              //   var request = http.MultipartRequest("POST", Uri.parse(_url));
+
+              //   var stream = http.ByteStream(DelegatingStream(_image.openRead()));
+              //   var length = await _image.length();
+              //   var multipartFileSign = new http.MultipartFile(
+              //       'profile_img', stream, length,
+              //       filename: basename(_image.path));
+              //   request.files.add(multipartFileSign);
+              //   request.fields['name'] = _shopNameController.text.trim();
+              //   request.fields['shop_slot'] = _slot.toString();
+              //   request.headers.addAll(headers);
+              //   if (checkDocImg == true) {
+              //     var stream =
+              //         http.ByteStream(DelegatingStream(documentImg.openRead()));
+              //     var length = await documentImg.length();
+              //     var multipartFileSign = new http.MultipartFile(
+              //         'document_img', stream, length,
+              //         filename: basename(documentImg.path));
+              //     request.files.add(multipartFileSign);
+              //   } else {}
+              //   var response = await request.send();
+              //   logger.d(response.statusCode);
+              //   if (response.statusCode == 200) {
+              //     // var context1;
+              //     showDialog(
+              //       barrierDismissible: false,
+              //       context: context,
+              //       builder: (context) {
+              //         Future.delayed(Duration(seconds: 3), () {
+              //           Navigator.of(context).pop(true);
+              //         });
+              //         return Dialog(
+              //             shape: RoundedRectangleBorder(
+              //                 borderRadius: BorderRadius.circular(10.0)),
+              //             child: Container(
+              //                 height: 250.0,
+              //                 width: 300.0,
+              //                 decoration: BoxDecoration(
+              //                     borderRadius: BorderRadius.circular(20.0)),
+              //                 child: Column(
+              //                   children: <Widget>[
+              //                     Stack(
+              //                       children: <Widget>[
+              //                         Center(
+              //                           child: Container(
+              //                             margin: EdgeInsets.only(top: 40),
+              //                             height: 90.0,
+              //                             width: 90.0,
+              //                             decoration: BoxDecoration(
+              //                                 borderRadius:
+              //                                     BorderRadius.circular(50.0),
+              //                                 image: DecorationImage(
+              //                                   image: AssetImage(
+              //                                       'assets/images/success.png'),
+              //                                   fit: BoxFit.cover,
+              //                                 )),
+              //                           ),
+              //                         ),
+              //                       ],
+              //                     ),
+              //                     Container(
+              //                         margin: EdgeInsets.only(
+              //                             top: 30,
+              //                             left: 10,
+              //                             right: 10,
+              //                             bottom: 0),
+              //                         child: Center(
+              //                           child: Text(
+              //                             'สร้างร้านค้าสำเร็จ',
+              //                             style: TextStyle(
+              //                               fontFamily: 'Aleo-Bold',
+              //                               fontSize: 24.0,
+              //                               fontWeight: FontWeight.bold,
+              //                             ),
+              //                           ),
+              //                         )),
+              //                   ],
+              //                 )));
+              //       },
+              //     ).then((value) => Navigator.push(context,
+              //         MaterialPageRoute(builder: (context) => Homepage())));
+
+              //     return "success";
+              //   } else {
+
+              //     dialogError(context);
+              //   }
+              // }
               _createShop();
             }
           }),
@@ -406,12 +504,12 @@ class _CreateShopState extends State<CreateShop> {
                       SizedBox(height: 10.0),
                       Container(
                         margin:
-                            EdgeInsets.only(top: 10, left: 20.0, right: 20.0),
+                            EdgeInsets.only(top: 10, left: 40.0, right: 40.0),
                         child: RaisedButton(
                             padding: EdgeInsets.only(top: 5, bottom: 5),
                             elevation: 5,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
+                                borderRadius: BorderRadius.circular(10.0),
                                 side:
                                     BorderSide(color: const Color(0xffF6A911))),
                             child: Center(
@@ -445,7 +543,7 @@ class _CreateShopState extends State<CreateShop> {
       "slot": _slot,
       "name": name,
       "cover_img": _image,
-      "document_img": documentImg,
+      // "document_img": documentImg,
       "token": token
     };
     logger.d("body $body");
@@ -483,7 +581,60 @@ class _CreateShopState extends State<CreateShop> {
       logger.d("Data: ${response.data}");
 
       if (response.statusCode == 200) {
-        Navigator.of(context).pop(true);
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            Future.delayed(Duration(seconds: 3), () {
+              Navigator.of(context).pop(true);
+            });
+            return Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: Container(
+                    height: 250.0,
+                    width: 300.0,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    child: Column(
+                      children: <Widget>[
+                        Stack(
+                          children: <Widget>[
+                            Center(
+                              child: Container(
+                                margin: EdgeInsets.only(top: 40),
+                                height: 90.0,
+                                width: 90.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50.0),
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/success.png'),
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: 30, left: 10, right: 10, bottom: 0),
+                            child: Center(
+                              child: Text(
+                                'สร้างร้านค้าสำเร็จ',
+                                style: TextStyle(
+                                  fontFamily: 'Aleo-Bold',
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )),
+                      ],
+                    )));
+          },
+        ).then((value) => Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Homepage())));
+
         return "success";
       } else {
         dialogError(context);

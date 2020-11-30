@@ -28,13 +28,13 @@ class _TopSellerPageState extends State<TopSellerPage> {
   getColorTab(int index) {
     Color colorList;
     if (index == 0) {
-      colorList = Color(0xffB80900);
+      colorList = Color(0xffE8CE00);
     } else if (index == 1) {
-      colorList = Color(0xffE01E00);
+      colorList = Color(0xff7C7C7C);
     } else if (index == 2) {
-      colorList = Color(0xffF54100);
+      colorList = Color(0xffAB0B1F);
     } else {
-      colorList = Color(0xffFF801F);
+      colorList = Color(0xffF6A911);
     }
     return colorList;
   }
@@ -92,20 +92,23 @@ class _TopSellerPageState extends State<TopSellerPage> {
         body: ListView(
           children: [
             Container(
-              alignment: Alignment.centerRight,
-              margin: EdgeInsets.fromLTRB(30, 10, 20, 0),
+              alignment: Alignment.topLeft,
+              margin: EdgeInsets.fromLTRB(30, 30, 20, 0),
               child: Text(
                 "อันดับอาหารขายดี",
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xffB80900)),
+                    color: Colors.black),
               ),
             ),
-            Divider(
-              thickness: 6,
-              endIndent: 20,
-              color: Color(0xffB80900),
+            Container(
+              margin: EdgeInsets.only(left: 30),
+              child: Divider(
+                thickness: 1,
+                endIndent: 25,
+                color: Colors.black,
+              ),
             ),
             SizedBox(
               height: 6,
@@ -119,7 +122,7 @@ class _TopSellerPageState extends State<TopSellerPage> {
                     return snapshot.data.data.length == 0
                         ? Center(
                             child: Container(
-                              margin: EdgeInsets.only(top: 230),
+                              margin: EdgeInsets.only(top: 150),
                               child: Column(
                                 children: [
                                   Icon(
@@ -176,32 +179,35 @@ class _TopSellerPageState extends State<TopSellerPage> {
                                         shape: BoxShape.circle,
                                         color: Colors.white,
                                       ),
-                                      child: CachedNetworkImage(
-                                        imageUrl:
-                                            "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
-                                                '${data.cover_img}',
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.contain,
-                                        placeholder: (context, url) => Center(
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 5.0,
-                                            valueColor: AlwaysStoppedAnimation(
-                                                const Color(0xffF6A911)),
-                                          ),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                          decoration: new BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white,
-                                          ),
+                                      child: ClipOval(
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                                                  '${data.cover_img}',
+                                          width: 50,
                                           height: 50,
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.fastfood,
-                                              size: 25,
-                                              color: Colors.orange,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) => Center(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 5.0,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                      const Color(0xffF6A911)),
+                                            ),
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              Container(
+                                            decoration: new BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white,
+                                            ),
+                                            height: 50,
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.fastfood,
+                                                size: 25,
+                                                color: Colors.orange,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -332,11 +338,11 @@ class _TopSellerPageState extends State<TopSellerPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                  height: 80,
+                  height: 100,
                 ),
                 Container(
                   width: 380,
-                  height: 50,
+                  height: 70,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
                     color: Colors.white,
@@ -349,7 +355,10 @@ class _TopSellerPageState extends State<TopSellerPage> {
                     ],
                   ),
                   child: Container(
-                    margin: EdgeInsets.only(left: 20, right: 20),
+                    margin: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                    ),
                     child: totalPriceSummary != null
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
