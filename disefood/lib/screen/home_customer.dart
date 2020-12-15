@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:disefood/model/userById.dart';
@@ -269,6 +270,7 @@ class _HomeState extends State<Home> {
                         itemCount: shops != null ? shops.length : 0,
                         itemBuilder: (BuildContext context, int index) {
                           var item = shops[index];
+
                           return item['approved'] == 1
                               ? Container(
                                   margin: EdgeInsets.only(
@@ -418,14 +420,30 @@ class _HomeState extends State<Home> {
                                                           color: Colors.orange,
                                                         ),
                                                       ),
-                                                      Text(
-                                                        ": ${item['averageRating']} รีวิว",
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.black,
-                                                        ),
-                                                      )
+                                                      item['averageRating']
+                                                                  .toString()
+                                                                  .length >
+                                                              4
+                                                          ? Text(
+                                                              ": ${item['averageRating'].toString().substring(0, 4)} รีวิว",
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                            )
+                                                          : Text(
+                                                              ": ${item['averageRating']} รีวิว",
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                            ),
                                                     ],
                                                   ),
                                                 ),

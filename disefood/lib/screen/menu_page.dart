@@ -83,6 +83,7 @@ class _MenuPageState extends State<MenuPage> {
       for (var model in object) {
         cartModels = object;
         totalQty = totalQty + model.foodQuantity;
+        logger.e('totalQty : $totalQty');
       }
     });
     if (totalQty == 0) {
@@ -425,7 +426,7 @@ class _MenuPageState extends State<MenuPage> {
                                           height: 40,
                                           child: VerticalDivider(
                                             color: Colors.orange,
-                                            thickness: 5,
+                                            thickness: 2,
                                           ),
                                         ),
                                         Column(
@@ -456,8 +457,16 @@ class _MenuPageState extends State<MenuPage> {
                                                           Text('ยังไม่มีรีวิว'),
                                                     ),
                                                     replacement: Container(
-                                                      child: Text(
-                                                          '${widget.rating}'),
+                                                      margin: EdgeInsets.only(
+                                                          left: 5),
+                                                      child: widget.rating
+                                                                  .toString()
+                                                                  .length >
+                                                              4
+                                                          ? Text(
+                                                              '${widget.rating.toString().substring(0, 4)}')
+                                                          : Text(
+                                                              '${widget.rating}'),
                                                     ),
                                                   )
                                                 ],
@@ -646,7 +655,10 @@ class _MenuPageState extends State<MenuPage> {
                                                     foodQuantity:
                                                         item['quantity'],
                                                   ),
-                                                );
+                                                ).then((value) {
+                                                  initState();
+                                                  logger.e('value : $value');
+                                                });
                                               },
                                             ),
                                           ),

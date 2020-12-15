@@ -105,8 +105,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void facebookLogin() async {
     var facebookLogin = FacebookLogin();
-    var facebookLoginResult =
-        await facebookLogin.logInWithReadPermissions(['email']);
+    var facebookLoginResult = await facebookLogin.logIn(['email']);
     switch (facebookLoginResult.status) {
       case FacebookLoginStatus.error:
         print("Error");

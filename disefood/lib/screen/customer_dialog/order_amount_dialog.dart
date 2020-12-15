@@ -324,6 +324,7 @@ class _OrderAmountDialogState extends State<OrderAmountDialog> {
             showToast("เพิ่มไปยังตะกร้าเรียบร้อยแล้ว");
             readSQLite();
             checkQuantity(foodIndex, qty);
+            logger.e('length : $qty');
           },
         );
       } else {

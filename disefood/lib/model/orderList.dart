@@ -97,22 +97,49 @@ class Data {
 
 class Shop {
   int id;
+  int userId;
+  int shopSlot;
   String name;
   String coverImg;
+  int approved;
+  Null deletedAt;
+  Null createdAt;
+  Null updatedAt;
 
-  Shop({this.id, this.name, this.coverImg});
+  Shop(
+      {this.id,
+      this.userId,
+      this.shopSlot,
+      this.name,
+      this.coverImg,
+      this.approved,
+      this.deletedAt,
+      this.createdAt,
+      this.updatedAt});
 
   Shop.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    userId = json['user_id'];
+    shopSlot = json['shop_slot'];
     name = json['name'];
     coverImg = json['cover_img'];
+    approved = json['approved'];
+    deletedAt = json['deleted_at'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['user_id'] = this.userId;
+    data['shop_slot'] = this.shopSlot;
     data['name'] = this.name;
     data['cover_img'] = this.coverImg;
+    data['approved'] = this.approved;
+    data['deleted_at'] = this.deletedAt;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     return data;
   }
 }
@@ -170,25 +197,45 @@ class OrderDetails {
 
 class Food {
   int id;
+  int shopId;
   String name;
   int price;
+  int status;
   String coverImg;
+  Null createdAt;
+  Null updatedAt;
 
-  Food({this.id, this.name, this.price, this.coverImg});
+  Food(
+      {this.id,
+      this.shopId,
+      this.name,
+      this.price,
+      this.status,
+      this.coverImg,
+      this.createdAt,
+      this.updatedAt});
 
   Food.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    shopId = json['shop_id'];
     name = json['name'];
     price = json['price'];
+    status = json['status'];
     coverImg = json['cover_img'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['shop_id'] = this.shopId;
     data['name'] = this.name;
     data['price'] = this.price;
+    data['status'] = this.status;
     data['cover_img'] = this.coverImg;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     return data;
   }
 }

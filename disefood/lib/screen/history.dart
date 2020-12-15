@@ -374,7 +374,9 @@ class _HistoryState extends State<History> {
                                                           MainAxisSize.min,
                                                       children: <Widget>[
                                                         Text(
-                                                          "${data.shop.name}",
+                                                          data.shop.name != null
+                                                              ? "${data.shop.name}"
+                                                              : "",
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style: GoogleFonts
@@ -541,7 +543,7 @@ class _HistoryState extends State<History> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    '${orderDetail[index].food.name}  ',
+                                    '${orderDetail[index].food.name} ',
                                     style: TextStyle(
                                         fontFamily: 'Roboto',
                                         fontSize: 16,
@@ -570,33 +572,37 @@ class _HistoryState extends State<History> {
                       replacement: Container(
                         margin:
                             EdgeInsets.only(right: 100, left: 100, bottom: 30),
-                        child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          color: Colors.orange,
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PaymentPage(
-                                  shopId: shopId,
-                                  totalPrice: totalPrice,
-                                  orderId: orderId,
+                        child: status == "in process" ||
+                                status == "not confirmed"
+                            ? RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-                              ),
-                            ).then((value) => {Navigator.of(context).pop()});
-                          },
-                          child: Container(
-                            child: Text(
-                              "ชำระเงิน",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18),
-                            ),
-                          ),
-                        ),
+                                color: Colors.orange,
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PaymentPage(
+                                        shopId: shopId,
+                                        totalPrice: totalPrice,
+                                        orderId: orderId,
+                                      ),
+                                    ),
+                                  ).then(
+                                      (value) => {Navigator.of(context).pop()});
+                                },
+                                child: Container(
+                                  child: Text(
+                                    "ชำระเงิน",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
+                                  ),
+                                ),
+                              )
+                            : Container(),
                       ),
                       child: Container(
                         margin:

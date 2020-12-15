@@ -22,14 +22,8 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
   bool isLoading = false;
   bool isFilter = false;
   Future<Feedbacks> _feedbacks;
-  Future<Feedbacks> _feedbacks1;
-  Future<Feedbacks> _feedbacks2;
-  Future<Feedbacks> _feedbacks3;
-  Future<Feedbacks> _feedbacks4;
-  Future<Feedbacks> _feedbacks5;
-  List<Feedbacks> _feedbackLists = new List<Feedbacks>();
-  var star1;
 
+  var star1;
   var star2;
   var star3;
   var star4;
@@ -40,14 +34,10 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
   void initState() {
     isFilter = false;
     logger.d('initail rate filter : $rate');
-    // _feedbacks1 = getValue1();
-    // _feedbacks2 = getValue2();
-    // _feedbacks3 = getValue3();
-    // _feedbacks4 = getValue4();
-    // _feedbacks5 = getValue5();
+
     _feedbacks = getFeedback();
     isLoading = false;
-    // TODO: implement initState
+
     super.initState();
   }
 
@@ -194,7 +184,6 @@ class _FeedbackSellerState extends State<FeedbackSeller> {
                       itemCount: snapshot.data.data.length,
                       itemBuilder: (context, index) {
                         var data = snapshot.data.data[index];
-
                         int star = int.parse(data.rating);
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

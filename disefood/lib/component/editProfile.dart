@@ -136,6 +136,8 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
+  
+
   Widget _checkImage() {
     if (_isEdit) {
       if (_image != null) {

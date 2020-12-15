@@ -767,69 +767,76 @@ class _EditProfileFacebookState extends State<EditProfileFacebook> {
                                                       200) {
                                                     logger.d('success');
                                                     showDialog(
-                                                            barrierDismissible:
-                                                                false,
-                                                            context: context,
-                                                            builder: (context) {
-                                                              Future.delayed(
-                                                                  Duration(
-                                                                      seconds:
-                                                                          3),
-                                                                  () {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder:
-                                                                            (context) =>
-                                                                                Home()));
-                                                              });
-                                                              return Dialog(
-                                                                  shape: RoundedRectangleBorder(
+                                                        barrierDismissible:
+                                                            false,
+                                                        context: context,
+                                                        builder: (context) {
+                                                          Future.delayed(
+                                                              Duration(
+                                                                  seconds: 3),
+                                                              () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            Home()));
+                                                          });
+                                                          return Dialog(
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10.0)),
+                                                              child: Container(
+                                                                  height: 250.0,
+                                                                  width: 300.0,
+                                                                  decoration: BoxDecoration(
                                                                       borderRadius:
                                                                           BorderRadius.circular(
-                                                                              10.0)),
-                                                                  child: Container(
-                                                                      height: 250.0,
-                                                                      width: 300.0,
-                                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
-                                                                      child: Column(
+                                                                              20.0)),
+                                                                  child: Column(
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Stack(
                                                                         children: <
                                                                             Widget>[
-                                                                          Stack(
-                                                                            children: <Widget>[
-                                                                              Center(
-                                                                                child: Container(
-                                                                                  margin: EdgeInsets.only(top: 40),
-                                                                                  height: 90.0,
-                                                                                  width: 90.0,
-                                                                                  decoration: BoxDecoration(
-                                                                                      borderRadius: BorderRadius.circular(50.0),
-                                                                                      image: DecorationImage(
-                                                                                        image: AssetImage('assets/images/success.png'),
-                                                                                        fit: BoxFit.cover,
-                                                                                      )),
-                                                                                ),
-                                                                              ),
-                                                                            ],
+                                                                          Center(
+                                                                            child:
+                                                                                Container(
+                                                                              margin: EdgeInsets.only(top: 40),
+                                                                              height: 90.0,
+                                                                              width: 90.0,
+                                                                              decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(50.0),
+                                                                                  image: DecorationImage(
+                                                                                    image: AssetImage('assets/images/success.png'),
+                                                                                    fit: BoxFit.cover,
+                                                                                  )),
+                                                                            ),
                                                                           ),
-                                                                          Container(
-                                                                              margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 0),
-                                                                              child: Center(
-                                                                                child: Text(
-                                                                                  'แก้ไขโปรไฟล์สำเร็จ',
-                                                                                  style: TextStyle(
-                                                                                    fontFamily: 'Aleo-Bold',
-                                                                                    fontSize: 24.0,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                  ),
-                                                                                ),
-                                                                              )),
                                                                         ],
-                                                                      )));
-                                                            })
-                                                        .then((value) =>
-                                                            Navigator.pop(
-                                                                context));
+                                                                      ),
+                                                                      Container(
+                                                                          margin: EdgeInsets.only(
+                                                                              top: 20,
+                                                                              left: 10,
+                                                                              right: 10,
+                                                                              bottom: 0),
+                                                                          child: Center(
+                                                                            child:
+                                                                                Text(
+                                                                              'แก้ไขโปรไฟล์สำเร็จ',
+                                                                              style: TextStyle(
+                                                                                fontFamily: 'Aleo-Bold',
+                                                                                fontSize: 24.0,
+                                                                                fontWeight: FontWeight.bold,
+                                                                              ),
+                                                                            ),
+                                                                          )),
+                                                                    ],
+                                                                  )));
+                                                        });
                                                   }
                                                 } on DioError catch (error) {
                                                   if (error.response

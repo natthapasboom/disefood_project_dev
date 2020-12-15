@@ -139,11 +139,7 @@ class _RegisState extends State<Regis> {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [
-              const Color(0xffFF7C2C),
-              const Color(0xffF6A911),
-              const Color(0xffF6A911)
-            ],
+            colors: [Color(0xffFF7C2C), Color(0xffF6A911), Color(0xffF6A911)],
           ),
         ),
         child: ListView(

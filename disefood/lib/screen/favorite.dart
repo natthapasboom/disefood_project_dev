@@ -92,126 +92,159 @@ class _FavoritePageState extends State<FavoritePage> {
                   future: _favorites,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: snapshot.data.data.length,
-                          itemBuilder: (context, index) {
-                            var data = snapshot.data.data[index];
-                            return Container(
-                              margin: EdgeInsets.only(
-                                  bottom: 10, top: 5, left: 40, right: 40),
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MenuPage(
-                                        shopId: data.shop.id,
-                                        shopName: data.shop.name,
-                                        shopSlot: data.shop.shopSlot,
-                                        shopCoverImg: data.shop.coverImg,
-                                        rating: shops[index]["averageRating"]
-                                            .toDouble(),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Card(
-                                  semanticContainer: true,
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  elevation: 5,
-                                  color: Colors.white70,
-                                  // margin: EdgeInsets.only(
-                                  //     top: 8, bottom: 8, left: 40, right: 40),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      CachedNetworkImage(
-                                        imageUrl:
-                                            "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
-                                                "${data.shop.coverImg}",
-                                        width: 380,
-                                        height: 140,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => Center(
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                                top: 50, bottom: 35),
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 5.0,
-                                              valueColor:
-                                                  AlwaysStoppedAnimation(
-                                                      const Color(0xffF6A911)),
-                                            ),
+                      return snapshot.data.data.length != 0
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data.data.length,
+                              itemBuilder: (context, index) {
+                                var data = snapshot.data.data[index];
+                                return Container(
+                                  margin: EdgeInsets.only(
+                                      bottom: 10, top: 5, left: 40, right: 40),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MenuPage(
+                                            shopId: data.shop.id,
+                                            shopName: data.shop.name,
+                                            shopSlot: data.shop.shopSlot,
+                                            shopCoverImg: data.shop.coverImg,
+                                            rating: shops[index]
+                                                    ["averageRating"]
+                                                .toDouble(),
                                           ),
                                         ),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                          height: 140,
-                                          width: 380,
-                                          color: const Color(0xff7FC9C5),
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.store,
-                                              size: 50,
-                                              color: Colors.white,
+                                      );
+                                    },
+                                    child: Card(
+                                      semanticContainer: true,
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      elevation: 5,
+                                      color: Colors.white70,
+                                      // margin: EdgeInsets.only(
+                                      //     top: 8, bottom: 8, left: 40, right: 40),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          CachedNetworkImage(
+                                            imageUrl:
+                                                "https://disefood.s3-ap-southeast-1.amazonaws.com/" +
+                                                    "${data.shop.coverImg}",
+                                            width: 380,
+                                            height: 140,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                Center(
+                                              child: Container(
+                                                margin: EdgeInsets.only(
+                                                    top: 50, bottom: 35),
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  strokeWidth: 5.0,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation(
+                                                          const Color(
+                                                              0xffF6A911)),
+                                                ),
+                                              ),
+                                            ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
+                                              height: 140,
+                                              width: 380,
+                                              color: const Color(0xff7FC9C5),
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.store,
+                                                  size: 50,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Container(
-                                        color: Colors.grey[50],
-                                        child: ListTile(
-                                          title: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
+                                          Container(
+                                            color: Colors.grey[50],
+                                            child: ListTile(
+                                              title: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
-                                                  Text(
-                                                    "${data.shopId} ",
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        "${data.shopId} ",
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      Container(
+                                                        height: 40,
+                                                        child: VerticalDivider(
+                                                          color: Colors.orange,
+                                                          thickness: 3,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "  ${data.shop.name}",
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Container(
-                                                    height: 40,
-                                                    child: VerticalDivider(
-                                                      color: Colors.orange,
-                                                      thickness: 3,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "  ${data.shop.name}",
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                  Icon(
+                                                    Icons.favorite,
+                                                    color: Colors.red,
                                                   ),
                                                 ],
                                               ),
-                                              Icon(
-                                                Icons.favorite,
-                                                color: Colors.red,
-                                              ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ],
+                                        ],
 //          crossAxisAlignment: CrossAxisAlignment.start,
+                                      ),
+                                    ),
                                   ),
+                                );
+                              })
+                          : Center(
+                              child: Container(
+                                margin: EdgeInsets.only(top: 200),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.favorite,
+                                      color: Colors.black38,
+                                      size: 48,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      child: Text(
+                                        "ยังไม่มีประวัติการถูกใจในขณะนี้",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black38,
+                                            fontSize: 20),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             );
-                          });
                     } else {
                       return Container(
                         margin: EdgeInsets.only(top: 150),

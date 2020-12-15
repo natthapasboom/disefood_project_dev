@@ -79,12 +79,12 @@ class _HomeSellerState extends State<HomeSeller> {
     token = preference.getString('token');
 
     var response = await apiProvider.getShopId(token);
-    // logger.d(token);
+
     print(response.statusCode);
     if (response.statusCode == 200) {
       Map map = json.decode(response.body);
       ShopById msg = ShopById.fromJson(map);
-      // logger.d(msg.data);
+
       setState(() {
         _isLoading = true;
         _shopName = msg.data.name;
@@ -92,10 +92,7 @@ class _HomeSellerState extends State<HomeSeller> {
         _shopSlot = msg.data.shopSlot;
         _shopId = msg.data.id;
         approve = msg.data.approved;
-        // account = msg.data.accountNumbers;
-        // logger.d(msg.data.approved);
-        // logger.d('account number: $account');
-        // logger.d('shop detail : ${msg.data.toJson()}');
+
         preference.setInt('shop_id', msg.data.id);
         preference.setInt('approved', approve);
         getBankAccount();
@@ -124,14 +121,12 @@ class _HomeSellerState extends State<HomeSeller> {
         bankNum = bankAccount.data[0].number;
         bankName = bankAccount.data[0].channel;
         bankId = bankAccount.data[0].id;
-        // logger.d('account number: ${bankAccount.data[0].channel}');
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // logger.d(_shopId);
     return new Scaffold(
       body: _isLoading == false
           ? Center(
@@ -224,40 +219,6 @@ class _HomeSellerState extends State<HomeSeller> {
                           height: 13.0,
                           color: const Color(0xffC4C4C4),
                         ),
-                        // Column(
-                        //   // mainAxisAlignment: MainAxisAlignment.center,
-                        //   // crossAxisAlignment: CrossAxisAlignment.center,
-                        //   children: [
-                        //     Container(
-                        //       height: 64,
-                        //       alignment: Alignment.center,
-                        //       child: IconButton(
-                        //         iconSize: 64,
-                        //         icon: Icon(
-                        //           Icons.store,
-                        //           color: Colors.amber[800],
-                        //         ),
-                        //         onPressed: () {
-                        //           Navigator.push(
-                        //               context,
-                        //               MaterialPageRoute(
-                        //                   builder: (context) => EditShop(
-                        //                         shopId: _shopId,
-                        //                         shopImg: _shopImg,
-                        //                         shopName: _shopName,
-                        //                         shopSlot: _shopSlot,
-                        //                       ))).then((value) {
-                        //             setState(() {
-                        //               fetchShopFromStorage();
-                        //               initState();
-                        //               print('Set state work');
-                        //             });
-                        //           });
-                        //         },
-                        //       ),
-                        //     ),
-                        //   ],
-                        // )
                         Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
