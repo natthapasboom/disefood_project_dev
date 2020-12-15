@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        putenv("GOOGLE_APPLICATION_CREDENTIALS=".storage_path('senior-project-292516-0d9da0ef0b46.json'));
+        putenv("GOOGLE_APPLICATION_CREDENTIALS=".storage_path('cafeteria-297113-9bb648c05900.json'));
         $models = array(
             'User',
             'Shop',

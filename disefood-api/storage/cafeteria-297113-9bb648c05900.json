@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "cafeteria-297113",
+  "private_key_id": "9bb648c059005d4acfcd6230babb5640ab5e1ef4",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDCvhuDBQeF+M/H\nRytWxf9HYereo115akt+AG2UGdO1XYEDf03DXX29Go/utpuAXD8GQ2W0+ZJIhuxn\ncDoKdM+gkcsnkvC8tmqTFdr+025YzJNk0KeCnBuv1IZKvkrfRKph4PbnkxGIt+sE\nQwRoCDEk+hOcHVoNZnaOfywikU2EEA31co0piWhyA9s/NIH+1Rl+n7lQH6ADJNbm\n85liSJjrmYMfREpnL1QEF3hEFqYB56bhMwC2LaMrvnJUi/npOWU3UmWQC/ACCYly\nOnc45TmwJ6djirf+u39WZ599VwpGH4MNrqA1OWu+nvNt8wTnowGW9kp00SLhR+kq\n+6coYZyRAgMBAAECggEAA73yACNfz2zroX9Y94zBgMetQvbWEC6mUZ8J5qgU46B5\ndEhf0DFVk1AaztTS2drGlL+aiT7S7GJtpuKsNit5Wl3heWq8cLnbbs+t6AqGwtLN\nLGlJ0LZgc1FaJ76ZPcn0sVcIk4RQTdAv5kKbPPGsWmgqPzboANzUn3IVi7qpnUVw\n8swkodmUSw9NovLZtB52WnkPxjj3jXD8TOA5iYDqTdpG2EaIvHcLBxheghnyvfXH\nMkuHdDxFGKs1m7LP1HdqDNgIQ+frfuMsgzXJmMmM8eGqypRh4JAH9e2YhSjbpkzP\nNG+54ytAQxbvjOLbgBptqxBFuY58wSzLLy3WsdvHAQKBgQDoXJhcIHuX3Gn1xyCz\n+L6k5DNPBq4AnkmHxK2DEcIalTZ7BQOHSrW2cWBwyctlSi0fK3d45tzrQcoGr3Tq\nby/MA2K3fIbxNVnvn9WtkNfk/irSoo9BUmVQNQUv1Fhe9OlUrkXkwls+qvY7AZxx\nsIyrLXhFARecx7Pm8CoYJNe/EQKBgQDWjcv77XT0bZn1Rj2IYvlU3GhznUKKCrc6\nHySjb3GEgjrgNqLqF5CUhihMpO8nBTHNr4mFiWxQsIF/W3Kv6IJdmGDJvpvXzH2U\nCOYaDOvRNOIFZls62YTxvKs3NDroK41fx/1n9e1cTDFEqTVEaAj5tJxykXjMOhyL\nufIaH/8FgQKBgQCT9urat6CcerJK3UvY7wxPqjV2HFXPdPxz5W1sanGFRgFUY0P0\n8kE2dYopKIdJ7+s9zwscRT7m3JUOnso/wx/XtUw2dajkjsm/irOh+/tPCf8w9G1u\n9k4nviuYYosHpMO0tekyHAXIqUt1FbiOuRNKqgDNSD3GC3FnHQZhK4zrUQKBgE/8\nLL+OlrtI4Mx/kxD1VN4+DPKM/fFYbVZNpesH8Nnlcu2DcNi0UEIOgZeRJVb2qMp1\nVl9iC+9I3f4MqYTKuU8LL4oGdTLOGULGzoGHr6IehORedERMMzOrkmjSH+PN2LaM\nZ/wJwqNWBEgEjMcjwbTVkD1l3hLE1z9/4rG6m+gBAoGBAI8vDyy7J7hW+q1l98B5\nI07SwJ21T27pJWC+ITrxF2Gmiql+1jH9v1K13BeYY1hwU+abkWpe8Thirgm5tv9L\nh/Kf6rIvtBZCLhqcYLZ+1PRUepBqZQvxM7hjVzUNFJd+iKFy34Btc/eQ0TNLw+9N\ndSp9PzxcvRWiB8o2W8NCTFf4\n-----END PRIVATE KEY-----\n",
+  "client_email": "cafeteria-management-system@cafeteria-297113.iam.gserviceaccount.com",
+  "client_id": "115292992491707593173",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/cafeteria-management-system%40cafeteria-297113.iam.gserviceaccount.com"
+}

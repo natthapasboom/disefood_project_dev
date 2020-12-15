@@ -15,7 +15,8 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             SellerSeeder::class,
             ShopSeeder::class,
-            MenuSeeder::class
+            MenuSeeder::class,
+            AccountNumberSeeder::class
         ]);
     }
 }
