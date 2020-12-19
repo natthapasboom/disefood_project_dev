@@ -30,7 +30,7 @@ class Data {
   String timePickup;
   String status;
   int confirmedByCustomer;
-  Null deletedAt;
+  String deletedAt;
   String createdAt;
   String updatedAt;
   Shop shop;
@@ -102,9 +102,9 @@ class Shop {
   String name;
   String coverImg;
   int approved;
-  Null deletedAt;
-  Null createdAt;
-  Null updatedAt;
+  String deletedAt;
+  String createdAt;
+  String updatedAt;
 
   Shop(
       {this.id,
@@ -202,8 +202,8 @@ class Food {
   int price;
   int status;
   String coverImg;
-  Null createdAt;
-  Null updatedAt;
+  String createdAt;
+  String updatedAt;
 
   Food(
       {this.id,
